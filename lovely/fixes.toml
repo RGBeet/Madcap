@@ -1,0 +1,136 @@
+[manifest]
+version = "1.0.0"
+dump_lua = true
+priority = 1000
+
+# START OF RUN
+[[patches]]
+[patches.pattern]
+target = "back.lua"
+pattern = '''function Back:apply_to_run()'''
+position = "after"
+payload = '''RGMC.funcs.run_start()'''
+match_indent = true
+
+# START OF BLIND
+[[patches]]
+[patches.pattern]
+target = 'blind.lua'
+pattern = '''if blind and blind.name then'''
+position = 'after'
+payload = '''RGMC.funcs.blind_start()'''
+match_indent = true
+
+# BLIND OVER
+[[patches]]
+[patches.pattern]
+target = 'functions/state_events.lua'
+pattern = '''G.GAME.unused_discards = (G.GAME.unused_discards or 0) + G.GAME.current_round.discards_left'''
+position = 'before'
+payload = '''RGMC.funcs.blind_end()'''
+match_indent = true
+
+# START OF ANTE
+[[patches]]
+[patches.pattern]
+target = 'functions/common_events.lua'
+pattern = '''G.GAME.round_resets.ante = G.GAME.round_resets.ante + mod'''
+position = 'after'
+payload = '''RGMC.funcs.ante_start()'''
+match_indent = true
+
+# FINISH ANTE
+[[patches]]
+[patches.pattern]
+target = 'functions/common_events.lua'
+pattern = '''delay(0.4); ease_ante(1); delay(0.4); check_for_unlock({type = 'ante_up', ante = G.GAME.round_resets.ante + 1})'''
+position = 'at'
+payload = '''RGMC.funcs.ante_finish()'''
+match_indent = true
+
+
+# START OF SHOP
+[[patches]]
+[patches.pattern]
+target = 'functions/button_callbacks.lua'
+pattern = '''G.STATE = G.STATES.SHOP'''
+position = 'after'
+payload = '''RGMC.funcs.shop_start()'''
+match_indent = true
+
+# RECORD EACH CARD
+[[patches]]
+[patches.pattern]
+target = 'functions/state_events.lua'
+pattern = '''highlight_card(scoring_hand[i],(i-0.999)/5,'up')'''
+position = 'after'
+payload = '''RGMC.funcs.record_card(scoring_hand[i])'''
+match_indent = true
+
+# RECORD HAND
+[[patches]]
+[patches.pattern]
+target = 'functions/state_events.lua'
+pattern = '''check_and_set_high_score('hand', hand_chips*mult)'''
+position = 'after'
+payload = '''RGMC.funcs.record_hand(scoring_hand,math.floor(hand_chips*mult),text)'''
+match_indent = true
+
+# PLAY HAND
+[[patches]]
+[patches.pattern]
+target = 'functions/state_events.lua'
+pattern = '''G.GAME.hands[text].visible = true'''
+position = 'after'
+payload = '''RGMC.funcs.play_hand(G.hand.highlighted)'''
+match_indent = true
+
+
+[[patches]]
+[patches.pattern]
+target = 'functions/button_callbacks.lua'
+pattern = '''G.CONTROLLER.locks.skip_blind = true'''
+position = 'after'
+payload = '''RGMC.funcs.blind_skip()'''
+match_indent = true
+
+# DISCARD HAND
+[[patches]]
+[patches.pattern]
+target = 'functions/state_events.lua'
+pattern = '''if G.CONTROLLER.focused.target and G.CONTROLLER.focused.target.area == G.hand then G.card_area_focus_reset = {area = G.hand, rank = G.CONTROLLER.focused.target.rank} end
+    local highlighted_count = math.min(#G.hand.highlighted, G.discard.config.card_limit - #G.play.cards)'''
+position = 'after'
+payload = '''RGMC.funcs.discard_hand(G.hand.highlighted)'''
+match_indent = true
+
+
+# Handle Glass card stuff (e.g. Glass Michel)
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = '''if scoring_hand[i].ability.name == 'Glass Card' and not scoring_hand[i].debuff and pseudorandom('glass') < G.GAME.probabilities.normal/scoring_hand[i].ability.extra then'''
+position = "at"
+match_indent = true
+payload = """if scoring_hand[i].ability.name == 'Glass Card' and RGMC.funcs.handle_glass_card_scoring(scoring_hand[i]) then"""
+
+
+# Continuum
+[[patches]]
+[patches.pattern]
+target = '=[SMODS _ "src/utils.lua"]'
+pattern = "if in_scoring then context.cardarea = G.play else context.cardarea = 'unscored' end"
+position = "after"
+payload = "RGMC.funcs.alter_score_order(card,scoring_hand,context,in_scoring)"
+match_indent = true
+
+# Exploit - patch into smods
+[[patches]]
+[patches.pattern]
+target = '''=[SMODS _ "src/overrides.lua"]'''
+pattern = '''disp_text = text'''
+position = "before"
+payload = '''
+text = G.GAME.MADCAP.force_poker_hand or text
+'''
+match_indent = true

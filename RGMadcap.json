@@ -1,0 +1,11 @@
+{
+    "id": "rgmadcap",
+    "name": "Madcap",
+    "author": ["RGBeet"],
+	"description": "If this appears, there was an error initializing the mod. Non-the-less, hi!",
+    "prefix": "rgmc",
+    "main_file": "madcap.lua",
+    "badge_colour": "FF69B4",
+	"dependencies": ["Steamodded (>=1.0.0~BETA-0408c)"],
+    "version": "1.1.0"
+}
