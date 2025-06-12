@@ -1,67 +1,69 @@
-
-function Card:set_rgmc_engraved(_engraved)
-	self.ability.rgmc_engraved = _engraved
-	SMODS.Stickers["rgmc_engraved"]:apply(self,_engraved)
+-- General function for setting temporary stickers (which Madcap incorporates a lot of!)
+function Card:set_temp_sticker(id,bool,tally)
+    self.ability[id]                = bool
+    self.ability[id .. '_tally']    = tally or 1
+	SMODS.Stickers[id]:apply(self,bool)
 end
 
-function Card:set_rgmc_shielded(_shielded)
-	self.ability.rgmc_shielded = _shielded
-	SMODS.Stickers["rgmc_shielded"]:apply(self,_shielded)
+function Card:set_rgmc_engraved(bool,tally)
+    set_temp_sticker('rgmc_engraved',bool,tally or 3)
 end
 
-function Card:set_rgmc_twinkling(_twinkling)
-	self.ability.rgmc_twinkling = _twinkling
-	SMODS.Stickers["rgmc_twinkling"]:apply(self,_twinkling)
+function Card:set_rgmc_shielded(bool,tally)
+    set_temp_sticker('rgmc_shielded',bool,tally or 3)
 end
 
-function Card:set_rgmc_painted(_painted)
-	self.ability.rgmc_painted = _painted
-	SMODS.Stickers["rgmc_painted"]:apply(self,_painted)
+function Card:set_rgmc_twinkling(bool,tally)
+    set_temp_sticker('rgmc_twinkling',bool,tally or 1)
 end
 
+function Card:set_rgmc_painted(_painted,tally)
+    set_temp_sticker('rgmc_painted',bool,tally or 1)
+end
 
-local set_debuff_ref = Card.set_debuff
-function Card:set_debuff(should_debuff)
+-- A handy little sticker
+local function handle_sticker_calculation(self,id,eval)
+    local name      = id
+    local tally     = name .. '_tally'
+
     if
-		not self.ability.shielded 			-- shielded cannot be debuffed
-		and not self.ability.painted 		-- painted cannot be debuffed because paint is cool
-	then
-		set_debuff_ref(self, should_debuff)
-	end
-end
-
-
-local start_dissolve_ref = Card.start_dissolve
-function Card:start_dissolve(...)
-    if
-		not self.ability.shielded 			-- shielded cannot be killed
-		and not self.ability.twinkling 		-- twinkling cannot be killed, because plot armor
-	then
-        return start_dissolve_ref(self, ...)
-    end
-end
-
-function Card:calculate_rgmc_engraved()
-    tell(self.ability.rgmc_engraved)
-    self.ability.rgmc_engraved_tally = self.ability.rgmc_engraved_tally or 3
-    if self.ability.rgmc_engraved and to_big(self.ability.rgmc_engraved_tally) > to_big(0) then
-        if self.ability.rgmc_engraved_tally <= 1 then
+        self.ability[name]
+        and self.ability[tally] > 0
+    then
+        if -- if the tally is about to go to 0
+            self.ability[tally] <= 1
+        then
+            self.ability[tally] = 0
+            -- if in hand, show the sticker coming off
             for i=1, #G.hand.cards do
-                if G.hand.cards[i] == self then
-                    self.ability.rgmc_engraved_tally = 0
+                if
+                    G.hand.cards[i] == self
+                then -- show it coming off
                     card_eval_status_text(self, 'extra', nil, nil, nil, {
-                        message = localize('rgmc_enabled_ex'),
+                        message = localize('k_'..eval),
                         colour = G.C.FILTER,
                         delay = 0.45
                     })
-                    self:set_rgmc_engraved(false)
+                    break -- we are done
                 end
             end
+            self.ability[name] = false
+            SMODS.Stickers[name]:apply(self,false)
         else
-            self.ability.rgmc_engraved_tally = to_big(self.ability.rgmc_engraved_tally) - to_big(1)
+            self.ability[tally] = self.ability[tally] - 1
             for i=1, #G.hand.cards do
-                if G.hand.cards[i] == self then
-                    card_eval_status_text(self, 'extra', nil, nil, nil, {message = localize{type='variable',key='a_remaining',vars={self.ability.rgmc_engraved_tally}},colour = G.C.FILTER, delay = 0.45})
+                if
+                    G.hand.cards[i] == self
+                then -- show the countdown
+                    card_eval_status_text(self, 'extra', nil, nil, nil, {
+                        message = localize {
+                            type    = 'variable',
+                            key     = 'a_remaining',
+                            vars    = { self.ability[tally] }
+                        },
+                        colour = G.C.FILTER,
+                        delay = 0.45
+                    })
                     break
                 end
             end
@@ -69,70 +71,37 @@ function Card:calculate_rgmc_engraved()
     end
 end
 
+function Card:calculate_rgmc_engraved()
+    handle_sticker_calculation(
+        self,
+        'rgmc_engraved',
+        'rgmc_enabled_ex'
+    )
+end
+
 function Card:calculate_rgmc_shielded()
-    tell(self.ability.rgmc_shielded)
-    self.ability.rgmc_shielded_tally = self.ability.rgmc_shielded_tally or 3
-    if self.ability.rgmc_shielded and to_big(self.ability.rgmc_shielded_tally) > to_big(0) then
-        if self.ability.rgmc_shielded_tally <= 1 then
-            for i=1, #G.hand.cards do
-                if G.hand.cards[i] == self then
-                    self.ability.rgmc_shielded_tally = 0
-                    card_eval_status_text(self, 'extra', nil, nil, nil, {
-                        message = localize('rgmc_shield_removed_ex'),
-                        colour = G.C.FILTER,
-                        delay = 0.45
-                    })
-                    self:set_rgmc_shielded(false)
-                else
-                    self.ability.rgmc_shielded_tally = to_big(self.ability.rgmc_shielded_tally) - to_big(1)
-                    card_eval_status_text(self, 'extra', nil, nil, nil, {message = localize{type='variable',key='a_remaining',vars={self.ability.rgmc_shielded_tally}},colour = G.C.FILTER, delay = 0.45})
-                    self:set_debuff(false)
-                end
-            end
-        end
-    end
+    handle_sticker_calculation(
+        self,
+        'rgmc_shielded',
+        'rgmc_shield_removed_ex'
+    )
 end
 
 -- TODO: maybe make it so it can be twinkling more than 1 round?
 function Card:calculate_rgmc_twinkling()
-    if self.ability.rgmc_twinkling then
-        for i=1, #G.hand.cards do
-            if G.hand.cards[i] == self then
-                card_eval_status_text(self, 'extra', nil, nil, nil, {
-                    message = "!!",
-                    colour = G.C.FILTER,
-                    delay = 0.45
-                })
-            end
-        end
-        self:set_rgmc_twinkling(false)
-        self:set_edition(nil,true,true) -- BANG! and the edition is gone
-    end
+    handle_sticker_calculation(
+        self,
+        'rgmc_twinkling'
+    )
+    self:set_edition(nil,true,true)
 end
 
 function Card:calculate_rgmc_painted()
-    if self.ability.rgmc_painted then
-        for i=1, #G.hand.cards do
-            if G.hand.cards[i] == self then
-                card_eval_status_text(self, 'extra', nil, nil, nil, {
-                    message = "!!",
-                    colour = G.C.FILTER,
-                    delay = 0.45
-                })
-            end
-        end
-        self:set_rgmc_painted(false)
-        self:set_ability(G.P_CENTERS.c_base)
-    end
-end
-
-
-local start_dissolve_ref = Card.start_dissolve
--- If the card has a Shielded or Twinkling sticker, stop that shit
-function Card:start_dissolve(dissolve_colours, silent, dissolve_time_fac, no_juice)
-    if (not (self.ability.rgmc_shielded or self.ability.rgmc_twinkling)) then
-        start_dissolve_ref(self,dissolve_colours, silent, dissolve_time_fac, no_juice)
-    end
+    handle_sticker_calculation(
+        self,
+        'rgmc_painted'
+    )
+    self:set_ability(G.P_CENTERS.c_base)
 end
 
 
@@ -143,10 +112,6 @@ function Game:start_run(args)
 
 end
 
-
-
--- Main menu (Stolen from JoyousSpring)
-local oldfunc = Game.main_menu
 
 local draw_card_ref = draw_card
 function draw_card(from, to, percent, dir, sort, card, delay, mute, stay_flipped, vol, discarded_only)
@@ -529,4 +494,9 @@ function RGMC.funcs.get_hand_sigma(group)
         end
     end
 	return total
+end
+
+-- Is the current ante (or specified) a finisher blind ante?
+function RGMC.funcs.is_finisher_ante(ante)
+    return (ante or G.GAME.round_resets.ante) % G.GAME.win_ante == 0
 end

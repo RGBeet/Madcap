@@ -86,7 +86,6 @@ function reset_castle_card()
 
 	-- barbershop joker
 	G.GAME.current_round.rgmc_barbershop = { suit = nil, order = {} }
-	RGMC.funcs.reset_rgmc_barbershop_order()
 
 	local valid_castle_cards = {}
     for k, v in ipairs(G.playing_cards) do
@@ -227,7 +226,7 @@ function get_new_boss()
 		and G.GAME.round_resets.ante > 0	-- dont do it ante 0 or earlier :(
 		and G.GAME.round_resets.ante % G.GAME.win_ante == 0
 	then
-		local yes_please = G.GAME.round_resets.ante == G.GAME.win_ante
+		local yes_please = G.GAME.round_resets.ante <= G.GAME.win_ante
 
 		if not yes_please then -- past ante 8
 			if RGMC.funcs.calculate_roll({
@@ -242,8 +241,8 @@ function get_new_boss()
 		if yes_please then
 			local eligible_bosses = {}
 
-			for k, v in pairs(G.GAME.MADCAP.deck_finishers) do -- might be more than one
-				eligible_bosses[k] = true
+			for _, v in pairs(G.GAME.MADCAP.deck_finishers) do -- might be more than one
+				eligible_bosses[v] = true
 			end
 
 			local _, boss = RGMC.funcs.get_random_from_list(eligible_bosses)
@@ -425,4 +424,28 @@ function level_up_hand(card, hand, instant, amount, context)
 	end
 
 	level_up_hand_ref(card, hand, instant, amount)
+end
+
+-- Some stickers prevent debuffs
+local set_debuff_ref = Card.set_debuff
+function Card:set_debuff(should_debuff)
+    if
+		not self.ability.shielded 			-- shielded cannot be debuffed
+		not self.ability.engraved           -- this would be too easy
+		and not self.ability.painted 		-- painted cannot be debuffed because paint is cool
+	then
+		set_debuff_ref(self, should_debuff)
+	end
+end
+
+
+-- Some stickers prevent death
+local start_dissolve_ref = Card.start_dissolve
+function Card:start_dissolve(...)
+    if
+		not self.ability.shielded 			-- shielded cannot be killed
+		and not self.ability.twinkling 		-- twinkling cannot be killed, because plot armor
+	then
+        return start_dissolve_ref(self, ...)
+    end
 end

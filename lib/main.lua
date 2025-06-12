@@ -1,19 +1,5 @@
 
--- Gets the number of each rank in deck.
--- Used to find the most/least of each rank.
-local function get_rank_distribution()
-    local deck = {}
-    for i=1, #G.deck.cards do
-        local card = G.deck.cards[i]
-        deck[card.base.value] = deck[card.base.value] or 0
-        deck[card.base.value] = deck[card.base.value] + 1
-    end
-
-    return deck
-end
-
 function RGMC.funcs.run_start()
-    G.GAME.Exotic = G.GAME.Exotic or false
     -- start of run
     tell('Run Start')
 
@@ -30,16 +16,17 @@ function RGMC.funcs.run_start()
         force_poker_hand    = nil       -- in case cryptid isnt here.
     }
 
+    G.GAME.Exotic = G.GAME.Exotic or false -- Used for exotic suits and ranks?
+
     RGMC.funcs.ante_start() -- Since the game starts at the first ante...?
 end
 
+-- Upon selecting the blind...
 function RGMC.funcs.blind_start()
     -- start of blind
     tell('Blind Start')
 
-    G.GAME.MADCAP.rank_dist = get_rank_distribution()
-
-    RGMC.funcs.reset_rgmc_barbershop_order()
+    G.GAME.MADCAP.rank_dist = RGMC.funcs.get_ranks_in_deck()
 
     local patina_cards, bronze_cards, normal_cards = {}, {}, {}
     local new_deck = {}
@@ -100,6 +87,7 @@ function RGMC.funcs.blind_start()
     end
 end
 
+-- Upon winning the blind...
 function RGMC.funcs.blind_end()
 
     -- end of blind
@@ -118,6 +106,7 @@ function RGMC.funcs.blind_end()
 
 end
 
+-- Upon starting an ante
 function RGMC.funcs.ante_start()
     -- start of ante
     tell('Ante Start')
@@ -167,30 +156,34 @@ function RGMC.funcs.ante_start()
 	end
 end
 
+-- Upon ending an ante?
 function RGMC.funcs.ante_finish()
     -- end of ante
     tell('Ante End')
 
 end
 
+-- Upon starting a shop
 function RGMC.funcs.shop_start()
     -- start of shop
     tell('Shop Start')
 
 end
 
+-- Upon recording a singular card?
 function RGMC.funcs.record_card(card)
     -- recording card
     tell('Record Card')
-
 end
 
+-- Upon playing a hand...
 function RGMC.funcs.play_hand(hand)
     -- recording hand
     tell('Play Hand')
     G.GAME.MADCAP.ante.hands = G.GAME.MADCAP.ante.hands + 1
 end
 
+-- Upon discarding a hand...
 function RGMC.funcs.discard_hand(hand, chips, text)
     -- recording hand
     tell('Discard Hand')
@@ -257,17 +250,19 @@ function RGMC.funcs.record_hand(hand, chips, text)
 
 end
 
-local function cmp(a, b)
-   a = tostring(a.N)
-   b = tostring(b.N)
-   local patt = '^(.-)%s*(%d+)$'
-   local _,_, col1, num1 = a:find(patt)
-   local _,_, col2, num2 = b:find(patt)
-   if (col1 and col2) and col1 == col2 then
-      return tonumber(num1) < tonumber(num2)
-   end
-   return a < b
+-- Gets the number of each rank in deck.
+-- Used to find the most/least of each rank.
+function RGMC.funcs.get_ranks_in_deck()
+    local deck = {}
+    for i=1, #G.deck.cards do
+        local card = G.deck.cards[i]
+        deck[card.base.value] = deck[card.base.value] or 0
+        deck[card.base.value] = deck[card.base.value] + 1
+    end
+
+    return deck
 end
+
 
 -- Used for Perilous and Boomerang tags - adds (or removes) chips to blind.
 function Blind:add_chips(chips)
@@ -826,4 +821,43 @@ function RGMC.funcs.card_suit_in_list(card,list)
 		end
 	end
 	return false
+end
+
+-- Used for new deck music.
+function RGMC.funcs.is_playing_blind()
+    return G.STATE == G.STATES.SELECTING_HAND
+    or G.STATE == G.STATES.DRAW_TO_HAND
+    or G.STATE == G.STATES.HAND_PLAYED
+    or G.STATE == G.STATES.PLAY_TAROT
+    or G.STATE == G.STATES.GAME_OVER
+    or G.STATE == G.STATES.BLIND_SELECT
+    or G.STATE == G.STATES.ROUND_EVAL
+    or G.STATE == G.STATES.MENU
+    or G.STATE ==  G.STATES.NEW_ROUND
+end
+
+-- Is choosing a card. (Used for music!)
+function RGMC.funcs.is_choosing_card()
+    return G.STATE == G.STATES.TAROT_PACK
+        or G.STATE == G.STATES.PLANET_PACK
+        or G.STATE == G.STATES.SPECTRAL_PACK
+        or G.STATE == G.STATES.STANDARD_PACK
+        or G.STATE == G.STATES.BUFFOON_PACK
+        or G.STATE == G.STATES.SMODS_BOOSTER_OPENED
+end
+
+-- Is choosing a Celestial / Spectral pack. (Used for music!)
+function RGMC.funcs.is_choosing_celestial()
+    return G.STATE == G.STATES.PLANET_PACK
+        or G.STATE == G.STATES.SPECTRAL_PACK
+end
+
+function RGMC.funcs.get_boss_status()
+    return
+        not (G.GAME.blind
+        and G.GAME.blind.boss)
+    and 0 or
+        RGMC.funcs.is_finisher_ante()
+        and G.GAME.MADCAP.is_finisher()
+    and 2 or 1
 end
