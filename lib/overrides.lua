@@ -431,7 +431,7 @@ local set_debuff_ref = Card.set_debuff
 function Card:set_debuff(should_debuff)
     if
 		not self.ability.shielded 			-- shielded cannot be debuffed
-		not self.ability.engraved           -- this would be too easy
+		and not self.ability.engraved           -- this would be too easy
 		and not self.ability.painted 		-- painted cannot be debuffed because paint is cool
 	then
 		set_debuff_ref(self, should_debuff)
