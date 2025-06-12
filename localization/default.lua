@@ -37,15 +37,16 @@ return {
 			b_rgmc_sangria = {
 				name = "Sangria Deck",
 				text = {
-					"Start run with {C:attention}26 {C:rgmc_cups}Goblets",
-					"and {C:attention} 26 {rgmc_shields}Towers in deck"
+					"Start run with {C:attention}26 {C:rgmc_goblets}Goblets",
+					"and {C:attention} 26 {rgmc_towers}Towers in deck"
 				},
 			},
 			b_rgmc_micro = {
 				name = "Micro Deck",
 				text = {
-					"Start run with {C:attention}26 {C:rgmc_cups}Goblets",
-					"and {C:attention} 26 {rgmc_shields}Towers in deck"
+					"{C:attention}-3 hand size",
+					"{C:attention}-1{} play limit",
+					"{C:attention}0.5X{} blind size"
 				},
 			},
         },
@@ -321,7 +322,7 @@ return {
             j_rgmc_plentiful_ametrine = {
                 name = "Plentiful Ametrine",
                 text = {
-                    "For each scored {C:rgmc_cups}Goblet{} card,",
+                    "For each scored {C:rgmc_goblets}Goblet{} card,",
                     "{C:green}#1# in #2#{} chance",
                     "this Joker gains {C:mult}+#3# Mult",
                     "Resets at end of {C:attention}Ante",
@@ -331,7 +332,7 @@ return {
             j_rgmc_toughened_shungite = {
                 name = "Toughened Shungite",
                 text = {
-                    "For each scored {C:rgmc_shields}Tower{} card,",
+                    "For each scored {C:rgmc_towers}Tower{} card,",
                     "{C:green}#1# in #2#{} chance",
                     "this Joker gains {C:chips}+#3# Chips",
                     "Resets at end of {C:attention}Ante",
@@ -415,7 +416,7 @@ return {
                 name = "Pretentious Joker",
                 text = {
                     'Played cards with',
-                    '{C:rgmc_cups}#2#{} suit give',
+                    '{C:rgmc_goblets}#2#{} suit give',
                     '{C:mult}+#1#{} Mult when scored',
                 },
             },
@@ -423,7 +424,7 @@ return {
                 name = "Deceitful Joker",
                 text = {
                     'Played cards with',
-                    '{C:rgmc_shields}#2#{} suit give',
+                    '{C:rgmc_towers}#2#{} suit give',
                     '{C:mult}+#1#{} Mult when scored',
                 },
             },
@@ -1288,6 +1289,7 @@ return {
 			rgmc_what                = "what",
 			rgmc_enabled_ex          = "Enabled!",
 			rgmc_shield_removed_ex   = "Un-Shielded!",
+			rgmc_removed_ex          = "Removed!",
 			rgmc_balanced            = "Balanced",
 			rgmc_ace_ex              = "Ace!",
 			rgmc_inactive            = "Inactive",
