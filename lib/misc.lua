@@ -454,3 +454,79 @@ function Card:nosuit()
 		or SMODS.has_enhancement(self, "m_rgmc_bismuth")
 		or self.config.center.no_suit
 end
+
+
+-- Turns a number into its ordinal (e.g. 1 -> 1st, 10 -> 10th, etc.)
+-- Used for Changing Had
+function RGMC.funcs.get_num_position(n)
+    local suffix = "th"
+    if n % 100 < 11 or n % 100 > 13 then
+        local lastDigit = n % 10
+        if lastDigit == 1 then
+            suffix = "st"
+        elseif lastDigit == 2 then
+            suffix = "nd"
+        elseif lastDigit == 3 then
+            suffix = "rd"
+        end
+    end
+    return tostring(n) .. suffix
+end
+
+-- Takes a rarity id. If it's in Madcap's rarity index, return that value - otherwise, return 0.
+function RGMC.funcs.get_rarity_value(val)
+	local rarval = RGMC.rarities[val] and RGMC.rarities[val].value or 0
+	return rarval
+end
+
+-- In case the following function gets a numeric id from vanilla Balatro
+local rarity_conversion = {
+	[1] = 'Common',
+	[2] = 'Uncommon',
+	[3] = 'Rare',
+	[4] = 'Legendary'
+}
+
+-- Checks whether the Joker falls within a certain rarity
+function RGMC.funcs.greater_than_rarity(joker,val,equals)
+	local joker_rarity
+
+	if SMODS.Rarities[joker.config.center.rarity] then
+		joker_rarity = SMODS.Rarities[joker.config.center.rarity].key
+	elseif rarity_conversion[joker.config.center.rarity] then
+		joker_rarity = rarity_conversion[joker.config.center.rarity]
+	else
+		--tell('Invalid Joker Rarity: ' .. tostring(joker.config.center.rarity))
+		return false -- not a real rarity!
+	end
+
+	--tell("Joker Rarity  is " .. tostring(joker_rarity) .. ", and Minimum Rarity is " .. tostring(val) .. ".")
+	local v1, v2 = RGMC.funcs.get_rarity_value(joker_rarity), RGMC.funcs.get_rarity_value(val)
+	--tell("Joker Rarity Val is " .. tostring(v1) .. ", and Minimum Rarity Val is " .. tostring(v2) .. ".")
+
+	return equals and (v1 and v1 >= v2 or false) or (v1 and v1 > v2 or false)
+end
+
+-- Returns how many Jokers in the specified cardarea (G.jokers) exceed (or equal) the specified requirement
+function RGMC.funcs.jokers_greater_than_rarity(group, rarity, equals)
+	local matches = 0
+	for k,v in pairs(group) do
+		if RGMC.funcs.greater_than_rarity(v, rarity, equals or false) then
+			matches = matches + 1
+		end
+	end
+	return matches
+end
+
+-- Gets the nominal ranks of all regular ranks in the group (usually G.hand.cards).
+-- Used for the Sum rank.
+function RGMC.funcs.get_hand_sigma(group)
+	local total = 0
+    for _, v in ipairs(group) do
+        if not (SMODS.has_no_rank(v) or RGMC.funcs.is_irregular_rank(v))  then
+            local rank = SMODS.Ranks[v.base.value]
+            total = total + rank.nominal
+        end
+    end
+	return total
+end

@@ -738,3 +738,92 @@ function RGMC.funcs.get_weighted_booster()
 
 	return edition -- we got our edition
 end
+
+-- This is what I use for most randomization
+function RGMC.funcs.calculate_roll(params)
+    if not params then
+        tell("Calculate Roll - No parameters added?!")
+        return false -- NEEDS PARAMS!
+    end
+
+    if
+        params.card    -- uses a card
+    then
+        if
+            Cryptid     -- is Cryptid installed? (implements cry_prob)
+        then
+            local card = params.card
+            -- If no denominator is dictated, looks for card odds or drops a 1 in 2.
+            return cry_prob(
+					card.ability.cry_prob,
+					params.denom or (card.ability.odds or card.ability.extra.odds or card.ability.immutable.odds or 2),
+					card.ability.cry_rigged)
+        end
+    end
+
+    return pseudorandom(pseudoseed(params.seed or 'rgmc')) < (params.numer or G.GAME.probabilities.normal) / (denom or 2)
+end
+
+-- Simple way to get a random element from list.
+function RGMC.funcs.get_random_from_list(list, seed)
+    return pseudorandom_element(list, pseudoseed(seed or RGMC.seed))
+end
+
+-- A cleaner function add event function without all those pesky parentheses!
+-- Only takes function
+function RGMC.funcs.simple_event(doohickey)
+    G.E_MANAGER:add_event(Event({func = doohickey}))
+end
+
+-- Why deep copy? To avoid references to pre-existing values that I dont want to change.
+-- Deep copy, taken from Cryptid
+function RGMC.funcs.deep_copy(obj, seen)
+	if type(obj) ~= "table" then
+		return obj
+	end
+	if seen and seen[obj] then
+		return seen[obj]
+	end
+	local s = seen or {}
+	local res = setmetatable({}, getmetatable(obj))
+	s[obj] = res
+	for k, v in pairs(obj) do
+		res[RGMC.funcs.deep_copy(k, s)] = RGMC.funcs.deep_copy(v, s)
+	end
+	return res
+end
+
+-- Returns the number of cards in a group that have a specified suit.
+function RGMC.funcs.count_suit(group,target)
+	local number = 0
+	for i = 1, #group do
+		if group[i]:is_suit(target) and not group[i]:nosuit() then number = number + 1 end
+	end
+	return number
+end
+
+-- Takes a card and returns whether the card's rank id falls within the list of rank ids.
+function RGMC.funcs.card_rank_in_list(card,list)
+	for i=1, #list do
+		if
+			list[i] == card.base.value
+			and not card:norank()
+		then
+			return true
+		end
+	end
+	return false
+end
+
+-- Takes a card and returns whether the card's suit id falls within the list of suit ids.
+function RGMC.funcs.card_suit_in_list(card,list)
+	for i=1, #list do
+		if
+			list[i] == card.base.suit
+			and not card:nosuit()
+		then
+			return true
+		end
+	end
+	return false
+end
