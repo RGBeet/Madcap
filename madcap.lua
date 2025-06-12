@@ -15,10 +15,10 @@ local colors = {
 ]]
 
 RGMC = {
-	devmode = false, -- if enabled expect to see a LOT of debug text
-	disable_main_menu = false,
-	funcs = {},
-	custom_suits = {},
+	seed 				= 'rgmc',	-- when the seed is SUS
+	devmode 			= false, 	-- if enabled expect to see a LOT of debug text
+	funcs 				= {}, 		-- ALL THE FUNCTIONS!
+	custom_suits 		= {}, 		-- handles custom suit shenanigans
 	C = {
 		goblets 	= HEX('D66FA3'),		-- Goblets suit color
 		towers 		= HEX('593559'),		-- Towers suit color
@@ -56,7 +56,7 @@ RGMC = {
 			UNUSUAL 	= {HEX('9C87F6'), HEX('F6879B')},
 			CHAOTIC 	= {HEX('32CD32'), HEX('CD32CD')},
 			ALTERED 	= {HEX('5c0e59'), HEX('b5821d')},
-			ECHIPS	 	= {HEX('000994'), HEX('9a00ff')}, -- i like this color :)
+			ECHIPS	 	= {HEX('000994'), HEX('9a00ff')}, 	-- i like this color :)
 			EMULT 		= {HEX('a41818'), HEX('9a00ff')},
 		},
 	},
@@ -164,62 +164,33 @@ function tell_list(text,list)
     print(list)
 end
 
+-- more flexible key path function
+function key_path(k, p)
+	return { key = k, path = p }
+end
 
+-- simple key path function
+function key_path_simple(k,e)
+	local path = k..'.'..e
+	return key_path(k, path)
+end
 
-
-
-
-
-
-
-
-
-
-
-SMODS.Sound({ key = "e_iridescent", path = "e_iridescent.ogg" })
-SMODS.Shader({
-	key = "iridescent",
-	path = "iridescent.fs"
-})
-
-SMODS.Sound({ key = "e_infernal", path = "e_infernal.ogg" })
-SMODS.Shader({
-	key = "infernal",
-	path = "infernal.fs"
-})
-
-SMODS.Sound({ key = "e_chrome", path = "e_chrome.ogg" })
-SMODS.Shader({
-	key = "chrome",
-	path = "chrome.fs"
-})
-
-SMODS.Sound({ key = "e_disco", path = "e_disco.ogg" })
-SMODS.Shader({
-	key = "disco",
-	path = "disco.fs"
-})
-
-SMODS.Sound({ key = "e_phasing", path = "e_disco.ogg" })
-SMODS.Shader({
-	key = "phasing",
-	path = "phasing.fs"
-})
-
-SMODS.Sound({ -- Twinkle of Contagion noise
-    key = 'contagion',
-    path = "contagion.ogg"
-})
-
-
-
-
-
+-- compare two numbers
+local function cmp(a, b)
+   a = tostring(a.N)
+   b = tostring(b.N)
+   local patt = '^(.-)%s*(%d+)$'
+   local _,_, col1, num1 = a:find(patt)
+   local _,_, col2, num2 = b:find(patt)
+   if (col1 and col2) and col1 == col2 then
+      return tonumber(num1) < tonumber(num2)
+   end
+   return a < b
+end
 
 SMODS.load_file('lib/main.lua')()     		-- main functions
-
-
 SMODS.load_file('lib/misc.lua')()			-- misc functions
+SMODS.load_file('lib/unsorted.lua')()		-- unsorted right now
 SMODS.load_file('lib/overrides.lua')()     	-- overrides
 
 -- suits
