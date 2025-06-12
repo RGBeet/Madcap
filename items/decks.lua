@@ -52,10 +52,13 @@ local pale = {
     end,
     apply = function(self) -- Start of the run
         tell('Pale Deck applied!')
+
+        G.GAME.modifiers.rgmc_deck    = true  -- music activated
 		G.GAME.modifiers.rgmc_pale = true
-		G.GAME.modifiers.rgmc_force_chance = 7 -- 1 in 7, turns into 1 in 1 at Ante 7
-		G.GAME.modifiers.rgmc_force_awakened = false -- forces "the force" if true (until beaten)
-		G.GAME.modifiers.rgmc_void_finisher = 'rgmc_bl_finisher_void' -- force midnight void
+		G.GAME.modifiers.rgmc_force_chance = 7        -- 1 in 7, turns into 1 in 1 at Ante 7
+		G.GAME.modifiers.rgmc_force_awakened = false  -- forces "the force" if true (until beaten)
+
+		G.GAME.MADCAP.deck_finishers = { 'bl_rgmc_final_void' }    -- force midnight void
     end,
 	calculate = function(self, card, context)
         if
@@ -111,6 +114,11 @@ local hexing = {
         return { vars = { }}
     end,
     apply = function(self)
+        tell('Hexing Deck applied!')
+
+        G.GAME.modifiers.rgmc_deck    = true  -- music activated
+		G.GAME.modifiers.rgmc_hexing = true
+		G.GAME.MADCAP.deck_finishers = { 'bl_rgmc_final_chimes' }    -- force wisteria chimes, i guess
     end
 }
 
@@ -138,27 +146,18 @@ local sangria = {
     end,
     apply = function(self)
         tell('Sangria Deck applied!')
-		G.GAME.modifiers.rgmc_sangria         = true
-        G.GAME.starting_params.rgmc_sangria   = true
+
+        G.GAME.modifiers.rgmc_deck    = true  -- music activated
+		G.GAME.modifiers.rgmc_sangria     = true
+		G.GAME.MADCAP.deck_finishers      = { 'bl_rgmc_final_hoop' }    -- force han purple hoop - EVIL!
         G.GAME.Exotic = true -- also works with bunco stuff!
-		--G.GAME.modifiers.rgmc_force_finisher = 'rgmc_bl_finisher_moon'
     end
 }
 
 --[[
     TARGET DECK:
     - Gain prizes for scoring within 1%, 5%, 10%, 25%, and 50% of the BR.
-        - Prize I; ???
-        - Prize II; ???
-        - Prize III; ???
-        - Prize IV; ???
-        - Prize V; ???
     - Gain penalties for scoring outside 100%, 200%, and 500% of the BR.
-        - Penalty I; ???
-        - Penalty II; ???
-        - Penalty III; ???
-        - Penalty IV; ???
-        - Penalty V; ???
     - Tomato Target is guaranteed as first Showdown Blind,
         and has a 1 in 3 chance to reappear after Ante 8
 ]]
@@ -199,7 +198,11 @@ local target = {
     end,
     apply = function(self)
         tell('Target Deck applied!')
-		G.GAME.modifiers.rgmc_target = true
+
+		G.GAME.modifiers.rgmc_deck    = true  -- music activated
+		G.GAME.modifiers.rgmc_target  = true
+		G.GAME.MADCAP.deck_finishers  = { 'bl_rgmc_final_target' }    -- force tomato target - EVIL!
+
     end,
 	calculate = function(self, card, context)
         if
@@ -265,6 +268,7 @@ local target = {
         and has a 1 in 3 chance to reappear after Ante 8
 ]]
 
+-- Poker hands that involve only <5 cards
 local micro_list = {
     "High Card",
     "Pair",
@@ -287,16 +291,7 @@ local micro = {
     end,
 	apply = function(self, back)
 
-        for k,v in pairs(G.P_CENTERS) do
-            if
-                v.object_type == "Enhancement"
-                or string.sub(k, 1, 2) == "m_"
-            then
-                print(k)
-                print(v.calculate)
-            end
-        end
-        print(SMODS.Centers['m_glass'].object_type)
+        -- play limit go boing boing
 		G.E_MANAGER:add_event(Event({
 			trigger = "after",
 			delay = 0.7,
@@ -305,7 +300,8 @@ local micro = {
 				return true
 			end,
 		}))
-        --SMODS.change_discard_limit(1)
+
+		-- remove hands with 5+ cards
         for _, v in ipairs(G.handlist) do
             local valid = false
             for _, v2 in ipairs(micro_list) do
@@ -318,6 +314,11 @@ local micro = {
                 G.GAME.hands[v].visible = false
             end
         end
+
+        G.GAME.modifiers.rgmc_deck    = true  -- music activated
+		G.GAME.modifiers.rgmc_target = true
+		G.GAME.MADCAP.deck_finishers = { 'bl_rgmc_final_blindfold' }    -- force tomato target - EVIL!
+
 	end,
 	calculate = function(self, card, context)
 		local iter, iterlimit = 0, 1024 -- Just so we don't freeze the game.

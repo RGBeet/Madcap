@@ -485,7 +485,7 @@ local final_blindfold = {
     in_pool = function(self)
         -- 1 in 4 chance to enter pool if you haven't skipped prior to this ante
         return G.GAME.MADCAP.blinds_skipped > 0
-            or pseudorandom(pseudoseed("rgmc_statue")) < ((G.GAME.probabilities.normal) / self.config.extra.odds)
+            or pseudorandom(pseudoseed("rgmc_blindfold")) < ((G.GAME.probabilities.normal) / self.config.extra.odds)
             or RGMC.devmode
     end,
     loc_vars = function(self, info_queue, card)
@@ -768,7 +768,7 @@ local final_void = {
                 if v.edition and v.edition.negative then negatives = negatives + 1 end
             end
         end
-        return RGMC.devmode or negatives > 4
+        return RGMC.devmode or negatives > 7
     end,
     loc_vars = function(self, info_queue, card)
     end,
