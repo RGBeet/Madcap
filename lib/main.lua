@@ -743,10 +743,11 @@ function RGMC.funcs.calculate_roll(params)
 
     local denom = params.denom or ( card and (card.ability.odds or card.ability.extra.odds or card.ability.immutable.odds) or 1e6)
     local numer = params.numer or G.GAME.probabilities.normal
+    local exp   = params.exp or 1
 
 
     if denom == 1e6 then
-        tell('Probability not found, set to 1e6')
+        tell('Probability not found, set to 1e6. Please fix!')
     end
 
     if
@@ -755,15 +756,14 @@ function RGMC.funcs.calculate_roll(params)
         if
             Cryptid     -- is Cryptid installed? (implements cry_prob)
         then
-            local card = params.card
+            local card, cry_denom = params.card, card.ability.cry_prob ^ (params.exp or 1)
             -- If no denominator is dictated, looks for card odds or drops a 1 in 2.
-            return cry_prob(card.ability. cry_prob, odds, card.ability.cry_rigged)
+            return cry_prob(card.ability.cry_prob, denom, card.ability.cry_rigged)
         end
     end
 
-    return pseudorandom(pseudoseed(params.seed or 'rgmc')) < (numer / denom)
+    return pseudorandom(pseudoseed(params.seed or 'rgmc')) < (numer ^ exp) / denom
 end
-
 
 -- This is what I use for most randomization
 function RGMC.funcs.calculate_card_odds(c, s)
@@ -873,7 +873,9 @@ function RGMC.funcs.get_boss_status()
         and G.GAME.blind.boss)
     and 0 or
         RGMC.funcs.is_finisher_ante()
-        and G.GAME.MADCAP.is_finisher()
+        and (G.GAME.blind
+        and G.GAME.blind.boss
+        and G.GAME.blind.showdown)
     and 2 or 1
 end
 
@@ -892,7 +894,7 @@ end
 function RGMC.funcs.get_num_enhanced(group, key)
     if not (G.GAME and group) then return 0 end
     local cards = 0
-    
+
     for k,v in pairs(group) do
         if v.config.center == G.P_CENTERS['m_'..key] then cards = cards + 1 end
     end

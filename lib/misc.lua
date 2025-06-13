@@ -6,19 +6,19 @@ function Card:set_temp_sticker(id,bool,tally)
 end
 
 function Card:set_rgmc_engraved(bool,tally)
-    set_temp_sticker('rgmc_engraved',bool,tally or 3)
+    self:set_temp_sticker('rgmc_engraved',bool,tally or 3)
 end
 
 function Card:set_rgmc_shielded(bool,tally)
-    set_temp_sticker('rgmc_shielded',bool,tally or 3)
+    self:set_temp_sticker('rgmc_shielded',bool,tally or 3)
 end
 
 function Card:set_rgmc_twinkling(bool,tally)
-    set_temp_sticker('rgmc_twinkling',bool,tally or 1)
+    self:set_temp_sticker('rgmc_twinkling',bool,tally or 1)
 end
 
 function Card:set_rgmc_painted(_painted,tally)
-    set_temp_sticker('rgmc_painted',bool,tally or 1)
+    self:set_temp_sticker('rgmc_painted',bool,tally or 1)
 end
 
 -- A handy little sticker
