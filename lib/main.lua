@@ -885,7 +885,7 @@ function RGMC.funcs.safe_get(t, ...)
 end
 
 function RGMC.funcs.get_num_enhanced(group, key)
-    if not G.GAME then return 0 end
+    if not group then return 0 end
 
     for k,v in pairs(group) do
         if v.config.center == 'm_'..G.P_CENTERS[key] then cards = cards + 1 end
