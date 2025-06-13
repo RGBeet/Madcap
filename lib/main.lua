@@ -756,7 +756,7 @@ function RGMC.funcs.calculate_roll(params)
         if
             Cryptid     -- is Cryptid installed? (implements cry_prob)
         then
-            local card, cry_denom = params.card, card.ability.cry_prob ^ (params.exp or 1)
+            local card, cry_denom = params.card, params.card.ability.cry_prob ^ (params.exp or 1)
             -- If no denominator is dictated, looks for card odds or drops a 1 in 2.
             return cry_prob(card.ability.cry_prob, denom, card.ability.cry_rigged)
         end
@@ -873,9 +873,6 @@ function RGMC.funcs.get_boss_status()
         and G.GAME.blind.boss)
     and 0 or
         RGMC.funcs.is_finisher_ante()
-        and (G.GAME.blind
-        and G.GAME.blind.boss
-        and G.GAME.blind.showdown)
     and 2 or 1
 end
 
@@ -901,4 +898,3 @@ function RGMC.funcs.get_num_enhanced(group, key)
 
     return cards
 end
-
