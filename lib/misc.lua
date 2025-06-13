@@ -40,7 +40,7 @@ local function handle_sticker_calculation(self,id,eval)
                     G.hand.cards[i] == self
                 then -- show it coming off
                     card_eval_status_text(self, 'extra', nil, nil, nil, {
-                        message = localize('k_'..eval),
+                        message = localize('k_' .. (eval or 'removed_ex')),
                         colour = G.C.FILTER,
                         delay = 0.45
                     })
