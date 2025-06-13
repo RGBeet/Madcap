@@ -9,6 +9,7 @@ local mus_play = { -- Play music
             and G.GAME.modifiers.rgmc_deck
             and RGMC.funcs.is_playing_blind()
             and not G.GAME.blind.boss
+            and 2
 	end,
 }
 
@@ -21,6 +22,7 @@ local mus_shop = { -- Shop music
 		return G.GAME
             and G.GAME.modifiers.rgmc_deck
             and G.STATE == G.STATES.SHOP
+            and 2
 	end,
 }
 
@@ -33,6 +35,7 @@ local mus_booster = { -- Booster music
 		return G.GAME
             and G.GAME.modifiers.rgmc_deck
             and RGMC.funcs.is_choosing_card()
+            and 2
 	end,
 }
 
@@ -45,6 +48,7 @@ local mus_celestial = { -- Celestial music
 		return G.GAME
             and G.GAME.modifiers.rgmc_deck
             and RGMC.funcs.is_choosing_celestial()
+            and 2
 	end,
 }
 
@@ -58,6 +62,7 @@ local mus_boss = { -- Boss Blind music
             and G.GAME.modifiers.rgmc_deck
             and RGMC.funcs.is_playing_blind()
             and RGMC.funcs.get_boss_status() > 0 -- regular boss blind
+            and 6
 	end,
 }
 
@@ -72,6 +77,7 @@ local mus_finisher = { -- Finisher Blind music
             and RGMC.funcs.is_playing_blind()
             and RGMC.funcs.get_boss_status() == 2 -- finisher boss blind (on winning ante?)
             and RGMC.funcs.is_finisher_ante(ante)
+            and 6
 	end,
 }
 

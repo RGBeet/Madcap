@@ -1395,7 +1395,7 @@ local redd_dacca = {
     name = name('redd_dacca'),
     atlas = sprites,
     pos = get_pos(2,1),
-    rarity = 1,
+    rarity = 1, -- Thanks, Beige Deck
     cost = 3,
     unlocked = true,
     discovered = true,
@@ -1403,12 +1403,19 @@ local redd_dacca = {
     perishable_compat = true,
     blueprint_compat = true,
 	demicoloncompat = true,
-    config = { extra = { powmult = 2, odds = 200 } },
+    config = {
+        extra = {
+            powmult = 2,
+            odds = 200,
+            numer_factor = 0.1 -- a little trick to mak
+        }
+    },
 	loc_vars = function(self, info_queue, card)
+        local adv_numerator = (G.GAME.probabilities.normal or 1) ^ (1 + (card.ability.numer_factor or 0))
 		return {
             vars = {
                 number_format(card.ability.extra.powmult),
-                number_format(G.GAME.probabilities.normal or 1),
+                number_format(math.floor(adv_numerator)),
                 number_format(card.ability.extra.odds)
             }
         }
@@ -1438,7 +1445,15 @@ local redd_dacca = {
 			and not context.blueprint
 			and not context.retrigger_joker
 		then
-            return banana_logic(card, 'redd_dacca')
+        local adv_numerator = (G.GAME.probabilities.normal or 1) ^ (1 + (card.ability.numer_factor or 0))
+            if RGMC.funcs.calculate_roll({
+                card    = card,
+                exp     = math.floor(adv_numerator) -- just to make it less OP on beige deck
+            }) then -- 1 in 200^n chance to POOF!
+                return banana_remove(card)
+            else
+                return { message = localize("k_safe_ex") } -- safe!
+            end
         end
     end
 }
@@ -1715,7 +1730,7 @@ local twinkle_of_contagion = {
             if
                 (not card.ability.extra.card
                     or card.ability.extra.card ~= context.other_card)
-                and RGMC.funcs.get_random(card,"rgmc_twinkle_of_contagion")
+                and RGMC.funcs.calculate_card_odds(card,"rgmc_twinkle_of_contagion")
             then
                 local temp_hand, finished = {}, false
                 local from_card, to_card = context.other_card, nil
@@ -1935,7 +1950,7 @@ local plentiful_ametrine = {
         then
             if
                 context.other_card:is_suit('rgmc_goblets')
-                and RGMC.funcs.get_random(card,'plentiful_ametrine')
+                and RGMC.funcs.calculate_card_odds(card,'plentiful_ametrine')
             then
                 card.ability.extra.mult = card.ability.extra.mult + card.ability.extra.mult_mod
                 return {
@@ -2009,7 +2024,7 @@ local toughened_shungite = {
         then
             if -- suit is towers, 1 in 2 chance
                 context.other_card:is_suit('rgmc_towers')
-                and RGMC.funcs.get_random(card,'toughened_shungite')
+                and RGMC.funcs.calculate_card_odds(card,'toughened_shungite')
             then
                 card.ability.extra.chips = card.ability.extra.chips + card.ability.extra.chip_mod
                 return {
@@ -2083,7 +2098,7 @@ local six_shooter = {
 			local rank = context.other_card:get_id()
 			if
                 rank == 6
-                and RGMC.funcs.get_random(card,'six_shooter')
+                and RGMC.funcs.calculate_card_odds(card,'six_shooter')
                 and not context.blueprint
 			then
                 -- do a little dance
@@ -3127,12 +3142,6 @@ local miracle_pop = {
 		end
     end
 }
-
---[[
-    Scored Wild Cards change into
-    a random card from the deck
-    Copies Editions and Seals
-]]
 
 -- 47. Doom Bunny
 local doom_bunny = {

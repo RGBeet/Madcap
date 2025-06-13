@@ -145,10 +145,8 @@ local boss_ladder = {
 	set_blind = function(self, reset, silent)
         if not G.GAME.blind.disabled then
 
-            local matches = RGMC.funcs.jokers_greater_than_rarity(G.jokers.cards,self.config.immutable.min_rarity,true)
+            local matches = RGMC.funcs.jokers_greater_than_rarity(G.jokers.cards,self.config.immutable.min_rarity,true) or 0
             local multiplier = 1
-
-            tell_stats("Matches",matches)
 
             if matches > 1 then
                 tell("Ooh, now you've done it! You've increased the blind by X" .. tostring(multiplier) .. "!!")
