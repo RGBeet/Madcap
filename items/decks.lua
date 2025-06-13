@@ -321,15 +321,6 @@ local micro = {
 
 	end,
 	calculate = function(self, card, context)
-		local iter, iterlimit = 0, 1024 -- Just so we don't freeze the game.
-		while
-            G.GAME.round_resets.blind_choices.Boss == 'bl_psychic'
-            and (G.hand.card_limit < 5 or G.GAME.starting_params.play_limit < 5) -- Must be able to play 5 cards
-        do
-			G.GAME.round_resets.blind_choices.Boss = get_new_boss()
-			iter = iter + 1
-			if iter >= iterlimit then break end
-		end
 	end
 }
 
