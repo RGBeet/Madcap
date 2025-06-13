@@ -1779,7 +1779,7 @@ local iron_joker = {
         return {
 			vars = {
 				number_format(card.ability.extra.chips),
-				number_format(card.ability.extra.mult * RGMC.funcs.get_num_enhanced(G.playing_cards,card.ability.enhancement)),
+				number_format(card.ability.extra.chips * RGMC.funcs.get_num_enhanced(G.playing_cards,card.ability.enhancement)),
 			},
         }
     end,
@@ -1870,8 +1870,8 @@ local jeweler_joker = {
     loc_vars = function(self, info_queue, card)
         return {
 			vars = {
-				number_format(card.ability.extra.mult),
-				number_format(card.ability.extra.mult * RGMC.funcs.get_num_enhanced(G.playing_cards,card.ability.enhancement)),
+				number_format(card.ability.extra.x_mult),
+				number_format(card.ability.extra.x_mult * RGMC.funcs.get_num_enhanced(G.playing_cards,card.ability.enhancement)),
 			},
         }
     end,
