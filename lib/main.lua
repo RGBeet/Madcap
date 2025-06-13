@@ -349,8 +349,8 @@ local get_id_use = false
 
 function RGMC.funcs.get_rio_rank()
 
-    if (not G.GAME and G.GAME.MADCAP) or (not G.GAME.MADCAP.rank_dist) then -- this should work, G.GAME.MADCAP is made on start
-        tell('Ooh... my head hurty...')
+    if not (G.GAME and G.GAME.MADCAP and G.GAME.MADCAP.rank_dist) then -- this should work, G.GAME.MADCAP is made on start
+        --tell('Ooh... my head hurty...')
         return "Ace"
     end
 
@@ -372,7 +372,7 @@ function RGMC.funcs.get_rio_rank()
         end
     end
 
-    tell("Rio's really feeling like a "..selection)
+    --tell("Rio's really feeling like a "..selection)
     return selection
 end
 
@@ -741,8 +741,13 @@ function RGMC.funcs.calculate_roll(params)
         return false -- NEEDS PARAMS!
     end
 
-    local denom = params.denom or ( card and (card.ability.odds or card.ability.extra.odds or card.ability.immutable.odds) or 2)
+    local denom = params.denom or ( card and (card.ability.odds or card.ability.extra.odds or card.ability.immutable.odds) or 1e6)
     local numer = params.numer or G.GAME.probabilities.normal
+
+
+    if denom == 1e6 then
+        tell('Probability not found, set to 1e6')
+    end
 
     if
         params.card    -- uses a card
@@ -885,10 +890,10 @@ function RGMC.funcs.safe_get(t, ...)
 end
 
 function RGMC.funcs.get_num_enhanced(group, key)
-    if not group then return 0 end
+    if group == nil then return 0 end
 
     for k,v in pairs(group) do
-        if v.config.center == 'm_'..G.P_CENTERS[key] then cards = cards + 1 end
+        if v.config.center == G.P_CENTERS['m_'..key] then cards = cards + 1 end
     end
 
     return cards
