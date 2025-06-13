@@ -77,6 +77,7 @@ local function food_joker_logic(card,func)
         }
     else
         return banana_remove(card,"k_eaten_ex")
+    end
 end
 
 -- simple end of round logic
@@ -162,6 +163,7 @@ local vari_seala = {
 }
 
 -- 2. B-Ball Pasta (WORKS?)
+local bball_pasta = {
 	object_type = "Joker",
     key = 'bball_pasta',
     atlas = sprites,
@@ -207,8 +209,7 @@ local vari_seala = {
 
 -- 3. Squeezy Cheeze (WORKS)
 local squeezy_cheeze = {
-	object_type = "Joker",
-    key = 'squeezy_cheeze',
+	key = 'squeezy_cheeze',
     atlas = sprites,
     pos = get_pos(0,2),
     rarity = 1,
@@ -593,7 +594,7 @@ local house_of_cards = {
     config = {
         immutable = {
             odds = 6 -- believe me, it is bettter this way
-        }
+        },
         extra = {
             chip_mod = 6,
             chips = 0
@@ -3427,7 +3428,7 @@ local jokers = {
 local list = {}
 
 for i=1, #jokers do
-	jokers[i]object_type = "Joker"
+	jokers[i].object_type = "Joker"
     list[i] = jokers[i]
 end
 
