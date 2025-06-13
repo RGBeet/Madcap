@@ -890,8 +890,9 @@ function RGMC.funcs.safe_get(t, ...)
 end
 
 function RGMC.funcs.get_num_enhanced(group, key)
-    if group == nil then return 0 end
-
+    if not (G.GAME and group) then return 0 end
+    local cards = 0
+    
     for k,v in pairs(group) do
         if v.config.center == G.P_CENTERS['m_'..key] then cards = cards + 1 end
     end
