@@ -155,7 +155,7 @@ function Card:get_nominal(mod)
         tell('Sum Card found?! Wowie!')
         return RGMC.funcs.get_hand_sigma(G.play.cards) -- returns sum of hand cards
     else -- carry on!
-        return get_nominal_ref(mod)
+        return get_nominal_ref(self,mod)
     end
 end
 

@@ -349,7 +349,7 @@ local get_id_use = false
 
 function RGMC.funcs.get_rio_rank()
 
-    if (not G.GAME) or (not G.GAME.MADCAP.rank_dist) then -- this should work, G.GAME.MADCAP is made on start
+    if (not G.GAME and G.GAME.MADCAP) or (not G.GAME.MADCAP.rank_dist) then -- this should work, G.GAME.MADCAP is made on start
         tell('Ooh... my head hurty...')
         return "Ace"
     end
@@ -741,6 +741,9 @@ function RGMC.funcs.calculate_roll(params)
         return false -- NEEDS PARAMS!
     end
 
+    local denom = params.denom or ( card and (card.ability.odds or card.ability.extra.odds or card.ability.immutable.odds) or 2)
+    local numer = params.numer or G.GAME.probabilities.normal
+
     if
         params.card    -- uses a card
     then
@@ -749,14 +752,21 @@ function RGMC.funcs.calculate_roll(params)
         then
             local card = params.card
             -- If no denominator is dictated, looks for card odds or drops a 1 in 2.
-            return cry_prob(
-					card.ability.cry_prob,
-					params.denom or (card.ability.odds or card.ability.extra.odds or card.ability.immutable.odds or 2),
-					card.ability.cry_rigged)
+            return cry_prob(card.ability. cry_prob, odds, card.ability.cry_rigged)
         end
     end
 
-    return pseudorandom(pseudoseed(params.seed or 'rgmc')) < (params.numer or G.GAME.probabilities.normal) / (denom or 2)
+    return pseudorandom(pseudoseed(params.seed or 'rgmc')) < (numer / denom)
+end
+
+
+-- This is what I use for most randomization
+function RGMC.funcs.calculate_card_odds(c, s)
+    local params = { card = card }
+    if s then
+        params.seed = s
+    end
+    return RGMC.funcs.calculate_roll(params)
 end
 
 -- Simple way to get a random element from list.
@@ -861,3 +871,26 @@ function RGMC.funcs.get_boss_status()
         and G.GAME.MADCAP.is_finisher()
     and 2 or 1
 end
+
+-- From Cryptid
+function RGMC.funcs.safe_get(t, ...)
+	local current = t
+	for _, k in ipairs({ ... }) do
+		if not current or current[k] == nil then
+			return false
+		end
+		current = current[k]
+	end
+	return current
+end
+
+function RGMC.funcs.get_num_enhanced(group, key)
+    if not G.GAME then return 0 end
+
+    for k,v in pairs(group) do
+        if v.config.center == 'm_'..G.P_CENTERS[key] then cards = cards + 1 end
+    end
+
+    return cards
+end
+
