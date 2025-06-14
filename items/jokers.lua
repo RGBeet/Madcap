@@ -1149,8 +1149,6 @@ local pentagon = {
         return {
             vars = {
                 number_format(card.ability.extra.mult),
-                localize(card.ability.extra.suit, 'suits_singular'),
-                colours = {G.C.SUITS['rgmc_towers'] },
             }
         }
     end,
