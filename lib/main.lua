@@ -741,14 +741,17 @@ function RGMC.funcs.calculate_roll(params)
         return false -- NEEDS PARAMS!
     end
 
-    local denom = params.denom or ( card and (card.ability.odds or card.ability.extra.odds or card.ability.immutable.odds) or 1e6)
+    local card = params.card or nil
+
+    local denom = params.denom or card and (card.ability.odds or card.ability.extra.odds or card.ability.immutable.odds) or 1
     local numer = params.numer or G.GAME.probabilities.normal
     local exp   = params.exp or 1
 
+    tell('Denom is ' .. tostring(denom))
+    --tell('Card Denom is ' .. tostring(card and (card.ability.odds or card.ability.extra.odds or card.ability.immutable.odds)))
 
-    if denom == 1e6 then
-        tell('Probability not found, set to 1e6. Please fix!')
-    end
+    local roll, ceiling = pseudorandom(pseudoseed(params.seed or 'rgmc')), (numer ^ exp) / denom
+    local final
 
     if
         params.card    -- uses a card
@@ -756,16 +759,28 @@ function RGMC.funcs.calculate_roll(params)
         if
             Cryptid     -- is Cryptid installed? (implements cry_prob)
         then
-            local card, cry_denom = params.card, params.card.ability.cry_prob ^ (params.exp or 1)
-            -- If no denominator is dictated, looks for card odds or drops a 1 in 2.
-            return cry_prob(card.ability.cry_prob, denom, card.ability.cry_rigged)
-        end
-    end
+            -- use cry prob
+            tell ("Oppa Cryptid Style")
+            numer = params.numer or params.card.ability.cry_prob
 
-    return pseudorandom(pseudoseed(params.seed or 'rgmc')) < (numer ^ exp) / denom
+            -- If no denominator is dictated, looks for card odds or drops a 1 in 2.
+            ceiling = (numer ^ exp) / denom
+
+            final = params.card.ability.cry_rigged or roll < ceiling
+        else
+            final = roll < ceiling
+        end
+    else
+        final = roll < ceiling
+    end
+    tell('Numerator is ' .. tostring(numer) .. ", Denominator is " .. tostring(denom) .. '.')
+    tell('Roll was ' .. tostring(roll) .. '.')
+    tell('Ceiling was ' .. tostring(ceiling) .. '.')
+
+    return final
 end
 
--- This is what I use for most randomization
+-- This is what I use for most CARD randomization
 function RGMC.funcs.calculate_card_odds(c, s)
     local params = { card = card }
     if s then
