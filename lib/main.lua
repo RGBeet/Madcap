@@ -913,3 +913,16 @@ function RGMC.funcs.get_num_enhanced(group, key)
 
     return cards
 end
+
+-- Quick way of determining whether the context involves editions
+-- (usually trigger if a Joker or scoring card has one)
+function RGMC.funcs.edition_in_play(context, card)
+	return (
+		context.edition
+		and context.cardarea == G.jokers
+		and card.config.trigger
+	) or (
+		context.main_scoring
+		and context.cardarea == G.play
+	)
+end
