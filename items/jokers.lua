@@ -32,53 +32,10 @@ end
 ]]
 
 -- banana remove effect
-local banana_remove = function (card, msg)
-    G.E_MANAGER:add_event(Event({
-        func = function()
-            card.T.r = -0.2
-            card:juice_up(0.3, 0.4)
-            card.states.drag.is = true
-            card.children.center.pinch.x = true
-            G.E_MANAGER:add_event(Event({
-                trigger = 'after',
-                delay = 0.3,
-                blockable = false,
-                func = function()
-                    G.jokers:remove_card(card)
-                    card:remove()
-                    card = nil
-                    return true;
-                end
-        }))
-        return true
-        end
-    }))
-    return { message = localize(msg or "k_extinct_ex") }
-end
 
--- simple banana joker logic
-local function banana_logic(card,seed,func)
-    if RGMC.funcs.calculate_card_odds(card,seed or "banana") then -- 1 in 6 chance to POOF!
-        return func or banana_remove(card) -- remove it like a banana? maybe have it shatter
-    else
-        return { message = localize("k_safe_ex") } -- safe!
-    end
-end
 
--- simple food joker logic
-local function food_joker_logic(card,func)
-    card.ability.extra.rounds_remaining = card.ability.extra.rounds_remaining
-        and lenient_bignum(to_big(card.ability.extra.rounds_remaining) - 1)
-        or 1
-    if to_big(card.ability.extra.rounds_remaining) > to_big(0) then
-        return {
-            message = { localize("rgmc_minus_round") },
-            colour = G.C.FILTER,
-        }
-    else
-        return banana_remove(card,"k_eaten_ex")
-    end
-end
+
+
 
 -- simple end of round logic
 local function get_end_of_round(context)
@@ -239,7 +196,7 @@ local squeezy_cheeze = {
     end,
     calculate = function(self, card, context)
         if get_end_of_round(context) then
-            return food_joker_logic(card)
+            return RGMC.funcs.food_joker_logic(card)
         end
     end
 }
@@ -378,14 +335,14 @@ local lady_liberty = {
     config = {
         extra = {
             seals = 1
+        },
+        immutable = {
+            max_seals = 10
         }
     },
     loc_vars = function(self, info_queue, card)
-		--info_queue[#info_queue + 1] = { set = "Other", key = "rgmc_patina_seal" }
-        return {
-            vars = {number_format(self.config.extra.seals or 1)
-            }
-        }
+		info_queue[#info_queue + 1] = { set = "Other", key = "rgmc_patina_seal" }
+		return vars = { number_format(self.config.extra.seals or 1) }
     end,
     calculate = function(self, card, context)
         if
@@ -713,7 +670,7 @@ local glass_michel = {
             -- roll to see if banana goes bye!
 
             if RGMC.funcs.calculate_card_odds(card,'glass_michel') then -- 1 in 6 chance to POOF!
-                return banana_remove(card) -- remove it like a banana? maybe have it shatter
+                return RGMC.funcs.banana_remove(card) -- remove it like a banana? maybe have it shatter
             else
                 return { message = localize("k_safe_ex") } -- safe!
             end
@@ -732,7 +689,7 @@ local chinese_takeout = {
     unlocked = true,
     discovered = true,
     eternal_compat = true,
-    perishable_compat = true,
+    perishable_compat = false,
     blueprint_compat = true,
 	demicoloncompat = true,
     config =  {
@@ -881,7 +838,7 @@ local chinese_takeout = {
 		if
             get_end_of_round(context)
         then
-            return food_joker_logic(card)
+            return RGMC.funcs.food_joker_logic(card)
         end
     end
 }
@@ -1074,16 +1031,22 @@ local pretentious_joker = {
     blueprint_compat = true,
     config = {
         extra = {
-            mult = 5,
+            mult = 6,
             suit = 'rgmc_goblets'
         }
     },
-    calculate = function(self, card, context)
-        if context.individual and context.cardarea == G.play and context.other_card:is_suit('rgmc_goblets') then
-            return {
-                mult = card.ability.extra.mult,
-                card = card,
+    loc_vars = function(self, info_queue, card)
+        return {
+            vars = {
+                number_format(card.ability.extra.mult),
+                localize(card.ability.extra.suit, 'suits_singular'),
+                colours = {G.C.SUITS[card.ability.extra.suit] },
             }
+        }
+    end,
+    calculate = function(self, card, context)
+        if context.individual and context.cardarea == G.play and context.other_card:is_suit(card.ability.extra.suit) then
+            return { mult = card.ability.extra.mult, card = card }
         end
     end,
 }
@@ -1113,16 +1076,13 @@ local deceitful_joker = {
             vars = {
                 number_format(card.ability.extra.mult),
                 localize(card.ability.extra.suit, 'suits_singular'),
-                colours = {G.C.SUITS['rgmc_towers'] },
+                colours = {G.C.SUITS[card.ability.extra.suit] },
             }
         }
     end,
     calculate = function(self, card, context)
-        if context.individual and context.cardarea == G.play and context.other_card:is_suit('rgmc_towers') then
-            return {
-                mult = card.ability.extra.mult,
-                card = card,
-            }
+        if context.individual and context.cardarea == G.play and context.other_card:is_suit(card.ability.extra.suit) then
+            return { mult = card.ability.extra.mult, card = card }
         end
     end,
 }
@@ -1334,7 +1294,7 @@ local supreme_with_cheese = {
         if
             get_end_of_round(context)
         then
-            return food_joker_logic(card)
+            return RGMC.funcs.food_joker_logic(card)
         end
     end
 }
@@ -1381,7 +1341,7 @@ local bluenana = {
 			and not context.blueprint
 			and not context.retrigger_joker
 		then
-            return banana_logic(card, 'glass_michel')
+            return RGMC.funcs.banana_logic(card, 'bluenana')
         end
     end
 }
@@ -1420,21 +1380,22 @@ local redd_dacca = {
 	end,
     calculate = function(self, card, context)
         if
-            context.forcetrigger or
-            (context.cardarea == G.jokers and context.joker_main)
+            (context.cardarea == G.jokers
+            and context.joker_main)
+            or context.forcetrigger
         then
-            if Talisman then
-                return {
-                    emult = card.ability.extra.powmult
-                }
-            else
-                return { -- better with talisman
-                    Xmult_mod = mult ^ (card.ability.extra.powmult - 1),
-                    message = "^"..card.ability.extra.powmult.." Mult",
-                    colour = G.C.DARK_EDITION
-                }
-            end
-        end
+			return {
+				message = localize({
+					type = "variable",
+					key = "a_powmult",
+					vars = {
+						number_format(card.ability.extra.powmult),
+					},
+				}),
+				Emult_mod = lenient_bignum(card.ability.extra.powmult),
+				colour = G.C.RGMC_EMULT,
+			}
+		end
 
         if
 			context.end_of_round
@@ -1448,7 +1409,7 @@ local redd_dacca = {
                 card    = card,
                 exp     = math.floor(adv_numerator) -- just to make it less OP on beige deck
             }) then -- 1 in 200^n chance to POOF!
-                return banana_remove(card)
+                return RGMC.funcs.banana_remove(card)
             else
                 return { message = localize("k_safe_ex") } -- safe!
             end
@@ -1627,7 +1588,7 @@ local thorium_joker = {
         then
             local this_card = context.other_card
             if
-                pseudorandom(pseudoseed("rgmc_thorium_joker")) < (G.GAME.probabilities.normal / card.ability.extra.odds)
+                RGMC.funcs.calculate_roll({ card = card, seed = 'rgmc_thorium_joker' })
                 or context.forcetrigger
             then
                 local rank, new_rank = SMODS.Ranks[context.other_card.base.value].key, nil
@@ -1728,7 +1689,7 @@ local twinkle_of_contagion = {
             if
                 (not card.ability.extra.card
                     or card.ability.extra.card ~= context.other_card)
-                and RGMC.funcs.calculate_card_odds(card,"rgmc_twinkle_of_contagion")
+                and RGMC.funcs.calculate_roll({ card = card, seed = 'rgmc_twinkle_of_contagion' })
             then
                 local temp_hand, finished = {}, false
                 local from_card, to_card = context.other_card, nil
@@ -1915,7 +1876,7 @@ local plentiful_ametrine = {
     atlas = sprites,
     pos = get_pos(2,9),
     rarity = 2,
-    cost = 3,
+    cost = 6,
     unlocked = true,
     discovered = true,
     eternal_compat = true,
@@ -1948,7 +1909,7 @@ local plentiful_ametrine = {
         then
             if
                 context.other_card:is_suit('rgmc_goblets')
-                and RGMC.funcs.calculate_card_odds(card,'plentiful_ametrine')
+                and RGMC.funcs.calculate_roll({ card = card, seed = 'rgmc_plentiful_ametrine' })
             then
                 card.ability.extra.mult = card.ability.extra.mult + card.ability.extra.mult_mod
                 return {
@@ -2022,7 +1983,7 @@ local toughened_shungite = {
         then
             if -- suit is towers, 1 in 2 chance
                 context.other_card:is_suit('rgmc_towers')
-                and RGMC.funcs.calculate_card_odds(card,'toughened_shungite')
+                and RGMC.funcs.calculate_roll({ card = card, seed = 'rgmc_toughened_shungite' })
             then
                 card.ability.extra.chips = card.ability.extra.chips + card.ability.extra.chip_mod
                 return {
@@ -2096,8 +2057,7 @@ local six_shooter = {
 			local rank = context.other_card:get_id()
 			if
                 rank == 6
-                and RGMC.funcs.calculate_card_odds(card,'six_shooter')
-                and not context.blueprint
+                and RGMC.funcs.calculate_roll({ card = card, seed = 'rgmc_six_shooter' })
 			then
                 -- do a little dance
                 local target = context.other_card
@@ -2174,8 +2134,8 @@ local conspiracy_wizard = {
             vars = {
                 number_format(card.ability.extra.mult),
                 number_format(card.ability.extra.chips),
-                RGMC.devmode and G.GAME.current_round.rgmc_wizard_card.rank or "SEKRIT",
-                RGMC.devmode and G.GAME.current_round.rgmc_wizard_card.suit or "SEKRIT",
+                (RGMC.devmode and G.GAME.MADCAP) and G.GAME.current_round.rgmc_wizard_card.rank or "SEKRIT",
+                (RGMC.devmode and G.GAME.MADCAP) and RGMC.devmode and G.GAME.current_round.rgmc_wizard_card.suit or "SEKRIT",
             }
         }
     end,
@@ -2189,7 +2149,6 @@ local conspiracy_wizard = {
 			local rank = context.other_card:get_id()
 			if rank == G.GAME.current_round.rgmc_wizard_card.rank then -- u got the rank (prioritizes over suit)
                 G.GAME.current_round.rgmc_wizard_card.rank_discovered = true
-            else
                 return {
                     message = localize({
                         type = "variable",
@@ -2364,7 +2323,7 @@ local blindfold_joker = {
 				}
             else
                 -- fucking explode
-                return banana_remove(card)
+                return RGMC.funcs.banana_remove(card)
             end
         end
 
@@ -3332,7 +3291,7 @@ local legend_picky = {
 	demicoloncompat = true,
     config =  {
         extra = {
-            x_mult = 1.25,
+            x_mult = 1.75,
             x_mult_mult = 1.25,
         },
         immutable = {
@@ -3428,7 +3387,7 @@ local jokers = {
     doom_bunny,
     rocket_keychain,
     legend_rio,
-    legend_picky,
+    legend_picky
 }
 
 
