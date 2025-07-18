@@ -1,11 +1,26 @@
+
+
+-- Quick way of determining whether the context involves editions
+-- (usually trigger if a Joker or scoring card has one)
+function Madcap.Funcs.edition_in_play(context, card)
+	return (
+		context.edition
+		and context.cardarea == G.jokers
+		and card.config.trigger
+	) or (
+		context.main_scoring
+		and context.cardarea == G.play
+	)
+end
+
+-- end of edition funcs
+
 local iridescent = {
-	object_type = "Edition",
-    key = "iridescent",
-	order = 6,
-	weight = 2,
-	shader = "iridescent",
+    key 	= 'iridescent',
+	shader 	= 'iridescent',
+	weight 	= 2,
 	in_shop = true,
-	extra_cost = 5,
+	extra_cost = 4,
 	config = {
 		x_chips = 2.5,
 		trigger = nil
@@ -19,10 +34,10 @@ local iridescent = {
 		return G.GAME.edition_rate * self.weight
 	end,
 	loc_vars = function(self, info_queue)
-		return { vars = { self.config.x_chips } }
+		return MadLib.collect_vars(self.config.x_chips)
 	end,
 	calculate = function(self, card, context)
-		if RGMC.funcs.edition_in_play(context,card) then
+		if Madcap.Funcs.edition_in_play(context,card) then
 
 			-- Redistributes the sum of chips and mult 70-30
 			-- (larger value gets 70%, smaller gets 30%)
@@ -44,6 +59,7 @@ local iridescent = {
 				colour = G.C.PURPLE
 			}
 		end
+
 		if context.joker_main then
 			card.config.trigger = true -- context.edition triggers twice, this makes it only trigger once (only for jonklers)
 		end
@@ -55,12 +71,9 @@ local iridescent = {
 }
 
 local infernal = {
-	object_type = "Edition",
-    key = "infernal",
-	order = 7,
-	weight = 2,
-	shader = "infernal",
-	in_shop = false,
+    key 	= 'infernal',
+	shader 	= 'infernal',
+	weight 	= 2,
 	extra_cost = 5,
 	config = {
 		x_score = 3,
@@ -77,18 +90,12 @@ local infernal = {
 		return G.GAME.edition_rate * self.weight
 	end,
 	loc_vars = function(self, info_queue)
-		return {
-			vars = {
-				self.config.x_score,
-				(G.GAME.probabilities.normal or 1),
-				self.config.odds or 3
-			}
-		}
+		return MadLib.collect_vars(self.config.x_score, G.GAME.probabilities.normal or 1, self.config.odds)
 	end,
 	calculate = function(self, card, context)
 
         if
-            RGMC.funcs.edition_in_play(context,card)
+            Madcap.Funcs.edition_in_play(context,card)
             or context.joker_main
 		then
 			card.ability.infernaled = true
@@ -102,20 +109,7 @@ local infernal = {
 			context.after
 			and card.ability.infernaled
 		then
-			G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4,
-				func = function()
-					G.GAME.chips = (to_big(G.GAME.chips))*(to_big(self.config.x_score))
-					G.HUD:get_UIE_by_ID('chip_UI_count'):juice_up(0.3, 0.3)
-					play_sound('holo1')
-                    card.ability.infernaled = nil -- not needed now
-					return true
-				end,
-			}))
-
-            return {
-				message = "X" .. tostring(self.config.x_score),
-				colour = G.C.PURPLE
-			}
+            return MadLib.do_x_score(self.config.x_score)
         end
 
         -- If card was activated at any time during blind, 1 in 3 chance it BURNS UP!
@@ -124,13 +118,10 @@ local infernal = {
 				card.ability.infernaled 		-- has been activated at least once this round
                 and not card.ability.eternal	-- not eternal
             then
-
-				local chance = pseudorandom('rgmc_infernal')
-				tell('Infernal Chance: ' .. tostring(chance) .. ' ~ ' .. tostring(G.GAME.probabilities.normal / self.config.odds))
-
-				if
-					chance < G.GAME.probabilities.normal / self.config.odds		-- 1 in 3
-				then
+				if  MadLib.calculate_roll({
+                seed = 'rgmc_infernal',
+                denom = self.config.extra.odds
+				}) then
 					if Yahimod then -- yahimod make card go BOOM!
 						tell('Card asplode')
 						explodeCard(card)
@@ -157,16 +148,12 @@ local infernal = {
 
 -- credit to astronomica for idea
 local chrome = {
-	object_type = "Edition",
-    key = "chrome",
-	order = 10,
-	weight = 3, --slightly rarer than Polychrome
-	shader = "chrome",
+    key 	= 'chrome',
+	shader 	= 'chrome',
+	weight 	= 3, --slightly rarer than Polychrome
 	in_shop = true,
 	extra_cost = 5,
-	config = {
-		x_score = 1.5,
-	},
+	config = { x_score = 1.5, },
 	sound = {
 		sound = "rgmc_e_chrome",
 		per = 1,
@@ -177,11 +164,12 @@ local chrome = {
 		return G.GAME.edition_rate * self.weight
 	end,
 	loc_vars = function(self, info_queue)
-		return { vars = { self.config.x_score } }
+		return MadLib.collect_vars(self.config.x_score)
 	end,
 	calculate = function(self, card, context)
+
         if
-            RGMC.funcs.edition_in_play(context,card)
+            Madcap.Funcs.edition_in_play(context,card)
             or context.joker_main
 		then
 			card.ability.chromed = true
@@ -195,57 +183,26 @@ local chrome = {
 			context.after
 			and card.ability.chromed
 		then
-			G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4,
-				func = function()
-					G.GAME.chips = (to_big(G.GAME.chips))*(to_big(self.config.x_score))
-					G.HUD:get_UIE_by_ID('chip_UI_count'):juice_up(0.3, 0.3)
-					play_sound('holo1')
-                    card.ability.chromed = nil -- not needed now
-					return true
-				end,
-			}))
-            return {
-				message = "X" .. tostring(self.config.x_score),
-				colour = G.C.PURPLE
-			}
+			card.ability.infernaled = nil -- not needed now
+            return MadLib.do_x_score(self.config.x_score)
         end
+
 	end
 }
 
 local disco_weights = {
-	{
-		key 	= "a_chips",
-		weight 	= 6,
-	},
-	{
-		key 	= "a_mult",
-		weight 	= 5,
-	},
-	{
-		key 	= "a_dollars",
-		weight 	= 4,
-	},
-	{
-		key 	= "x_mult",
-		weight 	= 3,
-	},
-	{
-		key 	= "x_score",
-		weight 	= 2,
-	},
-	{
-		key 	= "x_dollars",
-		weight 	= 1,
-	},
+	{ key = "a_chips", 		weight 	= 6, },
+	{ key = "a_mult", 		weight 	= 5, },
+	{ key = "a_dollars", 	weight 	= 4, },
+	{ key = "x_mult", 		weight 	= 3, },
+	{ key = "x_score", 		weight 	= 2, },
+	{ key = "x_dollars", 	weight 	= 1, },
 }
 
 local disco = {
-	object_type = "Edition",
-    key = "disco",
-	order = 13,
+    key 	= 'disco',
+	shader 	= 'disco',
 	weight = 2,
-	shader = "disco",
-	in_shop = false,
 	extra_cost = 2,
 	config = {
 		a_chips = 40,
@@ -265,20 +222,17 @@ local disco = {
 		return G.GAME.edition_rate * self.weight
 	end,
 	loc_vars = function(self, info_queue)
-		return {
-			vars = {
-				number_format(self.config.a_chips or 40),
-				number_format(self.config.a_mult or 8),
-				number_format(self.config.x_mult or 2),
-				number_format(self.config.a_dollars or 7),
-				number_format(self.config.x_score or 2),
-				number_format(self.config.x_dollars or 1.5),
-			}
-		}
+		return MadLib.collect_vars(
+			self.config.a_chips or 40,
+			self.config.a_mult or 8,
+			self.config.x_mult or 2,
+			self.config.a_dollars or 7,
+			self.config.x_score or 2,
+			self.config.x_dollars or 1.5)
 	end,
 	calculate = function(self, card, context)
 
-		if RGMC.funcs.edition_in_play(context,card) then
+		if Madcap.Funcs.edition_in_play(context,card) then
 
 			-- Weighted random choice
 			local choice = nil
@@ -297,8 +251,6 @@ local disco = {
 					break
 				end
 			end
-
-			print(choice)
 
 			if not self.config[choice] then choice = nil end
 
@@ -330,17 +282,12 @@ local disco = {
 					colour = G.C.CHIPS,
 				}
 			elseif choice == 'x_score' then
-				G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4,
-					func = function()
-						G.GAME.chips = (to_big(G.GAME.chips))*(to_big(self.config.x_score))
-						G.HUD:get_UIE_by_ID('chip_UI_count'):juice_up(0.3, 0.3)
-						play_sound('holo1')
-						return {
-							message = "X" .. tostring(self.config.x_score),
-							colour = G.C.PURPLE
-						}
-					end,
-				}))
+				MadLib.simple_event(function()
+					G.GAME.chips = to_big(G.GAME.chips) * to_big(amt)
+					G.HUD:get_UIE_by_ID('chip_UI_count'):juice_up(0.3, 0.3)
+					play_sound('holo1')
+					return true
+				end, 0.4, 'after')
 				return {
 					message = "...?",
 					colour = G.C.PURPLE
@@ -363,19 +310,14 @@ local disco = {
 	end,
 }
 
--- From here:
--- https://www.shadertoy.com/view/wdlGRM
-local phasing = {
-	object_type = "Edition",
-    key = "phasing",
-	order = -100,
+local galactic = {
+    key 	= 'galactic',
+	shader 	= 'galactic',
 	weight = 2,
-	shader = "phasing",
-	in_shop = false,
-	extra_cost = 2,
+	in_shop = true,
+	extra_cost = 6,
 	config = {
-		a_chips = 1,
-		trigger = nil
+		-- idk
 	},
 	sound = {
 		sound = "rgmc_e_disco",
@@ -386,30 +328,146 @@ local phasing = {
 		return G.GAME.edition_rate * self.weight
 	end,
 	loc_vars = function(self, info_queue)
-		return {
-			vars = {
-				number_format(self.config.a_chips or 1),
-			}
-		}
+		local poker_hand 	= G.GAME.last_played_hand or 'High Card'
+		local hand_chips 	= G.GAME and G.GAME.hands[poker_hand].chips or 5
+		local hand_level 	= G.GAME and G.GAME.hands[poker_hand].level or 1
+		local total 		= math.floor(hand_chips/2 * hand_level)
+		return MadLib.collect_vars(poker_hand,
+			number_format(hand_chips),
+			number_format(hand_level),
+			number_format(total))
+	end,
+	calculate = function(self, card, context)
+		-- get the data for the last played poker hand
+		if
+			Madcap.Funcs.edition_in_play(context,card)
+			and G.GAME.last_played_hand
+		then
+			local total = math.floor(G.GAME.hands[poker_hand].chips/2 * G.GAME.hands[poker_hand].level)
+            return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips, card, total)
+		end
+	end,
+}
+
+local abyssal = {
+    key 	= 'abyssal',
+	shader 	= 'abyssal',
+	weight = 2,
+	in_shop = true,
+	extra_cost = 6,
+	config = {
+		extra = { xmult_mod = 0.08 }
+	},
+	sound = {
+		sound = "rgmc_e_disco",
+		per = 1,
+		vol = 0.2,
+	},
+	get_weight = function(self)
+		return G.GAME.edition_rate * self.weight
+	end,
+	loc_vars = function(self, info_queue)
+		local total = (G.GAME.Mayhem or 0) * self.config.extra.xmult_mod
+		return MadLib.collect_vars(total, self.config.extra.xmult_mod)
+	end,
+	calculate = function(self, card, context)
+		if
+			Madcap.Funcs.edition_in_play(context,card)
+			and G.GAME.Mayhem > 0
+		then
+			local total = G.GAME.Mayhem * self.config.extra.xmult_mod
+            return MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiMult, card, total)
+		end
+	end,
+}
+
+local luxury = {
+    key 	= "luxury",
+	shader 	= 'luxury',
+	weight = 2,
+	extra_cost = 2,
+	config = {
+		extra = {
+			money_mod 	= 3,
+			extra = 1
+		},
+		trigger = nil,
+	},
+	sound = {
+		sound = "rgmc_e_disco",
+		per = 1,
+		vol = 0.2,
+	},
+	get_weight = function(self)
+		return G.GAME.edition_rate * self.weight
+	end,
+	loc_vars = function(self, info_queue)
+		return MadLib.collect_vars(self.config.extra.extra, self.config.extra.money_mod)
 	end,
 	calculate = function(self, card, context)
 
-		if RGMC.funcs.edition_in_play(context,card) then
-			return {
-				chip_mod = lenient_bignum(self.config[choice]),
-				colour = G.C.CHIPS,
+		-- adds luxury points
+		if Madcap.Funcs.edition_in_play(context,card) then
+			G.GAME.luxury_points = G.GAME.luxury_points + 1
+            return {
+				message = "!!",
+				colour	= G.C.PURPLE,
+				card 	= card
 			}
 		end
 
-		if context.joker_main then
-            card.config.trigger = true
-        end
-
-		if context.after then
-            card.config.trigger = nil
+		if -- takes money at end of round
+            context.playing_card_end_of_round
+			and G.GAME.dollars - card.ability.extra.money_mod >= 0
+        then
+            ease_dollars(-self.config.extra.money_mod)
         end
 	end,
 }
+
+
+local flipped = {
+	object_type = "Edition",
+    key = "flipped",
+	shader = "flipped",
+	weight = 2,
+	config = {
+		extra = { chips = 16 },
+		trigger = nil,
+	},
+	sound = {
+		sound = "rgmc_e_disco",
+		per = 1,
+		vol = 0.2,
+	},
+	get_weight = function(self)
+		return G.GAME.edition_rate * self.weight
+	end,
+	loc_vars = function(self, info_queue)
+		return MadLib.collect_vars(self.config.extra.chips)
+	end,
+	calculate = function(self, card, context)
+	end,
+}
+
+local default_get_weight = function(self)
+	return 1
+end
+
+function Madcap.Funcs.LoadEditions(_f,_t,_args)
+	MadLib.loop_func_list(_f,function(w,i)
+		if not w or w.key then return false end
+		Madcap.Orders['Edition'] = Madcap.Orders['Edition'] + 1
+		w.object_type	= "Edition"
+		w.shader		= w.shader or w.key
+		w.in_shop		= w.in_shop or false
+		w.extra_cost		= w.extra_cost or 0
+		w.get_weight 	= w.get_weight or default_get_weight
+		w.order     	= w.order or Madcap.Orders['Edition']
+		if _args then MadLib.loop_func_table(_args, function(k,v) w[k] = v end) end
+		_t[#_t+1] = _f[i]
+    end)
+end
 
 
 local list = {
@@ -417,8 +475,16 @@ local list = {
     infernal,
     chrome,
     disco,
-    --phasing (NOT DONE YET)
+	galactic,
+	abyssal,
+	luxury,
+	flipped
 }
+
+for i=1, #list do
+	list[i].object_type = "Edition"
+	list[i].order 		= i
+end
 
 return {
     name = "Editions",

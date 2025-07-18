@@ -2,22 +2,30 @@
 
 local ext, list = 'ogg', {}
 
-local sounds = {
-    key_path_simple('e_iridescent',ext),
-    key_path_simple('e_infernal',ext),
-    key_path_simple('e_chrome',ext),
-    key_path_simple('e_disco',ext),
-    key_path('e_phasing','e_disco.ogg'),
-    key_path_simple('contagion',ext)
-}
-
-for i=1, #sounds do
-    sounds[i].object_type = "Sound"
-    list[#list+1] = sounds[i]
-end
+Madcap.Funcs.LoadSounds({
+    MadLib.keypath_simple('bowling',ext),
+    MadLib.keypath_simple('e_iridescent',ext),
+    MadLib.keypath_simple('e_infernal',ext),
+    MadLib.keypath_simple('e_chrome',ext),
+    MadLib.keypath_simple('e_disco',ext),
+    MadLib.key_path('e_phasing','e_disco.ogg'),
+    MadLib.keypath_simple('contagion',ext),
+    MadLib.keypath_simple('ominous',ext),
+    MadLib.keypath_simple('pogladontasaurus',ext),
+    MadLib.keypath_simple('spam_enter',ext),
+    MadLib.keypath_simple('lobster_thermidor',ext),
+    MadLib.keypath_simple('sauce',ext),
+    MadLib.keypath_simple('spam1',ext),
+    MadLib.keypath_simple('spam2',ext),
+    MadLib.keypath_simple('spam3',ext),
+    MadLib.keypath_simple('spam4',ext),
+    MadLib.keypath_simple('spam_remove1',ext),
+    MadLib.keypath_simple('spam_remove2',ext),
+    MadLib.keypath_simple('spam_remove3',ext),
+}, list)
 
 return {
     name = "Sounds",
-    init = function() print("Sounds!") end,
+    init = function() print(tostring(#list) .."Sounds!") end,
     items = list
 }

@@ -1,7 +1,7 @@
 return {
-	["Medium Blinds"] = true,
-	["Blinds"] = true,
-	["Jokers"] = true,
-	["Stakes"] = true,
-	["Decks"] = true,
+	["Jokers"] 	= true,
+	["Decks"] 	= true,
+	["Ranks"] 	= true,
+	["Suits"] 	= true,
+	["Mayhem"] 	= true
 }

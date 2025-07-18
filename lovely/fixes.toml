@@ -9,7 +9,7 @@ priority = 1000
 target = "back.lua"
 pattern = '''function Back:apply_to_run()'''
 position = "after"
-payload = '''RGMC.funcs.run_start()'''
+payload = '''Madcap.Funcs.run_start()'''
 match_indent = true
 
 # START OF BLIND
@@ -18,7 +18,7 @@ match_indent = true
 target = 'blind.lua'
 pattern = '''if blind and blind.name then'''
 position = 'after'
-payload = '''RGMC.funcs.blind_start()'''
+payload = '''Madcap.Funcs.blind_start()'''
 match_indent = true
 
 # BLIND OVER
@@ -27,7 +27,7 @@ match_indent = true
 target = 'functions/state_events.lua'
 pattern = '''G.GAME.unused_discards = (G.GAME.unused_discards or 0) + G.GAME.current_round.discards_left'''
 position = 'before'
-payload = '''RGMC.funcs.blind_end()'''
+payload = '''Madcap.Funcs.blind_end()'''
 match_indent = true
 
 # START OF ANTE
@@ -36,7 +36,7 @@ match_indent = true
 target = 'functions/common_events.lua'
 pattern = '''G.GAME.round_resets.ante = G.GAME.round_resets.ante + mod'''
 position = 'after'
-payload = '''RGMC.funcs.ante_start()'''
+payload = '''Madcap.Funcs.ante_start()'''
 match_indent = true
 
 # FINISH ANTE
@@ -45,7 +45,7 @@ match_indent = true
 target = 'functions/common_events.lua'
 pattern = '''delay(0.4); ease_ante(1); delay(0.4); check_for_unlock({type = 'ante_up', ante = G.GAME.round_resets.ante + 1})'''
 position = 'at'
-payload = '''RGMC.funcs.ante_finish()'''
+payload = '''Madcap.Funcs.ante_finish()'''
 match_indent = true
 
 
@@ -55,25 +55,7 @@ match_indent = true
 target = 'functions/button_callbacks.lua'
 pattern = '''G.STATE = G.STATES.SHOP'''
 position = 'after'
-payload = '''RGMC.funcs.shop_start()'''
-match_indent = true
-
-# RECORD EACH CARD
-[[patches]]
-[patches.pattern]
-target = 'functions/state_events.lua'
-pattern = '''highlight_card(scoring_hand[i],(i-0.999)/5,'up')'''
-position = 'after'
-payload = '''RGMC.funcs.record_card(scoring_hand[i])'''
-match_indent = true
-
-# RECORD HAND
-[[patches]]
-[patches.pattern]
-target = 'functions/state_events.lua'
-pattern = '''check_and_set_high_score('hand', hand_chips*mult)'''
-position = 'after'
-payload = '''RGMC.funcs.record_hand(scoring_hand,math.floor(hand_chips*mult),text)'''
+payload = '''Madcap.Funcs.shop_start()'''
 match_indent = true
 
 # PLAY HAND
@@ -82,7 +64,7 @@ match_indent = true
 target = 'functions/state_events.lua'
 pattern = '''G.GAME.hands[text].visible = true'''
 position = 'after'
-payload = '''RGMC.funcs.play_hand(G.hand.highlighted)'''
+payload = '''Madcap.Funcs.play_hand(G.hand.highlighted)'''
 match_indent = true
 
 
@@ -91,7 +73,7 @@ match_indent = true
 target = 'functions/button_callbacks.lua'
 pattern = '''G.CONTROLLER.locks.skip_blind = true'''
 position = 'after'
-payload = '''RGMC.funcs.blind_skip()'''
+payload = '''Madcap.Funcs.blind_skip()'''
 match_indent = true
 
 # DISCARD HAND
@@ -101,7 +83,7 @@ target = 'functions/state_events.lua'
 pattern = '''if G.CONTROLLER.focused.target and G.CONTROLLER.focused.target.area == G.hand then G.card_area_focus_reset = {area = G.hand, rank = G.CONTROLLER.focused.target.rank} end
     local highlighted_count = math.min(#G.hand.highlighted, G.discard.config.card_limit - #G.play.cards)'''
 position = 'after'
-payload = '''RGMC.funcs.discard_hand(G.hand.highlighted)'''
+payload = '''Madcap.Funcs.discard_hand(G.hand.highlighted)'''
 match_indent = true
 
 
@@ -112,8 +94,7 @@ target = "functions/state_events.lua"
 pattern = '''if scoring_hand[i].ability.name == 'Glass Card' and not scoring_hand[i].debuff and pseudorandom('glass') < G.GAME.probabilities.normal/scoring_hand[i].ability.extra then'''
 position = "at"
 match_indent = true
-payload = """if scoring_hand[i].ability.name == 'Glass Card' and RGMC.funcs.handle_glass_card_scoring(scoring_hand[i]) then"""
-
+payload = """if scoring_hand[i].ability.name == 'Glass Card' and Madcap.Funcs.handle_glass_card_scoring(scoring_hand[i]) then"""
 
 # Continuum
 [[patches]]
@@ -121,16 +102,72 @@ payload = """if scoring_hand[i].ability.name == 'Glass Card' and RGMC.funcs.hand
 target = '=[SMODS _ "src/utils.lua"]'
 pattern = "if in_scoring then context.cardarea = G.play else context.cardarea = 'unscored' end"
 position = "after"
-payload = "RGMC.funcs.alter_score_order(card,scoring_hand,context,in_scoring)"
+payload = "Madcap.Funcs.alter_score_order(card,scoring_hand,context,in_scoring)"
 match_indent = true
 
-# Exploit - patch into smods
+# Handle tag removal
 [[patches]]
 [patches.pattern]
-target = '''=[SMODS _ "src/overrides.lua"]'''
-pattern = '''disp_text = text'''
-position = "before"
-payload = '''
-text = G.GAME.MADCAP.force_poker_hand or text
-'''
+target = "tag.lua"
+pattern = '''local tag_key = nil'''
+position = "after"
+payload = '''for i = 1, #G.GAME.tags do G.GAME.tags[i]:apply_to_run({type = 'tag_remove', tag = _tag}) end'''
 match_indent = true
+
+# Adds custom cashouts
+[[patches]]
+[patches.pattern]
+target = 'functions/state_events.lua'
+pattern = '''add_round_eval_row({name = 'bottom', pitch = pitch, dollars = dollars})'''
+position = 'before'
+payload = '''for k,v in pairs(Madcap.CustomCashouts) do
+	if v.check() then
+		local cash_money = (v.get_money and v.get_money() or v.money or 0)
+		add_round_eval_row({name = k, dollars = cash_money})
+		pitch = pitch + (v.pitch_up or 0.06)
+		dollars = dollars + cash_money
+	end
+end'''
+match_indent = true
+
+# Add context for Junk Mail to trigger correctly
+# as it normally only triggers for Tags
+[[patches]]
+[patches.pattern]
+target = 'game.lua'
+match_indent = true
+pattern = '''for i = 1, #G.GAME.tags do
+    G.GAME.tags[i]:apply_to_run({type = 'voucher_add'})
+end'''
+position = 'after'
+payload = '''
+SMODS.calculate_context{ rgmc_luxury_check = G.GAME.luxury_points }
+'''
+
+# Missed jokers list
+[[patches]]
+[patches.pattern]
+target = 'functions/button_callbacks.lua'
+match_indent = true
+pattern = '''SMODS.calculate_context({ending_shop = true})'''
+position = 'after'
+payload = '''if G.shop_jokers then
+	G.GAME.missed_jokers = G.GAME.missed_jokers or {}
+    MadLib.loop_func(G.shop_jokers.cards, function(v,i)
+        table.insert(G.GAME.missed_jokers,v.config.center.key)
+    end)
+    print(tostring(#G.GAME.missed_jokers) .. ' missed Jokers.')
+end'''
+
+# Dead jokers list
+[[patches]]
+[patches.pattern]
+target = 'card.lua'
+match_indent = true
+pattern = '''self.removed = true'''
+position = 'after'
+payload = '''if G.GAME.MADCAP and G.GAME.dead_jokers then
+	table.insert(G.GAME.dead_jokers,self.config.center.key)
+    print(tostring(#G.GAME.dead_jokers) .. ' \"unalived\" Jokers.')
+end'''
+

@@ -1,351 +1,191 @@
-local get_pos = function(_y,_x)
-    return {
-        x = _x,
-        y = _y
-    }
-end
+
 
 local combo_meal = {
-    object_type = "Voucher",
-	key = "combo_meal",
-	atlas = "vouchers",
-	pos = get_pos(0,0),
-	cost = 8,
-	unlocked = true,
-	discovered = true,
-	available = true,
-    config = {
-        extra = 1.5,
-        immutable = {
-			active = true
-        }
-    },
+	key 		= "combo_meal",
+	cost 		= 8,
+    config 		= { extra = 1.5, },
 	redeem = function(self)
+
     end,
     loc_vars = function(self, info_queue, card)
-        return {
-			vars = {
-				number_format(self.config.extra)
-			}
-		}
+		return MadLib.collect_vars(number_format(card.ability.extra))
     end,
     calculate = function (self, card, context)
 
-        if
-            context.end_of_round
-			and not context.game_over    -- do nothing if you lose
-			and context.main_eval
-        then
+        if context.end_of_round and not context.game_over and context.main_eval then
 			-- if you get overkill, you get a free tarot card
             local diff = math.abs(to_big(G.GAME.chips) - to_big(G.GAME.blind.chips)) -- difference between your chips and blind chips
-            local div = to_big(diff) / to_big(G.GAME.blind.chips) -- blind chips / difference
-
-			if RGMC.funcs.greater_than(div, 1.5) then
-				local card_type = "Tarot"
+			if to_big(diff) / to_big(G.GAME.blind.chips) >= 1.5 then
 				tell('Good job!')
-				G.GAME.consumeable_buffer = G.GAME.consumeable_buffer + 1
-                G.E_MANAGER:add_event(Event({ -- make a card
-					trigger = 'immediate',
-					delay = 0.08,
-					func = (function()
-						local n_card = create_card(card_type,G.consumeables, nil, nil, nil, nil, nil, 'sup')
-						play_sound('timpani')
-						n_card:add_to_deck()
-						G.consumeables:emplace(n_card)
-						G.GAME.consumeable_buffer = 0
-						return true
-					end
-				)}))
-			end
+				MadLib.simple_event(function()
+					local card_type = "Tarot"
+					G.GAME.consumeable_buffer = G.GAME.consumeable_buffer + 1
 
+					local n = MadLib.get_random_card(card_type, G.consumeables, 'combo_meal')
+					play_sound('timpani')
+					n:add_to_deck()
+					G.consumeables:emplace(n)
+
+					G.GAME.consumeable_buffer = 0
+					return true
+				end, 0.15, 'immediate')
+			end
 		end
+
     end,
 }
 
 local supersize = {
-    object_type = "Voucher",
-	key = "supersize",
-	atlas = "vouchers",
-	pos = get_pos(0,1),
-	cost = 8,
-	unlocked = true,
-	discovered = true,
-	available = true,
-    config = {
-        extra = 1.07,
-        immutable = {
-			active = true
-        }
-    },
-	redeem = function(self)
+	key 		= "supersize",
+	cost 		= 8,
+	requires 	= MadLib.get_voucher_reqs('rgmc_combo_meal'),
+    config 		= { extra 	= 1.07, active	= true },
+	redeem 		= function(self)
     end,
-    loc_vars = function(self, info_queue, card)
-        return {
-			vars = {
-				number_format(self.config.extra)
-			}
-		}
+    loc_vars 	= function(self, info_queue, card)
+		return MadLib.collect_vars(number_format(card.ability.extra))
     end,
-    calculate = function (self, card, context)
+    calculate 	= function (self, card, context)
 
         if
             context.end_of_round
 			and not context.game_over    -- do nothing if you lose
 			and context.main_eval
         then
-			card.ability.immutable.active = false
 
 			-- if you get overkill, you get a free tarot card
-			local points = 0
-			local chip_goal = G.GAME.blind.chips
+			local points, chip_goal = 0, G.GAME.blind.chips
 
-			-- does chips^extra, then (chips^extra)^extra, and so forth...
-			for i=1,10 do
-				chip_goal = chip_goal ^ self.config.extra
-				tell('Chip goal is now '..tostring(chip_goal))
-				if RGMC.funcs.greater_than(G.GAME.chips, chip_goal, true) then
-					points = points + 1
-				else
-					break -- we done
-				end
-			end
+			points = MadLib.build_onto_val(points, function(i)
+				return to_big(G.GAME.chips) >= to_big(chip_goal) and i <= 10
+			end, function(v,i)
+				points = points + 1
+				return v ^ self.config.extra
+			end, false)
 
+			tell_stat('Rewards Gained',points)
 
-			tell_stat('Rewards Gained:',points)
+			-- Make a list of 1-9 consumables - weights in Madcap table.
+			local rewards = MadLib.get_loop_func_number(math.min(points,9), function(i)
+				local set = 'Tarot'
+				return MadLib.get_random_card(set, G.consumeables, 'supersize')
+			end)
 
-			local rewards = {}
-
-			local card_type, numbert = "Tarot", math.min(points,9)
-
-			for i=1,numbert do
-				local n_card = create_card(card_type,G.consumeables, nil, nil, nil, nil, nil, 'sup')
-				rewards[#rewards+1] = n_card
-			end
-
-			for i=1,#rewards do
+			MadLib.loop_func_list(rwards, function(v,i)
 				G.GAME.consumeable_buffer = G.GAME.consumeable_buffer + 1
-				G.E_MANAGER:add_event(Event({ -- make a card
-				trigger = 'after',
-				delay = 0.5,
-				func = (function()
+				MadLib.simple_event(function()
 					play_sound('timpani')
-					rewards[i]:add_to_deck()
-					rewards[i]:set_edition({ negative = true }, true) -- now spawns as a Negative!
-					G.consumeables:emplace(rewards[i])
+					v:add_to_deck()
+					v:set_edition({ negative = true }, true) -- now spawns as a Negative!
+					G.consumeables:emplace(v)
 					G.GAME.consumeable_buffer = 0
 					return true
-				end)}))
-			end
+				end, 0.5, 'after')
+			end)
 		end
     end,
 }
 
 local everyman = {
-    object_type = "Voucher",
-	key = "everyman",
-	atlas = "vouchers",
-	pos = get_pos(0,2),
-	cost = 8,
-	unlocked = true,
-	discovered = true,
-	available = true,
-    config = {
-        extra = {
-			x_score = 1.1
-        }
-    },
-	redeem = function(self)
+	key 		= "everyman",
+	cost 		= 8,
+    config 		= { extra = 1.1 },
+	redeem 		= function(self)
     end,
-    loc_vars = function(self, info_queue, card)
-        return {
-			vars = {
-				number_format(self.config.extra.x_score)
-			}
-		}
+    loc_vars 	= function(self, info_queue, card)
+		return MadLib.collect_vars(number_format(card.ability.extra))
     end,
-    calculate = function (self, card, context)
-        if
-            context.after
-        then
-			local commons = RGMC.funcs.get_common_jokers()
-			if commons > 0 then
-				return RGMC.funcs.do_x_score(self.config.extra.x_score, commons)
-			end
+    calculate 	= function (self, card, context)
+        if context.after then
+			local commons = Madcap.Funcs.get_common_jokers()
+			if commons > 0 then return MadLib.do_x_score(card.ability.extra, commons) end
         end
     end,
 }
 
 local exceptional = {
-    object_type = "Voucher",
-	key = "exceptional",
-	atlas = "vouchers",
-	pos = get_pos(0,3),
-	cost = 8,
-	unlocked = true,
-	discovered = true,
-	available = true,
-    config = {
-        extra = {
-			e_score = 1.01
-        }
-    },
-	redeem = function(self)
+	key 		= "exceptional",
+	cost 		= 8,
+	requires 	= MadLib.get_voucher_reqs('rgmc_everyman'),
+    config 		= { extra = 1.01 },
+	redeem 		= function(self)
     end,
-    loc_vars = function(self, info_queue, card)
-        return {
-			vars = {
-				number_format(self.config.extra.e_score)
-			}
-		}
+    loc_vars 	= function(self, info_queue, card)
+		return MadLib.collect_vars(number_format(card.ability.extra))
     end,
-    calculate = function (self, card, context)
-        if
-            context.after
-        then
-			local commons = RGMC.funcs.get_common_jokers()
-			if commons > 0 then
-				return RGMC.funcs.do_e_score(self.config.extra.e_score, commons)
-            end
+    calculate 	= function (self, card, context)
+        if context.after then
+			local commons = Madcap.Funcs.get_common_jokers()
+			if commons > 0 then return MadLib.do_e_score(card.ability.extra, commons) end
         end
     end,
 }
 
-
 local big_bonus = {
-    object_type = "Voucher",
-	key = "big_bonus",
-	atlas = "vouchers",
-	pos = get_pos(1,0),
-	cost = 8,
-	unlocked = true,
-	discovered = true,
-	available = true,
-    config = {
-        per_level = 8
-    },
-	redeem = function(self)
+	key 		= "big_bonus",
+	cost 		= 8,
+	unlocked 	= true,
+	discovered 	= true,
+	available 	= true,
+    config 		= { extra = 8 },
+	redeem 		= function(self)
     end,
-    loc_vars = function(self, info_queue, card)
-        return {
-			vars = {
-				number_format(self.config.per_level)
-			}
-		}
+    loc_vars 	= function(self, info_queue, card)
+		return MadLib.collect_vars(number_format(card.ability.extra))
     end,
     calculate = function (self, card, context)
 		if
 			context.cardarea == G.play
 			and context.individual
 			and context.other_card
+			and MadLib.list_matches_one(Madcap.Data.enhancement_lists.bonus, function(v,k)
+				return SMODS.has_enhancement(context.other_card, "m_"..v)
+			end)
 		then
-			local has_bonus = false
-			for i=1,#RGMC.enhancement_lists.bonus do
-				if SMODS.has_enhancement(context.other_card, "m_"..RGMC.enhancement_lists.bonus[i]) then
-					has_bonus = true
-					break
-				end
-			end
+			local text, disp_text, poker_hands, scoring_hand, non_loc_disp_text = G.FUNCS.get_poker_hand_info(G.play.cards)
+			local _chips = card.ability.extra * to_number(G.GAME.hands[text].level)
 
-			if has_bonus then
-				local text, disp_text, poker_hands, scoring_hand, non_loc_disp_text = G.FUNCS.get_poker_hand_info(G.play.cards)
-				local level = to_number(G.GAME.hands[text].level)
-				local chip_return = card.ability.per_level * level
-
-				card_eval_status_text(card, "extra", nil, nil, nil, {
-					message = localize({
-						type = "variable",
-						key = "a_chips",
-						vars = { number_format(chip_return) },
-						card = context.other_card
-					}),
-					colour = G.C.CHIPS,
-				})
-
-				G.GAME.chips = G.GAME.chips + chip_return
-			end
+			return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips, context.other_card, chips)
 		end
-    end,
+    end
 }
 
 local massive_mult = {
-    object_type = "Voucher",
-	key = "massive_mult",
-	atlas = "vouchers",
-	pos = get_pos(1,1),
-	cost = 8,
-	unlocked = true,
-	discovered = true,
-	available = true,
-    config = {
-        per_level = 1
-    },
-	redeem = function(self)
+	key 		= "massive_mult",
+	cost 		= 8,
+	requires 	= MadLib.get_voucher_reqs('rgmc_big_bonus'),
+    config 		= { extra = 2 },
+	redeem 		= function(self)
     end,
-    loc_vars = function(self, info_queue, card)
-        return {
-			vars = {
-				number_format(self.config.per_level)
-			}
-		}
+    loc_vars 	= function(self, info_queue, card)
+		return MadLib.collect_vars(number_format(card.ability.extra))
     end,
-    calculate = function (self, card, context)
+    calculate 	= function (self, card, context)
 		if
 			context.cardarea == G.play
 			and context.individual
 			and context.other_card
+			and MadLib.list_matches_one(Madcap.Data.enhancement_lists.mult, function(v,k)
+				return SMODS.has_enhancement(context.other_card, "m_"..v)
+			end)
 		then
-			local has_bonus = false
-			for i=1,#RGMC.enhancement_lists.mult do
-				if SMODS.has_enhancement(context.other_card, "m_"..RGMC.enhancement_lists.mult[i]) then
-					has_bonus = true
-					break
-				end
-			end
+			local text, disp_text, poker_hands, scoring_hand, non_loc_disp_text = G.FUNCS.get_poker_hand_info(G.play.cards)
+			local _mult = card.ability.extra * to_number(G.GAME.hands[text].level)
 
-			if has_bonus then
-				local text, disp_text, poker_hands, scoring_hand, non_loc_disp_text = G.FUNCS.get_poker_hand_info(G.play.cards)
-				local level = to_number(G.GAME.hands[text].level)
-				local chip_return = card.ability.per_level * level
-
-				card_eval_status_text(card, "extra", nil, nil, nil, {
-					message = localize({
-						type = "variable",
-						key = "a_mult",
-						vars = { number_format(chip_return) },
-						card = context.other_card
-					}),
-					colour = G.C.MULT,
-				})
-
-				G.GAME.chips = G.GAME.chips + chip_return
-			end
+			return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddMult, context.other_card, _mult)
 		end
-    end,
+    end
 }
 
 local high_rise = {
-    object_type = "Voucher",
 	key = "high_rise",
-	atlas = "vouchers",
-	pos = get_pos(1,2),
 	cost = 8,
-	unlocked = true,
-	discovered = true,
-	available = true,
     config = {
-        extra = {
-			retriggers = 1
-        },
-        immutable = {
-			max_retriggers = 40
-        }
+        extra 		= { retriggers = 1 },
+        immutable 	= { max_retriggers = 25 }
     },
     loc_vars = function(self, info_queue, card)
-        return {
-			vars = {
-				math.floor(math.max(1, math.min(card.ability.immutable.max_retriggers, card.ability.extra.retriggers)))
-			}
-		}
+		return MadLib.collect_vars(number_format(MadLib.clamp(card.ability.extra.retriggers, 1, card.ability.immutable.max_retriggers)))
     end,
     calculate = function (self, card, context)
 
@@ -355,40 +195,23 @@ local high_rise = {
 			and context.cardarea == G.play
 			and context.scoring_name == "High Card" -- has a scoring hand, of course
 		then
-			return {
-				repetitions = math.floor(math.max(1, math.min(card.ability.immutable.max_retriggers, card.ability.extra.retriggers))),
-				card = card
-			}
+			local high_card 	= context.scoring_hand[1]
+			local retriggers 	= MadLib.clamp(card.ability.extra.retriggers, 1, card.ability.immutable.max_retriggers)
+			return MadLib.get_retrigger_data(high_card,retriggers,localize('k_rgmc_high_rise'))
 		end
     end
-
 }
 
--- if context.other_card.config.center ~= G.P_CENTERS.c_base then
-
 local high_roller = {
-    object_type = "Voucher",
-	key = "high_roller",
-	atlas = "vouchers",
-	pos = get_pos(1,3),
-	cost = 8,
-	unlocked = true,
-	discovered = true,
-	available = true,
+	key 		= "high_roller",
+	cost 		= 8,
+	requires 	= MadLib.get_voucher_reqs('rgmc_high_rise'),
     config = {
-        extra = {
-			retriggers = 1
-        },
-        immutable = {
-			max_retriggers = 40
-        }
+        extra 		= { retriggers = 1 },
+        immutable 	= { max_retriggers = 25 }
     },
-    loc_vars = function(self, info_queue, card)
-        return {
-			vars = {
-				math.max(1, math.min(card.ability.immutable.max_retriggers, card.ability.extra.retriggers))
-			}
-		}
+    loc_vars 	= function(self, info_queue, card)
+		return MadLib.collect_vars(number_format(MadLib.clamp(card.ability.extra.retriggers, 1, card.ability.immutable.max_retriggers)))
     end,
     calculate = function (self, card, context)
 
@@ -398,15 +221,89 @@ local high_roller = {
 			and context.cardarea == G.hand
 			and context.scoring_name == "High Card" -- has a scoring hand, of course
 		then
-			return {
-				repetitions = math.floor(math.max(1, math.min(card.ability.immutable.max_retriggers, card.ability.extra.retriggers))),
-				card = card
-			}
+			local high_card 	= context.scoring_hand[1]
+			local retriggers 	= MadLib.clamp(card.ability.extra.retriggers, 1, card.ability.immutable.max_retriggers)
+			return MadLib.get_retrigger_data(high_card,retriggers,localize('k_rgmc_high_roller'))
 		end
     end,
 }
 
-local list = {
+local function clamp_mayhem(val)
+	local _total 	= ((G.GAME and G.GAME.Mayhem) or 0) + math.max(0,val)
+	local _max 		= ((G.GAME and G.GAME.max_mayhem) or 10)
+	return _total < _max and _total or (_max - _total)
+end
+
+local manifest = {
+	key 		= "manifest",
+	cost 		= 8,
+    config = {
+        extra = { antes = 1, mayhem = 1 },
+        immutable = { max_antes = 25 }
+    },
+    loc_vars 	= function(self, info_queue, card)
+		return MadLib.collect_vars(
+			number_format(clamp_mayhem(card.ability.extra.mayhem)),
+			number_format(MadLib.clamp(card.ability.extra.antes, 1, card.ability.immutable.max_antes))
+		)
+    end,
+	redeem 		= function(self)
+		Madcap.Funcs.ease_mayhem(clamp_mayhem(card.ability.extra.mayhem))
+    end,
+}
+
+local mindmelt = {
+	key 		= "mindmelt",
+	cost 		= 8,
+	requires 	= MadLib.get_voucher_reqs('rgmc_manifest'),
+    config = {
+        extra = { antes = 1, mayhem = 1 },
+        immutable = { max_antes = 25 }
+    },
+    loc_vars 	= function(self, info_queue, card)
+		return MadLib.collect_vars(
+			number_format(clamp_mayhem(card.ability.extra.mayhem)),
+			number_format(MadLib.clamp(card.ability.extra.antes, 1, card.ability.immutable.max_antes))
+		)
+    end,
+	redeem 		= function(self)
+		Madcap.Funcs.ease_mayhem(clamp_mayhem(card.ability.extra.mayhem))
+    end,
+}
+
+local cosma_merchant = {
+	key 		= "cosma_merchant",
+	cost 		= 8,
+    config 		= { extra = 2 },
+    loc_vars 	= function(self, info_queue, card)
+		return MadLib.collect_vars_colours( number_format(card.ability.extra), { G.C.SET.CosmaTarot })
+    end,
+	redeem 		= function(self)
+		MadLib.simple_event(function()
+			G.GAME.cosma_rate = (G.GAME.cosma_rate or 3) * card.ability.extra.display
+			return true
+		end)
+    end,
+}
+
+local cosma_tycoon = {
+	key 		= "cosma_tycoon",
+	cost 		= 8,
+    config 		= { extra = 4 },
+	requires 	= MadLib.get_voucher_reqs('rgmc_cosma_merchant'),
+    loc_vars 	= function(self, info_queue, card)
+		return MadLib.collect_vars_colours( number_format(card.ability.extra), { G.C.SET.CosmaTarot })
+    end,
+	redeem 		= function(self)
+		MadLib.simple_event(function()
+			G.GAME.cosma_rate = (G.GAME.cosma_rate or 6) * math.floor(card.ability.extra.display/2)
+			return true
+		end)
+    end,
+}
+
+local list = {}
+Madcap.Funcs.LoadVouchers({
 	combo_meal,
 	supersize,
 	everyman,
@@ -414,15 +311,13 @@ local list = {
 	big_bonus,
 	massive_mult,
 	high_rise,
-	high_roller
-}
-
-for i=1, #list do
-    if list[i] then list[i].order = i-1 end
-end
+	high_roller,
+	manifest,
+	mindmelt
+}, list, 'vouchers')
 
 return {
-    name = "Voucher",
+    name = "Vouchers",
     init = function() print("Vouchers!") end,
     items = list
 }
