@@ -17,6 +17,12 @@ if mod_loaded(mod_id) and Partner_API then -- load the items
         path = "partners.png"
     }
 
+	-- Snacky Shark: provides a random stat boost every Blind,
+	-- similar to Chinese Takeout.
+	-- Not 100% random - tends to skew towards Chips if Mult is higher,
+	-- and vice versa.
+	
+	-- Upon obtaining Chinese Takeout, unlocks stronger effects (?)
 	local snacky = {
 		key = "snacky",
 		config = {
@@ -32,6 +38,11 @@ if mod_loaded(mod_id) and Partner_API then -- load the items
 		end,
 	}
 
+	-- Manganese: first scored Diamond gives +7 Mult OR +40 Chips if
+	-- succeding Clubs / Spades, similar to Rhodochrosite.
+
+	-- Upon obtaining Rhodochrosite, Diamonds also have a 1 in 2 chance
+	-- to give X2 Mult.
 	local manganese = {
 		key = "manganese",
 		config = {
@@ -49,6 +60,8 @@ if mod_loaded(mod_id) and Partner_API then -- load the items
 		end,
 	}
 
+	-- Traveller: Upon using a Planet card, levels up the last
+	-- played poker hand by 1/2 level (1 with Rocket Keychain).
 	local traveller = {
 		key = "traveller",
 		config = {
@@ -70,6 +83,9 @@ if mod_loaded(mod_id) and Partner_API then -- load the items
 		end,
 	}
 
+	-- Paschal: Upon selecting blind, applys random enhancement
+	-- to card in hand.
+	-- With Easter Egg, also adds edition to selected card.
 	local paschal = {
 		key = "paschal",
 		config = {
@@ -85,6 +101,9 @@ if mod_loaded(mod_id) and Partner_API then -- load the items
 		end,
 	}
 
+	-- Squeezy: After scoring, gives X0.25 Mult for every
+	-- +50 Chips scored (past base chips)
+	-- With Squeezy Cheeze, doubles this to X0.5 Mult
 	local squeezy = {
 		key = "squeezy",
 		config = {
@@ -106,6 +125,7 @@ if mod_loaded(mod_id) and Partner_API then -- load the items
 		end,
 	}
 
+	-- Foolish: 
 	local foolish = {
 		key = "foolish",
 		config = {

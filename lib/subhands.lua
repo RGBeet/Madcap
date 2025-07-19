@@ -13,12 +13,18 @@
 function Madcap.Funcs.subhand_light_dark(hand)
     if not hand then return nil end
     local light = MadLib.loop_func(hand, function(v)
-            return v:has_light_suit()
-        end)
-    local dark = MadLib.loop_func(hand, function(v)
-        return v:has_dark_suit()
+        for i=1, #MadLib.SuitTypes.Light do
+            if v:is_suit(MadLib.SuitTypes.Light[i]) then return true end
+        end
+        return false
     end)
-    local result = (light > 4 and 'light') or (dark > 4 and 'dark') or 'both'
+    local dark = MadLib.loop_func(hand, function(v)
+        for i=1, #MadLib.SuitTypes.Dark do
+            if v:is_suit(MadLib.SuitTypes.Dark[i]) then return true end
+        end
+        return false
+    end)
+    local result = (light > dark and 'light') or (dark > light and 'dark') or 'both'
     return result
 end
 
@@ -31,7 +37,7 @@ SubHands = {
         l_mult     = 0.10,
         l_chips    = 0.10,
         check_hand = function(hand) -- at least 5 light suits (wilds included)
-            return Madcap.Funcs.subhand_light_dark(hand) == 'light'
+            return #hand >= (G.GAME.subhand_minimum or 5) and Madcap.Funcs.subhand_light_dark(hand) == 'light'
         end,
     },
     Dark = {
@@ -42,7 +48,7 @@ SubHands = {
         l_mult     = 0.10,
         l_chips    = 0.10,
         check_hand = function(hand) -- at least 5 light suits (wilds included)
-            return Madcap.Funcs.subhand_light_dark(hand) == 'dark'
+            return #hand >= (G.GAME.subhand_minimum or 5) and Madcap.Funcs.subhand_light_dark(hand) == 'dark'
         end,
     },
     Dazzling = {
@@ -53,7 +59,7 @@ SubHands = {
         l_mult     = 0.10,
         l_chips    = 0.10,
         check_hand = function(hand) -- at least 5 unique enhancements (+ voucher unlocked)
-            return MadLib.get_unique_enhancements(hand) > 4 -- wip
+            return MadLib.get_unique_enhancements(hand) >= (G.GAME.subhand_minimum or 5) -- wip
         end,
     },
     High = {

@@ -38,6 +38,8 @@ function tell_list(text,list)
 end
 
 Madcap = { Funcs = { }, JokerLists = { } }
+mfuncs 	= Madcap.Funcs
+mjokers	= Madcap.JokerLists
 
 -- enabled type stuff
 local mod_path = "" .. SMODS.current_mod.path       -- save the mod path for future usage!
@@ -207,6 +209,7 @@ function Madcap.Funcs.run_start()
     }
 
     G.GAME.Mayhem 			= G.GAME.Mayhem or 0
+    G.GAME.MayhemState 		= 0
     G.GAME.max_mayhem 		= G.GAME.max_mayhem or 10
     G.GAME.luxury_points 	= G.GAME.luxury_points or 0
 
@@ -225,6 +228,8 @@ function Madcap.Funcs.blind_start()
     -- start of blind
     tell('Blind Start')
 
+	print(MadLib.SuitTypes.Light)
+	print(MadLib.SuitTypes.Dark)
     G.GAME.MADCAP.rank_dist = MadLib.get_ranks_from_cards(G.playing_cards)
 
     local patina_cards, bronze_cards, normal_cards = {}, {}, {}
@@ -741,6 +746,14 @@ Madcap.Funcs.make_long_title_line = function(text)
     }}
 end
 
+function Madcap.Funcs.get_mayhem()
+	return G.GAME and G.GAME.Mayhem or 0
+end
+
+function Madcap.Funcs.get_mayhem_state()
+	return G.GAME and G.GAME.MayhemState or 0
+end
+
 function Madcap.Funcs.ease_mayhem(_mod, _check, _silent, _instant)
     MadLib.simple_event(function()
         local round_UI = G.HUD:get_UIE_by_ID('mayhem_UI_count')
@@ -749,6 +762,7 @@ function Madcap.Funcs.ease_mayhem(_mod, _check, _silent, _instant)
         local col   = (add_mayhem and G.C.RGMC_MAYHEM) or (lose_mayhem and G.C.RED) or G.C.FILTER
 
         _mod = _mod or 0
+		local _old = G.GAME.Mayhem
         G.GAME.Mayhem = (G.GAME.Mayhem or 0) + _mod
         if G.GAME.Mayhem + _mod > G.GAME.max_mayhem then _mod = G.GAME.max_mayhem - (G.GAME.Mayhem + _mod) end
 
@@ -766,14 +780,29 @@ function Madcap.Funcs.ease_mayhem(_mod, _check, _silent, _instant)
             end
         end
 
+		local _new = (_old + mod)
+		local mayhem_state = (_new > 9 and 3)
+			or (_new > 6 and 2)
+			or (_new > 3 and 1)
+			or 0
+
+		if mayhem_state ~= G.GAME.MayhemState then
+			G.GAME.MayhemState = mayhem_state
+		end
+
         --Play a SPOOKY noise sound
-        if not Talisman.config_file.disable_anims then
+        if (not Talisman.config_file.disable_anims) and (not _silent) then
             if lose_mayhem then
-                play_sound('timpani', 0.8)
-                play_sound('generic1')
-            else
-                play_sound('timpani', 0.8)
-                play_sound('generic1')
+                play_sound('rgmc_mayhem_down', 0.8)
+                play_sound('timpani')
+			elseif add_mayhem then
+				if mayhem_state ~= nil then
+					play_sound('rgmc_mayhem_t' .. tostring(state_up), 0.8)
+					delay(2.0)
+				else
+					play_sound('timpani')
+					play_sound('rgmc_mayhem_up', 0.8)
+				end
             end
         end
 
@@ -2351,25 +2380,30 @@ end
 	MAYHEM
 ]]
 
--- 
+-- When values are "mayhemized". they follow certain rules.
+-- Some values are multiplied at a lesser [factor].
+-- Some values are only manipulated at a minimum [level].
+-- Some values are [round]ed for the sake of simplicity.
+-- Some values activate functions based on their [type].
 Madcap.MayhemValues = {
-	['AddMult'] 		= { factor = 1 },
-	['AddChips'] 		= { factor = 1 },
-	['AddScore'] 		= { factor = 1 },
+	['AddMult'] 		= { factor = 1, round = true },
+	['AddChips'] 		= { factor = 1, round = true },
+	['AddScore'] 		= { factor = 1, round = true },
 	['MultiMult'] 		= { factor = 1, level = 1, multiply = true },
 	['MultiChips'] 		= { factor = 0.8, level = 1, multiply = true },
 	['MultiScore'] 		= { factor = 0.8, level = 1, multiply = true },
 	['ExpMult'] 		= { factor = 0.5, level = 2, multiply = true },
 	['ExpChips'] 		= { factor = 0.5, level = 2, multiply = true },
 	['ExpScore'] 		= { factor = 0.5, level = 2, multiply = true },
-	['AddMoney'] 		= { factor = 1 },
-	['HandSize']		= { factor = 0.5, level = 1, type = 'hand_size' },
-	['PlayHands']		= { factor = 0.5, },
-	['PlayDiscards'] 	= { factor = 0.5, },
-	['JokerSlots']		= { factor = 0.5, level = 1, type = 'joker_slots' },
-	['VoucherLimit']	= { factor = 0.5, level = 2, type = 'voucher_limit' },
-	['BoosterLimit']	= { factor = 0.5, level = 2, type = 'booster_limit' },
-	['MaxMayhem']		= { factor = 1, level = 1, type = 'max_mayhem' },
+	['AddMoney'] 		= { factor = 1, round = true },
+	['HandSize']		= { factor = 0.5, level = 1, round = true, type = 'hand_size'},
+	['PlayHands']		= { factor = 0.5, round = true },
+	['PlayDiscards'] 	= { factor = 0.5, round = true },
+	['Retriggers'] 		= { factor = 0.5, round = true },
+	['JokerSlots']		= { factor = 0.5, level = 1, round = true, type = 'joker_slots' },
+	['VoucherLimit']	= { factor = 0.5, level = 2, round = true, type = 'voucher_limit' },
+	['BoosterLimit']	= { factor = 0.5, level = 2, round = true, type = 'booster_limit' },
+	['MaxMayhem']		= { factor = 1, level = 1, round = true, type = 'max_mayhem' },
 	['Mayhem']			= { factor = 1, level = 1, type = 'add_mayhem' },
 	['Probability']		= { factor = 1, },
 	['Misc']			= { factor = 1, }
@@ -2386,9 +2420,11 @@ Madcap.MayhemConversions = {
 	['hand']			= mlibmv['PlayHands'],
 	['hands']			= mlibmv['PlayHands'],
 	['hand_mod']		= mlibmv['PlayHands'],
+	['adds_hands']		= mlibmv['PlayHands'], -- UnStable?
 	['discard']			= mlibmv['PlayDiscards'],
 	['discards']		= mlibmv['PlayDiscards'],
 	['discard_mod']		= mlibmv['PlayDiscards'],
+	['discard_size']	= mlibmv['PlayDiscards'], -- UnStable?
 	['extra']			= mlibmv['Misc'],
 	['jokerslots']		= mlibmv['JokerSlots'],
 	['joker_slots']		= mlibmv['JokerSlots'],
@@ -2397,13 +2433,15 @@ Madcap.MayhemConversions = {
 	['extra_choices']	= mlibmv['ExtraChoices'],
 	['max_mayhem']		= mlibmv['MaxMayhem'],
 	['add_mayhem']		= mlibmv['Mayhem'],
+	['retriggers']		= mlibmv['Retriggers'],
+	['repetitions']		= mlibmv['Retriggers'],
 }
 
 -- 
 local function loop_keys_add(list, target, value)
 	MadLib.loop_func(list, function(k) target[k] = value end)
 end
-loop_keys_add({ 'mult', 'mult_mod', 'perma_mult', 'perma_h_mult' },
+loop_keys_add({ 'mult', 'mult_mod', 'perma_mult', 'perma_h_mult', 's_mult', 't_mult' },
 	Madcap.MayhemConversions,  mlibmv['AddMult'])
 loop_keys_add({ 'chips', 'chip_mod', 'perma_bonus', 'perma_h_chips' },
 	Madcap.MayhemConversions,  mlibmv['AddChips'])
@@ -2424,7 +2462,7 @@ MadLib.loop_func({ 'x', 'e', 'ee', 'eee', 'hyper' }, function(v)
 	local v1 = string.upper(v)
 	
 	loop_keys_add({ v..'mult', v..'mult_mod', v..'_mult', v1..'mult', v1..'mult_mod', 'h_'..v..'_mult',
-		'perma_'..v..'_mult', 'perma_h_'..v..'_mult' },
+		'perma_'..v..'_mult', 'perma_h_'..v..'_mult', },
 		Madcap.MayhemConversions,  mlibmv[_cat..'Mult'])
 
 	loop_keys_add({ 
@@ -2464,94 +2502,247 @@ function Madcap.Funcs.get_mayhem_multiplier(mayhem)
 end
 
 -- used to define what extra means for the vanilla jokers (which work differently?)
-Madcap.DefineExtras = {}
+-- also works with any joker that has undefined variables.
+Madcap.DefineExtras = {
+	['j_loyalty_card'] 		= { ['every'] = mlibmv['Misc'] }, -- every ? rounds
+	['j_8_ball'] 			= { ['extra'] = mlibmv['Probability'] }, -- 1 in ? chance
+	['j_misprint'] 			= { ['max'] = mlibmv['AddMult'], ['min'] = mlibmv['AddMult'] }, -- min and max mult
+	['j_chaos'] 			= { ['extra'] = mlibmv['Misc'] }, -- reroll
+	['j_fibonacci'] 		= { ['extra'] = mlibmv['AddMult'] },
+	['j_steel_joker'] 		= { ['extra'] = mlibmv['MultiMult'] },
+	['j_scary_face'] 		= { ['extra'] = mlibmv['AddChips'] },
+	['j_abstract'] 			= { ['extra'] = mlibmv['AddChips'] },
+	['j_delayed_grat'] 		= { ['extra'] = mlibmv['AddMoney'] },
+	['j_hack'] 				= { ['extra'] = mlibmv['Retriggers'] },
+	['j_even_steven'] 		= { ['extra'] = mlibmv['AddMult'] },
+	['j_odd_todd'] 			= { ['extra'] = mlibmv['AddChips'] },
+	['j_business'] 			= { ['extra'] = mlibmv['Probability'] },
+	['j_egg'] 				= { ['extra'] = mlibmv['AddMoney'] },
+	['j_burglar'] 			= { ['extra'] = mlibmv['PlayHands'] },
+	['j_blackboard'] 		= { ['extra'] = mlibmv['MultiMult'] },
+	['j_supernova'] 		= { ['extra'] = mlibmv['AddMult'] },
+	['j_ride_the_bus'] 		= { ['extra'] = mlibmv['AddMult'] },
+	['j_space'] 			= { ['extra'] = mlibmv['Probability'] },
+	['j_blue_joker']	 	= { ['extra'] = mlibmv['AddChips'] },
+	['j_constellation']		= { ['extra'] = mlibmv['AddChips'] },
+	['j_red_card']			= { ['extra'] = mlibmv['AddMult'] },
+	['j_madness']			= { ['extra'] = mlibmv['MultiMult'] },
+	['j_riff_raff']			= { ['extra'] = mlibmv['JokerSlots'] },
+	['j_vagabond'] 			= { ['extra'] = mlibmv['AddMoney'] },
+	['j_baron'] 			= { ['extra'] = mlibmv['MultiMult'] },
+	['j_cloud_9'] 			= { ['extra'] = mlibmv['AddMoney'] },
+	['j_obelisk'] 			= { ['extra'] = mlibmv['MultiMult'] },
+	['j_photograph'] 		= { ['extra'] = mlibmv['MultiMult'] },
+	['j_gift'] 				= { ['extra'] = mlibmv['AddMoney'] },
+	['j_erosion'] 			= { ['extra'] = mlibmv['AddMult'] },
+	['j_mail'] 				= { ['extra'] = mlibmv['AddMoney'] },
+	['j_to_the_moon'] 		= { ['extra'] = mlibmv['AddMoney'] },
+	['j_hallucination'] 	= { ['extra'] = mlibmv['Probability'] },
+	['j_fortune_teller'] 	= { ['extra'] = mlibmv['AddMult'] },
+	['j_stone'] 			= { ['extra'] = mlibmv['AddChips'] },
+	['j_golden'] 			= { ['extra'] = mlibmv['AddMoney'] },
+	['j_lucky_cat'] 		= { ['extra'] = mlibmv['MultiMult'] },
+	['j_baseball'] 			= { ['extra'] = mlibmv['MultiMult'] },
+	['j_bull'] 				= { ['extra'] = mlibmv['AddChips'] },
+	['j_trading'] 			= { ['extra'] = mlibmv['AddMoney'] },
+	['j_flash'] 			= { ['extra'] = mlibmv['AddMult'] },
+	['j_popcorn'] 			= { ['extra'] = mlibmv['AddMult'] },
+	['j_trousers'] 			= { ['extra'] = mlibmv['AddMult'] },
+	['j_ancient'] 			= { ['extra'] = mlibmv['MultiMult'] },
+	['j_ramen'] 			= { ['extra'] = mlibmv['MultiMult'] },
+	['j_seltzer'] 			= { ['extra'] = mlibmv['Retriggers'] },
+	['j_smiley'] 			= { ['extra'] = mlibmv['AddMult'] },
+	['j_campfire'] 			= { ['extra'] = mlibmv['MultiMult'] },
+	['j_ticket'] 			= { ['extra'] = mlibmv['AddMoney'] },
+	['j_acrobat'] 			= { ['extra'] = mlibmv['MultiMult'] },
+	['j_sock_and_buskin'] 	= { ['extra'] = mlibmv['Retriggers'] },
+	['j_throwback'] 		= { ['extra'] = mlibmv['MultiMult'] },
+	['j_hanging_chad'] 		= { ['extra'] = mlibmv['Retriggers'] },
+	['j_rough_gem'] 		= { ['extra'] = mlibmv['AddMoney'] },
+	['j_arrowhead'] 		= { ['extra'] = mlibmv['AddChips'] },
+	['j_onyx_agate'] 		= { ['extra'] = mlibmv['AddMult'] },
+	['j_glass'] 			= { ['extra'] = mlibmv['MultiMult'] },
+	['j_flower_pot'] 		= { ['extra'] = mlibmv['MultiMult'] },
+	['j_idol'] 				= { ['extra'] = mlibmv['MultiMult'] },
+	['j_seeing_double'] 	= { ['extra'] = mlibmv['MultiMult'] },
+	['j_matador'] 			= { ['extra'] = mlibmv['AddMoney'] },
+	['j_hit_the_road'] 		= { ['extra'] = mlibmv['MultiMult'] },
+	['j_invisible'] 		= { ['extra'] = mlibmv['Misc'] }, -- rounds
+	['j_satellite'] 		= { ['extra'] = mlibmv['AddMoney'] },
+	['j_shoot_the_moon'] 	= { ['extra'] = mlibmv['AddMult'] },
+	['j_drivers_license'] 	= { ['extra'] = mlibmv['MultiMult'] },
+	['j_caino'] 			= { ['extra'] = mlibmv['MultiMult'] },
+	['j_triboulet'] 		= { ['extra'] = mlibmv['MultiMult'] },
+	['j_cry_soccer'] 		= { ['holygrail'] = mlibmv['Misc'] }, -- One For All
+}
+
+function Madcap.Funcs.change_hand_size(_old,_new)
+	if _new == _old then return false end
+	G.hand:change_size(_new - _old)
+	return true
+end
+
+function Madcap.Funcs.change_extra_choices(_old,_new)
+	if _new == _old then return false end
+	G.GAME.extra_choices = (G.GAME.extra_choices or 0) + (_new - _old)
+	return true
+end
+
+function Madcap.Funcs.change_consumable_limit(_old,_new)
+	if _new == _old then return false end
+	G.consumeables.config.card_limit = G.consumeables.config.card_limit + (_new - _old)
+	return true
+end
+
+function Madcap.Funcs.change_voucher_limit(_old,_new)
+	if _new == _old then return false end
+	SMODS.change_voucher_limit(_new - _old)
+	return true
+end
+
+function Madcap.Funcs.change_booster_limit(_old,_new)
+	if _new == _old then return false end
+	SMODS.change_booster_limit(_new - _old)
+	return true
+end
+
+function Madcap.Funcs.change_joker_slots(_old,_new)
+	if _new == _old then return false end
+	G.jokers.config.card_limit = G.jokers.config.card_limit + (_new - _old)
+	return true
+end
 
 local mayhemize_funcs = {
-	['joker_slots'] = function(_old,_new)
-		G.jokers.config.card_limit = G.jokers.config.card_limit + (_new - _old)
-	end,
-	['booster_limit'] = function(_old,_new)
-		SMODS.change_booster_limit(_new - _old)
-	end,
-	['voucher_limit'] = function(_old,_new)
-		SMODS.change_voucher_limit(_new - _old)
-	end,
-	['extra_choices'] = function(_old,_new)
-		G.GAME.extra_choices = (G.GAME.extra_choices or 0) + (_new - _old)
-	end,
-	['max_mayhem'] = function(_old,_new)
+	['joker_slots'] 	= mfuncs.change_joker_slots,
+	['booster_limit'] 	= mfuncs.change_booster_limit,
+	['voucher_limit'] 	= mfuncs.change_voucher_limit,
+	['extra_choices'] 	= mfuncs.change_extra_choices,
+	['max_mayhem'] 		= function(_old,_new)
+		if _new == _old then return false end
 		G.GAME.max_mayhem = (G.GAME.max_mayhem or 10) + (_new - _old)
+		return true
 	end,
 	['add_mayhem'] = function(_old,_new)
+		if _new == _old then return false end
 		Madcap.Funcs.ease_mayhem(_new - _old)
+		return true
 	end,
+	['rift_limit'] 		= function(_old,_new)
+		if _new == _old then return false end
+		G.GAME.rift_limit = (G.GAME.rift_limit or 10) + (_new - _old)
+		return true
+	end,
+	['hand_size'] 		= mfuncs.change_hand_size,
+	['handsize'] 		= mfuncs.change_hand_size,
+	['h_size'] 			= mfuncs.change_hand_size,
+	['h_mod']			= mfuncs.change_hand_size,
+	['consumable_limit'] = mfuncs.change_consumable_limit,
+	['holygrail']		= function(_old,_new)
+		mfuncs.change_hand_size(_old,_new)
+		mfuncs.change_consumable_limit(_old,_new)
+		mfuncs.change_booster_limit(_old,_new)
+	end
 }
+
+function Madcap.Funcs.can_mayhemize_value(_level,_type)
+	local level_check = _level <= mfuncs.get_mayhem_state()
+
+	return level_check
+end
 
 function Madcap.Funcs.mayhemize_table(_card, _table, _args)
 	-- loop through the table
 	MadLib.loop_table(_table, function(k,v)
 		-- is this a blacklisted term?
-		tell('Key ' .. k .. ' explored!')
 		if Madcap.MayhemBlacklist[k] == nil then -- not blacklisted
 			if type(v) == 'table' then -- we must go deeper
 				Madcap.Funcs.mayhemize_table(_card, v, _args)
 			elseif type(v) == 'number' then -- do the number
-				local _key = k ~= 'extra' and k or Madcap.DefineExtras[_card.config.center.key] or ''
-				local _data = Madcap.MayhemConversions[_key]
+				local _key = k ~= 'extra' and k
+				local _data = k and Madcap.MayhemConversions[_key]
+				if Madcap.DefineExtras[_card.config.center.key] then
+					tell('Finding extra value...')
+					_data = Madcap.DefineExtras[_card.config.center.key][k]
+				end
 				local _xval = _data and _data.multiply
-				if not _key or (_xval and v == 1) or  (not _xval and v == 0) then 
+
+				if 
+					not _data -- no data
+					or (not _xval and v == 0) -- additive value at 0.00
+					or (_xval and v == 1) -- multiplying value at 1.00 (or 0.00)
+				then
 					return false 
 				end -- don't bother if multiplying value and not set
+				tell('Key ' .. k .. ' explored!')
 
 				local factor = (_data and _data.factor) or 1
+				local must_round = (_data and _data.round or false)
 				local nu_min, nu_max = MadLib.deep_copy(_args.min), MadLib.deep_copy(_args.max)
-				
 				local center, half_range = (nu_min + nu_max) / 2, math.abs(nu_max - nu_min) / 2 * factor
 				nu_min, nu_max = center - half_range, center + half_range
+				
+				local _mult = MadLib.random_between(nu_min,nu_max, 2)
 
-				local _mult = MadLib.random_between(nu_min,nu_max,2)
-
-				if _xval then tell('This is an multiplying value!') end
-
+				--if _xval then tell('This is an multiplying value!') end
 				
 				local _base = v - (_xval and 1 or 0)
-				_table[k] = (_base * _mult) + (_xval and 1 or 0)
-
+				_table[k] = MadLib.round((_base * _mult) + (_xval and 1 or 0), must_round and 0 or 2)
 				
 				if _data and _data.type and mayhemize_funcs[_data.type] then
 					mayhemize_funcs[_data.type](v,_table[k])
 				end
 
-
-				tell(tostring(k)..' is now '..tostring(_table[k])..' ('..tostring(v)..').')
+				--tell(tostring(k)..' is now '..tostring(_table[k])..' ('..tostring(v)..').')
 			end -- don't mess with bools and strings.
 		end
 	end)
 end
 
-function Madcap.Funcs.mayhemize(_card, _args)
+-- Messes up the values of the targeted cards based on 
+function Madcap.Funcs.mayhemize(_card, _args, _silent)
 	local low_mult 		= (_args and _args.min_mult) or (1/2)
 	local high_mult		= (_args and _args.max_mult) or 2
+	local mayhem_state	= mfuncs.get_mayhem_state()
+	local arguments 	= { min	= low_mult, max	= high_mult }
 
-	Madcap.Funcs.mayhemize_table(_card, _card.ability, {
-		min	= low_mult,
-		max	= high_mult
-	})
+	if not (_args and _args.force_values) then
+		if mayhem_state < 1 then
+			low_mult	= low_mult * 1.5
+			high_mult	= high_mult / 1.5
+		elseif mayhem_state < 2 then
+			low_mult	= low_mult / 1.5
+			high_mult	= high_mult * 1.5
+		elseif mayhem_state < 3 then
+			low_mult	= low_mult / 2
+			high_mult	= high_mult * 2
+		else
+			low_mult	= low_mult / 3
+			high_mult	= high_mult * 3
+		end
+	end
+
+	Madcap.Funcs.mayhemize_table(_card, _card.ability, arguments)
 	-- loop through each
 
 	-- max mayhem (10 has between x1/8 and x8 mult)
 	-- 0 mayhem is x1 mult
-
+	if not _silent then
+		MadLib.simple_event(function()
+        	_card:juice_up(0.3, 0.4)
+        	play_sound("rgmc_mayhemize")
+			return true
+		end, 0.0, 'immediate')
+	end
 end
 
 function Madcap.Funcs.flip_and_mayhemize(_cards,_args)
 	MadLib.flip_cards(_cards, function(v)
-		Madcap.Funcs.mayhemize(v)
+		Madcap.Funcs.mayhemize(v, _args, true)
 	end, nil, function(v)
         card:juice_up(0.3, 0.4)
+        play_sound("rgmc_mayhemize")
 	end)
 end
-
 
 load_folder('items') -- load the items folder
 load_folder('compat') -- load the items folder
@@ -2731,12 +2922,12 @@ Madcap.JokerLists.ExtraChoices = {
 function Card:open()
 	local orig = self.ability.extra or 1
 	-- checks if there are any +booster slot jokers
-	local _helpers = Madcap.get_list_matches(G.jokers.cards, function(v)
-		return Madcap.JokerLists.ExtraChoices['j_'..v.config.center.key]  -- if an extra choice card
-	end) 
+	local _helpers = 0
 	if _helpers > 0 then
 		for k, v in pairs(_helpers) do
-			orig = orig + v.ability.extra.extra_choices
+			if v.ability.extra and v.ability.extra.extra_choices then
+				orig = orig + v.ability.extra.extra_choices
+			end
 		end
 		self.config.choose = math.floor(orig)
 		self.ability.extra = math.floor(orig)
@@ -2744,9 +2935,7 @@ function Card:open()
 	-- commence regular opening
 	card_open_ref(self)
 	G.E_MANAGER:add_event(Event({delay = 0.5, timer = 'REAL', func = function()
-		if poppins > 0 then
-			G.GAME.pack_choices = math.floor(self.ability.extra)
-		end
+		if _helpers > 0 then G.GAME.pack_choices = math.floor(self.ability.extra) end
 		return true
 	end }))
 end

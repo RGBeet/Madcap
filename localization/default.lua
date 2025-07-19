@@ -3843,14 +3843,10 @@ return {
                     "???"
 				},
 			},
-			rgmc_clowned = {
+			rgmc_clown = {
 				name = "Clowned",
 				text = {
-                    "Gives its parent {C:attention}Joker",
-                    "{C:chips}+20{} Chips when card is played",
-                    "Takes {C:chips}-15{} Chips",
-                    "from parent {C:attention}Joker",
-                    "if {C:blue}drawn{} and {C:red}not{} played",
+                    "Catch the clown!",
 				},
 			},
             rgmc_bronze_seal = {
@@ -3973,7 +3969,7 @@ return {
 			pnr_rgmc_traveller = {
                 name = "Traveller",
                 text = {
-                    "Upon using a {C:planet}Planet{} cards",
+                    "Upon using a {C:planet}Planet{} card",
                     "level up the last played",
                     "{C:attention}poker hand by #1# level(s)",
                     "{C:inactive}{Currently {C:attention}#2# {C:inactive})"
@@ -3986,7 +3982,7 @@ return {
                 name = "Paschal",
                 text = {
                     "Upon selecting blind,",
-                    "apply {C:dark_edition}random edition",
+                    "apply random {C:attention}enhancement",
                     "to random playing {C:attention}card",
                 },
                 unlock = {
@@ -4026,7 +4022,7 @@ return {
                     "{C:attention}Blind{}, {C:attention}Aces{} are",
                     "considered {C:attention}#1#s{}",
                     "{C:inactive}(Rank changes",
-                    "{C:inactive}each Blind"
+                    "{C:inactive}each Blind)"
                 },
                 unlock = {
                     "???",
@@ -4312,6 +4308,23 @@ return {
 		},
 		v_dictionary = {
             capitalism_money    = "Boss Capital ($#1#)",
+            --[[
+            k_riftraft_buy = {
+                "Buy & Void", 
+                "for $#3#",
+                "(#1#/#2#)"
+            },
+            k_riftraft_send = {
+                "Void!",
+            },
+            k_riftraft_nope = { 
+                "Nope!" 
+            },
+            k_riftraft_limit_reached = {
+                "Voiding Limit",
+                "Reached!",
+                "(#1#/#2#)"
+            },]]
 		},
     },
 }

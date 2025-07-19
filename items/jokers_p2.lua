@@ -1229,6 +1229,8 @@ local catch_the_clown = {
     blueprint_compat    = true,
 	demicoloncompat     = true,
     config = {
+        rand_id = nil,
+        caught = false,
         extra = {
             chips       = 0,
             chip_mod    = 40,
@@ -1236,8 +1238,6 @@ local catch_the_clown = {
         immutable = {
             max_misses  = 3,
             misses      = 0,
-            clown_card  = nil,
-            clown_caught = false
         }
     },
 	loc_vars = function(self, info_queue, card)
@@ -1245,15 +1245,53 @@ local catch_the_clown = {
 	end,
     calculate = function(self, card, context)
 
-        if
-            context.setting_blind
-        then -- add clown sticker to card in first half of deck
-            local possible_deck = MadLib.get_possible_deck()
-            local target = pseudorandom_element(possible_deck, pseudoseed('rgmc_catch_the_clown'))
-            card.ability.immutable.clown_card = target
-            card.ability.immutable.clown_caught = false
+        if context.shuffled_deck then -- add clown sticker to card in first half of deck
+            local _cards    = MadLib.get_possible_deck(G.deck.cards)
+            local _index   =  math.floor(math.random() * #_cards) + 1
+            tell("Card is ".. tostring(_index))
+            SMODS.Stickers["rgmc_clown"]:apply(_cards[_index], true)
+            card.ability.immutable.caught = false
+            MadLib.pair_cards(self,_cards[_index])
+        end
+        
+        if context.after then
+            local _index = nil
+            print(tostring(#G.deck.cards) .. ' cards...')
+            for i=1,#G.deck.cards do
+                if G.deck.cards[i].config.rand_id == self.config.rand_id then
+                    _index = i
+                    break
+                end
+            end
+            tell('Index in deck is ' .. tostring(_index) .. '...')
+        end
 
-            return MadLib.seal_event(card.ability.immutable.clown_card, 'rgmc_clown')
+        if -- gain chippys
+            context.individual
+            and context.cardarea == G.play
+            and context.other_card
+        then
+            local _card = context.other_card
+            local pairs = _card.config.extra and _card.config.extra.rand_id ~= nil and (self.config.extra.rand_id == _card.config.extra.rand_id)
+            if pairs then
+                --tell('Win!')
+                card.ability.immutable.clown_caught = true
+                card.ability.extra.chips = card.ability.extra.chips + card.ability.extra.chip_mod
+                MadLib.pair_cards(card, _card, nil, true)
+                print(self.config.rand_id)
+                MadLib.event({
+                    trigger = 'after', 
+                    func = function() 
+                        SMODS.Stickers["rgmc_clown"]:apply(_card, false)
+                        return true 
+                    end
+                })
+                return {
+                    message     = localize('k_upgrade_ex'),
+                    colour      = G.C.CHIPS,
+                    card        = card
+                }
+            end
         end
 
 		if -- generic joker type stuff
@@ -1264,40 +1302,26 @@ local catch_the_clown = {
             return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips, card, card.ability.extra.chips)
         end
 
-        if -- gain chippys
-            context.individual
-            and context.cardarea == G.play
-            and (card.ability.immutable.clown_card ~= nil and context.other_card == card.ability.immutable.clown_card)
-        then
-            card.ability.extra.chips = card.ability.extra.chips + card.ability.extra.chip_mod
-            SMODS.Stickers["rgmc_clown"]:apply(context.other_card,false)
-            card.ability.immutable.clown_card = nil -- all good!
-            card.ability.immutable.clown_caught = true
-            -- win !!!
-            MadLib.simple_event(function()
-                target:juice_up(0.3,0.3)
-                play_sound('tarot2', 1.2, 0.4)
-                return {
-                    message = localize("k_upgrade_ex"), -- Upgrade!
-                    card = card,
-                    colour = G.C.CHIPS
-                }
-            end, 0.5, 'before')
-        end
-
         -- Checks if you have caught the clown.
         if
             context.end_of_round
+            and context.cardarea == G.joker
             and not card.ability.immutable.clown_caught -- clown was missed. sad day.
         then
             card.ability.immutable.misses = card.ability.immutable.misses + 1
-
-            -- Remove clown status.
-            if card.ability.immutable.clown_card then
-                SMODS.Stickers["rgmc_clown"]:apply(card.ability.immutable.clown_card, false)
-                card.ability.immutable.clown_card = nil
+            -- Get rid of the ID and the sticker.
+            for i=1, #G.playing_cards do
+                local _card = G.playing_cards[i]
+                if 
+                    _card.config.extra 
+                    and _card.config.extra.rand_id
+                    and _card.config.extra.rand_id == self.config.extra.rand_id
+                then
+                    SMODS.Stickers["rgmc_clown"]:apply(_card, false)
+                    MadLib.pair_cards(card, _card, nil, true)
+                    break
+                end
             end
-
             -- Remove the card altogether, you failed.
             if card.ability.immutable.misses == card.ability.immutable.max_misses then
                 return MadLib.banana_remove(card, "rgmc_spam_deathex")
