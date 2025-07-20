@@ -758,9 +758,9 @@ return {
             j_rgmc_thorium_joker = {
                 name = "Thorium Joker",
                 text = {
-                    "Scored cards from {C:attention}2{} to {C:attention}9{}",
+                    "Scored cards of ranks {C:attention}2{}-{C:attention}9{}",
                     "have a {C:green}#1# in #2#{} chance",
-                    "of changing ranks",
+                    "to {C:attention}change ranks{}",
                     "{C:inactive,s:0.7}(2~5, 3~8, 4~7, 6~9)"
                 },
                 quote = {
@@ -773,7 +773,7 @@ return {
                 text = {
                     "Retrigger {C:attention}#1#{} played",
                     "card used in scoring",
-                    "{C:attention}#2#{} additional times",
+                    "{C:attention}#2#{} additional time(s)",
                     "{C:inactive,s:0.7}(Position changes each hand)"
                 },
             },
@@ -781,9 +781,9 @@ return {
                 name = "Glass Michel",
                 text = {
                     "Scored {C:attention}Glass{} cards retrigger",
-                    "with no chance of breaking",
+                    "without chance of breaking",
                     "{C:green}#1# in #2#{} chance this card is",
-                    "destroyed at end of {C:attention}round{}",
+                    "destroyed at end of {C:attention}Blind{}",
                 },
                 quote = {
                     "I mean, it's one banana, Michel.",
@@ -816,7 +816,7 @@ return {
                     {
                         "Gains {C:chips}+#1#{} Chips per played hand",
                         "{C:green}#2# in #3#{} chance to {C:red}reset{}",
-                        "at {C:attention}end{} of Blind",
+                        "at end of {C:attention}Blind}}",
                         "{C:inactive}(Currently {C:chips}+#4#{C:inactive})"
                     },
                     {
@@ -830,7 +830,8 @@ return {
                 text = {
                     "If Blind is beaten",
                     "in {C:attention}first{} hand,",
-                    "create a {C:attention}consumable{}"
+                    "create a {C:attention}consumable{}",
+                    "{C:inactive}(Must have room)"
                 },
             },
             j_rgmc_venn_diagram = {
@@ -861,7 +862,7 @@ return {
             j_rgmc_blindfold_joker = {
                 name = "Blindfold Joker",
                 text = {
-                    "{X:mult,C:white}X#1#{} Mult against {C:attention}Big{} Blinds",
+                    "{X:mult,C:white}X#1#{} Mult against {C:attention}Boss{} Blinds",
                     "Lose {X:mult,C:white}X#2#{} Mult",
                     "when Blind is {C:attention}skipped",
                     "({C:attention}#3#{})"
@@ -872,7 +873,7 @@ return {
                 text = {
                     "For each scored {C:rgmc_goblets}Goblet{} card,",
                     "{C:green}#1# in #2#{} chance",
-                    "this Joker gains {C:mult}+#3# Mult",
+                    "this Joker gains {C:mult}+#3#{} Mult",
                     "Resets at end of {C:attention}Ante",
                     "{C:inactive}(Currently {C:mult}+#4# {C:inactive} Mult)"
                 },
@@ -891,7 +892,7 @@ return {
                 name = "Jimbo's Funeral",
                 text = {
                     "After playing {C:attention}final hand{},",
-                    "convert all {C:red}Discards{} to {C:blue}Hands{}",
+                    "convert remaining {C:red}discards{} to {C:blue}hands{}",
                     "{C:inactive}(Resets at end of Blind)"
                 },
                 quote = {
@@ -901,8 +902,9 @@ return {
             j_rgmc_quick_brown_fox = {
                 name = "Quick Brown Fox",
                 text = {
-                    "Gains {C:chips}+#1#{} Chips for every unique",
-                    "rank played this {C:attention}Ante",
+                    "Gains {C:chips}+#1#{} Chips",
+                    "for every {C:attention}unique rank",
+                    "played this Ante",
                     "{C:inactive}(Currently {C:chips}+#2#{C:inactive} Chips)"
                 },
                 quote = {
@@ -912,16 +914,16 @@ return {
             j_rgmc_penrose_stairs = {
                 name = "Penrose Stairs",
                 text = {
-                    "Each scored card has a {C:green}#1# in #2#{} chance",
-                    "to increase in rank {C:attention}#3#{} times",
+                    "Scored cards have a {C:green}#1# in #2#{} chance",
+                    "to increase in rank {C:attention}#3#{} time(s)",
                     "{C:inactive}(e.g. 10 -> J)"
                 },
             },
             j_rgmc_joker_squared = {
                 name = "Joker Squared",
                 text = {
-                    "Each scored {C:attention}square number{} rank",
-                    "gives {C:mult}+#1#{} Mult",
+                    "Scored {C:attention}square number{} ranks",
+                    "give {C:mult}+#1#{} Mult",
                 },
             },
             j_rgmc_iron_joker = {
@@ -991,7 +993,8 @@ return {
                     'Played cards with',
                     '{C:purple}#1#{} suit give',
                     '{C:mult}+#2#{} Mult when scored',
-                    'Suit changes after each scored {C:attention}Hand{}'
+                    'Suit changes after",
+                    "each trigger'
                 },
             },
             j_rgmc_neighborhood_watch = {
@@ -1011,14 +1014,14 @@ return {
             j_rgmc_la_jokeonde = {
                 name = "La Jokeonde",
                 text = {
-                    "At end of Blind, apply {C:attention}random Edition",
+                    "At end of Blind, apply random {C:dark_edition}edition",
                     "to {C:attention}#1#{} unscored card(s)",
                     "in {C:attention}winning{} hand",
                 },
                 idea = {"Caligula"},
             },
             j_rgmc_bluenana = {
-                name = "Blue Java",
+                name = "Bluenana",
                 text = {
                     "{X:chips,C:white}X#1#{} Chips",
                     "{C:green}#2# in #3#{} chance this card is",
@@ -1026,7 +1029,7 @@ return {
                 },
             },
             j_rgmc_redd_dacca = {
-                name = "Red Dacca",
+                name = "Redd Dacca",
                 text = {
                     "{X:dark_edition,C:white}^#1#{} Mult",
                     "{C:green}#2# in #3#{} chance this card is",
@@ -1043,22 +1046,23 @@ return {
             j_rgmc_pentagon = {
                 name = "Pentagon",
                 text = {
-                    "Each scored {C:attention}pentagonal number{} rank",
-                    "gives {C:mult}+#1#{} Mult",
+                    "Scored {C:attention}pentagonal number{} ranks",
+                    "give {C:chips}+#1#{} Chips",
+                    "{C:inactive}({C:attention}Queens{C:inactive}count as {C:attention}12{C:inactive})"
                 },
             },
             j_rgmc_null_and_void = {
                 name = "Null and Void",
                 text = {
                     "Before scoring,",
-                    "debuffs the next {C:attention}#1#{} Jokers(s)",
+                    "debuffs the next {C:attention}#1#{} Joker(s)",
                     "to the right",
                 },
             },
             j_rgmc_lady_liberty = {
                 name = "Lady Liberty",
                 text = {
-                    "Upon playing first {C:attention}Hand{},",
+                    "Upon playing first {C:attention}hand{},",
                     "apply a {C:attention}Patina Seal{} to",
                     "{C:attention}first played card{}",
                 },
@@ -1066,9 +1070,9 @@ return {
             j_rgmc_vari_seala = {
                 name = "Vari-Seala",
                 text = {
-                    "Scoring cards with {C:attention}Seals{}",
+                    "Scoring cards with {C:attention}Seal{}",
                     "have a {C:green}#1# in #2#{} chance to",
-                    "copy Seal(s) to {C:attention}#3#{} random played card(s){}"
+                    "copy Seal to {C:attention}#3#{} random played card(s){}"
                 },
             },
             j_rgmc_bball_pasta = {
@@ -1084,7 +1088,7 @@ return {
             j_rgmc_squeezy_cheeze = {
                 name = "Squeezy Cheeze",
                 text = {
-                   "Gains {C:white,X:chips}X#1#{} Chips for",
+                   "Gives {C:white,X:chips}X#1#{} Chips for",
                    "every {C:white,X:mult}X#2#{} Mult scored",
                    "{C:inactive,s:0.8}Disappears in {C:attention,s:0.8}#3# {C:inactive,s:0.7}round(s)"
                 },
@@ -1094,38 +1098,38 @@ return {
                 text = {
                     "If played hand contains",
                     "a {C:attention}light{} suit, a {C:attention}dark{} suit,",
-                    "and a {C:attention}special suit{}, gives {X:mult,C:white}X3{} Mult",
-                    "{C:inactive,s:0.7}(Requires at least three suits)"
+                    "and a {C:attention}modded suit{}, give {X:mult,C:white}X3{} Mult",
+                    "{C:inactive,s:0.7}(Requires at least 3 suits)"
                 },
             },
             j_rgmc_shovel_joker = {
                 name = "Shovel Joker",
                 text = {
                     "Scored {C:attention}Knights{} with {C:attention}dark suits{}",
-                    "give {C:mult}2X{} Mult",
+                    "give {C:mult}X#1#{} Mult",
                     "{C:inactive,s:0.7}({C:clubs}Clubs{}, {C:spades}Spades{}, etc.)"
                 },
             },
             j_rgmc_rhodochrosite = {
                 name = "Rhodochrosite",
                 text = {
-                    "Scored cards with #1 suit",
-                    "give {C:mult}+#4#{} Mult / {C:chips}+#5#{} Chips if",
-                    "played after #2# / #3#"
+                    "Scored #1# give",
+                    "{C:mult}+#4#{} Mult/{C:chips}+#5#{} Chips",
+                    "if played after #2#/#3#"
                 },
             },
             j_rgmc_waveworx = {
                 name = "Waveworx",
                 text = {
                     "First hand of round",
-                    "counts as {C:attention}Straight",
+                    "counts as {C:attention}#1#",
                 },
             },
             j_rgmc_miracle_pop = {
                 name = "Miracle Pop",
                 text = {
-                    "Gains {C:chips}+#3#{} / {C:chips}+#4#{} Chips per",
-                    "scored #1# / #2#",
+                    "Gains {C:chips}+#3#{}/{C:chips}+#4#{} Chips per",
+                    "scored #1#/#2#",
                     "When {C:attention}sold, distribute {C:chips}#5#{} chips{}",
                     "among {C:attention}#6#{} cards in {C:attention}hand",
                     "{C:inactive}(or {C:chips}+#7#{} {C:inactive}bonus chips)"
@@ -1134,9 +1138,9 @@ return {
             j_rgmc_doom_bunny = {
                 name = "Doom Bunny",
                 text = {
-                    "Scored {C:attention}Wild{} Cards change into",
-                    "a {C:attention}random rank{} from the deck",
-                    "(Copies {C:attention}Editions{} and {C:attention}Seals{})"
+                    "Scored {C:attention}Wild{} cards copy",
+                    "a {C:attention}random{} card from deck",
+                    "(Copies rank, edition, and seal)"
                 },
             },
             j_rgmc_rocket_keychain = {
@@ -1150,11 +1154,11 @@ return {
             j_rgmc_legend_rio = {
                 name = "Rio",
                 text = {
-                    "{C:attention}Aces{} are considered as {C:attention}#1#{}",
-                    "(Can count as either an",
+                    "{C:attention}Aces{} are considered {C:attention}#1#{}",
+                    "Can count as either an",
                     "{C:attention}Ace{}, {C:attention}King{}, or {C:attention}Queen{}",
-                    "depending on which has",
-                    "{C:attention}fewest{} cards in deck",
+                    "depending on which appears the",
+                    "{C:attention}least{} in full deck",
                     "{C:inactive}\"Let's ball.\""
                 },
             },
@@ -1199,11 +1203,12 @@ return {
             j_rgmc_twinkle_of_contagion = {
                 name = "Twinkle of Contagion",
                 text = {
-                    "Scoring cards with {C:attention}Editions{}",
-                    "have a {C:green}#1# in #2#{} chance to",
-                    "transfer Edition to a {C:attention}random played card{}",
-                    "If no cards in deck have {C:attention}Polychrome{},",
-                    "apply {C:attention}Polychrome{} to one base edition card"
+                    "At start of Blind,",
+                    "apply Twinkling and Polychrome",
+                    "to 1 random card(s) in deck",
+                    "Scored cards transfer",
+                    "edition and sticker to",
+                    "random card in hand",
                 },
             },
             j_rgmc_conspiracy_wizard = {
@@ -1216,7 +1221,7 @@ return {
             j_rgmc_continuum = {
                 name = "Continuum",
                 text = {
-                    "Scored {C:attention}8{}s {C:attention}retrigger{}",
+                    "First scored {C:attention}8{} retriggers",
                     "all previously scored cards"
                 },
             },
@@ -1233,8 +1238,8 @@ return {
             j_rgmc_easter_egg = {
                 name = "Easter Egg",
                 text = {
-                    "{C:attention}Sell this Joker to",
-                    "apply {C:attention}random editions{}",
+                    "{C:attention}Sell{} this Joker to",
+                    "apply {C:attention}random edition(s){}",
                     "to {C:attention}#1#{} random card(s) in {C:attention}deck{}",
                     "{C:inactive,s:0.7}(Increases by {C:attention}#2# {C:inactive,s:0.7}upon winning Boss Blind)",
                 },
@@ -1346,7 +1351,7 @@ return {
             j_rgmc_primordial_joker = {
                 name = "Primordial Joker",
                 text = {
-                    "This Joker gives {C:mult}+#1#{} Mult",
+                    "{C:mult}+#1#{} Mult",
                     "per {C:rgmc_mayhem}Mayhem Point{}",
                     "{C:inactive}(Currently {C:mult}+#2#{}{C:inactive})"
                 },
@@ -1360,7 +1365,7 @@ return {
                 },
             },
             j_rgmc_nope_joker = {
-                name = "Nope Joker",
+                name = "nope.jkr",
                 text = {
                     "When {C:blue}playing{} or {C:red}discarding{},",
                     "{C:green}#1# in {} ({C:green}#2#{} / {C:green}#3#{}) chance to",
@@ -3784,24 +3789,6 @@ return {
                     "{C:dark_edition}+#1#{} Rifting Limit",
                     "{C:blue}-#1#{} discard(s) each round",
                     "{C:inactive}(Currently {C:attention}#2#{C:inactive} cards per Blind)",
-				},
-			},
-            -- Graveyard Shift
-			v_rgmc_graveyard_shift = {
-				name = "Graveyard Shift",
-				text = {
-                    "Upon {C:attention}destruction{}, {C:attention}Jokers{},",
-                    "have a {C:green}#1# in #2#{} chance to",
-                    "appear in {C:attention}booster packs{}",
-                    "or the {C:attention}Shop{}"
-				},
-			},
-			v_rgmc_the_joking_dead = {
-				name = "The Joking Dead",
-				text = {
-                    "After each {C:attention}Boss Blind{},",
-                    "{C:attention}Jokers{} in the {C:dark_edition}Graveyard{}",
-                    "have their stats {C:dark_edition}increased",
 				},
 			},
             -- Event Passes

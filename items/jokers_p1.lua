@@ -35,7 +35,7 @@ local vari_seala = {
     atlas   = sprites,
     pos     = get_pos(0,0),
     rarity  = 1,
-    cost    = 5,
+    cost    = 4,
     unlocked            = true,
     discovered          = true,
     eternal_compat      = true,
@@ -90,11 +90,11 @@ local bball_pasta = {
     demicoloncompat     = true,
     config =  {
         extra = {
-            odds = 4,
-            chips = 6,
-            mult = 3,
-            chip_mod = 6,
-            mult_mod = 3
+            odds = 6,
+            chips = 5,
+            mult = 2,
+            chip_mod = 5,
+            mult_mod = 2
         }
     },
     loc_vars = function(self, info_queue, card)
@@ -178,7 +178,7 @@ local joker_squared = {
     blueprint_compat    = true,
     demicoloncompat     = true,
     config =  {
-        extra = { mult = 6 }
+        extra = { mult = 5 }
     },
     loc_vars = function(self, info_queue, card)
         return MadLib.collect_vars(number_format(card.ability.extra.mult))
@@ -212,7 +212,7 @@ local spectator = {
     blueprint_compat    = true,
     demicoloncompat     = true,
     config = {
-        extra = { mult_mod = 1, mult = 0 }
+        extra = { mult_mod = 2, mult = 0 }
     },
     loc_vars = function(self, info_queue, card)
         return MadLib.collect_vars(number_format(card.ability.extra.mult_mod))
@@ -357,7 +357,7 @@ local penrose_stairs = {
     atlas   = sprites,
     pos     = get_pos(0,7),
     rarity  = 1,
-    cost    = 3,
+    cost    = 4,
     unlocked            = true,
     discovered          = true,
     eternal_compat      = true,
@@ -395,14 +395,14 @@ local quick_brown_fox = {
     atlas   = sprites,
     pos     = get_pos(0,8),
     rarity  = 1,
-    cost    = 4,
+    cost    = 5,
     unlocked            = true,
     discovered          = true,
     eternal_compat      = true,
     perishable_compat   = true,
     blueprint_compat    = true,
     demicoloncompat     = true,
-    config = {  extra = { chips = 6 } },
+    config = {  extra = { chips = 7 } },
     loc_vars = function(self, info_queue, card)
         local amt = (G.GAME and G.GAME.MADCAP
             and G.GAME.MADCAP.ante.ante.unique_ranks) or 0
@@ -665,7 +665,7 @@ local easter_egg= {
     atlas   = sprites,
     pos     = get_pos(1,2),
     rarity  = 1,
-    cost    = 5,
+    cost    = 6,
     unlocked            = true,
     discovered          = true,
     eternal_compat      = true,
@@ -695,9 +695,6 @@ local easter_egg= {
                 card = card,
             }
         end
-
-        -- Sell it!
-
 		if
             (context.selling_self
                 and not context.blueprint)
@@ -870,7 +867,7 @@ local pentagon = {
     name    = name('pentagon'),
     pos     = get_pos(1,6),
     rarity  = 1,
-    cost    = 3,
+    cost    = 5,
     unlocked            = true,
     discovered          = true,
     eternal_compat      = true,
@@ -879,7 +876,7 @@ local pentagon = {
     demicoloncompat     = true,
     config = {
         extra = {
-            mult = 6,
+            chips = 21,
         }
     },
     loc_vars = function(self, info_queue, card)
@@ -894,7 +891,7 @@ local pentagon = {
             if MadLib.is_pentagonal(tonumber(rank))
                 or rank == 'Queen'
             then
-                return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddMult, card, card.ability.extra.mult)
+                return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips, card, card.ability.extra.chips)
             end
         end
     end,
@@ -906,7 +903,7 @@ local barbershop_joker = {
     atlas   = sprites,
     pos     = get_pos(1,8),
     rarity  = 1,
-    cost    = 3,
+    cost    = 5,
     unlocked            = true,
     discovered          = true,
     eternal_compat      = true,
@@ -914,7 +911,7 @@ local barbershop_joker = {
     blueprint_compat    = true,
     demicoloncompat     = true,
     config =  {
-        extra = { mult = 2, scored = false }
+        extra = { mult = 3, scored = false }
     },
     loc_vars = function(self, info_queue, card)
         local suit = Madcap.Funcs.safe_get(G.GAME, "current_round", "rgmc_barbershop", "suit") or 'Spades'
@@ -972,7 +969,7 @@ local cup_of_joeker = {
     atlas   = sprites,
     pos     = get_pos(1,7),
     rarity  = 1,
-    cost    = 3,
+    cost    = 5,
     unlocked            = true,
     discovered          = true,
     eternal_compat      = true,
@@ -997,7 +994,7 @@ local supreme_with_cheese = {
     atlas   = sprites,
     pos     = get_pos(1,9),
     rarity  = 1,
-    cost    = 3,
+    cost    = 6,
     unlocked            = true,
     discovered          = true,
     eternal_compat      = false,
@@ -1035,7 +1032,7 @@ local bluenana = {
     atlas   = sprites,
     pos     = get_pos(2,0),
     rarity  = 1,
-    cost    = 3,
+    cost    = 6,
     unlocked            = true,
     discovered          = true,
     eternal_compat      = false,
@@ -1076,7 +1073,7 @@ local redd_dacca = {
     atlas   = sprites,
     pos     = get_pos(2,1),
     rarity  = 1, -- Thanks, Beige Deck
-    cost    = 3,
+    cost    = 8,
     unlocked            = true,
     discovered          = true,
     eternal_compat      = false,
@@ -1085,7 +1082,7 @@ local redd_dacca = {
     demicoloncompat     = true,
     config = {
         extra = {
-            e_mult = 2,
+            e_mult = 1.4,
             odds = 200,
             numer_factor = 0.1 -- a little trick to mak
         }
@@ -1131,7 +1128,7 @@ local changing_had = {
     atlas   = sprites,
     pos     = get_pos(2,2),
     rarity  = 1,
-    cost    = 3,
+    cost    = 6,
     unlocked            = true,
     discovered          = true,
     eternal_compat      = true,
@@ -1183,7 +1180,7 @@ local ball_breaker = {
     atlas   = sprites,
     pos     = get_pos(2,3),
     rarity  = 1,
-    cost    = 4,
+    cost    = 5,
     unlocked            = true,
     discovered          = true,
     eternal_compat      = true,
@@ -1247,7 +1244,7 @@ local thorium_joker = {
     atlas   = sprites,
     pos     = get_pos(2,4),
     rarity  = 1,
-    cost    = 3,
+    cost    = 5,
     unlocked            = true,
     discovered          = true,
     eternal_compat      = true,
@@ -1301,7 +1298,7 @@ local twinkle_of_contagion = {
     atlas   = sprites,
     pos     = get_pos(2,5),
     rarity  = 2,
-    cost    = 3,
+    cost    = 6,
     unlocked            = true,
     discovered          = true,
     eternal_compat      = true,
@@ -1410,7 +1407,7 @@ local iron_joker = {
     atlas   = sprites,
     pos     = get_pos(2,6),
     rarity  = 2,
-    cost    = 3,
+    cost    = 6,
     unlocked            = true,
     discovered          = true,
     eternal_compat      = true,
@@ -1446,7 +1443,7 @@ local tungsten_joker = {
     atlas   = sprites,
     pos     = get_pos(2,7),
     rarity  = 2,
-    cost    = 3,
+    cost    = 7,
     unlocked            = true,
     discovered          = true,
     eternal_compat      = true,
@@ -1482,7 +1479,7 @@ local jeweler_joker = {
     atlas   = sprites,
     pos     = get_pos(2,8),
     rarity  = 2,
-    cost    = 3,
+    cost    = 8,
     unlocked            = true,
     discovered          = true,
     eternal_compat      = true,
@@ -1527,7 +1524,7 @@ local plentiful_ametrine = {
     demicoloncompat     = true,
     config =  {
         extra = {
-            odds = 6,
+            odds = 4,
             mult = 0,
             mult_mod = 4,
             suit = 'rgmc_goblets'
@@ -1583,7 +1580,7 @@ local toughened_shungite = {
     demicoloncompat     = true,
     config =  {
         extra = {
-            odds = 7,
+            odds = 4,
             chips = 0,
             chip_mod = 15,
             suit = 'rgmc_goblets'
@@ -1638,7 +1635,7 @@ local six_shooter = {
     blueprint_compat    = true,
     demicoloncompat     = true,
     config =  {
-        extra = { odds = 7, chips = 0, chip_mod = 30 }
+        extra = { odds = 6, chips = 0, chip_mod = 30 }
     },
     loc_vars = function(self, info_queue, card)
         return MadLib.collect_vars(
@@ -1860,7 +1857,7 @@ local crystal_cola = {
     atlas   = sprites,
     pos     = get_pos(3,5),
     rarity  = 2,
-    cost    = 5,
+    cost    = 4,
     unlocked            = true,
     discovered          = true,
     eternal_compat      = false, -- dependent on selling
@@ -1950,7 +1947,7 @@ local venn_diagram = {
     atlas   = sprites,
     pos     = get_pos(3,7),
     rarity  = 2,
-    cost    = 5,
+    cost    = 6,
     unlocked            = true,
     discovered          = true,
     eternal_compat      = true,
@@ -2028,7 +2025,7 @@ local three_trees = {
     atlas   = sprites,
     pos     = get_pos(3,9),
     rarity  = 2,
-    cost    = 5,
+    cost    = 6,
     unlocked            = true,
     discovered          = true,
     eternal_compat      = true,
@@ -2294,7 +2291,7 @@ local la_jokeonde = {
     atlas   = sprites,
     pos     = get_pos(4,4),
     rarity  = 3,
-    cost    = 8,
+    cost    = 9,
     unlocked            = true,
     discovered          = true,
     eternal_compat      = true,

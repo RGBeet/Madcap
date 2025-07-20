@@ -24,7 +24,7 @@ end
 local primordial_joker = {
     key     = 'primordial_joker',
     rarity  = 1,
-    cost    = 6,
+    cost    = 5,
     pos     = get_pos(5,0),
     unlocked            = true,
     discovered          = true,
@@ -105,7 +105,7 @@ local joker_in_binary = {
         '01101011 01100101 01110010\"'
 	},
     config = {
-        extra = { chips = 16 }
+        extra = { chips = 32 }
     },
 	loc_vars = function(self, info_queue, card)
 		return MadLib.collect_vars(card.ability.extra.chips)
