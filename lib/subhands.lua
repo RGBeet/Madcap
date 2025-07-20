@@ -92,6 +92,20 @@ MadLib.clear_hand_text = function(pit,vol)
             { mult = 0, chips = 0, handname = '', level = '' })
 end
 
+-- Sets subhand to TRUE (on) or FALSE (off) - if no state is provided, acts as a toggler.
+function Madcap.Funcs.set_subhand(_sh,_state)
+	if not G.GAME.subhands[_sh] then return false end
+	G.GAME.subhands[_sh].enabled = _state or (not G.GAME.subhands[_sh].enabled)
+	return true
+end
+
+function Madcap.Funcs.empower_subhand(_sh,_lvl)
+	if not G.GAME.subhands[_sh] then return false end
+	G.GAME.subhands[_sh].empowered = _lvl or 0
+	return true
+end
+
+-- Levels up the subhand
 MadLib.level_up_subhand = function(card, subhand, instant, amount)
     tell('Level Up Subhand')
     -- if no amount, assume it's just 1 level up

@@ -1673,6 +1673,23 @@ return {
                     "{C:inactive}... what the hell is a \"Meat\"?"
                 },
             },
+            j_rgmc_gentileschi = {
+                name = "Judith and Her Maidservant",
+                text = {
+                    "{C:attention}Light{} and {C:attention}Dark{} subhands",
+                    "can be made with",
+                    "{C:attention}#1#{} fewer card(s)",
+                    "{C:inactive}(Currently #2# cards)"
+                },
+            },
+            j_rgmc_vermeer = {
+                name = "Joker with Pearl Earring",
+                text = {
+                    "{C:attention}Dazzling{} subhands",
+                    "{C:attention}#1#{} fewer card(s)",
+                    "{C:inactive}(Currently #2# cards)"
+                },
+            },
             -- Finity compat
             j_rgmc_finity_blindfold = {
                 name = "Beige Blindfold",
@@ -1700,6 +1717,128 @@ return {
                     "requirements by {C:attention}#1#%{} per",
                     "{C:attention}#2#{} or better Joker",
                     "{C:inactive}(Currently #3#%{C:inactive})",
+                },
+            },
+            j_rgmc_finity_chimes = {
+                name = "Wisteria Chimes",
+                text = {
+                    "Retriggers all scored {C:attention}#1#{}",
+                    "{C:attention}#2#{} times",
+                    "{C:inactive}(Chooses rank(s) with",
+                    "{C:attention}fewest {C:inactive}cards in deck)"
+                },
+            },
+            j_rgmc_finity_target = {
+                name = "Tomato Target",
+                text = {
+                    "Gains {X:mult, C:white}X#1#{} Mult",
+                    "when scoring within",
+                    "{C:attention}#2#{}% of blind score",
+                    "{C:inactive}(Currently {X:mult,C:white}X#3#{C:inactive} Mult)"
+                },
+            },
+            j_rgmc_finity_void = {
+                name = "Midnight Void",
+                text = {
+                    "If {C:attention}scored{} card(s)",
+                    "in {C:attention}winning{} hand are",
+                    "base edition, apply {C:dark_edition}Negative{}",
+                    "and {C:chips}+#1#{} chip bonus"
+                },
+            },
+            j_rgmc_finity_twins = {
+                name = "Thistle Twins",
+                text = {
+                    "If number of scored cards is {C:attention}even{}",
+                    "1st/3rd cards give {X:mult,C:white}X#1#{} Mult and",
+                    "2nd/4th cards give {X:chips,C:white}X#2#{} Chips"
+                },
+            },
+            j_rgmc_finity_vino = {
+                name = "Verdigris Vino",
+                text = {
+                    "{C:green}#1# in #2#{} chance to",
+                    "replace enhancements with {C:attention}Vino{}",
+                    "Gains {X:purple}X#3#{} Score per",
+                    "{C:attention}Vino{} card added to deck",
+                    "{C:inactive}(Currently {X:purple,C:white}X#3#{C:inactive} Score)"
+                },
+            },
+            j_rgmc_finity_claw = {
+                name = "Amaranth Claw",
+                text = {
+                    "{C:dark_edition}+#1#{} selection limit",
+                    "If played hand contains",
+                    "{C:attention}#2#{} or more",
+                    "scored cards, {C:attention}retrigger{}",
+                    "the last {C:attention}#3#{} cards"
+                },
+            },
+            j_rgmc_finity_horn = {
+                name = "Harvest Horn",
+                text = {
+                    "{C:attention}Non-standard ranks{}",
+                    "give {X:chips}X#1#{} Chips",
+                    "{C:attention}Non-standard suits{}",
+                    "give {X:mult}X#2#{} Mult",
+                },
+            },
+            j_rgmc_finity_moon = {
+                name = "Macchiato Moon",
+                text = {
+                    "{C:attention}#1#{} suits",
+                    "retrigger #2# time(s)",
+                    "Switches between {C:attention}light{}",
+                    "and {C:attention}dark{} each {C:attention}hand{}"
+                },
+            },
+            j_rgmc_finity_glutton = {
+                name = "Gunmetal Glutton",
+                text = {
+                    "Apply {C:red}Forked{} to",
+                    "all discarded cards",
+                    "Gains {X:purple,C:white}X#2#{} Score",
+                    "per destroyed {C:attention}Forked{} card",
+                    "{C:inactive}(Currently {X:purple,C:white}X#3#{C:inactive} Score)"
+                },
+            },
+            j_rgmc_finity_gauntlet = {
+                name = "Golden Gauntlet",
+                text = {
+                    "Held {C:finity_showdown}Showdown{} Jokers",
+                    "give {C:dark_edition}+1{} Joker slot",
+                    "and {C:dark_edition}+1{} consumable slot",
+                    "{C:inactive}(Values are immutable)"
+                },
+            },
+            j_rgmc_finity_omega = {
+                name = "Ochre Omega",
+                text = {
+                    "If {C:attention}winning{} hand contains",
+                    "{C:attention}#1#{},",
+                    "{C:red}destroy{} all scored cards",
+                    "Base {C:chips}chips{} are split between",
+                    "{C:attention}held{} cards",
+                    "and multiplied by {X:chips,C:white}#2#{}",
+                },
+            },
+            j_rgmc_finity_alpha = {
+                name = "Alabaster Alpha",
+                text = {
+                    "If {C:attention}first{} hand contains",
+                    "{C:attention}#1#{},",
+                    "level up all {C:attention}scored{}",
+                    "hands by {C:attention}#2#{} level(s)"
+                },
+            },
+            j_rgmc_finity_anvil = {
+                name = "Aurum Anvil",
+                text = {
+                    "If scored hand is {C:attention}Dazzling{}",
+                    "convert {C:attention}all{} scored cards",
+                    "to {C:attention}#2#{}",
+                    "{C:inactive}(Suit changes after",
+                    "{C:inactive}each trigger)",
                 },
             },
             -- Cryptid compat
@@ -1839,7 +1978,7 @@ return {
                 text = {
                     "{C:green}#1# in #2#{} chance for cards",
                     "{C:attention}drawn{} from the {C:riftraft_void}Void",
-                    "to become {C:dark_edition}Glitched"
+                    "to get {C:dark_edition}Mayhemized{}"
                 },
             },
             j_rgmc_riftraft_memory_leak = {
@@ -3497,6 +3636,187 @@ return {
                     "Playing cards can",
                     "appear in shop with",
                     "{C:rgmc_unusual}Twinkling{} and {C:attention}Entropic{}"
+				},
+			},
+            -- Painted/Twinkling
+			v_rgmc_day_and_night = {
+				name = "Day and Night",
+				text = {
+                    "Hands can now gain",
+                    "additional chips and mult",
+                    "from {C:attention}Light{} and {C:attention}Dark{}",
+                    "sub-hands"
+				},
+			},
+            -- Light/Dark
+			v_rgmc_midday = {
+				name = "Midday",
+				text = {
+                    "Boosts the power of",
+                    "{C:attention}Light{} sub-hands"
+				},
+			},
+			v_rgmc_midnight = {
+				name = "Midnight",
+				text = {
+                    "Boosts the power of",
+                    "{C:attention}Dark{} sub-hands"
+				},
+			},
+			v_rgmc_twilight = {
+				name = "Twilight",
+				text = {
+                    "Further empowers",
+                    "{C:attention}Light{} and {C:attention}Dark{}",
+                    "sub-hands"
+				},
+			},
+            -- High/Low
+			v_rgmc_ebb_and_flow = {
+				name = "Ebb and Flow",
+				text = {
+                    "Hands can now gain",
+                    "additional chips and mult",
+                    "from {C:attention}High{} and {C:attention}Low{}",
+                    "sub-hands"
+				},
+			},
+			v_rgmc_eensy_weensy = {
+				name = "Eensy Weensy",
+				text = {
+                    "Boosts the power of",
+                    "{C:attention}Low{} sub-hands"
+				},
+			},
+			v_rgmc_extra_large = {
+				name = "Extra Large",
+				text = {
+                    "Boosts the power of",
+                    "{C:attention}High{} sub-hands"
+				},
+			},
+			v_rgmc_the_median = {
+				name = "The Median",
+				text = {
+                    "Further empowers",
+                    "{C:attention}High{} and {C:attention}Low{}",
+                    "sub-hands"
+				},
+			},
+            -- Dazzling
+			v_rgmc_radiance = {
+				name = "Radiance",
+				text = {
+                    "Hands can now gain",
+                    "additional chips and mult",
+                    "from {C:attention}Dazzling{}",
+                    "sub-hands"
+				},
+			},
+			v_rgmc_brilliance = {
+				name = "Brilliance",
+				text = {
+                    "Boosts the power of",
+                    "{C:attention}Dazzling{} sub-hands"
+				},
+			},
+            -- AnTags
+			v_rgmc_antimony = {
+				name = "Antimony",
+				text = {
+                    "{C:red}AnTags{} have a",
+                    "{C:green}#1# in #2#{} chance",
+                    "to give {C:money}$#3#",
+                    "upon {C:attention}activation{}"
+				},
+			},
+			v_rgmc_antiquated = {
+				name = "Antiquated",
+				text = {
+                    "{C:red}AnTags{} have a",
+                    "{C:green}#1# in #2#{} chance",
+                    "to spawn their {C:attention}counterpart{}",
+                    "upon {C:attention}activation{}"
+				},
+			},
+            -- Void and Lantern Suits
+			v_rgmc_irregularity = {
+				name = "Irregularity",
+				text = {
+                    "{C:rgmc_voids}Void{} and {C:rgmc_lanterns{}Lantern{} suits",
+                    "appear {C:attention}#1#X{} more frequently"
+				},
+			},
+			v_rgmc_voidup = {
+				name = "Void Power",
+				text = {
+                    "{C:rgmc_voids}Voids{} are considered {C:attention}Dark{}",
+                    "and add {C:dark_edition}X#1#{} Mayhem"
+				},
+			},
+			v_rgmc_lanternup = {
+				name = "Lantern Power",
+				text = {
+                    "{C:rgmc_lanterns}Lanterns{} are considered {C:attention}Light{}",
+                    "and remove {C:dark_edition}X#1#{} Mayhem"
+				},
+			},
+			v_rgmc_light_within_darkness = {
+				name = "Light Within Darkness",
+				text = {
+                    "Further empowers the",
+                    "{C:rgmc_voids}Void{} and {C:rgmc_lanterns}Lantern{}",
+                    "suits"
+				},
+			},
+            -- Rift Limit (Rift-Raft exclusive!)
+			v_rgmc_raise_the_rift = {
+				name = "Raise the Rift",
+				text = {
+                    "{C:dark_edition}+#1#{} Rifting Limit",
+                    "{C:red}-#2#{} discard(s) each round",
+                    "{C:inactive}(Currently {C:attention}#2#{C:inactive} cards per Blind)",
+				},
+			},
+			v_rgmc_oculus_rift = {
+				name = "Oculus Rift",
+				text = {
+                    "{C:dark_edition}+#1#{} Rifting Limit",
+                    "{C:blue}-#1#{} discard(s) each round",
+                    "{C:inactive}(Currently {C:attention}#2#{C:inactive} cards per Blind)",
+				},
+			},
+            -- Graveyard Shift
+			v_rgmc_graveyard_shift = {
+				name = "Graveyard Shift",
+				text = {
+                    "Upon {C:attention}destruction{}, {C:attention}Jokers{},",
+                    "have a {C:green}#1# in #2#{} chance to",
+                    "appear in {C:attention}booster packs{}",
+                    "or the {C:attention}Shop{}"
+				},
+			},
+			v_rgmc_the_joking_dead = {
+				name = "The Joking Dead",
+				text = {
+                    "After each {C:attention}Boss Blind{},",
+                    "{C:attention}Jokers{} in the {C:dark_edition}Graveyard{}",
+                    "have their stats {C:dark_edition}increased",
+				},
+			},
+            -- Event Passes
+			v_rgmc_event1 = {
+				name = "Absolute Mayhem",
+				text = {
+                    "Invokes {C:dark_edition}Stage 1{}",
+                    "{C:inactive}(Buyer beware!!)",
+				},
+			},
+			v_rgmc_event2 = {
+				name = "Amorphous Maelstrom",
+				text = {
+                    "Invokes {C:dark_edition}Stage 2{}",
+                    "{C:inactive}(Buyer beware!!)",
 				},
 			},
         },

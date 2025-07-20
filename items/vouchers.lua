@@ -2,7 +2,7 @@
 
 local combo_meal = {
 	key 		= "combo_meal",
-	cost 		= 8,
+	cost 		= 6,
     config 		= { extra = 1.5, },
 	redeem = function(self)
 
@@ -37,7 +37,7 @@ local combo_meal = {
 
 local supersize = {
 	key 		= "supersize",
-	cost 		= 8,
+	cost 		= 9,
 	requires 	= MadLib.get_voucher_reqs('rgmc_combo_meal'),
     config 		= { extra 	= 1.07, active	= true },
 	redeem 		= function(self)
@@ -88,7 +88,7 @@ local supersize = {
 
 local everyman = {
 	key 		= "everyman",
-	cost 		= 8,
+	cost 		= 6,
     config 		= { extra = 1.1 },
 	redeem 		= function(self)
     end,
@@ -105,7 +105,7 @@ local everyman = {
 
 local exceptional = {
 	key 		= "exceptional",
-	cost 		= 8,
+	cost 		= 11,
 	requires 	= MadLib.get_voucher_reqs('rgmc_everyman'),
     config 		= { extra = 1.01 },
 	redeem 		= function(self)
@@ -123,7 +123,7 @@ local exceptional = {
 
 local big_bonus = {
 	key 		= "big_bonus",
-	cost 		= 8,
+	cost 		= 3,
 	unlocked 	= true,
 	discovered 	= true,
 	available 	= true,
@@ -152,7 +152,7 @@ local big_bonus = {
 
 local massive_mult = {
 	key 		= "massive_mult",
-	cost 		= 8,
+	cost 		= 7,
 	requires 	= MadLib.get_voucher_reqs('rgmc_big_bonus'),
     config 		= { extra = 2 },
 	redeem 		= function(self)
@@ -179,7 +179,7 @@ local massive_mult = {
 
 local high_rise = {
 	key = "high_rise",
-	cost = 8,
+	cost = 4,
     config = {
         extra 		= { retriggers = 1 },
         immutable 	= { max_retriggers = 25 }
@@ -236,7 +236,7 @@ end
 
 local manifest = {
 	key 		= "manifest",
-	cost 		= 8,
+	cost 		= 5,
     config = {
         extra = { antes = 1, mayhem = 1 },
         immutable = { max_antes = 25 }
@@ -273,7 +273,7 @@ local mindmelt = {
 
 local cosma_merchant = {
 	key 		= "cosma_merchant",
-	cost 		= 8,
+	cost 		= 6,
     config 		= { extra = 2 },
     loc_vars 	= function(self, info_queue, card)
 		return MadLib.collect_vars_colours( number_format(card.ability.extra), { G.C.SET.CosmaTarot })
@@ -288,7 +288,7 @@ local cosma_merchant = {
 
 local cosma_tycoon = {
 	key 		= "cosma_tycoon",
-	cost 		= 8,
+	cost 		= 9,
     config 		= { extra = 4 },
 	requires 	= MadLib.get_voucher_reqs('rgmc_cosma_merchant'),
     loc_vars 	= function(self, info_queue, card)
@@ -297,6 +297,198 @@ local cosma_tycoon = {
 	redeem 		= function(self)
 		MadLib.simple_event(function()
 			G.GAME.cosma_rate = (G.GAME.cosma_rate or 6) * math.floor(card.ability.extra.display/2)
+			return true
+		end)
+    end,
+}
+
+local day_and_night = {
+	key 		= "day_and_night",
+	cost 		= 6,
+    config 		= { },
+    loc_vars 	= function(self, info_queue, card)
+		return Madcap.BlankVar
+    end,
+	redeem 		= function(self)
+		MadLib.simple_event(function()
+			Madcap.Funcs.set_subhand('light',true)
+			Madcap.Funcs.set_subhand('dark',true)
+			return true
+		end)
+    end,
+}
+
+local midday = {
+	key 		= "midday",
+	cost 		= 8,
+    config 		= { },
+    loc_vars 	= function(self, info_queue, card)
+		return Madcap.BlankVar
+    end,
+	requires 	= MadLib.get_voucher_reqs('rgmc_day_and_night'),
+	redeem 		= function(self)
+		MadLib.simple_event(function()
+			Madcap.Funcs.empower_subhand('light', 1)
+			return true
+		end)
+    end,
+}
+
+local midnight = {
+	key 		= "midnight",
+	cost 		= 8,
+    config 		= { },
+    loc_vars 	= function(self, info_queue, card)
+		return Madcap.BlankVar
+    end,
+	requires 	= MadLib.get_voucher_reqs('rgmc_day_and_night'),
+	redeem 		= function(self)
+		MadLib.simple_event(function()
+			Madcap.Funcs.empower_subhand('dark', 1)
+			return true
+		end)
+    end,
+}
+
+local twilight = {
+	key 		= "twilight",
+	cost 		= 11,
+    config 		= { },
+    loc_vars 	= function(self, info_queue, card)
+		return Madcap.BlankVar
+    end,
+	requires 	= MadLib.get_voucher_reqs('rgmc_day_and_night','rgmc_midday','rgmc_midnight'),
+	redeem 		= function(self)
+		MadLib.simple_event(function()
+			Madcap.Funcs.empower_subhand('dark', 2)
+			Madcap.Funcs.empower_subhand('light', 2)
+			return true
+		end)
+    end,
+}
+
+local ebb_and_flow = {
+	key 		= "ebb_and_flow",
+	cost 		= 5,
+    config 		= { },
+    loc_vars 	= function(self, info_queue, card)
+		return Madcap.BlankVar
+    end,
+	redeem 		= function(self)
+		MadLib.simple_event(function()
+			Madcap.Funcs.set_subhand('high',true)
+			Madcap.Funcs.set_subhand('low',true)
+			return true
+		end)
+    end,
+}
+
+local eensy_weensy = {
+	key 		= "eensy_weensy",
+	cost 		= 7,
+    config 		= { },
+    loc_vars 	= function(self, info_queue, card)
+		return Madcap.BlankVar
+    end,
+	requires 	= MadLib.get_voucher_reqs('rgmc_ebb_and_flow'),
+	redeem 		= function(self)
+		MadLib.simple_event(function()
+			Madcap.Funcs.empower_subhand('low', 1)
+			return true
+		end)
+    end,
+}
+
+local extra_large = {
+	key 		= "extra_large",
+	cost 		= 7,
+    config 		= { },
+    loc_vars 	= function(self, info_queue, card)
+		return Madcap.BlankVar
+    end,
+	requires 	= MadLib.get_voucher_reqs('rgmc_ebb_and_flow'),
+	redeem 		= function(self)
+		MadLib.simple_event(function()
+			Madcap.Funcs.empower_subhand('high', 1)
+			return true
+		end)
+    end,
+}
+
+local the_median = {
+	key 		= "the_median",
+	cost 		= 10,
+    config 		= { },
+    loc_vars 	= function(self, info_queue, card)
+		return Madcap.BlankVar
+    end,
+	requires 	= MadLib.get_voucher_reqs('rgmc_ebb_and_flow','rgmc_eensy_weensy','rgmc_extra_large'),
+	redeem 		= function(self)
+		MadLib.simple_event(function()
+			Madcap.Funcs.empower_subhand('high', 2)
+			Madcap.Funcs.empower_subhand('low', 2)
+			return true
+		end)
+    end,
+}
+
+local radiance = {
+	key 		= "radiance",
+	cost 		= 6,
+    config 		= { },
+    loc_vars 	= function(self, info_queue, card)
+		return Madcap.BlankVar
+    end,
+	redeem 		= function(self)
+		MadLib.simple_event(function()
+			Madcap.Funcs.set_subhand('dazzling',true)
+			return true
+		end)
+    end,
+}
+
+local brilliance = {
+	key 		= "brilliance",
+	cost 		= 9,
+    config 		= { },
+    loc_vars 	= function(self, info_queue, card)
+		return Madcap.BlankVar
+    end,
+	requires 	= MadLib.get_voucher_reqs('rgmc_brilliance'),
+	redeem 		= function(self)
+		MadLib.simple_event(function()
+			Madcap.Funcs.empower_subhand('dazzling', 1)
+			return true
+		end)
+    end,
+}
+
+local antimony = {
+	key 		= "antimony",
+	cost 		= 6,
+    config 		= { },
+    loc_vars 	= function(self, info_queue, card)
+		return Madcap.BlankVar
+    end,
+	redeem 		= function(self)
+		MadLib.simple_event(function()
+			Madcap.Funcs.set_subhand('dazzling',true)
+			return true
+		end)
+    end,
+}
+
+local antiquated = {
+	key 		= "antiquated",
+	cost 		= 9,
+    config 		= { },
+    loc_vars 	= function(self, info_queue, card)
+		return Madcap.BlankVar
+    end,
+	requires 	= MadLib.get_voucher_reqs('rgmc_brilliance'),
+	redeem 		= function(self)
+		MadLib.simple_event(function()
+			Madcap.Funcs.empower_subhand('dazzling', 1)
 			return true
 		end)
     end,
@@ -313,7 +505,19 @@ Madcap.Funcs.LoadVouchers({
 	high_rise,
 	high_roller,
 	manifest,
-	mindmelt
+	mindmelt,
+	day_and_night,
+	midday,
+	midnight,
+	twilight,
+	radiance,
+	brilliance,
+	antimony,
+	antiquated,
+	ebb_and_flow,
+	eensy_weensy,
+	extra_large,
+	the_median
 }, list, 'vouchers')
 
 return {

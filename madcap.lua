@@ -181,11 +181,13 @@ function Madcap.Funcs.run_start()
     for _,v in pairs(SubHands) do
         local k = v.name
         G.GAME.subhands[k] = {}
-        G.GAME.subhands[k].level    = 1
-        G.GAME.subhands[k].mult     = v.x_mult
-        G.GAME.subhands[k].chips    = v.x_chips
-        G.GAME.subhands[k].l_mult   = v.l_mult or 0.1
-        G.GAME.subhands[k].l_chips  = v.l_chips or 0.1
+        G.GAME.subhands[k].level    	= 1
+        G.GAME.subhands[k].mult     	= v.x_mult
+        G.GAME.subhands[k].chips    	= v.x_chips
+        G.GAME.subhands[k].l_mult   	= v.l_mult or 0.1
+        G.GAME.subhands[k].l_chips  	= v.l_chips or 0.1
+        G.GAME.subhands[k].enabled  	= false
+        G.GAME.subhands[k].empowered  	= 0
     end
 
     G.GAME.MADCAP = {
