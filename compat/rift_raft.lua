@@ -219,9 +219,76 @@ if loaded then -- load the items
         }
     end
 
-	-- I have no idea how to plug these into list.
-	-- just do em here ig
-	local wavelength = {
+	
+
+	-- NEW JOKERS
+	local rr_j_webdings = {
+		key = 'webdings',
+	}
+
+	local rr_j_invert = {
+		key = 'invert',
+	}
+
+	local rr_j_space_bar = {
+		key = 'space_bar',
+	}
+
+	local rr_j_minus_world = {
+		key = 'minus_world',
+	}
+
+	local rr_j_think_therefore_ram = {
+		key = 'think_therefore_ram',
+	}
+
+	local rr_j_purest_unobtanium = {
+		key = 'purest_unobtanium',
+	}
+
+	local rr_j_evil_orbsman = {
+		key = 'evil_orbsman',
+	}
+
+	function Madcap.Funcs.LoadJokers(_f,_t,_atlas,_args)
+		if
+			type(_f) ~= 'table'
+			or type(_t) ~= 'table'
+			or type(_atlas) ~= 'string'
+			or (_args and type(_args) ~= 'table')
+		then
+			return false
+		end
+		-- should have key, rarity, and some sort of vars/calculation.
+		MadLib.loop_func_list(_f,function(w,i)
+			w.pos         		= w.pos or Madcap.Funcs.LoadCoords(w, i, (w.args and w.args.width or 0))
+			w.order     		= (w.order or Madcap.Orders['Joker']) + (w.args and w.args.priority or 0)
+			w.cost				= w.cost or 3 -- default price is $3
+			w.unlocked			= w.unlocked or true
+			w.discovered		= w.discovered or true
+			-- sticker compat defaults to true unless stated otherwise
+			w.eternal_compat	= w.eternal_compat or true
+			w.perishable_compat = w.perishable_compat or true
+			w.blueprint_compat 	= w.blueprint_compat or true,
+			w.demicoloncompat	= w.demicoloncompat or false, -- must state demicolon compat!
+			table.insert(_t,w)
+		end)
+	end
+
+	Madcap.Funcs.LoadJokers({
+		rr_j_webdings,
+		rr_j_invert,
+		rr_j_space_bar,
+		rr_j_minus_world,
+		rr_j_think_therefore_ram,
+		rr_j_purest_unobtanium,
+		rr_j_evil_orbsman
+	}, list, 'jokers_riftraft',{
+		priority = 1000 -- +1000 order
+	})
+
+	-- NEW RIFT CARDS
+	local rr_rc_wavelength = {
 		key = "wavelength",
 		loc_vars = function(self, info_queue, card)
 			return { }
@@ -242,22 +309,18 @@ if loaded then -- load the items
 		end,
 	}
 
-	local rift_cards = {
-		wavelength
-	}
-
-	for i = 1,#rift_cards do
-		rift_cards[i].set 		= 'Rift'
-		rift_cards[i].atlas 	= 'riftraft_riftcards'
-		rift_cards[i].order 	= 100+i
-		rift_cards[i].set_ability = function(self, card, initial, delay_sprites)
-			if not card.edition then
-				card:set_edition({negative = true}, true, true)
-			end
+	-- Register all Rift Cards
+	MadLib.loop_func({
+		rr_rc_wavelength
+	}, function(v, i)
+		v.set 		= 'Rift'
+		v.atlas 	= 'riftraft_riftcards'
+		v.order 	= 100+i
+		v.set_ability = function(self, card, initial, delay_sprites)
+			if not card.edition then card:set_edition({negative = true}, true, true) end
 		end
-
-		Madcap.RiftCard(rift_cards[i])
-	end
+		Madcap.RiftCard(v)
+	end)
 end
 
 return {
