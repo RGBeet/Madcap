@@ -230,7 +230,7 @@ local fortified_joker = {
 	end,
 }
 
--- 57. Nope Joker
+-- 57. nope.jkr
 local nope_joker = {
     key     = 'nope_joker',
     rarity  = 1,
@@ -384,7 +384,7 @@ local radioactive_chinese = {
                 { 1.5,   0.85 },  -- Xchips
                 { 0.25,  0.70 },  -- Xmult
                 { 0.25,  0.80 },  -- Xmult
-                { 1.12,  0.00 }   -- Escore
+                { 1.12,  0.5 }   -- Escore
             }
         },
         immutable = { mode = 1 }
@@ -501,7 +501,7 @@ local outrageous_joker = {
     blueprint_compat    = true,
     demicoloncompat     = true,
     config =  {
-        extra = { mult = 12, type = 'Dazzling' }
+        extra = { mult = 18, type = 'Dazzling' }
     },
 	loc_vars = function(self, info_queue, card)
 		return MadLib.collect_vars(card.ability.extra.mult, card.ability.extra.type)
@@ -529,7 +529,7 @@ local flamboyant_joker = {
     blueprint_compat    = true,
     demicoloncompat     = true,
     config =  {
-        extra = { chips = 60, type = 'Dazzling' }
+        extra = { chips = 70, type = 'Dazzling' }
     },
 	loc_vars = function(self, info_queue, card)
 		return MadLib.collect_vars(card.ability.extra.chips, card.ability.extra.type)
@@ -623,7 +623,7 @@ local captain_viridian = {
     key     = 'captain_viridian',
     pos     = get_pos(6,4),
     rarity  = 2,
-    cost    = 9,
+    cost    = 8,
     unlocked            = true,
     discovered          = true,
     eternal_compat      = true,
@@ -631,7 +631,7 @@ local captain_viridian = {
     blueprint_compat    = true,
     demicoloncompat     = true,
     config = {
-        extra = { chips = 18, odds = 6 }
+        extra = { chips = 36, odds = 6 }
     },
     loc_vars = function(self, info_queue, card)
         return MadLib.collect_vars(card.ability.extra.chips, MadLib.base_prob(card), card.ability.extra.odds)
@@ -724,7 +724,7 @@ local vibrant_tourmaline = {
     blueprint_compat    = true,
     demicoloncompat     = true,
     config = {
-        extra = { odds = 4, money = 0, money_mod = 2, suit = 'rgmc_blooms' }
+        extra = { odds = 3, money = 0, money_mod = 2, suit = 'rgmc_blooms' }
     },
     loc_vars = function(self, info_queue, card)
         return MadLib.collect_vars(card.ability.extra.suit, MadLib.base_prob(card), card.ability.extra.odds, card.ability.extra.money_mod, card.ability.extra.money)
@@ -885,7 +885,7 @@ local jestrogen = {
 	demicoloncompat     = true, -- picks a random [rank_old] out of deck to turn into a rank_new
     config = {
         extra = {
-            odds     = 6,
+            odds     = 5,
             rank_old = "King",
             rank_new = "Queen",
             chip_mod = 20
@@ -1030,7 +1030,7 @@ local stonebound = {
     key     = 'stonebound',
     pos     = get_pos(7,2),
     rarity  = 2,
-    cost    = 9,
+    cost    = 8,
     unlocked            = true,
     discovered          = true,
     eternal_compat      = true,
@@ -1085,7 +1085,7 @@ local metallurgist = {
     key     = 'metallurgist',
     pos     = get_pos(7,3),
     rarity  = 2,
-    cost    = 7,
+    cost    = 6,
     unlocked            = true,
     discovered          = true,
     eternal_compat      = true,
@@ -1182,7 +1182,7 @@ local arkose_michel = {
     blueprint_compat    = true,
 	demicoloncompat     = true,
     config = {
-        extra = { odds = 8, mult = 12 }
+        extra = { odds = 8, mult = 10 }
     },
     loc_vars = function(self, info_queue, card)
         return MadLib.collect_vars(card.ability.extra.mult, MadLib.base_prob(card), card.ability.extra.odds)
@@ -1220,7 +1220,7 @@ local arkose_michel = {
 local catch_the_clown = {
     key     = 'catch_the_clown',
     rarity  = 2,
-    cost    = 6,
+    cost    = 7,
     pos     = get_pos(7,6),
     unlocked            = true,
     discovered          = true,
@@ -1233,7 +1233,7 @@ local catch_the_clown = {
         caught = false,
         extra = {
             chips       = 0,
-            chip_mod    = 40,
+            chip_mod    = 60,
         },
         immutable = {
             max_misses  = 3,
@@ -1423,7 +1423,7 @@ local microfiche = {
     key     = 'microfiche',
     pos     = get_pos(7,9),
     rarity  = 3,
-    cost    = 9,
+    cost    = 8,
     unlocked            = true,
     discovered          = true,
     eternal_compat      = true,
@@ -1554,7 +1554,7 @@ local streemerz = {
     key     = 'streemerz',
     pos     = get_pos(8,3),
     rarity  = 3,
-    cost    = 11,
+    cost    = 15,
     unlocked            = true,
     discovered          = true,
     eternal_compat      = true,
@@ -1643,7 +1643,7 @@ local jonster_cola = {
     key     = 'jonster_cola',
     pos     = get_pos(8,5),
     rarity  = 'rgmc_unusual',
-    cost    = 14,
+    cost    = 15,
     unlocked          = true,
     discovered        = true,
     eternal_compat    = false, -- dependent on selling
@@ -1727,7 +1727,7 @@ local weighted_die = {
     key     = 'weighted_die',
     pos     = get_pos(8,7),
     rarity  = 'rgmc_unusual',
-    cost    = 13,
+    cost    = 9,
     unlocked          = true,
     discovered        = true,
     eternal_compat    = true,
@@ -1735,7 +1735,7 @@ local weighted_die = {
     blueprint_compat  = true,
     demicoloncompat   = true,
     config = {
-        extra = { odds = 8 }
+        extra = { odds = 6 }
     },
     loc_vars = function(self, info_queue, card)
         return MadLib.collect_vars(card.ability.extra.odds)
@@ -2067,7 +2067,7 @@ local cat_planet = {
     key     = 'cat_planet',
     pos     = get_pos(9,0),
     rarity  = 'rgmc_unusual',
-    cost    = 12,
+    cost    = 13,
     unlocked          = true,
     discovered        = true,
     eternal_compat    = true,
@@ -2105,7 +2105,7 @@ local cat_planet = {
             -- Acquire the chips/mult, convert to mayhem.
             local chips, mult, changed = Madcap.Funcs.get_goldenhouse_chipmult(target)
             if changed and chips + mult > 0 then
-                local mayhem = (chips/4 + mult/3)
+                local mayhem = (chips/5 + mult/2)
                 MadLib.simple_event(function()
                     Madcap.Funcs.ease_mayhem(mayhem)
                     card_eval_status_text(context_blueprint_card or self, 'extra', nil, nil, nil, {
@@ -2124,7 +2124,7 @@ local cat_planet = {
 local golden_house = {
     key     = 'golden_house',
     rarity  = 'rgmc_unusual',
-    cost    = 15,
+    cost    = 16,
     pos     = get_pos(9,1),
     unlocked          = true,
     discovered        = true,
@@ -2192,7 +2192,7 @@ local spam = {
     key     = 'spam',
     atlas   = 'rgmc_spam',
     rarity  = 'rgmc_gimmick',
-    cost    = 3,
+    cost    = 4,
     pos     = {x = 0, y = 0},
     unlocked          = true,
     discovered        = true,
@@ -2272,10 +2272,10 @@ local lobster_thermidor = {
     long_title = {
         "With A Mornay Sauce",
         "Garnished With Truffle Pâté," ,
-        "Brandy and a Fried Egg On Top"
+        "Brandy, And A Fried Egg On Top"
     },
     config = {
-        extra = { emult   = 0.01, extra   = 1 },
+        extra = { emult   = 0.02, extra   = 1.01 },
         immutable = { mode = 1 }
     },
 	loc_vars = function(self, info_queue, card)
@@ -2333,7 +2333,7 @@ local chicken_jokey = {
     key     = 'chicken_jokey',
     pos     = get_pos(9,4),
     rarity  = 'rgmc_gimmick',
-    cost    = 4,
+    cost    = 2,
     unlocked          = true,
     discovered        = true,
     eternal_compat    = true,
@@ -2364,12 +2364,12 @@ local chicken_jokey = {
     end
 }
 
--- 96. Jegg Jarton
-local jegg_jarton = {
-    key     = 'jegg_jarton',
+-- 96. Egglike Joker
+local egglike_joker = {
+    key     = 'egglike_joker',
     pos     = get_pos(9,5),
     rarity  = 'rgmc_gimmick',
-    cost    = 2,
+    cost    = 1,
     unlocked          = true,
     discovered        = true,
     eternal_compat    = true,
@@ -2400,12 +2400,12 @@ local jegg_jarton = {
     end
 }
 
--- 97.  Talking Bacteria John
-local talking_bacteria_john = {
-    key     = 'talking_bacteria_john',
+-- 97.  Talking Bacteria Jim
+local talking_bacteria_jim = {
+    key     = 'talking_bacteria_jim',
     pos     = get_pos(9,6),
     rarity  = 'rgmc_gimmick',
-    cost    = 4,
+    cost    = 2,
     unlocked          = true,
     discovered        = true,
     eternal_compat    = true,
@@ -2789,8 +2789,8 @@ local jokers = {
     spam,
     lobster_thermidor,
     chicken_jokey,
-    jegg_jarton,
-    talking_bacteria_john,
+    egglike_joker,
+    talking_bacteria_jim,
 
     -- legendaries
     legend_foreman,

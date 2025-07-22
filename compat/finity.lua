@@ -112,6 +112,7 @@ if mod_loaded(mod_id) and 3 == 1 then -- load the items
 	for i=1, #jokers do
 		jokers[i].object_type = 'Joker'
 		jokers[i].order 	= 1000+i
+		jokers[i].cost 		= 20
 		jokers[i].atlas 	= 'jokers_finity'
 		jokers[i].rarity 	= 'finity_showdown'
 		jokers[i].pos 		= legend(i-1,false)

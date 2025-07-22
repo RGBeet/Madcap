@@ -341,7 +341,7 @@ local lunacy = {
     atlas = 'rgmc_deck_lunacy',
     pos = get_pos(0,0),
 	config = {
-        finisher_frequency = 4,
+        finisher_frequency = 3,
         ante_win = 12
     },
     loc_vars = function(self)
@@ -482,6 +482,7 @@ Madcap.Funcs.LoadDecks({
     sangria,
     target,
     micro,
+
     mayhem,
     capital,
     cross,

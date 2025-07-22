@@ -12,7 +12,7 @@ return {
 			b_rgmc_pale = {
 				name = "Pale Deck",
 				text = {
-					"{C:attention}#1#{} hand size, #2# hand(s)",
+					"{C:attention}#1#{} hand size, {C:blue{#2#{} hand(s)",
 					"At start of {C:attention}Blind{},",
 					"apply {C:attention}Negative{} and {C:attention}Twinkling{}",
 					"to #3# cards"
@@ -22,7 +22,7 @@ return {
 				name = "Hexing Deck",
 				text = {
 					"Start with {C:attention}Special{} suits",
-					"(Removes ranks {C:attention}2{} through {C:attention}5{!)"
+					"Removes ranks {C:attention}2{} through {C:attention}5{}"
 				},
 			},
 			b_rgmc_target = {
@@ -57,7 +57,7 @@ return {
 				name = "Micro Deck",
 				text = {
 					"{C:attention}#1#{} hand size",
-					"{C:attention}#2#{} play limit",
+					"{C:blue}#2#{} play limit",
 					"{C:attention}X#3#{} blind size"
 				},
 			},
@@ -98,7 +98,7 @@ return {
 			b_rgmc_cross = {
 				name = "Cross Deck",
 				text = {
-					"Played cards are {C:attention}permanently debuffed{}",
+					"Scored cards are {C:attention}\"permanently\" debuffed{}",
 					"Held cards at end of round are {C:green}reset{}",
 					"{C:attention}+#1#{} hand size"
 				},
@@ -1256,7 +1256,8 @@ return {
                 name = "SPAM!",
                 text = {
                     {
-                        "{C:rgmc_gimmick,E:1}+#1#{} #2# / {C:rgmc_gimmick,E:1}+#3#{} #4#",
+                        "{C:rgmc_gimmick,E:1}+#1#{} #2#",
+                        "{C:rgmc_gimmick,E:1}+#3#{} #4#",
                         "{C:green}#5# in #6#{} chance to get {C:attention}1337ened{}",
                         "at end of {C:attention}Blind{}! ONOS!1!"
                     },
@@ -1300,8 +1301,8 @@ return {
                     "{C:rgmc_flipped}Flipped{} cards give",
                     "{C:chips}+#1#{} Chips",
                     "{C:green}#2# in #3#{} chance to {c:rgmc_flipped}Flip{}",
-                    "{C:attention}scoring{} cards on {C:attention}first{}",
-                    "{C:blue}hand{} or {C:red}discard"
+                    "{C:blue}scoring{}/{C:red}discarded{} cards on",
+                    "{C:attention}first{} {C:blue}hand{} or {C:red}discard"
                 },
             },
             j_rgmc_balutro = {
@@ -1309,7 +1310,7 @@ return {
                 text = {
                     "If all {C:attention}scored{} cards include",
                     "digits of {C:attention}1{}, {C:attention}2{}, or {C:attention}5{}",
-                    "retrigger {C:attention}all{} cards"
+                    "retrigger {C:attention}scoring{} cards"
                 },
             },
             j_rgmc_catch_the_clown = {
@@ -1331,9 +1332,9 @@ return {
             j_rgmc_all_star_joker = {
                 name = "All-Star Joker",
                 text = {
-                   "If ranks of scored cards equals {C:attention}#1#{},",
+                   "If sum of scored ranks equals {C:attention}#1#{},",
                    "gain {C:money}$#2#{} at end of round",
-                   "for each {C:attention}Joker",
+                   "per {C:attention}Joker",
                    "{C:inactive}(Currently {C:money}$#3#{C:inactive})"
                 },
             },
@@ -1475,7 +1476,7 @@ return {
             j_rgmc_radioactive_chinese = {
                 name = "Radioactive Chinese?!?",
                 text = {
-                    "Provides a \"{C:rgmc_unusual,E:1}awesome {C:attention}treat{}\"",
+                    "Provides an \"{C:rgmc_unusual,E:1}awesome {C:attention}treat{}\"",
                     "at start of Blind",
                     "{C:green}#2# in #3#{} chance to obtain a",
                     "{C:attention}negative{} effect",
@@ -1486,7 +1487,7 @@ return {
                 name = "Sanguine",
                 text = {
                     "{X:mult,C:white}X#1#{} Mult",
-                    "if hand contains a scoring",
+                    "if hand contains both a scoring",
                     "{C:rgmc_goblets}Goblet{} and {C:rgmc_daggers}Dagger{}"
                 },
             },
@@ -1494,7 +1495,7 @@ return {
                 name = "Stonebound",
                 text = {
                     "{C:chips}+#1#{} Chips",
-                    "if hand contains a scoring",
+                    "if hand contains both a scoring",
                     "{C:rgmc_towers}Tower{} and {C:rgmc_blooms}Bloom{}"
                 },
             },
@@ -1518,8 +1519,9 @@ return {
             j_rgmc_arkose_michel = {
                 name = "Arkose Michel",
                 text = {
-                    "Scored {C:attention}Stone{} cards",
+                    "Scoring {C:attention}Stone{} cards",
                     "give {C:mult}+#1#{} Mult",
+                    "{C:attention}before{} scoring",
                     "{C:green}#2# in #3#{} chance this card is",
                     "destroyed at end of {C:attention}round{}",
                 },
@@ -1566,6 +1568,9 @@ return {
                         "{C:green}#1# in #2#{} chance for",
                         "{C:red}discarded{} {C:rgmc_flipped}Flipped{} cards",
                         "to {C:attention}lose edition{}",
+                        "{C:green}#1# in #3#{} chance for",
+                        "{C:blue}played{} base edition cards",
+                        "to become {C:dark_edition}Flipped{}",
                     },
                     { "\"Eureka Tary\"" }
                 },
@@ -1634,7 +1639,7 @@ return {
                 name = "Cat Planet",
                 text = {
                     "Using {C:planet}planets{}",
-                    "give {C:rgmc_mayhem}+#1#{} {C:rgmc_unusual,E:1}Mayhem{}",
+                    "give {C:rgmc_unusual,E:1}Mayhem{}",
                 },
             },
             j_rgmc_liberty_bell = {
@@ -1648,23 +1653,21 @@ return {
             j_rgmc_chicken_jokey = {
                 name = "Chicken Jokey!",
                 text = {
-                    "Every {C:attention}#1#{} Blinds, create",
-                    "an {C:attention}Popcorn{C:inactive} (#2#/#1#)",
-                    "with {C:attention}Perishable() sticker",
+                    "Every {C:attention}#1#{} Blinds, create a",
+                    "{C:attention}Perishable Popcorn{C:inactive} (#2#/#1#)",
                     "{C:inactive}I... am Joker"
                 },
             },
-            j_rgmc_jegg_jarton = {
-                name = "Jegg Jarton",
+            j_rgmc_egglike_joker = {
+                name = "Egglike Joker",
                 text = {
-                    "Every {C:attention}#1#{} Blinds, create",
-                    "an {C:attention}Egg{C:inactive} (#2#/#1#)",
-                    "with {C:attention}Perishable() sticker",
+                    "Every {C:attention}#1#{} Blinds, create an",
+                    "{C:attention}Perishable Egg{C:inactive} (#2#/#1#)",
                     "{C:inactive}So much to do, so much to see!"
                 },
             },
-            j_rgmc_talking_bacteria_john = {
-                name = "Talking Bacteria John",
+            j_rgmc_talking_bacteria_jim = {
+                name = "Talking Bacteria Jim",
                 text = {
                     "At start of blind, {C:green}#1# in #2#",
                     "chance to {C:attention}copy{} a card",
@@ -1701,7 +1704,8 @@ return {
                 text = {
                     "Skipping a Blind creates",
                     "{C:attention}#1#{} additional copies",
-                    "Gains {C:attention}+#2#{} Power after",
+                    "of skip Tag",
+                    "Gains {C:attention}+#2#{} Tag(s) after",
                     "defeating {C:attention}Boss Blind{}",
                     "{C:inactive}(Resets upon skipping blind)",
                 },
@@ -1921,7 +1925,7 @@ return {
                 text = {
                     "STOP POSTING ABOUT {C:red}OBELISK{}!!",
                     "I'M {C:blue}TIRED{} OF SEEING IT!!",
-                    "MY {C:attention}FRIENDS{} ON {C:riftraft_void}VOID{} SEND ME {C:red}OBELISK{},",
+                    "MY {C:attention}FRIENDS{} ON {C:dark_edition}VOID{} SEND ME {C:red}OBELISK{},",
                     "ON {C:attention}RIFT PACKS{} IT'S F***ING {C:red}OBELISK{}!"
                 },
             },
@@ -3643,7 +3647,7 @@ return {
                     "{C:rgmc_unusual}Twinkling{} and {C:attention}Entropic{}"
 				},
 			},
-            -- Painted/Twinkling
+            -- Light/Dark
 			v_rgmc_day_and_night = {
 				name = "Day and Night",
 				text = {
@@ -3653,7 +3657,6 @@ return {
                     "sub-hands"
 				},
 			},
-            -- Light/Dark
 			v_rgmc_midday = {
 				name = "Midday",
 				text = {

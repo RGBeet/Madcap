@@ -65,7 +65,7 @@ local blooms = {
     pos = { x = 0, y = 2 },
     ui_pos = { x = 2, y = 0 },
 
-    lc_colour = HEX('A7EE5f'),
+    lc_colour = HEX('A7EE5F'),
     hc_colour = HEX('81B949'),
 
     in_pool = function(self, args)
