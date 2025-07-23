@@ -63,8 +63,8 @@ local providence = {
 	pos = get_pos(0,3),
 	config = {
 		extra = {
-			odds 		= 3,
-			max_cards	= 4
+			odds 		= 4,
+			max_cards	= 2
 		},
 	},
 	loc_vars = function(self, info_queue, card)

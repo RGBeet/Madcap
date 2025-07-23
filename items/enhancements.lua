@@ -52,7 +52,7 @@ local ferrous = {
 
 local lustrous = {
 	key = "lustrous",
-    config = { extra = { x_mult = 1.1, gain = 0.3 } },
+    config = { extra = { x_mult = 1.2, gain = 0.2 } },
     loc_vars = function(self, info_queue, card)
         return MadLib.collect_vars(card.ability.extra.x_mult, card.ability.extra.gain)
     end,
