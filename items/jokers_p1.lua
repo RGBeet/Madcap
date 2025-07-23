@@ -983,7 +983,7 @@ local cup_of_joeker = {
                 and G.GAME.current_round.hands_played == 0)
             or context.forcetrigger
         then
-            MadLib.create_random_card("Tarot")
+            MadLib.get_random_card("Tarot")
         end
     end
 }
@@ -1012,7 +1012,6 @@ local supreme_with_cheese = {
             { MadLib.get_warning_colour(card.ability.extra.rounds_remaining / card.ability.immutable.max_rounds) })
     end,
     calculate = function(self, card, context)
-
         if
             context.forcetrigger or
             (context.cardarea == G.jokers and context.joker_main)

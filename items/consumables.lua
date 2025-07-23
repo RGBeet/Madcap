@@ -106,7 +106,6 @@ local oxidize = {
 }
 
 local reduct = {
-	object_type = "Consumable",
 	set = "Spectral",
 	key = "reduct",
 	pos = get_pos(0,4),
@@ -283,35 +282,131 @@ SMODS.ConsumableType({
     can_divide = true,
 })
 
--- [Cosma] DEMISE: Gives a random Cosma Tarot (besides Demise).
+function Madcap.Funcs.use_cosma(self, card, area, copier, num_cards, check, func)
+	if not G.hand then return false end
+	tell('Cards be like')
+    local used_tarot = copier or card
+    G.hand:unhighlight_all()
+
+	-- no suitless
+	local valid = MadLib.shuffle_sort_list(G.hand.cards, num_cards, check)
+	tell_stat('Valid Cards',valid)
+
+	-- up down
+	Madcap.loop_func(G.hand.cards,function(v, i)
+		MadLib.simple_event(function()
+			v:highlight(true)
+			play_sound('card3', math.random()*0.2 + 0.9, 0.35)
+			return true
+		end, 0.08, 'after')
+
+		MadLib.simple_event(function()
+			v:highlight(false)
+			return true
+		end, 0.08, 'after')
+	end)
+
+	-- up
+	Madcap.loop_func(G.hand.cards,function(v, i)
+		MadLib.simple_event(function()
+			play_sound('card3', math.random()*0.2 + 0.9, 0.35)
+			v:highlight(true)
+        	v:flip()
+			return true
+		end, 0.1, 'after')
+	end)
+
+	-- change
+	Madcap.loop_func(valid,function(v, i)
+		MadLib.simple_event(function()
+			func(v,card)
+			return true
+		end, 0.05, 'after')
+	end)
+
+	-- down
+	Madcap.loop_func(G.hand.cards,function(v, i)
+		MadLib.simple_event(function()
+			v:highlight(false)
+        	v:flip()
+			return true
+		end, 0.1, 'after')
+	end)
+    
+	if used_tarot then
+	used_tarot:juice_up(0.3, 0.5)
+	end
+	return true
+end
+
+
+
+-- [Cosma] DEMISE: Gives a random Cosma Tarot (besides Demise). 1 in 4 chance chance to copy last cosma tarot.
 -- Parallels 0 - The Fool.
 local demise = {
     key 	= "demise",
 	pos 	= get_pos(0,0),
-	config	= { },
-	cost 	= 7,
+	config	= {},
+	cost 	= 6,
 	can_use = function(self, card)
-		return true
+		return (#G.consumeables.cards < G.consumeables.config.card_limit or card.area == G.consumeables)
 	end,
 	use 	= function(self, card, area, copier)
+      	local used_tarot = copier or card
+		local card = nil
+		--select a random cosma tarot from 1-21. Has a 1 in 200 chance to give Sleeping Ships instead.
+		if 
+			(G.GAME.last_cosma_tarot and G.GAME.last_cosma_tarot ~= 'c_rgmc_demise')
+			and MadLib.calculate_roll({ denom = card, seed = 'rgmc_demise' }) 
+		then -- copy the thing
+            card = create_card('CosmaTarot', G.consumeables, nil, nil, nil, nil, G.GAME.last_cosma_tarot, 'fool')
+		else
+            card = MadLib.get_random_card("CosmaTarot")
+		end
 
+		if card then
+            play_sound('timpani')
+            card:add_to_deck()
+            G.consumeables:emplace(card)
+		end
+        used_tarot:juice_up(0.3, 0.5)
 	end
 }
 
 -- [Cosma] THE CROW: Select two cards to convert to
--- [Daggers]. If already [Daggers], give them [+1 bonus mult].
--- Parallels II - The Magician (Lucky Card).
+-- [Daggers]. If already [Daggers], give them [+3 bonus mult].
+-- Parallels I - The Magician (Lucky Card).
 local crow = {
     key 	= "crow",
 	pos 	= get_pos(0,1),
-	config	= { },
-	cost 	= 7,
+	config	= { extra = { mult_mod = 2, suit = 'rgmc_daggers'} },
+	cost 	= 5,
 	can_use = function(self, card)
 		return true
 	end,
-	use 	= function(self, card, area, copier)
-
-	end
+	use = Madcap.Funcs.use_cosma(self, card, area, copier, 2, function(v)
+			return true -- must have suit
+		end, function(v, card)
+			local no_bonus = v.base.suit ~= card.ability.extra.suit
+			
+			if no_bonus then -- switch into suit
+				MadLib.simple_event(function()
+					assert(SMODS.change_base(v, card.ability.extra.suit, nil))
+					return true
+				end, 0.2, 'after')
+			else -- give permanent bonus!
+				MadLib.simple_event(function()
+					v.ability.perma_mult = (v.ability.perma_mult or 0) + card.ability.extra.mult_mod
+					return true
+				end, 0.2, 'after')
+			end
+			
+			-- juice
+			MadLib.simple_event(function()
+				v:juice_up()
+				return true
+			end, 0.08, 'immediate')
+		end)
 }
 
 -- [Cosma] THE SWAN: Select two cards to convert to
@@ -320,14 +415,34 @@ local crow = {
 local swan = {
     key 	= "swan",
 	pos 	= get_pos(0,2),
-	config	= { },
-	cost 	= 7,
+	config	= { extra = { xmult_mod = 0.04, suit = 'rgmc_goblets'} },
+	cost 	= 5,
 	can_use = function(self, card)
 		return true
 	end,
-	use 	= function(self, card, area, copier)
-
-	end
+	use = Madcap.Funcs.use_cosma(self, card, area, copier, 2, function(v)
+			return true -- must have suit
+		end, function(v, card)
+			local no_bonus = v.base.suit ~= card.ability.extra.suit
+			
+			if no_bonus then -- switch into suit
+				MadLib.simple_event(function()
+					assert(SMODS.change_base(v, card.ability.extra.suit, nil))
+					return true
+				end, 0.2, 'after')
+			else -- give permanent bonus!
+				MadLib.simple_event(function()
+					v.ability.perma_x_mult = (v.ability.perma_h_x_mult or 1) + card.ability.extra.x_mult_mod
+					return true
+				end, 0.2, 'after')
+			end
+			
+			-- juice
+			MadLib.simple_event(function()
+				v:juice_up()
+				return true
+			end, 0.08, 'immediate')
+		end)
 }
 
 -- [Cosma] THE PEACOCK: Select two cards to convert to
@@ -336,14 +451,34 @@ local swan = {
 local peacock = {
     key 	= "peacock",
 	pos 	= get_pos(0,3),
-	config	= { },
-	cost 	= 7,
+	config	= { extra = { money_mod = 1, suit = 'rgmc_blooms'} },
+	cost 	= 5,
 	can_use = function(self, card)
 		return true
 	end,
-	use 	= function(self, card, area, copier)
-
-	end
+	use = Madcap.Funcs.use_cosma(self, card, area, copier, 2, function(v)
+			return true -- must have suit
+		end, function(v, card)
+			local no_bonus = v.base.suit ~= card.ability.extra.suit
+			
+			if no_bonus then -- switch into suit
+				MadLib.simple_event(function()
+					assert(SMODS.change_base(v, card.ability.extra.suit, nil))
+					return true
+				end, 0.2, 'after')
+			else -- give permanent bonus!
+				MadLib.simple_event(function()
+					v.ability.perma_h_money = (v.ability.perma_h_money or 0) + card.ability.extra.money_mod
+					return true
+				end, 0.2, 'after')
+			end
+			
+			-- juice
+			MadLib.simple_event(function()
+				v:juice_up()
+				return true
+			end, 0.08, 'immediate')
+		end)
 }
 
 -- [Cosma] THE PELICAN: Select two cards to convert to
@@ -352,14 +487,34 @@ local peacock = {
 local pelican = {
     key 	= "pelican",
 	pos 	= get_pos(0,4),
-	config	= { },
-	cost 	= 7,
+	config	= { extra = { chip_mod = 10, suit = 'rgmc_towers'} },
+	cost 	= 5,
 	can_use = function(self, card)
 		return true
 	end,
-	use 	= function(self, card, area, copier)
-
-	end
+	use = Madcap.Funcs.use_cosma(self, card, area, copier, 2, function(v)
+			return true -- must have suit
+		end, function(v, card)
+			local no_bonus = v.base.suit ~= card.ability.extra.suit
+			
+			if no_bonus then -- switch into suit
+				MadLib.simple_event(function()
+					assert(SMODS.change_base(v, card.ability.extra.suit, nil))
+					return true
+				end, 0.2, 'after')
+			else -- give permanent bonus!
+				MadLib.simple_event(function()
+					v.ability.perma_chips = (v.ability.perma_chips or 0) + card.ability.extra.chip_mod
+					return true
+				end, 0.2, 'after')
+			end
+			
+			-- juice
+			MadLib.simple_event(function()
+				v:juice_up()
+				return true
+			end, 0.08, 'immediate')
+		end)
 }
 
 -- [Cosma] THE PHOENIX: Halves chip value, but adds 1/5 of
@@ -524,8 +679,7 @@ local maze = {
 	end
 }
 
--- [Cosma] THE VESSEL: Select one card, multiply its
--- enhancement values by X1.5.
+-- [Cosma] THE VESSEL: Select one card, multiply its values by X1.25.
 -- Parallels XV - The Devil (Gold).
 local vessel = {
     key 	= "vessel",
@@ -646,6 +800,7 @@ local sleeping_ships = {
 	can_use 	= function(self, card)
 		return true -- Always
 	end,
+	hidden = true, -- Hard as hell to get
 	use 	= function(self, card, area, copier)
 		for i=1,card.ability.extra do
 			-- Create an Unusual Joker

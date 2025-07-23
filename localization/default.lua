@@ -3057,7 +3057,7 @@ return {
             c_rgmc_rose_gold = {
                 name = "Rose Gold",
                 text = {
-                "Create an {X:rgmc_gimmick,C:black}?!? Tag{} for",
+                "Create {X:rgmc_gimmick,C:black}?!? Tag{} for",
                 "every {C:attention}#4#{} rounds",
                 "this has been held",
                 "{C:inactive}(Currently {C:attention}#1#{C:inactive}, {}[{C:attention}#2#{C:inactive}#3#{}]{C:inactive})",
