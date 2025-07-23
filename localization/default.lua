@@ -98,8 +98,10 @@ return {
 			b_rgmc_cross = {
 				name = "Cross Deck",
 				text = {
-					"Scored cards are {C:attention}\"permanently\" debuffed{}",
-					"Held cards at end of round are {C:green}reset{}",
+					"Scored cards are {C:attention}",
+                    "\"permanently\" debuffed{}",
+					"Held cards at end of round",
+                    "are {C:green}reset{}",
 					"{C:attention}+#1#{} hand size"
 				},
 			},
@@ -993,8 +995,8 @@ return {
                     'Played cards with',
                     '{C:purple}#1#{} suit give',
                     '{C:mult}+#2#{} Mult when scored',
-                    'Suit changes after",
-                    "each trigger'
+                    'Suit changes after',
+                    'each trigger',
                 },
             },
             j_rgmc_neighborhood_watch = {
@@ -2553,6 +2555,74 @@ return {
 					"W.I.P.",
 				},
 			},
+			sleeve_rgmc_mayhem_sleeve = {
+				name = "Sleeve of Mayhem",
+				text = {
+					"W.I.P.",
+				},
+			},
+			sleeve_rgmc_mayhem_sleeve_alt = {
+				name = "Sleeve of Mayhem +",
+				text = {
+					"W.I.P.",
+				},
+			},
+			sleeve_rgmc_capital_sleeve = {
+				name = "Capital Sleeve",
+				text = {
+					"W.I.P.",
+				},
+			},
+			sleeve_rgmc_capital_sleeve_alt = {
+				name = "Capital Sleeve +",
+				text = {
+					"W.I.P.",
+				},
+			},
+			sleeve_rgmc_cross_sleeve = {
+				name = "Cross Sleeve",
+				text = {
+					"W.I.P.",
+				},
+			},
+			sleeve_rgmc_cross_sleeve_alt = {
+				name = "Cross Sleeve +",
+				text = {
+					"W.I.P.",
+				},
+			},
+			sleeve_rgmc_merlot_sleeve = {
+				name = "Merlot Sleeve",
+				text = {
+					"W.I.P.",
+				},
+			},
+			sleeve_rgmc_merlot_sleeve_alt = {
+				name = "Merlot Sleeve +",
+				text = {
+					"W.I.P.",
+				},
+			},
+			sleeve_rgmc_jumble_sleeve = {
+				name = "Jumble Sleeve",
+				text = {
+					"W.I.P.",
+				},
+			},
+			sleeve_rgmc_jumble_sleeve_alt = {
+				name = "Jumble Sleeve +",
+				text = {
+					"W.I.P.",
+				},
+			},
+			sleeve_rgmc_mad_sleeve = {
+				name = "Mad Sleeve",
+				text = {
+					"Adds {C:rgmc_unusual}Madcap{} deck features",
+                    "regardless of Deck",
+                    "{C:inactive}(Mayhem, music, etc.)"
+				},
+			},
         },
         CosmaTarot = {
             c_rgmc_demise = {
@@ -2951,15 +3021,6 @@ return {
                 text = {
                     "Converts a random card in",
                     "hand to {C:rgmc_blooms}Blooms{} for every",
-                    "{C:attention}#4#{} round this has been held",
-                    "{C:inactive}(Currently {C:attention}#1#{C:inactive}, {}[{C:attention}#2#{C:inactive}#3#{}]{C:inactive})",
-                }
-            },
-            c_rgmc_venetian_red = {
-                name = "Venetian Red",
-                text = {
-                    "Converts a random card in",
-                    "hand to {C:rgmc_daggers}Daggers{} for every",
                     "{C:attention}#4#{} round this has been held",
                     "{C:inactive}(Currently {C:attention}#1#{C:inactive}, {}[{C:attention}#2#{C:inactive}#3#{}]{C:inactive})",
                 }

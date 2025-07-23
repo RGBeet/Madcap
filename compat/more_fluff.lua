@@ -163,7 +163,7 @@ if loaded then -- load the items
     -- Carnation Pink: Converts suits to Goblets.
 	local carnation_pink = {
 		key = "carnation_pink",
-		config = { val = 0, partial_rounds = 0, upgrade_rounds = 2, },
+		config = { val = 0, partial_rounds = 0, upgrade_rounds = 1, },
 		cost = 4,
 		can_use = colour_can_use(self,card),
 		use = colour_convert_suit(self, card, area, copier, 'rgmc_goblets'),
@@ -173,7 +173,7 @@ if loaded then -- load the items
     -- Cobalt Blue: Converts suits to Towers.
 	local cobalt_blue = {
 		key = "cobalt_blue",
-		config = { val = 0, partial_rounds = 0, upgrade_rounds = 3, },
+		config = { val = 0, partial_rounds = 0, upgrade_rounds = 1, },
 		cost = 4,
 		can_use = colour_can_use(self,card),
 		use = colour_convert_suit(self, card, area, copier, 'rgmc_towers'),
@@ -183,7 +183,7 @@ if loaded then -- load the items
     -- Olive Green: Converts suits to Blooms.
 	local olive_green = {
 		key = "olive_green",
-		config = { val = 0, partial_rounds = 0, upgrade_rounds = 3, },
+		config = { val = 0, partial_rounds = 0, upgrade_rounds = 1, },
 		cost = 4,
 		can_use = colour_can_use(self,card),
 		use = colour_convert_suit(self, card, area, copier, 'rgmc_blooms'),
@@ -193,7 +193,7 @@ if loaded then -- load the items
     -- Venetian Red: Converts suits to Daggers
 	local venetian_red = {
 		key = "venetian_red",
-		config = { val = 0, partial_rounds = 0, upgrade_rounds = 3, },
+		config = { val = 0, partial_rounds = 0, upgrade_rounds = 1, },
 		cost = 4,
 		can_use = colour_can_use(self,card),
 		use = colour_convert_suit(self, card, area, copier, 'rgmc_daggers'),
@@ -213,7 +213,7 @@ if loaded then -- load the items
 	-- Torch Red: Converts cards to Infernal edition (1 in 4 chance to torch burn card instead)
 	local torch_red = {
 		key = "torch_red",
-		config = { val = 0, partial_rounds = 0, upgrade_rounds = 4, odds = 4 },
+		config = { val = 0, partial_rounds = 0, upgrade_rounds = 4, odds = 3 },
 		cost = 4,
 		loc_vars = function(self, info_queue, card)
 			-- has odds, unlike most colour cards. bad!
@@ -292,7 +292,7 @@ if loaded then -- load the items
 		-- custom atlas, woo!
 		atlas = "morefluff_colours_lunacy",
 		pos = MLIB.coords(0,4),
-		config = { val = 0, partial_rounds = 0, upgrade_rounds = 2, },
+		config = { val = 0, partial_rounds = 0, upgrade_rounds = 3, },
 		cost = 12,
 		can_use = colour_can_use(self,card),
 		use = function(self, card, area, copier)

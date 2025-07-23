@@ -2189,14 +2189,37 @@ function Madcap.Funcs.LoadCoordsVertical(w, i)
 	return Madcap.Funcs.LoadCoords(w, i, 1, w.atlas)
 end
 
+function Madcap.Funcs.CheckLoadTables(_f,_t)
+	return type(_f) == 'table' 
+		and type(_t) == 'table'
+end
+
+function Madcap.Funcs.CheckLoadArguments(_f,_t,_atlas,_args)
+	return Madcap.Funcs.CheckLoadTables(_f,_t)
+		and type(_atlas) == 'string'
+		and (not _args or type(_args) == 'table')
+end
+
+function Madcap.Funcs.LoadJokers(_f,_t,_atlas,_args)
+	if not Madcap.Funcs.CheckLoadArguments(_f,_t,_atlas,_args) then return false end
+	-- should have key, rarity, and some sort of vars/calculation.
+	MadLib.loop_func_list(_f,function(w,i)
+		w.pos         		= w.pos or Madcap.Funcs.LoadCoords(w, i, (w.args and w.args.width or 0))
+		w.order     		= (w.order or Madcap.Orders['Joker']) + (w.args and w.args.priority or 0)
+		w.cost				= w.cost or 3 -- default price is $3
+		w.unlocked			= w.unlocked or true
+		w.discovered		= w.discovered or true
+		-- sticker compat defaults to true unless stated otherwise
+		w.eternal_compat	= w.eternal_compat or true
+		w.perishable_compat = w.perishable_compat or true
+		w.blueprint_compat 	= w.blueprint_compat or true
+		w.demicoloncompat	= w.demicoloncompat or false -- must state demicolon compat!
+		table.insert(_t,w)
+	end)
+end
+
 function Madcap.Funcs.LoadBlind(_f,_t,_atlas,_args)
-	if
-		type(_f) ~= 'table'
-		or type(_t) ~= 'table'
-		or type(_atlas) ~= 'string'
-	then
-		return false
-	end
+	if not Madcap.Funcs.CheckLoadArguments(_f,_t,_atlas,_args) then return false end
 	MadLib.loop_func_list(_f,function(w,i)
 		Madcap.Orders['Blind'] = Madcap.Orders['Blind'] + 1
 		w.object_type     	= "Blind"
@@ -2220,6 +2243,7 @@ function Madcap.Funcs.LoadBlind(_f,_t,_atlas,_args)
 end
 
 function Madcap.Funcs.LoadConsumables(_f,_s,_t,_atlas,_w,_args)
+	if not Madcap.Funcs.CheckLoadArguments(_f,_t,_atlas,_args) then return false end
 	MadLib.loop_func_list(_f,function(w,i)
 		Madcap.Orders['Consumable'] = Madcap.Orders['Consumable'] + 1
 		w.object_type     	= "Consumable"
@@ -2235,6 +2259,7 @@ function Madcap.Funcs.LoadConsumables(_f,_s,_t,_atlas,_w,_args)
 end
 
 function Madcap.Funcs.LoadEnhancements(_f,_t,_atlas,_w,_args)
+	if not Madcap.Funcs.CheckLoadArguments(_f,_t,_atlas,_args) then return false end
 	MadLib.loop_func_list(_f,function(w,i)
 		Madcap.Orders['Enhancement'] = Madcap.Orders['Enhancement'] + 1
 		w.object_type	= "Enhancement"
@@ -2247,6 +2272,7 @@ function Madcap.Funcs.LoadEnhancements(_f,_t,_atlas,_w,_args)
 end
 
 function Madcap.Funcs.LoadBoosters(_f,_t,_atlas,_w,_args)
+	if not Madcap.Funcs.CheckLoadArguments(_f,_t,_atlas,_args) then return false end
 	MadLib.loop_func_list(_f,function(w,i)
 		Madcap.Orders['Booster'] = Madcap.Orders['Booster'] + 1
 		w.object_type	= "Booster"
@@ -2261,6 +2287,7 @@ function Madcap.Funcs.LoadBoosters(_f,_t,_atlas,_w,_args)
 end
 
 function Madcap.Funcs.LoadVouchers(_f,_t,_atlas,_w,_args)
+	if not Madcap.Funcs.CheckLoadArguments(_f,_t,_atlas,_args) then return false end
 	MadLib.loop_func_list(_f,function(w,i)
 		Madcap.Orders['Voucher'] = Madcap.Orders['Voucher'] + 1
 		w.object_type	= "Voucher"
@@ -2273,6 +2300,7 @@ function Madcap.Funcs.LoadVouchers(_f,_t,_atlas,_w,_args)
 end
 
 function Madcap.Funcs.LoadDecks(_f,_t,_atlas,_w,_args)
+	if not Madcap.Funcs.CheckLoadArguments(_f,_t,_atlas,_args) then return false end
 	MadLib.loop_func_list(_f,function(w,i)
 		Madcap.Orders['Deck'] = Madcap.Orders['Deck'] + 1
 		w.object_type	= "Back"
@@ -2285,6 +2313,7 @@ function Madcap.Funcs.LoadDecks(_f,_t,_atlas,_w,_args)
 end
 
 function Madcap.Funcs.LoadSounds(_f,_t)
+	if not Madcap.Funcs.CheckLoadTables(_f,_t) then return false end
 	MadLib.loop_func_list(_f,function(w,i)
 		if w.list then
 			MadLib.loop_func_list(_f,function(v,i)
@@ -2299,6 +2328,7 @@ function Madcap.Funcs.LoadSounds(_f,_t)
 end
 
 function Madcap.Funcs.LoadSleeves(_f,_t,_atlas,_args)
+	if not Madcap.Funcs.CheckLoadArguments(_f,_t,_atlas,_args) then return false end
 	MadLib.loop_func_list(_f,function(w,i)
 		Madcap.Orders['Sleeve'] = Madcap.Orders['Sleeve'] + 1
 		w.unlocked 			= w.unlocked or true
@@ -2312,6 +2342,7 @@ function Madcap.Funcs.LoadSleeves(_f,_t,_atlas,_args)
 end
 
 function Madcap.Funcs.LoadTags(_f,_t,_atlas,_w,_args)
+	if not Madcap.Funcs.CheckLoadArguments(_f,_t,_atlas,_args) then return false end
 	MadLib.loop_func_list(_f,function(w,i)
 		if not w then return false end
 		Madcap.Orders['Tag'] = Madcap.Orders['Tag'] + 1

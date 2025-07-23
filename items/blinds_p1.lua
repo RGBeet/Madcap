@@ -37,7 +37,7 @@ local boss_sword = {
     debuff = { suit = 'rgmc_towers' },
 }
 
-local keyhole_whitelist = {
+Madcap.KeyholeWhitelist = {
     'High Card',
     'Pair',
     'Two Pair',
@@ -57,14 +57,14 @@ local boss_keyhole = {
     boss_colour = HEX('C6A839'),
     in_pool = function(self) return true end,
 	debuff_hand = function(self, cards, hand, handname, check)
-        return (not G.GAME.blind.disabled) and MadLib.list_matches_one(keyhole_whitelist, function(v)
+        return (not G.GAME.blind.disabled) and MadLib.list_matches_one(Madcap.KeyholeWhitelist, function(v)
             if handname == v then
                 G.GAME.blind:wiggle() -- nuh uh!
                 G.GAME.blind.triggered = true
             else
                 return false
             end
-        end) or Madcap.Data.devmode
+        end)
     end
 }
 
@@ -74,7 +74,7 @@ local boss_ladder = {
     boss_colour = HEX('7C5949'),
     config = {
         immutable = { min_rarity = 'Rare' },
-        extra = { mult_increase = 1.00 }
+        extra = { mult_increase = 0.75 }
     },
     in_pool = function(self) -- must have at least 1 ladder joker
         return (not G.jokers)
@@ -182,7 +182,7 @@ local boss_jest = {
             number_format(self.debuff.add_antes or 1))
     end,
     mult = 1.5,
-    dollars = 5,
+    dollars = 6,
     calculate = function (self, blind, context)
         if
             not blind.disabled
@@ -205,7 +205,7 @@ local boss_force = {
             return v.edition and v.edition.negative
         end) > 4 or Madcap.Data.devmode
     end,
-    dollars = 7,
+    dollars = 6,
     stay_flipped = function(self, area, card) return area == G.hand and card.edition and card.edition.negative end,
     calculate = function (self, blind, context)
         if context.end_of_round and G.GAME.modifiers.rgmc_force_awakened then
@@ -228,7 +228,7 @@ local boss_elevator = {
     loc_vars = function(self, info_queue, blind)
         return MadLib.collect_vars(blind and MadLib.base_prob(blind) or 1, blind and blind.ability.extra.odds or 6)
     end,
-    dollars = 7,
+    dollars = 6,
 	calculate = function(self, blind, context)
 		if
 			context.final_scoring_step
@@ -312,7 +312,7 @@ local final_blindfold = {
     key = 'final_blindfold',
     pos = MLIB.coords(15),
     boss_colour = HEX('CFBB8F'),
-    config = { extra = { mult_increase = 0.25, odds = 4 } },
+    config = { extra = { mult_increase = 0.4, odds = 4 } },
     in_pool = function(self)
         -- 1 in 4* chance to enter pool if you haven't skipped prior to this ante
         return G.GAME.MADCAP.blinds_skipped > 0
@@ -385,7 +385,7 @@ local final_pin = {
     boss_colour = HEX('ABB3FF'),
     config = {
         immutable = { min_rarity = 'Rare' },
-        extra = { mult_increase = 1.00 }
+        extra = { mult_increase = 1.5 }
     },
     in_pool = function(self)
         return (not G.jokers)

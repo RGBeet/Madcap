@@ -13,7 +13,7 @@ if loaded then -- load the items
 		name = "Pale Sleeve",
 		config = {
 			hand_size = -2,
-			hands = 	-2
+			hands = 	-1
 		},
 		unlocked = true,
 		unlock_condition = { deck = "Pale Deck", stake = 1 },
@@ -24,8 +24,8 @@ if loaded then -- load the items
 			if self.get_current_deck_key() == "b_rgmc_pale" then
 				key = self.key .. "_alt"
 				self.config = {
-					hand_size = -2,
-					hands = -1
+					hand_size = -4,
+					hands = -2
 				}
 				vars = {
 					self.config.hand_size,
@@ -36,8 +36,8 @@ if loaded then -- load the items
 			else
 				key = self.key
 				self.config = {
-					hand_size = -3,
-					hands = -2
+					hand_size = -2,
+					hands = -1
 				}
 				vars = {
 					self.config.hand_size,

@@ -250,31 +250,6 @@ if loaded then -- load the items
 		key = 'evil_orbsman',
 	}
 
-	function Madcap.Funcs.LoadJokers(_f,_t,_atlas,_args)
-		if
-			type(_f) ~= 'table'
-			or type(_t) ~= 'table'
-			or type(_atlas) ~= 'string'
-			or (_args and type(_args) ~= 'table')
-		then
-			return false
-		end
-		-- should have key, rarity, and some sort of vars/calculation.
-		MadLib.loop_func_list(_f,function(w,i)
-			w.pos         		= w.pos or Madcap.Funcs.LoadCoords(w, i, (w.args and w.args.width or 0))
-			w.order     		= (w.order or Madcap.Orders['Joker']) + (w.args and w.args.priority or 0)
-			w.cost				= w.cost or 3 -- default price is $3
-			w.unlocked			= w.unlocked or true
-			w.discovered		= w.discovered or true
-			-- sticker compat defaults to true unless stated otherwise
-			w.eternal_compat	= w.eternal_compat or true
-			w.perishable_compat = w.perishable_compat or true
-			w.blueprint_compat 	= w.blueprint_compat or true,
-			w.demicoloncompat	= w.demicoloncompat or false, -- must state demicolon compat!
-			table.insert(_t,w)
-		end)
-	end
-
 	Madcap.Funcs.LoadJokers({
 		rr_j_webdings,
 		rr_j_invert,
