@@ -339,6 +339,10 @@ function Madcap.Funcs.use_cosma(self, card, area, copier, num_cards, check, func
 	return true
 end
 
+local cosma_can_use = function(self, card)
+	return G.hand and type(G.hand.cards) == 'table' and #G.hand.cards > 0
+end
+
 
 
 -- [Cosma] DEMISE: Gives a random Cosma Tarot (besides Demise). 1 in 4 chance chance to copy last cosma tarot.
@@ -379,12 +383,10 @@ local demise = {
 local crow = {
     key 	= "crow",
 	pos 	= get_pos(0,1),
-	config	= { extra = { mult_mod = 2, suit = 'rgmc_daggers'} },
+	config	= { select = 2, extra = { mult_mod = 2, suit = 'rgmc_daggers'} },
 	cost 	= 5,
-	can_use = function(self, card)
-		return true
-	end,
-	use = Madcap.Funcs.use_cosma(self, card, area, copier, 2, function(v)
+	can_use = cosma_can_use,
+	use = Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 2, function(v)
 			return true -- must have suit
 		end, function(v, card)
 			local no_bonus = v.base.suit ~= card.ability.extra.suit
@@ -415,12 +417,10 @@ local crow = {
 local swan = {
     key 	= "swan",
 	pos 	= get_pos(0,2),
-	config	= { extra = { xmult_mod = 0.04, suit = 'rgmc_goblets'} },
+	config	= { select = 2, extra = { xmult_mod = 0.04, suit = 'rgmc_goblets'} },
 	cost 	= 5,
-	can_use = function(self, card)
-		return true
-	end,
-	use = Madcap.Funcs.use_cosma(self, card, area, copier, 2, function(v)
+	can_use = cosma_can_use,
+	use = Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 2, function(v)
 			return true -- must have suit
 		end, function(v, card)
 			local no_bonus = v.base.suit ~= card.ability.extra.suit
@@ -451,12 +451,10 @@ local swan = {
 local peacock = {
     key 	= "peacock",
 	pos 	= get_pos(0,3),
-	config	= { extra = { money_mod = 1, suit = 'rgmc_blooms'} },
+	config	= { select = 2, extra = { money_mod = 1, suit = 'rgmc_blooms'} },
 	cost 	= 5,
-	can_use = function(self, card)
-		return true
-	end,
-	use = Madcap.Funcs.use_cosma(self, card, area, copier, 2, function(v)
+	can_use = cosma_can_use,
+	use = Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 2, function(v)
 			return true -- must have suit
 		end, function(v, card)
 			local no_bonus = v.base.suit ~= card.ability.extra.suit
@@ -483,16 +481,14 @@ local peacock = {
 
 -- [Cosma] THE PELICAN: Select two cards to convert to
 -- [Towers]. If already [Towers], give them [+5 bonus chips].
--- Parallels IV - The Pelican (2 Tarots).
+-- Parallels IV - The Emperor (2 Tarots).
 local pelican = {
     key 	= "pelican",
 	pos 	= get_pos(0,4),
-	config	= { extra = { chip_mod = 10, suit = 'rgmc_towers'} },
+	config	= { select = 2, extra = { chip_mod = 10, suit = 'rgmc_towers'} },
 	cost 	= 5,
-	can_use = function(self, card)
-		return true
-	end,
-	use = Madcap.Funcs.use_cosma(self, card, area, copier, 2, function(v)
+	can_use = cosma_can_use,
+	use = Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 2, function(v)
 			return true -- must have suit
 		end, function(v, card)
 			local no_bonus = v.base.suit ~= card.ability.extra.suit
@@ -523,14 +519,27 @@ local pelican = {
 local phoenix = {
     key 	= "phoenix",
 	pos 	= get_pos(0,5),
-	config	= { },
+	config	= { extra = 0.2 },
 	cost 	= 7,
 	can_use = function(self, card)
-		return true
+		return G.hand
 	end,
-	use 	= function(self, card, area, copier)
-
-	end
+	use = Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 2, function(v)
+			return true -- must have suit
+		end, function(v, card)
+			MadLib.simple_event(function()
+				local _value = (v.ability.chips) or 0
+				v.ability.chips 		= _value  / 2
+				v.ability.perma_mult 	= (v.ability.perma_mult or 0) + _value * (card.ability.extra.fraction or 0.2)
+				return true
+			end, 0.2, 'after')
+			
+			-- juice
+			MadLib.simple_event(function()
+				v:juice_up()
+				return true
+			end, 0.08, 'immediate')
+		end)
 }
 
 -- [Cosma] THE SOULMATES: Select two cards, change each
@@ -539,13 +548,21 @@ local phoenix = {
 local soulmates = {
     key 	= "soulmates",
 	pos 	= get_pos(0,6),
-	config	= { },
+	config	= { self.config.select = 3 },
 	cost 	= 7,
 	can_use = function(self, card)
-		return true
+		return G.GAME.blind_info and G.GAME.blind_info.suits_played true
 	end,
-	use 	= function(self, card, area, copier)
-
+	use = Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 2, function(v)
+			return true -- must have suit
+		end, function(v, card)
+			-- try not to have suits swap into the SAME SUIT
+			local _suit = pseudorandom_element(G.GAME.blind_info.suits_played, psuedoseed('rgmc_soulmates')) -- pick a suit
+			MadLib.simple_event(function()
+				assert(SMODS.change_base(v, _suit, nil))
+				return true
+			end, 0.2, 'after')
+		end)
 	end
 }
 
@@ -558,10 +575,24 @@ local spirit_plane = {
 	config	= { },
 	cost 	= 7,
 	can_use = function(self, card)
-		return true
+		return #MadLib.get_enhanced_cards(G.playing_cards) > 1
 	end,
 	use 	= function(self, card, area, copier)
+		-- targets cards with no enhancement
+		local sorted_hand = MadLib.shuffle_sort_list(G.hand.cards, self.config.extra.select or 2, nil, function(a,b)
+			return (a:has_enhancement() and 0 or 1) > (b:has_enhancement() and 0 or 1)
+		end)
 
+		Madcap.Funcs.use_cosma(self, card, area, copier, 3, function(v)
+			return true -- must have suit
+		end, function(v, card)
+			local _enhancement = pseudorandom_element(_enhancement, psuedoseed('rgmc_spirit_plane')) -- pick a suit
+			
+			MadLib.simple_event(function()
+				v:set_ability(G.P_CENTERS[_enhancement.center.key])
+				return true
+			end, 0.2, 'after')
+		end)
 	end
 }
 
@@ -572,31 +603,52 @@ local spirit_plane = {
 local orbs = {
     key 	= "orbs",
 	pos 	= get_pos(0,8),
-	config	= { },
+	config	= { extra = { select = 2, odds = 4 } },
 	cost 	= 7,
 	can_use = function(self, card)
 		return true
 	end,
 	use 	= function(self, card, area, copier)
-
+		local selection = MadLib.shuffle_sort_list(G.hand.cards, self.config.extra.select or 2, nil, function(a,b)
+			return math.random() > 0.5 -- coin flip
+		end)
+	
+		MadLib.loop_func(selection, function(v,i)
+		if not MadLib.calculate_roll({ -- 3 in 4
+            seed = 'rgmc_madcrap',
+            denom = self.config.extra.odds
+        }) then -- add random enhancement
+			
+		else -- fucking blow up
+		
+		end)
 	end
 }
 
--- [Cosma] THE COSMIC TREE: Gain $2 for every
+-- [Cosma] THE COSMIC TREE: Gain $2/$1 for every
 -- unique suit / rank in hand.
 -- Parallels IX - The Hermit (X2 Money).
 local cosmic_tree = {
     key 	= "cosmic_tree",
 	pos 	= get_pos(0,9),
-	config	= { },
+	config	= { extra = { money = 2 } },
 	cost 	= 7,
 	can_use = function(self, card)
-		return true
+		return true -- always time for money
 	end,
 	use 	= function(self, card, area, copier)
-
+		local ranks, suits = #get_ranks_from_cards(G.playing_cards), #get_suits_from_cards(G.playing_cards)
+		ease_dollars(ranks + suits * 2)
 	end
 }
+
+function MadLib.compare_and_pick_unique(main_list, compare_list, seed_name)
+	return pseudorandom_element(MadLib.list_matches_all(main_list, function(v1)
+		return not MadLib.list_matches_one(compare_list, function(v2)
+			v2 ~= v1
+		end), 
+	end), psuedoseed('rgmc_life_map'))
+end
 
 -- [Cosma] THE LIFE MAP: 1 in 4 chance to reroll a Joker
 -- into one of a higher rarity.
@@ -604,13 +656,22 @@ local cosmic_tree = {
 local life_map = {
     key 	= "life_map",
 	pos 	= get_pos(1,0),
-	config	= { },
+	config	= { select = 1, extra = { odds = 2 } },
 	cost 	= 7,
 	can_use = function(self, card)
-		return true
+		return G.jokers and #G.jokers.cards > 0
 	end,
 	use 	= function(self, card, area, copier)
-
+		local changed = {}
+		MadLib.number_func(self.config.select, function(v,i)
+			if MadLib.calculate_roll({ -- 3 in 4
+				seed = 'rgmc_life_map',
+				denom = self.config.extra.odds
+			}) then -- add random enhancement
+				local pick = MadLib.compare_and_pick_unique()
+				-- get rarity
+			end
+		end)
 	end
 }
 
