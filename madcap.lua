@@ -752,6 +752,10 @@ function Madcap.Funcs.get_mayhem()
 	return G.GAME and G.GAME.Mayhem or 0
 end
 
+function Madcap.Funcs.get_max_mayhem()
+	return G.GAME and G.GAME.max_mayhem or 10
+end
+
 function Madcap.Funcs.get_mayhem_state()
 	return G.GAME and G.GAME.MayhemState or 0
 end

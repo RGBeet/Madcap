@@ -319,7 +319,7 @@ function Madcap.Funcs.use_cosma(self, card, area, copier, num_cards, check, func
 	-- change
 	Madcap.loop_func(valid,function(v, i)
 		MadLib.simple_event(function()
-			func(v,card)
+			func(v,card,i)
 			return true
 		end, 0.05, 'after')
 	end)
@@ -579,7 +579,7 @@ local spirit_plane = {
 	end,
 	use 	= function(self, card, area, copier)
 		-- targets cards with no enhancement
-		local sorted_hand = MadLib.shuffle_sort_list(G.hand.cards, self.config.extra.select or 2, nil, function(a,b)
+		local sorted_hand = MadLib.shuffle_sort_list(G.hand.cards, self.config.select or 2, nil, function(a,b)
 			return (a:has_enhancement() and 0 or 1) > (b:has_enhancement() and 0 or 1)
 		end)
 
@@ -609,7 +609,7 @@ local orbs = {
 		return true
 	end,
 	use 	= function(self, card, area, copier)
-		local selection = MadLib.shuffle_sort_list(G.hand.cards, self.config.extra.select or 2, nil, function(a,b)
+		local selection = MadLib.shuffle_sort_list(G.hand.cards, self.config.select or 2, nil, function(a,b)
 			return math.random() > 0.5 -- coin flip
 		end)
 	
@@ -663,7 +663,7 @@ local life_map = {
 	end,
 	use 	= function(self, card, area, copier)
 		local changed = {}
-		MadLib.number_func(self.config.select, function(v,i)
+		MadLib.number_func(nil, self.config.select, function(i)
 			if MadLib.calculate_roll({ -- 3 in 4
 				seed = 'rgmc_life_map',
 				denom = self.config.extra.odds
@@ -681,13 +681,27 @@ local life_map = {
 local karma = {
     key 	= "karma",
 	pos 	= get_pos(1,1),
-	config	= { },
+	config	= { select = 2, extra = 2 },
 	cost 	= 7,
 	can_use = function(self, card)
 		return true
 	end,
 	use 	= function(self, card, area, copier)
+		-- targets cards with no enhancement
+		local to_destroy = MadLib.shuffle_sort_list(G.hand.cards, self.config.select or 2, nil, function(a,b)
+			return math.random() < 0.5
+		end)
 
+		Madcap.Funcs.use_cosma(self, card, area, copier, 3, function(v)
+			return true -- must have suit
+		end, function(v, card)
+			local _enhancement = pseudorandom_element(_enhancement, psuedoseed('rgmc_spirit_plane')) -- pick a suit
+			
+			MadLib.simple_event(function()
+				v:set_ability(G.P_CENTERS[_enhancement.center.key])
+				return true
+			end, 0.2, 'after')
+		end)
 	end
 }
 
@@ -697,29 +711,43 @@ local karma = {
 local sacrifice = {
     key 	= "sacrifice",
 	pos 	= get_pos(1,2),
-	config	= { },
+	config	= { select = 1, extra = 1.0 },
 	cost 	= 7,
 	can_use = function(self, card)
-		return true
+		return true (G.jokers and #G.jokers.cards > 1) and (Madcap.Funcs.get_mayhem() + self.config.extra) <= Madcap.Funcs.get_max_mayhem()
 	end,
-	use 	= function(self, card, area, copier)
+	use = function(self, card, area, copier)
+		Madcap.Funcs.ease_mayhem(self.config.extra or 1, true)
 
+		local selection = MadLib.shuffle_sort_list(G.jokers.cards, self.config.select or 2, nil, function(a,b)
+			return math.random() < 0.5
+		end)
+	
+		MadLib.loop_func(selection, function(v,i)
+			-- destroy v
+		end)
 	end
 }
 
--- [Cosma] PAST LIVES - select 2 cards, turns
--- cards into previously destroyed cards (e.g. Glass)
+-- [Cosma] PAST LIVES - Creates a previously destroyed Joker
+-- at the cost of 1 Mayhem.
 -- Parallels XIII - Death (Copy card).
 local past_lives = {
     key 	= "past_lives",
 	pos 	= get_pos(1,3),
-	config	= { },
+	config	= { extra = 1 },
 	cost 	= 7,
 	can_use = function(self, card)
-		return true
+		return (G.GAME.dead_jokers and #G.GAME.dead_jokers or 0) > 0
+			and (Madcap.Funcs.get_mayhem() - self.config.extra) >= 0
 	end,
-	use 	= function(self, card, area, copier)
-
+	use = function(self, card, area, copier)
+		local _key = pseudorandom_element(G.GAME.dead_jokers, psuedoseed('rgmc_past_lives'))
+		Madcap.Funcs.ease_mayhem(self.config.extra and -self.config.extra or -1, true)
+		MadLib.simple_event(function()
+			local _joker = MadLib.create_joker(_key)
+			return true
+		end, 0.2, 'after')
 	end
 }
 
@@ -730,28 +758,60 @@ local past_lives = {
 local maze = {
     key 	= "maze",
 	pos 	= get_pos(1,4),
-	config	= { },
+	config	= { select = 2, extra = 2 },
 	cost 	= 7,
 	can_use = function(self, card)
 		return true
 	end,
-	use 	= function(self, card, area, copier)
+	use = function(self, card, area, copier)
+		local shuffled_deck = MadLib.shuffle_sort_list(G.hand.cards, nil, nil, function(a,b)
+			return math.random() < 0.5
+		end)
 
+		local shuffle_suits, shuffle_ranks = {}, {}
+		local save_n = math.min(self.config.select, #G.hand.cards)
+		for i = save_n+1, #G.hand.cards do -- for the first 
+			table.insert(shuffle_suits, shuffled_deck[i].base.suit)
+			table.insert(shuffle_ranks, shuffled_deck[i].base.value)
+		end
+
+		-- shuffle everything
+		pseudoshuffle(shuffle_ranks, psuedoseed('rgmc_maze'))
+		pseudoshuffle(shuffle_suits, psuedoseed('rgmc_maze'))
+
+		local change_cards = {}
+		
+		for i = save_n+1, #G.hand.cards do -- for the first
+			table.insert(change_cards, G.hand.cards[i - save_n])
+		end
+
+		Madcap.Funcs.use_cosma(self, card, area, copier, #change_cards, function(v,card,i)
+			return (v.base.value ~= shuffle_ranks[i]) or (v.base.suit ~= shuffle_suits[i])
+		end, function(v)
+			assert(SMODS.change_base(v, shuffle_suits[i], shuffle_ranks[i]))
+			v:juice_up(0.3, 0.5)
+		end)
 	end
 }
 
--- [Cosma] THE VESSEL: Select one card, multiply its values by X1.25.
+-- [Cosma] THE VESSEL: Select two cards, multiply their values by X1.25.
 -- Parallels XV - The Devil (Gold).
 local vessel = {
     key 	= "vessel",
 	pos 	= get_pos(1,5),
-	config	= { },
+	config	= { select = 2, extra = 1.25},
 	cost 	= 7,
 	can_use = function(self, card)
-		return true
+		return G.hand and #G.hand.cards > 1
 	end,
-	use 	= function(self, card, area, copier)
-
+	use = Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 2, nil, function(v)
+		Madcap.Funcs.mayhemize(_card, { 
+				force_values 	= true,
+				min_mult 		= self.config.extra or 1.25,
+				max_mult 		= self.config.extra or 1.25
+			}, false)
+			end
+		)
 	end
 }
 
@@ -761,89 +821,204 @@ local vessel = {
 local shore = {
     key 	= "shore",
 	pos 	= get_pos(1,6),
-	config	= { },
+	config	= { select = 1 },
 	cost 	= 7,
 	can_use = function(self, card)
 		return true
 	end,
-	use 	= function(self, card, area, copier)
-
+	use = Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 2, nil, function(v)
+		Madcap.Funcs.mayhemize(_card, { 
+				force_values 	= true,
+				min_mult 		= self.config.extra or 1.25,
+				max_mult 		= self.config.extra or 1.25
+			}, false)
+			end
+		)
 	end
 }
 
--- [Cosma] THE VEIL: ???
+-- [Cosma] THE VEIL: Inverts 3 random light suit cards into their dark counterpart.
 -- Parallels XVII - The Star (Diamonds).
 local veil = {
     key 	= "veil",
 	pos 	= get_pos(1,7),
-	config	= { },
+	config	= { select = 3 },
 	cost 	= 7,
 	can_use = function(self, card)
-		return true
+		return G.hand and MadLib.loop_func(G.hand.cards, function(v)
+			return v:has_light_suit()
+		end) >= (self.config.select or 3)
 	end,
-	use 	= function(self, card, area, copier)
-
-	end
+	use = Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 3, function(v)
+		return v:has_light_suit()
+	end, function(v)
+		local _suit = MadLib.suit_get_counterpart_lightdark(v.base.suit)
+		MadLib.simple_event(function() assert(SMODS.change_base(v, _suit, nil)) end)
+	end)
 }
 
--- [Cosma] THE BRIDGE: ???
+-- [Cosma] THE BRIDGE: Inverts 3 random dark suit cards into their light counterpart.
 -- Parallels XVIII - The Moon (Clubs).
 local bridge = {
     key 	= "bridge",
 	pos 	= get_pos(1,8),
-	config	= { },
+	config	= { select = 3 },
 	cost 	= 7,
 	can_use = function(self, card)
-		return true
+		return G.hand and MadLib.loop_func(G.hand.cards, function(v)
+			return v:has_dark_suit()
+		end) >= (self.config.select or 3)
 	end,
-	use 	= function(self, card, area, copier)
-
-	end
+	use = Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 3, function(v)
+		return v:has_dark_suit()
+	end, function(v)
+		local _suit = MadLib.suit_get_counterpart_lightdark(v.base.suit)
+		MadLib.simple_event(function() assert(SMODS.change_base(v, _suit, nil)) end)
+	end)
 }
 
--- [Cosma] PATHWAYS: ???
+local get_joker_shop_width(jokers)
+	return jokers * 1.02 * G.CARD_W * (jokers > 4 and 4 / jokers or 1)
+end
+
+local buy_shop_ref = G.FUNCS.buy_from_shop
+G.FUNCS.buy_from_shop = function(e)
+	local r 	= buy_shop_ref(e)
+    local c1 	= e.config.ref_table
+
+	if r and (G.GAME.rgmc_pathway and G.GAME.rgmc_pathway > 0) then
+		SMODS.change_booster_limit(-1)
+		SMODS.change_voucher_limit(-1)
+		G.GAME.shop.joker_max = G.GAME.shop.joker_max + (self.config.extra or 1)
+		G.GAME.rgmc_pathway = G.GAME.rgmc_pathway - 1
+		G.shop_jokers.T.w = get_joker_shop_width()
+		G.shop_jokers.T.h = 1.05*G.CARD_H
+		G.shop:recalculate()
+	end
+	
+	return r
+end
+
+-- [Cosma] PATHWAYS: For the next shop, give +1 Booster, +1 Shop Item, and +1 Voucher
+-- (Choose one)
 -- Parallels XIX - The Sun (Hearts).
 local pathways = {
     key 	= "pathways",
 	pos 	= get_pos(1,9),
-	config	= { },
+	config	= { extra = 1},
 	cost 	= 7,
 	can_use = function(self, card)
-		return true
+		return not G.shop -- not in shop
 	end,
 	use 	= function(self, card, area, copier)
-
+    local used_tarot = copier or card
+		MadLib.simple_event(function()
+			play_sound("timpani")
+			card:juice_up(0.3, 0.5)
+            G.GAME.rgmc_pathway = (G.GAME.rgmc_pathway or 0) + 1
+			SMODS.change_booster_limit(self.config.extra or 1)
+			SMODS.change_voucher_limit(self.config.extra or 1)
+			G.GAME.shop.joker_max = G.GAME.shop.joker_max + (self.config.extra or 1)
+            return true
+			-- in case this triggers in shop?
+			if G.shop then
+				G.shop_jokers.T.w = get_joker_shop_width()
+				G.shop_jokers.T.h = 1.05*G.CARD_H
+				G.shop:recalculate()
+			end
+		end, 0.3, 'after')
 	end
 }
 
--- [Cosma] THE UNKNOWN:
+-- Gets a random consumable
+Madcap.Funcs.get_random_consumable = function()
+	local selected = ""
+    local passed = false
+    local tries = 50
+    
+	while tries > 0 and not passed do -- modified from a cryptid function, could easily be absolute garbage
+        tries = tries - 1
+        passed = false
+        selected = G.P_CENTERS[pseudorandom_element(G.P_CENTER_POOLS.Consumeables, pseudoseed("raffle_cons")).key]
+        
+		if not (selected["hidden"] or (G.GAME and G.GAME["hidden"] and G.GAME["hidden"][selected]) or false) then
+            passed = true
+        end
+		if passed or tries <= 0 then selected = tries <=0 and 'c_strength' or selected end
+	return selected
+end
+
+local function check_add(area,slots)
+	return (G[area] and (#G[area].jokers + (slots or 1)) < G[area].config.card_limit)
+end
+
+-- [Cosma] THE UNKNOWN: Creates a random Negative consumable, Joker, or card. Mayhemize its values.
+-- 1 in 3 chance to retrigger
 -- Parallels XX - Judgement (+Joker).
 local unknown = {
     key 	= "unknown",
 	pos 	= get_pos(2,0),
-	config	= { },
+	config	= { extra = { odds = 4, min = 0.5, max = 1.5 } },
 	cost 	= 7,
 	can_use = function(self, card)
 		return true
 	end,
-	use 	= function(self, card, area, copier)
+	use = function(self, card, area, copier)
+		local done = false -- always
+		local i = 1
 
+		while not done do
+			local roll = math.ceil(math.random()*6)
+			if check_add('jokers') and roll > 5 then  
+				-- make negative joker (1 in 6)
+                SMODS.add_card { set = 'Joker', edition = 'e_negative', key_append = 'rgmc_' }
+                G.GAME.joker_buffer = 0
+			elseif roll <= 3 and check_add('consumeables') then
+				-- make a negative consumable (1 in 2)
+				MadLib.simple_event(function()
+                    SMODS.add_card( { 
+						area = G.consumeables, 
+						soulable = false, 
+						key = Madcap.Funcs.get_random_consumable().key, 
+						edition = 'e_negative'
+					})
+                    G.GAME.consumeable_buffer = 0
+                    return true
+				end, 0.3, 'after')
+			else
+				-- make negative playing card (1 in 3)
+            	SMODS.create_card { set = "Base", area = G.discard, edition = 'e_negative' }
+            	G.playing_card = (G.playing_card and G.playing_card + 1) or 1
+			end
+			-- if you don't roll a 1 in 4+i, it ends
+			done = not MadLib.calculate_roll({
+                seed = 'rgmc_madcrap',
+                denom = self.config.extra.odds + i
+            })
+		end
 	end
 }
 
--- [Cosma] LIFE ON EARTH: ???
+-- [Cosma] LIFE ON EARTH: Converts 2 random cards to Voids/Lanterns
 -- Parallels XXI - The World (Spades).
 local life_on_earth = {
     key 	= "life_on_earth",
 	pos 	= get_pos(2,1),
-	config	= { },
+	config	= { select = 2, extra = { suits = {'rgmc_voids', 'rgmc_lanterns'} } },
 	cost 	= 7,
 	can_use = function(self, card)
-		return true
+		return G.hand and MadLib.loop_func(G.hand.cards, function(v)
+			return not (v:is_suit(self.config.extra[1]) or v:is_suit(self.config.extra[2])
+		end) >= (self.config.select or 2)
 	end,
-	use 	= function(self, card, area, copier)
-
-	end
+	use = Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 2, function(v)
+		return not (v:is_suit(self.config.extra[1]) or v:is_suit(self.config.extra[2])
+	end, function(v)
+		local _suit = v:has_light_suit() and self.config.extra[2] 
+			or v:has_dark_suit() and self.config.extra[1]
+			or pseudorandom_element(self.config.suits)
+		MadLib.simple_event(function() assert(SMODS.change_base(v, _suit, nil)) end)
+	end)
 }
 
 
@@ -937,123 +1112,264 @@ SMODS.ConsumableType({
     can_divide = true,
 })
 
--- Anti Familiar: removes 1/2 face cards from deck
+local prioritize_vulnerable_cards = function(a,b)
+	local _a = (a:is_invulnerable() and 1 or 0) + math.random()/2
+	local _b = (b:is_invulnerable() and 1 or 0) + math.random()/2
+	return _a > _b
+end
+
+-- Anti Familiar: removes 1/2 face cards from deck.
+-- if paraedolia is added, counts ALL face cards!
 local familiar = {
 	key		= 'anti_familiar',
-	config	= { },
+	config	= { select = 0.5 },
 	can_use = function(self, card)
-		return true
+		return G.playing_cards and MadLib.list_matches_one(list, function(v)
+        	return v:is_face()
+   		end)
 	end,
-	use 	= function(self, card, area, copier)
+	use = function(self, card, area, copier)
+		local selection = MadLib.shuffle_sort_list(G.playing_cards, #G.playing_cards, function(v)
+			return v:is_face() -- is face card
+		end, prioritize_vulnerable_cards)
 
+		-- removes up to 1/2 of face cards
+		MadLib.number_func(math.ceil(#selection/2), function(i)
+			local _card = selection[i]
+			local _first_dissolve = nil
+			MadLib.simple_event(function()
+				_card:start_dissolve(nil, _first_dissolve)
+				_first_dissolve = true
+			end, 0.1, 'after')
+		end)
 	end
 }
 
 -- Anti Grim: removes 1/2 aces from deck
 local grim = {
 	key		= 'anti_grim',
-	config	= { },
+	config	= { select = 0.5, extra = { rank = 'Ace' } },
 	can_use = function(self, card)
-		return true
+		return G.playing_cards and MadLib.list_matches_one(G.playing_cards, function(v)
+        	return v:get_id() == (self.config.extra.rank or 'Ace')
+   		end)
 	end,
 	use 	= function(self, card, area, copier)
+		local selection = MadLib.shuffle_sort_list(G.playing_cards, #G.playing_cards, function(v)
+			return v:get_id() == (self.config.extra.rank or 'Ace')
+		end, prioritize_vulnerable_cards)
 
+		-- removes up to 1/2 of ace cards
+		MadLib.number_func(math.ceil(#selection/2), function(i)
+			local _card = selection[i]
+			local _first_dissolve = nil
+			MadLib.simple_event(function()
+				_card:start_dissolve(nil, _first_dissolve)
+				_first_dissolve = true
+			end, 0.1, 'after')
+		end)
 	end
 }
 
--- Anti Incantation: removes highest number cards from deck (ignores 6s)
+function Madcap.Funcs.get_highest_rank(group, allow_faces, inverse)
+	local max_value, highest = -30, nil
+	local ranks = MadLib.get_ranks_from_cards(G.playing_cards, true)
+	for k, _ in pairs(ranks) do
+		local pts = SMODS.Ranks[k].nominal
+		if SMODS.Ranks[k].face_nominal > 0 and not allow_faces then pts = max_value-1 end
+		if pts > max_value then
+			highest 	= k
+			max_value 	= SMODS.Ranks[k].nominal + SMODS.Ranks[k].face_nominal
+		end
+	end
+	return highest
+end
+
+-- Anti Incantation: removes highest number cards from deck
 local incantation = {
 	key		= 'anti_incantation',
 	config	= { },
 	can_use = function(self, card)
-		return true
+		return G.playing_cards and #G.playing_cards > 0
 	end,
-	use 	= function(self, card, area, copier)
+	use = function(self, card, area, copier)
+		local highest_rank = Madcap.Funcs.get_highest_rank(G.playing_cards, false) -- id key
 
+		-- grabs all the cards with the highest rank
+        local selection = MadLib.get_list_matches(G.playing_cards, function(v)
+			return v:get_id() == highest_rank
+		end)
+
+		MadLib.loop_func(selection, function(v)
+			local _first_dissolve = nil
+			MadLib.simple_event(function()
+				_card:start_dissolve(nil, _first_dissolve)
+				_first_dissolve = true
+			end, 0.1, 'after')
+		end)
 	end
 }
 
 -- Anti Talisman: disables blind reward and interest for 2 rounds, gives $10 in 2 rounds
 local talisman = {
 	key		= 'anti_talisman',
-	config	= { },
+	config	= { extra = { rounds = 2, money = 10  } },
 	can_use = function(self, card)
-		return true
+		return true -- always
 	end,
 	use 	= function(self, card, area, copier)
-
+        play_sound('timpani')
+		G.GAME.rgmc_sin_talisman_rounds 	= (G.GAME.rgmc_sin_talisman_rounds or 0) + self.config.extra.rounds
+		G.GAME.rgmc_sin_talisman_money 		= (G.GAME.rgmc_sin_talisman_money or 0) + self.config.extra.money
 	end
 }
 
--- Anti Aura: debuff editions for 2 rounds, gives $1 for each edition card debuffed
+-- Anti Aura: debuff editions for +2 rounds, gives $2 for each edition card debuffed
 local aura = {
 	key		= 'anti_aura',
-	config	= { },
-	can_use = function(self, card)
-		return true
+	config	= { extra = 2 },
+	can_use = function(self, card) -- at least one editioned playing card
+		return MadLib.valid_table(MadLib.get_editioned_cards(G.playing_cards), 1)
 	end,
-	use 	= function(self, card, area, copier)
-
+	use = function(self, card, area, copier)
+		G.GAME.rgmc_sin_aura_rounds = (G.GAME.rgmc_sin_talisman_rounds or 0) + self.config.extra.rounds
+		ease_dollars(#MadLib.get_editioned_cards(G.playing_cards) * (self.config.extra or 2))
 	end
 }
 
--- Anti Wraith: debuffs all jokers above uncommonfor 2 rounds, gives $3 for each joker debuffed
+-- Anti Wraith: debuffs all jokers above uncommon for +2 rounds, gives $3 for each joker debuffed
 local wraith = {
 	key		= 'anti_wraith',
-	config	= { },
+	config	= { extra = 3 },
 	can_use = function(self, card)
-		return true
+		return MadLib.valid_table(MadLib.get_jokers_matching_min_rarity(G.jokers.cards, 'Uncommon', true), 1)
 	end,
 	use 	= function(self, card, area, copier)
-
+		G.GAME.rgmc_sin_wraith_rounds = (G.GAME.rgmc_sin_wraith_rounds or 0) + self.config.extra.rounds
+		ease_dollars(#MadLib.get_jokers_matching_min_rarity(G.jokers.cards, 'Uncommon', true) * (self.config.extra or 3))
 	end
 }
 
--- Anti Sigil: destroys 1/2 of a random suit from deck
+local function gcd(a, b)
+    while b ~= 0 do a, b = b, a % b end
+    return a
+end
+
+function Madcap.Funcs.get_numer_denom(n)(x, max_denom)
+    max_denom = max_denom or 1000
+    local sign = x < 0 and -1 or 1
+    x = math.abs(x)
+
+    local best_numer, best_denom = 1, 1
+    local best_error = math.abs(x - best_numer / best_denom)
+
+    for denominator = 1, max_denom do
+        local numerator = math.floor(x * denominator + 0.5)
+        local error = math.abs(x - numerator / denominator)
+        if error < bestError then
+            best_numer = numerator
+            best_denom = denominator
+            best_error = error
+            if best_error < 1e-10 then break end
+        end
+    end
+
+    -- Simplify the fraction
+    local common_devisor = gcd(best_numer, best_denom)
+    best_numer = math.floor(best_numer / common_devisor)
+    best_denom = math.floor(best_denom / common_devisor)
+
+    return sign * best_numer, best_denom
+end
+
+-- Anti Sigil: destroys 3/4 of a random suit from deck
 local sigil = {
 	key		= 'anti_sigil',
-	config	= { },
+	config	= { extra = 0.75 },
 	can_use = function(self, card)
-		return true
+		return MadLib.list_matches_one(G.playing_cards, function(v)
+			return not v:is_suitless() -- has a suit
+		end)
 	end,
-	use 	= function(self, card, area, copier)
+	use = function(self, card, area, copier)
+		local _suits = {}
+		MadLib.loop_func_table(MadLib.get_suits_from_cards(G.playing_cards), function(k,v) table.insert(_suits,k) end)
+		local _pick = pseudorandom_element(_suit,psuedoseed('rgmc_anti_sigil'))
+		
+		local selection = MadLib.shuffle_sort_list(G.playing_cards, #G.playing_cards, function(v)
+			return v:is_suit(_pick)
+		end, prioritize_vulnerable_cards)
 
+		MadLib.number_func(math.ceil(#selection * self.config.extra ), function(i)
+			local _card = selection[i]
+			local _first_dissolve = nil
+			MadLib.simple_event(function()
+				_card:start_dissolve(nil, _first_dissolve)
+				_first_dissolve = true
+			end, 0.08, 'after')
+		end)
 	end
 }
 
--- Anti Ouija: destroys 3/4 of a random rank from deck
+-- Anti Ouija: destroys 1/2 of a random rank from deck
 local ouija = {
 	key		= 'anti_ouija',
-	config	= { },
+	config	= { extra = 0.5 },
 	can_use = function(self, card)
-		return true
+		return MadLib.list_matches_one(G.playing_cards, function(v)
+			return not v:is_rankless() -- has a suit
+		end)
 	end,
-	use 	= function(self, card, area, copier)
+	use = function(self, card, area, copier)
+		local _ranks = {}
+		MadLib.loop_func_table(MadLib.get_ranks_from_cards(G.playing_cards), function(k,v) table.insert(_ranks,k) end)
+		local _pick = pseudorandom_element(_suit,psuedoseed('rgmc_anti_ouija'))
+		
+		local selection = MadLib.shuffle_sort_list(G.playing_cards, #G.playing_cards, function(v)
+			return v:get_id() == _pick
+		end, prioritize_vulnerable_cards)
 
+		MadLib.number_func(math.ceil(#selection * self.config.extra ), function(i)
+			local _card = selection[i]
+			local _first_dissolve = nil
+			MadLib.simple_event(function()
+				_card:start_dissolve(nil, _first_dissolve)
+				_first_dissolve = true
+			end, 0.08, 'after')
+		end)
 	end
 }
 
 -- Anti Ectoplasm: -1 Joker slot, +1 hand size
 local ectoplasm = {
 	key		= 'anti_ectoplasm',
-	config	= { },
+	config	= { extra = 1 },
 	can_use = function(self, card)
-		return true
+		return (G.jokers.config.card_limit - self.config.extra) >= 0
 	end,
-	use 	= function(self, card, area, copier)
+	use = function(self, card, area, copier)
 
 	end
 }
 
--- Anti Immolate = creates X stone cards, -$X
+-- Anti Immolate = creates 5 Vino cards, -$10
 local immolate = {
 	key		= 'anti_immolate',
-	config	= { },
+	config	= { extra = { add = 5, money = 15 } },
 	can_use = function(self, card)
 		return true
 	end,
-	use 	= function(self, card, area, copier)
-
+	use = function(self, card, area, copier)
+		MadLib.simple_event(function()
+			local _first_dissolve = nil
+            local new_cards = {}
+			MadLib.number_func(nil, self.config.extra.add or 5, function(i)
+                cards[i] = SMODS.add_card { set = "Base", enhancement = 'rgmc_vino' }
+			end)
+        	SMODS.calculate_context({ playing_card_added = true, cards = new_cards })
+			ease_dollars(-self.config.extra.money, true)
+        	return true
+		end)
 	end
 }
 
@@ -1064,8 +1380,8 @@ local ankh = {
 	can_use = function(self, card)
 		return true
 	end,
-	use 	= function(self, card, area, copier)
-
+	use = function(self, card, area, copier)
+		local chosen_joker = pseudorandom_element(G.jokers.cards, 'ankh_choice')
 	end
 }
 

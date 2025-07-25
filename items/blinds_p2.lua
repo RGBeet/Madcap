@@ -154,7 +154,7 @@ local boss_carousel = {
 		if context.setting_blind and not G.GAME.blind.disabled then
             Madcap.CheckJokerOrder = true
             MadLib.simple_event(function()
-                MadLib.get_loop_func_number(4, function(i)
+                MadLib.number_func(4, function(i)
                     MadLib.simple_event(function()
                         G.jokers:shuffle('rgmc_carousel')
                         play_sound('cardSlide1', 0.85 + i*0.15)
