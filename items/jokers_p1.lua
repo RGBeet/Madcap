@@ -143,7 +143,7 @@ local squeezy_cheeze = {
             xchip_mod        = 0.2,
             xmult_mod        = 1,
             xmult_store      = 0,
-            rounds_remaining = 8
+            rounds_remaining = 8,
         }
     },
     loc_vars = function(self, info_queue, card)

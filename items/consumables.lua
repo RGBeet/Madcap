@@ -638,7 +638,7 @@ local cosmic_tree = {
 	end,
 	use 	= function(self, card, area, copier)
 		local ranks, suits = #get_ranks_from_cards(G.playing_cards), #get_suits_from_cards(G.playing_cards)
-		ease_dollars(ranks + suits * 2)
+		ease_dollars(ranks + suits * (self.config.extra.money or 2))
 	end
 }
 
@@ -1112,6 +1112,16 @@ SMODS.ConsumableType({
     can_divide = true,
 })
 
+function Madcap.Funcs.add_sinister(key, v1, subkey, v2)
+	-- access data
+	G.GAME.rgmc_sinister = G.GAME.rgmc_sinister or {}
+	G.GAME.rgmc_sinister[key] = G.GAME.rgmc_sinister[key] or {}
+	local sinister_key = G.GAME.rgmc_sinister[key]
+	-- add rounds
+	sinister_key.rounds 	= (sinister_key.rounds or 0) + v1
+	sinister_key[subkey]	= (sinister_key[subkey] or 0) + v2
+end
+
 local prioritize_vulnerable_cards = function(a,b)
 	local _a = (a:is_invulnerable() and 1 or 0) + math.random()/2
 	local _b = (b:is_invulnerable() and 1 or 0) + math.random()/2
@@ -1219,8 +1229,7 @@ local talisman = {
 	end,
 	use 	= function(self, card, area, copier)
         play_sound('timpani')
-		G.GAME.rgmc_sin_talisman_rounds 	= (G.GAME.rgmc_sin_talisman_rounds or 0) + self.config.extra.rounds
-		G.GAME.rgmc_sin_talisman_money 		= (G.GAME.rgmc_sin_talisman_money or 0) + self.config.extra.money
+		Madcap.Funcs.add_sinister('talisman', self.config.extra.rounds or 2, 'money', self.config.extra.money or 10)
 	end
 }
 
@@ -1232,7 +1241,7 @@ local aura = {
 		return MadLib.valid_table(MadLib.get_editioned_cards(G.playing_cards), 1)
 	end,
 	use = function(self, card, area, copier)
-		G.GAME.rgmc_sin_aura_rounds = (G.GAME.rgmc_sin_talisman_rounds or 0) + self.config.extra.rounds
+		Madcap.Funcs.add_sinister('aura', self.config.extra.rounds or 2)
 		ease_dollars(#MadLib.get_editioned_cards(G.playing_cards) * (self.config.extra or 2))
 	end
 }
@@ -1244,8 +1253,8 @@ local wraith = {
 	can_use = function(self, card)
 		return MadLib.valid_table(MadLib.get_jokers_matching_min_rarity(G.jokers.cards, 'Uncommon', true), 1)
 	end,
-	use 	= function(self, card, area, copier)
-		G.GAME.rgmc_sin_wraith_rounds = (G.GAME.rgmc_sin_wraith_rounds or 0) + self.config.extra.rounds
+	use = function(self, card, area, copier)
+		Madcap.Funcs.add_sinister('wraith', self.config.extra.rounds or 2)
 		ease_dollars(#MadLib.get_jokers_matching_min_rarity(G.jokers.cards, 'Uncommon', true) * (self.config.extra or 3))
 	end
 }
@@ -1373,75 +1382,124 @@ local immolate = {
 	end
 }
 
--- Anti Ankh = Create an Eternal Engraved copy of a random Joker
+-- Anti Ankh = Create an Eternal Engraved copy of a random Joker (bypasses compats)
 local ankh = {
 	key		= 'anti_ankh',
 	config	= { },
 	can_use = function(self, card)
-		return true
+		return G.jokers and #G.jokers.cards > 0
 	end,
 	use = function(self, card, area, copier)
 		local chosen_joker = pseudorandom_element(G.jokers.cards, 'ankh_choice')
+		MadLib.simple_event(function()
+			-- make joker
+			local copied_joker = copy_card(chosen_joker, nil, nil, nil, chosen_joker.edition)
+            copied_joker:start_materialize()
+            copied_joker:add_to_deck()
+            if copied_joker.edition then copied_joker:set_edition(copied_joker.edition, true) end
+			-- add stickers
+			copied_joker.ability.eternal 		= true
+			copied_joker.ability.rgmc_engraved 	= true
+            G.jokers:emplace(copied_joker)
+            return true
+		end)
 	end
 }
 
--- Anti Ankh = Disable retriggering for 2 rounds, gain $X afterwards
+-- Anti Deja Vu
 local deja_vu = {
 	key		= 'anti_deja_vu',
-	config	= { },
+	config	= { extra = { rounds = 2, money = 10  } },
 	can_use = function(self, card)
 		return true
 	end,
 	use 	= function(self, card, area, copier)
-
+        play_sound('timpani')
+		Madcap.Funcs.add_sinister('deja_vu', self.config.extra.rounds or 2, 'money', self.config.extra.money or 10)
 	end
 }
 
--- Anti Hex = Remove 1/2 of enhancements and editions, give $X for each card affected
+-- Anti Hex = Remove all enhancements and editions in deck, give $X for each card affected
 local hex = {
 	key		= 'anti_hex',
-	config	= { },
+	config	= { extra = { percent = 1, money = 2 } },
 	can_use = function(self, card)
-		return true
+		return MadLib.valid_table(MadLib.get_editioned_cards(G.playing_cards), 1)
 	end,
-	use 	= function(self, card, area, copier)
+	use = function(self, card, area, copier)
+		local total_money = 0
 
+		local enhanced 	= MadLib.get_enhanced_cards(G.playing_cards)
+		Madcap.loop_func(enhanced, function(v)
+			v:set_ability(G.P_CENTERS.c_base, nil, true) -- remove enhancement
+			total_money = total_money + self.config.extra.money
+		end)
+		
+		local editioned	= MadLib.get_editioned_cards(G.playing_cards)
+		Madcap.loop_func(editioned, function(v)
+			v:set_edition(nil,true,true) -- remove editions
+			total_money = total_money + self.config.extra.money * 1.5
+		end)
+
+		if total_money > 0 then ease_dollars(math.floor(total_money)) end
 	end
 }
 
 -- Anti Trance = Remove 3 levels from your most played hand, add 1 level to 3 least played hands
 local trance = {
 	key		= 'anti_trance',
-	config	= { },
+	config	= { extra = 3 },
 	can_use = function(self, card)
-		return true
+		return G.GAME.hands[MadLib.get_most_played_hand()].level > (self.config.extra or 3)
 	end,
-	use 	= function(self, card, area, copier)
+	use = function(self, card, area, copier)
+		-- level down most played poker hand
+		local most_played = MadLib.get_most_played_hand()
+		local least_played_num = most_played.played
 
+		-- get # of least played
+		MadLib.loop_func_table(G.GAME.hands, function(k,v)
+			if v.played < least_played_num then least_played_num = v.played end
+		end)
+
+		-- get possible candidates
+		local level_up_hands = MadLib.get_cards_from_shuffled_deck(G.GAME.hands, math.min(self.config.extra,#G.GAME.hands), function(v)
+			v.played == least_played_num
+		end, function(v)
+			return math.random() < 0.5 -- coin flip
+		end)
+
+		-- add levels
+		MadLib.loop_func(level_up_hands, function(v)
+			MadLib.do_level_up(card, v, 1)
+		end)
+		
+		-- get 3 of the least played poker hands, add the levels ala decant
 	end
 }
 
 -- Anti Medium = Disable consumable area for 2 rounds, +1 consumable slot afterwards
 local medium = {
 	key		= 'anti_medium',
-	config	= { },
+	config	= { extra = { rounds = 2, add_slots = 1 } },
 	can_use = function(self, card)
 		return true
 	end,
 	use 	= function(self, card, area, copier)
-
+		Madcap.Funcs.add_sinister('medium', self.config.extra.rounds or 2, 'consumeable', self.config.extra.slots or 10)
 	end
 }
 
--- Anti Cryptid = +4 Ante, +1 joker slot
+-- Anti Cryptid = +4 Ante, +2 joker slot
 local cryptid = {
 	key		= 'anti_cryptid',
-	config	= { },
+	config	= { extra = { ante = 4, slots = 2 }},
 	can_use = function(self, card)
-		return true
+		return true -- always!
 	end,
-	use 	= function(self, card, area, copier)
-
+	use = function(self, card, area, copier)
+		ease_ante(card.ability.extra.ante or 4)
+		G.jokers.config.card_limit = lenient_bignum(G.jokers.config.card_limit + to_big(card.ability.extra.slots or 1))
 	end
 }
 

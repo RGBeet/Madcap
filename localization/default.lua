@@ -1966,22 +1966,17 @@ return {
                 text = {
                     {
                         "{C:green}#1# in #2#{} chance for {C:attention}consumables{},",
-                        "upon {C:attention}, to create a {C:dark_edition}Negative{} copy",
+                        "upon {C:attention}creation{}, to create a {C:dark_edition}Negative{} copy",
                         "in the {C:riftraft_void}Void{}",
                         "{C:inactive}(Only applies to {C:riftraft_void}voidable{C:inactive}cards)",
                     }
                 },
             },
-            j_rgmc_riftraft_tardis = {
-                name = "TARDIS",
+            j_rgmc_riftraft_space_bar = {
+                name = "Space Bar",
                 text = {
-                    {
-                        "{C:attention}+#1#{} Voiding Limit",
-                        "{C:inactive}(Currently {C:attention}#2# {C:inactive}Voiding Limit{}",
-                    },
-                    {
-                        "\"It's bigger on the inside.\""
-                    }
+                    "{C:attention}+#1#{} Voiding Limit",
+                    "{C:inactive}(Currently {C:attention}#2# {C:inactive}Voiding Limit{}",
                 },
             },
             j_rgmc_riftraft_minus_world = {
@@ -4621,7 +4616,7 @@ return {
             rgmc_spectrum_house_light       = "Light Spectrum House",
             rgmc_spectrum_five_light        = "Light Spectrum Five",
             rgmc_blazer                     = "Blazer",
-            rgmc_pick_five                      = "Pick 5",
+            rgmc_pick_five                  = "Pick 5",
             rgmc_kaleidoscope               = "Kaleidoscope",
             rgmc_noak                       = "None of a Kind",
             rgmc_noak_flush                 = "Flush None",

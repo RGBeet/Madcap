@@ -274,8 +274,7 @@ local volatile = {
 local lazurite= {
 	key = "lazurite",
     calculate = function(self, card, context)
-
-
+        -- SEASONED CURLIES!!!
     end,
 }
 

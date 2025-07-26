@@ -956,8 +956,6 @@ function Game:start_run(args)
 
 end
 
-
-
 Madcap.CardReturnList = {
 	{ id = 'coil',
 		to 		= hand,
@@ -1024,6 +1022,30 @@ function Madcap.Funcs.handle_glass_card_scoring(card)
     return dead -- if the card would be dead, then let the game know
 end
 
+-- At end of round, check on Sinister Card timers
+local end_round_ref = end_round
+function end_round()
+	-- sinister card round tickers
+	if G.GAME.rgmc_sinister then
+		MadLib.loop_table(G.GAME.rgmc_sinister, function(k,v)
+			MadLib.simple_event(function()
+				local sin_table = G.GAME.rgmc_sinister[k]
+				sin_table.rounds = (G.GAME.rgmc_sinister.rounds or 1) - 1
+				if sin_table.rounds == 0 then -- rounds ended
+					if sin_table.money ~= nil then -- gain money
+						ease_dollars(sin_table.money)
+					elseif sin_table.consumeable ~= nil then -- gain consumeable slots
+						G.consumeables.config.card_limit = lenient_bignum(G.consumeables.config.card_limit + (sin_table.consume_slots or 1))
+					end
+					G.GAME.rgmc_sinister[k] = nil
+				end
+			end)
+			delay(2.0)
+		end)
+	end
+	end_round_ref() -- continue as usual
+end
+
 -- Enables/disables special suits (cups/shields)
 function Madcap.Funcs.set_special_suits(x)
     if G.GAME then G.GAME.Exotic = (x or false) end
@@ -1033,6 +1055,7 @@ end
 function Madcap.Funcs.get_default_attention_hold(text)
     return G.SETTINGS.GAMESPEED * (#text * 0.02 + 1.3)
 end
+
 -- Returns a random rank within the nominal values listed - if no values are set, any rank can be returned.
 function Madcap.Funcs.get_random_rank(a,b)
 	local chosen, tries = false, 0
@@ -1285,24 +1308,14 @@ if SMODS and SMODS.calculate_individual_effect then
 	local cie = SMODS.calculate_individual_effect
 	function SMODS.calculate_individual_effect(effect, scored_card, key, amount, from_edition)
 		if
-			( key == "x_mult"
-				or key == "xmult"
-				or key == "Xmult"
-				or key == "x_mult_mod"
-				or key == "xmult_mod"
-				or key == "Xmult_mod")
-			and amount ~= 1
+			MadLib.list_matches_one({'x_mult', 'xmult', 'x_mult_mod', 'xmult_mod'}, function(v)
+				return key == string.lower(v)
+			end) and amount ~= 1
 		then
-
 			-- Squeezy Cheeze
-			local list = SMODS.find_card('j_rgmc_squeezy_cheeze')
-
-			for _, v in pairs(list)do
-				--tell("SQUEEZY CHEEZE ACTIVATED - "..tostring(amount))
-				-- adds the mult to the joker
-
+			MadLib.loop_func(SMODS.find_card('j_rgmc_squeezy_cheeze'), function(v)
 				v.ability.extra.xmult_store = lenient_bignum(to_big(v.ability.extra.xmult_store) + to_big(amount))
-
+			
 				if v.ability.extra.xmult_store > 1 then
 				tell("New xmult_store is "..lenient_bignum(v.ability.extra.xmult_store))
 					local m = 0
@@ -1313,25 +1326,37 @@ if SMODS and SMODS.calculate_individual_effect then
 					end
 
 					local xm = 1 + v.ability.extra.xchip_mod * m
-					G.E_MANAGER:add_event(Event({
-						func = function()
-							play_sound("tarot2")
-							v:juice_up()
-							return true
-						end
-					}))
+
+					MadLib.simple_event(function()
+						play_sound("tarot2")
+						v:juice_up()
+						return true
+					end)
 
 					card_eval_status_text(v, "extra", nil, nil, nil, {
 						message = localize({
 							type = "variable",
-								key = "a_xchips",
-								vars = { number_format(xm) },
-							}),
+							key = "a_xchips",
+							vars = { number_format(xm) },
+						}),
 						colour = G.C.CHIPS,
 					})
+					hand_chips = mod_chips(to_big(hand_chips) * to_big(xm)) -- stupid way of doing x1.5 chips
+				end
+			end)
+		end
 
-					--hand_chips = mod_chips(to_big(hand_chips) * to_big(xm)) -- stupid way of doing x1.5 chips
-					tell(to_big(hand_chips))
+		if
+			MadLib.list_matches_one({'chips', 'chip_mod', 'chips_mod'}, function(v)
+				return key == string.lower(v)
+			end) and amount ~= 1
+		then
+			-- Squeezy (Partner)
+			if Partner_API then
+				if Madcap.Funcs.get_partner_key() == 'pnr_rgmc_squeezy' then
+					local _partner = G.GAME.selected_partner_card
+					_partner.ability.immutable.before_score = _partner.ability.immutable.before_score + amount
+					tell('+chips is now ' ..string(_partner.ability.immutable.before_score))
 				end
 			end
 		end
