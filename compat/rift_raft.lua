@@ -254,7 +254,7 @@ if loaded then -- load the items
         	if 
 				(context.buying_card or context.getting_booster_card) 
 				and not context.blueprint
-            	and Madcap.Funcs.calculate_card_odds(card, 'invert') then
+            	and Madcap.Funcs.calculate_card_odds(card, 'invert')
 			then
 				--basically just copies mimicry lol
 				local _card = context.card
@@ -322,7 +322,7 @@ if loaded then -- load the items
 				end)
 			end
 		end
-	}
+	
 
 	local get_rift_cards = function()
 		return (G.riftraft_void and (#G.riftraft_void.cards + #G.riftraft_rifthand.cards) or 0)

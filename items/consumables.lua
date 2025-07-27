@@ -548,10 +548,10 @@ local phoenix = {
 local soulmates = {
     key 	= "soulmates",
 	pos 	= get_pos(0,6),
-	config	= { self.config.select = 3 },
+	config	= { select = 3 },
 	cost 	= 7,
 	can_use = function(self, card)
-		return G.GAME.blind_info and G.GAME.blind_info.suits_played true
+		return G.GAME.blind_info and G.GAME.blind_info.suits_played
 	end,
 	use = Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 2, function(v)
 			return true -- must have suit
@@ -563,7 +563,6 @@ local soulmates = {
 				return true
 			end, 0.2, 'after')
 		end)
-	end
 }
 
 -- [Cosma] THE SPIRIT PLANE: Select two cards, change each
@@ -608,19 +607,20 @@ local orbs = {
 	can_use = function(self, card)
 		return true
 	end,
-	use 	= function(self, card, area, copier)
+	use = function(self, card, area, copier)
 		local selection = MadLib.shuffle_sort_list(G.hand.cards, self.config.select or 2, nil, function(a,b)
 			return math.random() > 0.5 -- coin flip
 		end)
 	
 		MadLib.loop_func(selection, function(v,i)
-		if not MadLib.calculate_roll({ -- 3 in 4
-            seed = 'rgmc_madcrap',
-            denom = self.config.extra.odds
-        }) then -- add random enhancement
+			if not MadLib.calculate_roll({ -- 3 in 4
+				seed = 'rgmc_madcrap',
+				denom = self.config.extra.odds
+			}) then -- add random enhancement
+				
+			else -- fucking blow up
 			
-		else -- fucking blow up
-		
+			end
 		end)
 	end
 }
@@ -645,8 +645,8 @@ local cosmic_tree = {
 function MadLib.compare_and_pick_unique(main_list, compare_list, seed_name)
 	return pseudorandom_element(MadLib.list_matches_all(main_list, function(v1)
 		return not MadLib.list_matches_one(compare_list, function(v2)
-			v2 ~= v1
-		end), 
+			return v2 ~= v1
+		end)
 	end), psuedoseed('rgmc_life_map'))
 end
 
@@ -714,7 +714,7 @@ local sacrifice = {
 	config	= { select = 1, extra = 1.0 },
 	cost 	= 7,
 	can_use = function(self, card)
-		return true (G.jokers and #G.jokers.cards > 1) and (Madcap.Funcs.get_mayhem() + self.config.extra) <= Madcap.Funcs.get_max_mayhem()
+		return (G.jokers and #G.jokers.cards > 1) and (Madcap.Funcs.get_mayhem() + self.config.extra) <= Madcap.Funcs.get_max_mayhem()
 	end,
 	use = function(self, card, area, copier)
 		Madcap.Funcs.ease_mayhem(self.config.extra or 1, true)
@@ -805,14 +805,13 @@ local vessel = {
 		return G.hand and #G.hand.cards > 1
 	end,
 	use = Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 2, nil, function(v)
-		Madcap.Funcs.mayhemize(_card, { 
+			Madcap.Funcs.mayhemize(_card, { 
 				force_values 	= true,
 				min_mult 		= self.config.extra or 1.25,
 				max_mult 		= self.config.extra or 1.25
 			}, false)
 			end
 		)
-	end
 }
 
 -- [Cosma] THE SHORE: Select one card, apply
@@ -834,7 +833,6 @@ local shore = {
 			}, false)
 			end
 		)
-	end
 }
 
 -- [Cosma] THE VEIL: Inverts 3 random light suit cards into their dark counterpart.
@@ -877,7 +875,7 @@ local bridge = {
 	end)
 }
 
-local get_joker_shop_width(jokers)
+local function get_joker_shop_width(jokers)
 	return jokers * 1.02 * G.CARD_W * (jokers > 4 and 4 / jokers or 1)
 end
 
@@ -919,13 +917,13 @@ local pathways = {
 			SMODS.change_booster_limit(self.config.extra or 1)
 			SMODS.change_voucher_limit(self.config.extra or 1)
 			G.GAME.shop.joker_max = G.GAME.shop.joker_max + (self.config.extra or 1)
-            return true
 			-- in case this triggers in shop?
 			if G.shop then
 				G.shop_jokers.T.w = get_joker_shop_width()
 				G.shop_jokers.T.h = 1.05*G.CARD_H
 				G.shop:recalculate()
 			end
+            return true
 		end, 0.3, 'after')
 	end
 }
@@ -945,7 +943,8 @@ Madcap.Funcs.get_random_consumable = function()
             passed = true
         end
 		if passed or tries <= 0 then selected = tries <=0 and 'c_strength' or selected end
-	return selected
+		return selected
+	end
 end
 
 local function check_add(area,slots)
@@ -1008,11 +1007,11 @@ local life_on_earth = {
 	cost 	= 7,
 	can_use = function(self, card)
 		return G.hand and MadLib.loop_func(G.hand.cards, function(v)
-			return not (v:is_suit(self.config.extra[1]) or v:is_suit(self.config.extra[2])
+			return not (v:is_suit(self.config.extra[1]) or v:is_suit(self.config.extra[2]))
 		end) >= (self.config.select or 2)
 	end,
 	use = Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 2, function(v)
-		return not (v:is_suit(self.config.extra[1]) or v:is_suit(self.config.extra[2])
+		return not (v:is_suit(self.config.extra[1]) or v:is_suit(self.config.extra[2]))
 	end, function(v)
 		local _suit = v:has_light_suit() and self.config.extra[2] 
 			or v:has_dark_suit() and self.config.extra[1]
@@ -1464,7 +1463,7 @@ local trance = {
 
 		-- get possible candidates
 		local level_up_hands = MadLib.get_cards_from_shuffled_deck(G.GAME.hands, math.min(self.config.extra,#G.GAME.hands), function(v)
-			v.played == least_played_num
+			return v.played == least_played_num
 		end, function(v)
 			return math.random() < 0.5 -- coin flip
 		end)
