@@ -121,31 +121,31 @@ if mod_loaded(mod_id) and Partner_API then -- load the items
 				number_format(card.ability.extra.chips))
 		end,
 		calculate = function(self, card, context)
-
-		if context.cardarea == G.play and context.other_card then
-            if context.other_card:is_suit(card.ability.extra.suits[1]) then
-                local active = nil -- needs a diamond suit to activate
-                for i=1,#context.scoring_hand do
-                -- if club or spade suit
-                    if context.scoring_hand[i] == context.other_card then
-                        break -- bruh it's the same damn card
-                    else
-                        active = (context.scoring_hand[i]:is_suit(card.ability.extra.suits[2])
-                                and card.ability.extra.suits[2])
-                                or (context.scoring_hand[i]:is_suit(card.ability.extra.suits[3])
-                                and card.ability.extra.suits[3])
-                        if active then
-                            break -- we are done here
-                        end
-                    end
-                end
-                if active == card.ability.extra.suits[2] then
-                    return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddMult, card, card.ability.extra.mult)
-                elseif active == card.ability.extra.suits[3] then
-                    return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips, card, card.ability.extra.chips)
-                end
-            end
-		end,
+			if context.cardarea == G.play and context.other_card then
+				if context.other_card:is_suit(card.ability.extra.suits[1]) then
+					local active = nil -- needs a diamond suit to activate
+					for i=1,#context.scoring_hand do
+					-- if club or spade suit
+						if context.scoring_hand[i] == context.other_card then
+							break -- bruh it's the same damn card
+						else
+							active = (context.scoring_hand[i]:is_suit(card.ability.extra.suits[2])
+									and card.ability.extra.suits[2])
+									or (context.scoring_hand[i]:is_suit(card.ability.extra.suits[3])
+									and card.ability.extra.suits[3])
+							if active then
+								break -- we are done here
+							end
+						end
+					end
+					if active == card.ability.extra.suits[2] then
+						return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddMult, card, card.ability.extra.mult)
+					elseif active == card.ability.extra.suits[3] then
+						return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips, card, card.ability.extra.chips)
+					end
+				end
+			end
+		end
 	}
 
 	-- Traveller: Upon using a Planet card, levels up the last

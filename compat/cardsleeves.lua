@@ -450,7 +450,7 @@ if loaded then -- load the items
 		jumble
 	}, list, 'rgmc_sleeves')
 
-	MadLib.loop_func(list, function(v, i)
+	MadLib.loop_func(list, function(v)
 		CardSleeves.Sleeve(v)
 	end)
 end

@@ -222,7 +222,7 @@ if loaded then -- load the items
 	-- NEW JOKERS
 	local rr_j_webdings = {
 		key = 'webdings',
-    	atlas   = placeholder,
+    	atlas   = 'placeholder',
     	pos     = {x = 0, y = 0},
     	rarity  = 2,
     	cost    = 6,
@@ -244,8 +244,8 @@ if loaded then -- load the items
 	}
 
 	local rr_j_invert = {
-		key = 'invert',
-    	atlas   = placeholder,
+		key 	= 'invert',
+    	atlas   = 'placeholder',
     	pos     = {x = 0, y = 0},
     	rarity  = 3,
     	cost    = 8,
@@ -289,8 +289,8 @@ if loaded then -- load the items
 	}
 
 	local rr_j_space_bar = {
-		key = 'space_bar',
-    	atlas   = placeholder,
+		key		= 'space_bar',
+    	atlas   = 'placeholder',
     	pos     = {x = 0, y = 0},
     	rarity  = 1,
     	cost    = 4,
@@ -304,8 +304,8 @@ if loaded then -- load the items
 	}
 
 	local rr_j_minus_world = {
-		key = 'minus_world',
-    	atlas   = placeholder,
+		key 	= 'minus_world',
+    	atlas   = 'placeholder',
     	pos     = {x = 0, y = 0},
     	rarity  = 2,
     	cost    = 6,
@@ -314,7 +314,7 @@ if loaded then -- load the items
 			if 
 				context.add_to_void 
 				and context.added -- table!
-				and Madcap.Funcs.calculate_card_odds(card,'minus_world') then
+				and Madcap.Funcs.calculate_card_odds(card,'minus_world')
 			then
 				-- mayhemize the card
 				Madcap.loop_func(context.added,function(v)
@@ -322,6 +322,7 @@ if loaded then -- load the items
 				end)
 			end
 		end
+	}
 	
 
 	local get_rift_cards = function()
@@ -334,8 +335,8 @@ if loaded then -- load the items
 	]]
 
 	local rr_j_think_therefore_ram = {
-		key = 'think_therefore_ram',
-    	atlas   = placeholder,
+		key 	= 'think_therefore_ram',
+    	atlas   = 'placeholder',
     	pos     = {x = 0, y = 0},
     	rarity  = 3,
     	cost    = 8,
@@ -365,8 +366,8 @@ if loaded then -- load the items
 	}
 
 	local rr_j_purest_unobtanium = {
-		key = 'purest_unobtanium',
-    	atlas   = placeholder,
+		key 	= 'purest_unobtanium',
+    	atlas   = 'placeholder',
     	pos     = {x = 0, y = 0},
     	rarity  = 2,
     	cost    = 6,
@@ -479,8 +480,8 @@ if loaded then -- load the items
 	end
 
 	local rr_j_evil_orbsman = {
-		key = 'evil_orbsman',
-    	atlas   = placeholder,
+		key 	= 'evil_orbsman',
+    	atlas   = 'placeholder',
     	pos     = {x = 0, y = 0},
     	rarity  = 2,
     	cost    = 6,
@@ -496,17 +497,21 @@ if loaded then -- load the items
 		end
 	}
 
-	Madcap.Funcs.LoadJokers({
+	local jokers = {
 		rr_j_webdings,
 		rr_j_invert,
 		rr_j_space_bar,
 		rr_j_minus_world,
 		rr_j_think_therefore_ram,
 		rr_j_purest_unobtanium,
-		rr_j_evil_orbsman
-	}, list, 'jokers_riftraft',{
-		priority = 1000 -- +1000 order
-	})
+	}
+
+	for i=1, #jokers do
+		jokers[i].object_type = "Joker"
+		jokers[i].order = 1000+i-1
+		jokers[i].unlocked = true
+		list[#list+1] = jokers[i]
+	end
 
 	--[[
 		List of NEW Rift cards:

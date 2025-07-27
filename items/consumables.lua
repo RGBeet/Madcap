@@ -386,7 +386,8 @@ local crow = {
 	config	= { select = 2, extra = { mult_mod = 2, suit = 'rgmc_daggers'} },
 	cost 	= 5,
 	can_use = cosma_can_use,
-	use = Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 2, function(v)
+	use = function (self, card, area, copier)
+		Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 2, function(v)
 			return true -- must have suit
 		end, function(v, card)
 			local no_bonus = v.base.suit ~= card.ability.extra.suit
@@ -409,6 +410,7 @@ local crow = {
 				return true
 			end, 0.08, 'immediate')
 		end)
+	end
 }
 
 -- [Cosma] THE SWAN: Select two cards to convert to
@@ -420,7 +422,8 @@ local swan = {
 	config	= { select = 2, extra = { xmult_mod = 0.04, suit = 'rgmc_goblets'} },
 	cost 	= 5,
 	can_use = cosma_can_use,
-	use = Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 2, function(v)
+	use = function (self, card, area, copier)
+		Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 2, function(v)
 			return true -- must have suit
 		end, function(v, card)
 			local no_bonus = v.base.suit ~= card.ability.extra.suit
@@ -443,6 +446,7 @@ local swan = {
 				return true
 			end, 0.08, 'immediate')
 		end)
+	end
 }
 
 -- [Cosma] THE PEACOCK: Select two cards to convert to
@@ -454,7 +458,8 @@ local peacock = {
 	config	= { select = 2, extra = { money_mod = 1, suit = 'rgmc_blooms'} },
 	cost 	= 5,
 	can_use = cosma_can_use,
-	use = Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 2, function(v)
+	use = function (self, card, area, copier)
+		Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 2, function(v)
 			return true -- must have suit
 		end, function(v, card)
 			local no_bonus = v.base.suit ~= card.ability.extra.suit
@@ -477,6 +482,7 @@ local peacock = {
 				return true
 			end, 0.08, 'immediate')
 		end)
+	end
 }
 
 -- [Cosma] THE PELICAN: Select two cards to convert to
@@ -488,7 +494,8 @@ local pelican = {
 	config	= { select = 2, extra = { chip_mod = 10, suit = 'rgmc_towers'} },
 	cost 	= 5,
 	can_use = cosma_can_use,
-	use = Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 2, function(v)
+	use = function (self, card, area, copier)
+		Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 2, function(v)
 			return true -- must have suit
 		end, function(v, card)
 			local no_bonus = v.base.suit ~= card.ability.extra.suit
@@ -511,6 +518,7 @@ local pelican = {
 				return true
 			end, 0.08, 'immediate')
 		end)
+	end
 }
 
 -- [Cosma] THE PHOENIX: Halves chip value, but adds 1/5 of
@@ -524,7 +532,8 @@ local phoenix = {
 	can_use = function(self, card)
 		return G.hand
 	end,
-	use = Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 2, function(v)
+	use = function (self, card, area, copier)
+		Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 2, function(v)
 			return true -- must have suit
 		end, function(v, card)
 			MadLib.simple_event(function()
@@ -540,6 +549,7 @@ local phoenix = {
 				return true
 			end, 0.08, 'immediate')
 		end)
+	end
 }
 
 -- [Cosma] THE SOULMATES: Select two cards, change each
@@ -553,7 +563,8 @@ local soulmates = {
 	can_use = function(self, card)
 		return G.GAME.blind_info and G.GAME.blind_info.suits_played
 	end,
-	use = Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 2, function(v)
+	use = function (self, card, area, copier)
+		Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 2, function(v)
 			return true -- must have suit
 		end, function(v, card)
 			-- try not to have suits swap into the SAME SUIT
@@ -563,6 +574,7 @@ local soulmates = {
 				return true
 			end, 0.2, 'after')
 		end)
+	end
 }
 
 -- [Cosma] THE SPIRIT PLANE: Select two cards, change each
@@ -576,7 +588,7 @@ local spirit_plane = {
 	can_use = function(self, card)
 		return #MadLib.get_enhanced_cards(G.playing_cards) > 1
 	end,
-	use 	= function(self, card, area, copier)
+	use = function(self, card, area, copier)
 		-- targets cards with no enhancement
 		local sorted_hand = MadLib.shuffle_sort_list(G.hand.cards, self.config.select or 2, nil, function(a,b)
 			return (a:has_enhancement() and 0 or 1) > (b:has_enhancement() and 0 or 1)
@@ -636,7 +648,7 @@ local cosmic_tree = {
 	can_use = function(self, card)
 		return true -- always time for money
 	end,
-	use 	= function(self, card, area, copier)
+	use = function(self, card, area, copier)
 		local ranks, suits = #get_ranks_from_cards(G.playing_cards), #get_suits_from_cards(G.playing_cards)
 		ease_dollars(ranks + suits * (self.config.extra.money or 2))
 	end
@@ -661,7 +673,7 @@ local life_map = {
 	can_use = function(self, card)
 		return G.jokers and #G.jokers.cards > 0
 	end,
-	use 	= function(self, card, area, copier)
+	use = function(self, card, area, copier)
 		local changed = {}
 		MadLib.number_func(nil, self.config.select, function(i)
 			if MadLib.calculate_roll({ -- 3 in 4
@@ -686,7 +698,7 @@ local karma = {
 	can_use = function(self, card)
 		return true
 	end,
-	use 	= function(self, card, area, copier)
+	use = function(self, card, area, copier)
 		-- targets cards with no enhancement
 		local to_destroy = MadLib.shuffle_sort_list(G.hand.cards, self.config.select or 2, nil, function(a,b)
 			return math.random() < 0.5
@@ -804,14 +816,15 @@ local vessel = {
 	can_use = function(self, card)
 		return G.hand and #G.hand.cards > 1
 	end,
-	use = Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 2, nil, function(v)
-			Madcap.Funcs.mayhemize(_card, { 
+	use = function (self, card, area, copier)
+		Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 2, nil, function(v)
+			Madcap.Funcs.mayhemize(v, { 
 				force_values 	= true,
 				min_mult 		= self.config.extra or 1.25,
 				max_mult 		= self.config.extra or 1.25
 			}, false)
-			end
-		)
+		end)
+	end
 }
 
 -- [Cosma] THE SHORE: Select one card, apply
@@ -825,14 +838,15 @@ local shore = {
 	can_use = function(self, card)
 		return true
 	end,
-	use = Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 2, nil, function(v)
-		Madcap.Funcs.mayhemize(_card, { 
+	use = function (self, card, area, copier)
+		Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 2, nil, function(v)
+			Madcap.Funcs.mayhemize(_card, { 
 				force_values 	= true,
 				min_mult 		= self.config.extra or 1.25,
 				max_mult 		= self.config.extra or 1.25
 			}, false)
-			end
-		)
+		end)
+	end
 }
 
 -- [Cosma] THE VEIL: Inverts 3 random light suit cards into their dark counterpart.
@@ -847,12 +861,14 @@ local veil = {
 			return v:has_light_suit()
 		end) >= (self.config.select or 3)
 	end,
-	use = Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 3, function(v)
-		return v:has_light_suit()
-	end, function(v)
-		local _suit = MadLib.suit_get_counterpart_lightdark(v.base.suit)
-		MadLib.simple_event(function() assert(SMODS.change_base(v, _suit, nil)) end)
-	end)
+	use = function (self, card, area, copier)
+		Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 3, function(v)
+			return v:has_light_suit()
+		end, function(v)
+			local _suit = MadLib.suit_get_counterpart_lightdark(v.base.suit)
+			MadLib.simple_event(function() assert(SMODS.change_base(v, _suit, nil)) end)
+		end)
+	end
 }
 
 -- [Cosma] THE BRIDGE: Inverts 3 random dark suit cards into their light counterpart.
@@ -867,12 +883,14 @@ local bridge = {
 			return v:has_dark_suit()
 		end) >= (self.config.select or 3)
 	end,
-	use = Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 3, function(v)
-		return v:has_dark_suit()
-	end, function(v)
-		local _suit = MadLib.suit_get_counterpart_lightdark(v.base.suit)
-		MadLib.simple_event(function() assert(SMODS.change_base(v, _suit, nil)) end)
-	end)
+	use = function (self, card, area, copier)
+		Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 3, function(v)
+			return v:has_dark_suit()
+		end, function(v)
+			local _suit = MadLib.suit_get_counterpart_lightdark(v.base.suit)
+			MadLib.simple_event(function() assert(SMODS.change_base(v, _suit, nil)) end)
+		end)
+	end
 }
 
 local function get_joker_shop_width(jokers)
@@ -908,8 +926,8 @@ local pathways = {
 	can_use = function(self, card)
 		return not G.shop -- not in shop
 	end,
-	use 	= function(self, card, area, copier)
-    local used_tarot = copier or card
+	use = function(self, card, area, copier)
+    	local used_tarot = copier or card
 		MadLib.simple_event(function()
 			play_sound("timpani")
 			card:juice_up(0.3, 0.5)
@@ -965,7 +983,6 @@ local unknown = {
 	use = function(self, card, area, copier)
 		local done = false -- always
 		local i = 1
-
 		while not done do
 			local roll = math.ceil(math.random()*6)
 			if check_add('jokers') and roll > 5 then  
@@ -1010,14 +1027,16 @@ local life_on_earth = {
 			return not (v:is_suit(self.config.extra[1]) or v:is_suit(self.config.extra[2]))
 		end) >= (self.config.select or 2)
 	end,
-	use = Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 2, function(v)
-		return not (v:is_suit(self.config.extra[1]) or v:is_suit(self.config.extra[2]))
-	end, function(v)
-		local _suit = v:has_light_suit() and self.config.extra[2] 
-			or v:has_dark_suit() and self.config.extra[1]
-			or pseudorandom_element(self.config.suits)
-		MadLib.simple_event(function() assert(SMODS.change_base(v, _suit, nil)) end)
-	end)
+	use = function(self, card, area, copier)
+		Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 2, function(v)
+			return not (v:is_suit(self.config.extra[1]) or v:is_suit(self.config.extra[2]))
+		end, function(v)
+			local _suit = v:has_light_suit() and self.config.extra[2] 
+				or v:has_dark_suit() and self.config.extra[1]
+				or pseudorandom_element(self.config.suits)
+			MadLib.simple_event(function() assert(SMODS.change_base(v, _suit, nil)) end)
+		end)
+	end
 }
 
 
@@ -1263,7 +1282,7 @@ local function gcd(a, b)
     return a
 end
 
-function Madcap.Funcs.get_numer_denom(n)(x, max_denom)
+function Madcap.Funcs.get_numer_denom(x, max_denom)
     max_denom = max_denom or 1000
     local sign = x < 0 and -1 or 1
     x = math.abs(x)
