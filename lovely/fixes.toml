@@ -18,7 +18,7 @@ match_indent = true
 target = 'blind.lua'
 pattern = '''if blind and blind.name then'''
 position = 'after'
-payload = '''Madcap.Funcs.blind_start()'''
+payload = '''	Madcap.Funcs.blind_start()'''
 match_indent = true
 
 # BLIND OVER
@@ -85,16 +85,6 @@ pattern = '''if G.CONTROLLER.focused.target and G.CONTROLLER.focused.target.area
 position = 'after'
 payload = '''Madcap.Funcs.discard_hand(G.hand.highlighted)'''
 match_indent = true
-
-
-# Handle Glass card stuff (e.g. Glass Michel)
-[[patches]]
-[patches.pattern]
-target = "functions/state_events.lua"
-pattern = '''if scoring_hand[i].ability.name == 'Glass Card' and not scoring_hand[i].debuff and pseudorandom('glass') < G.GAME.probabilities.normal/scoring_hand[i].ability.extra then'''
-position = "at"
-match_indent = true
-payload = """if scoring_hand[i].ability.name == 'Glass Card' and Madcap.Funcs.handle_glass_card_scoring(scoring_hand[i]) then"""
 
 # Continuum
 [[patches]]

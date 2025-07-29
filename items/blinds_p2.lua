@@ -703,9 +703,9 @@ local final_claw = {
 
 
 local function has_nonstandard_cards(cards,percentage)
-    return #MadLib.get_list_matches(cards, function(_,v)
-        return not MadLib.list_matches_one(MadLib.SuitTypes.Base, function(v2,_) return v2 == v.base.suit end)
-            or not MadLib.list_matches_one(MadLib.RankTypes.Base, function(v2,_) return v2 == v.base.value end)
+    return #MadLib.get_list_matches(cards, function(v)
+        return not MadLib.list_matches_one(MadLib.SuitTypes.Base, function(v2) return v2 == v.base.suit end)
+            or not MadLib.list_matches_one(MadLib.RankTypes.Base, function(v2) return v2 == v.base.value end)
     end) > (#cards) * percentage
 end
 

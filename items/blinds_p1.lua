@@ -57,14 +57,10 @@ local boss_keyhole = {
     boss_colour = HEX('C6A839'),
     in_pool = function(self) return true end,
 	debuff_hand = function(self, cards, hand, handname, check)
-        return (not G.GAME.blind.disabled) and MadLib.list_matches_one(Madcap.KeyholeWhitelist, function(v)
-            if handname == v then
-                G.GAME.blind:wiggle() -- nuh uh!
-                G.GAME.blind.triggered = true
-            else
-                return false
-            end
+        local valid = MadLib.list_matches_one(Madcap.KeyholeWhitelist, function(v)
+            return handname == v
         end)
+        return not valid
     end
 }
 
@@ -281,7 +277,7 @@ local boss_statue = {
         end) > (#G.playing_cards / 4) or Madcap.Data.devmode
     end,
     loc_vars = function(self, info_queue, card)
-        return MadLib.collect_vars(MadLib.base_prob(card), card.ability.extra.odds or 6)
+        return MadLib.collect_vars(MadLib.base_prob(self), self.config.extra.odds or 6)
     end,
 	calculate = function(self, blind, context)
 
@@ -403,7 +399,6 @@ local final_pin = {
             local multiplier = 1
 
             tell_stat("Matches",matches)
-            print(matches)
 
             if matches and matches > 1 then
                 tell("Ooh, now you've done it! You've increased the blind by X" .. tostring(multiplier) .. "!!")

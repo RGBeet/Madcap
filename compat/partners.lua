@@ -48,9 +48,9 @@ if mod_loaded(mod_id) and Partner_API then -- load the items
 					1.75,   -- Xmult
 					1.75    -- Xscore
 				},
-                related_card = partner_card('chinese_takeout')
 			}
 		},
+		link_config = { j_rgmc_chinese_takeout = 1 },
 		loc_vars = function(self, info_queue, card)
 			local str = "null"
 			if
@@ -106,19 +106,14 @@ if mod_loaded(mod_id) and Partner_API then -- load the items
 		key = "manganese",
 		config = {
 			extra = {
-                related_card 	= partner_card('rhodochrosite'),
                 chips 	= 20,
                 mult	= 4,
 				suits 	= { "Diamonds", "Spades", "Clubs" }
 			}
 		},
+		link_config = { j_rgmc_rhodochrosite = 1 },
 		loc_vars = function(self, info_queue, card)
-			return MadLib.collect_vars(
-				number_format(card.ability.extra.suits[1]),
-				number_format(card.ability.extra.suits[2]),
-				number_format(card.ability.extra.suits[3]),
-				number_format(card.ability.extra.mult),
-				number_format(card.ability.extra.chips))
+			return MadLib.collect_vars(number_format(card.ability.extra.mult), number_format(card.ability.extra.chips))
 		end,
 		calculate = function(self, card, context)
 			if context.cardarea == G.play and context.other_card then
@@ -153,11 +148,9 @@ if mod_loaded(mod_id) and Partner_API then -- load the items
 	local traveller = {
 		key = "traveller",
 		config = {
-			extra = {
-				bonus_levels = 0.5,
-                related_card = partner_card('rocket_keychain')
-			}
+			extra = { bonus_levels = 0.5, }
 		},
+		link_config = { j_rgmc_rocket_keychain = 1 },
 		loc_vars = function(self, info_queue, card)
 			return {
 				vars = {
@@ -173,11 +166,8 @@ if mod_loaded(mod_id) and Partner_API then -- load the items
 	-- With Easter Egg, also adds edition to selected card.
 	local paschal = {
 		key = "paschal",
-		config = {
-			extra = {
-                related_card = partner_card('easter_egg')
-			}
-		},
+		config = { },
+		link_config = { j_rgmc_easter_egg = 1 },
 		loc_vars = function(self, info_queue, card)
 			return { vars = { } }
 		end,
@@ -205,10 +195,9 @@ if mod_loaded(mod_id) and Partner_API then -- load the items
                 x_mult 	= 0.25,
                 a_chips = 50
 			},
-			immutable = {
-				before_score = 0
-			}
+			immutable = { before_score = 0 }
 		},
+		link_config = { j_rgmc_squeezy_cheeze = 1 },
 		loc_vars = function(self, info_queue, card)
 			return {
 				vars = {
@@ -231,11 +220,8 @@ if mod_loaded(mod_id) and Partner_API then -- load the items
 	-- Foolish: 
 	local foolish = {
 		key = "foolish",
-		config = {
-			extra = {
-                related_card = partner_card('catch_the_clown')
-			}
-		},
+		config = {  },
+		link_config = { j_rgmc_catch_the_clown = 1 },
 		loc_vars = function(self, info_queue, card)
 			return { vars = { } }
 		end,
@@ -247,11 +233,9 @@ if mod_loaded(mod_id) and Partner_API then -- load the items
 	local aces = {
 		key = "aces",
 		config = {
-			extra = {
-                related_card = partner_card('legend_rio'),
-                rank = "2"
-			}
+			extra = { rank_from = "2", rank_to = "King" }
 		},
+		link_config = { j_rgmc_legend_rio = 1 },
 		loc_vars = function(self, info_queue, card)
 			return { vars = { card.ability.extra.rank } }
 		end,
@@ -259,7 +243,6 @@ if mod_loaded(mod_id) and Partner_API then -- load the items
 
 		end,
 	}
-
 
 	local partners = {
 		snacky,
@@ -270,12 +253,13 @@ if mod_loaded(mod_id) and Partner_API then -- load the items
 		foolish,
 		aces
 	}
+	
 	for i=1, #partners do
 		local n = i-1
-		partners[i].pos 		= partners[i].pos or {x = n%5, y = math.floor(n/5)}
+		partners[i].pos 		= partners[i].pos or {x = (n%5), y = math.floor(n/5)}
 		partners[i].unlocked 	= true
 		partners[i].discovered 	= true
-		partners[i].atlas = sprites
+		partners[i].atlas 		= sprites
 		Partner_API.Partner(partners[i])
 	end
 end

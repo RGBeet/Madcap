@@ -32,14 +32,14 @@ local primordial_joker = {
     perishable_compat   = true,
     blueprint_compat    = true,
     demicoloncompat     = true,
-    config = { extra = { mult = 6 } },
+    config = { extra = { mult = 4 } },
 	loc_vars = function(self, info_queue, card)
 		return MadLib.collect_vars(card.ability.extra.mult,
             card.ability.extra.mult * (G.GAME and G.GAME.Mayhem or 0))
 	end,
     calculate = function(self, card, context)
         if context.joker_main or context.forcetrigger then
-            return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddMult, card, card.ability.extra.mult)
+            return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddMult, card, card.ability.extra.mult * (G.GAME and G.GAME.Mayhem or 0))
         end
     end
 }
@@ -112,10 +112,11 @@ local joker_in_binary = {
 	end,
     calculate = function(self, card, context)
         if
-            (context.cardarea == G.play
-            and context.individual)
+            (context.cardarea == G.play and context.other_card)
             or context.forcetrigger
         then
+            print(MadLib.RankIds['1'])
+            print(MadLib.RankIds['0'])
 			local rank   = context.other_card:get_id()
 			if
                 context.forcetrigger
@@ -282,14 +283,14 @@ local nope_joker = {
             if add == 0 then --
                 return {
                     message = localize("k_nope_ex"),
-                    colour  = discarding and C.RED or C.BLUE
+                    colour  = discarding and G.C.RED or G.C.BLUE
                 }
             elseif add == 1 then -- add
                 return {
                     message = localize({
                         type = "variable",
                         key = "a_" .. (discarding and "discard" or "hand") .. "_plus",
-                        colour  = discarding and C.RED or C.BLUE,
+                        colour  = discarding and G.C.RED or G.C.BLUE,
                         vars = { add }
                     }),
                 }
@@ -298,7 +299,7 @@ local nope_joker = {
                     message = localize({
                         type = "variable",
                         key = "a_" .. (discarding and "discard" or "hand") .. "_minus",
-                        colour  = discarding and C.RED or C.BLUE,
+                        colour  = discarding and G.C.RED or G.C.BLUE,
                         vars = { add }
                     }),
                 }
@@ -471,14 +472,7 @@ local radioactive_chinese = {
             end
         end
 
-        if
-			context.after
-        then
-			if card.ability['rgmc_x_score'] ~= nil then
-                return MadLib.add_to_final_score('x_score',card.ability.extra.effects[card.ability.immutable.mode][card.ability['rgmc_x_score']])
-            elseif card.ability['rgmc_e_score'] ~= nil then
-                return MadLib.add_to_final_score('e_score',card.ability.extra.effects[card.ability.immutable.mode][1])
-            end
+        if context.after then
         end
 
         -- End of round
@@ -610,11 +604,13 @@ local function set_edition_flipped(target)
     local success = (not target.edition) or target.edition.rgmc_flipped
     MadLib.simple_event(function()
         if success then
-            context.other_card:set_edition((not target.edition.rgmc_flipped) and { rgmc_flipped = true } or nil, true)
-            context.other_card:juice_up(0.5, 0.7)
+            local flip = not (target.edition and target.edition.rgmc_flipped)
+            target:set_edition(flip and 'rgmc_flipped' or nil, true)
+            target:juice_up(0.5, 0.7)
+            play_sound('tarot2', 0.76, 0.4)
         end
         return true
-    end, 0.3, 'immediate')
+    end, 1.0, 'immediate')
     return success
 end
 
@@ -638,17 +634,14 @@ local captain_viridian = {
     end,
     calculate = function(self, card, context)
         -- scaling
-        if
-            (context.forcetrigger
-            and set_edition_flipped(MadLib.get_card_from_shuffled_deck(G.hand.cards, function(c)
-                return (not c.edition) or c.edition.rgmc_flipped
-            end)))
-            or (context.cardarea == G.play
-            and context.other_card
-            and MadLib.calculate_roll({ card = card, seed = 'rgmc_captain_viridian' })
-            and set_edition_flipped(context.other_card))
+        if 
+            context.forcetrigger
+            or (context.cardarea == G.play 
+                and context.other_card
+                and MadLib.calculate_roll({ card = card, seed = 'rgmc_captain_viridian' }))
         then
-            return MadLib.simple_card_message(card, localize("rgmc_flipped_ex"))
+            local _success = set_edition_flipped(context.other_card)
+            if _success then return MadLib.simple_card_message(card, localize("rgmc_flipped_ex")) end
         end
     end
 }

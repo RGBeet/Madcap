@@ -24,17 +24,17 @@ local boomerang = {
 		blind_increase = 0.5
 	},
 	loc_vars = function(self, info_queue, tag)
-        return MadLib.collect_vars(number_format(G.GAME and tag.ability.blind_increase or 0.5))
+        return MadLib.collect_vars(number_format(G.GAME and self.config.blind_increase or 0.5))
 	end,
 	in_pool = function()
         return true -- Always appears!
     end,
 	apply = function(self, tag, context)
 		if context.type == self.config.type then
-			tag:yep('-'..tostring(tag.ability.blind_increase), G.C.GREEN, function() return true end)
+			tag:yep('-'..tostring(self.config.blind_increase), G.C.GREEN, function() return true end)
             show_tag_effect_text("Blind Decreased!")
-			G.GAME.blind:multiply_chips(-tag.ability.blind_increase)
-            Madcap.Funcs.add_anti_tag('boomerang').ability.blind_increase = tag.ability.blind_increase
+			G.GAME.blind:multiply_chips(self.config.blind_increase)
+            Madcap.Funcs.add_anti_tag('boomerang').config.blind_increase = self.config.blind_increase
             tag.triggered = true
             return true
         end
@@ -54,8 +54,8 @@ local perilous = {
 	},
 	loc_vars = function(self, info_queue, tag)
         return MadLib.collect_vars(
-			number_format(G.GAME and tag.ability.blind_increase or 0.5),
-			number_format(G.GAME and tag.ability.dollars or 20))
+			number_format(G.GAME and self.config.blind_increase or 0.5),
+			number_format(G.GAME and self.config.dollars or 20))
 	end,
 	in_pool = function()
         return true -- Always appears. Less likely to appear if you have >$20.
@@ -64,8 +64,8 @@ local perilous = {
 		if context.type == self.config.type then
 			tag:yep('+', G.C.MONEY, function() return true end) -- Money
             show_tag_effect_text("Blind Increased!")
-			G.GAME.blind:multiply_chips(tag.ability.blind_increase)
-            ease_dollars(tag.ability.dollars) -- Add money
+			G.GAME.blind:multiply_chips(self.config.blind_increase)
+            ease_dollars(self.config.dollars) -- Add money
             tag.triggered = true
             return true
         end
@@ -87,7 +87,7 @@ local xchips = {
     end,
 	apply = function(self, tag, context)
 		if
-			context.type == tab.ability.type
+			context.type == self.config.type
 			and context.final_scoring_step
 		then
 			local bonus = self.config.extra or 1
@@ -127,7 +127,7 @@ local xmult = {
 	apply = function(self, tag, context)
 
 		if
-			context.type == tab.ability.type
+			context.type == self.config.type
 			and context.final_scoring_step
 		then
 			local bonus = self.config.extra or 1
@@ -243,7 +243,7 @@ local punisher = {
 function Madcap.Funcs.handle_edition_tag_logic(self,tag,context)
 	if not context then
 		return false
-	elseif context.type == tag.ability.type then
+	elseif context.type == self.config.type then
 		local _applied = nil
 
 		if (Cryptid and Cryptid.forced_edition()) then
@@ -314,11 +314,11 @@ local rainbow = {
     end,
 	config = { type = "store_joker_modify", edition = "e_rgmc_iridescent" },
 	loc_vars = function(self, info_queue, tag)
-		info_queue[#info_queue + 1] = G.P_CENTERS[tag.ability.edition]
+		info_queue[#info_queue + 1] = G.P_CENTERS[self.config.edition]
 		return Madcap.BlankVar
 	end,
 	set_ability = function(self, tag)
-		tag.ability.edition = MadLib.get_weighted_edition({
+		self.config.edition = MadLib.get_weighted_edition({
 			'e_foil',
 			'e_holo',
 			'e_polychrome',
@@ -331,7 +331,7 @@ local rainbow = {
 			'e_rgmc_abyssal',
 			'e_rgmc_luxury',
 		})
-		tell(tag.ability.edition)
+		tell(self.config.edition)
 	end,
 	apply = function(self, tag, context)
         return activate_edition(self, tag, context)
@@ -339,7 +339,7 @@ local rainbow = {
 }
 
 local function get_simple_edition_locvar(self, info_queue, tag)
-	info_queue[#info_queue + 1] = G.P_CENTERS[tag.ability.edition]
+	info_queue[#info_queue + 1] = G.P_CENTERS[self.config.edition]
 	return Madcap.BlankVar
 end
 
@@ -777,7 +777,7 @@ local jackpot = {
 				G.CONTROLLER.locks[lock] = true
 				tag:yep("+", G.C.SECONDARY_SET.Spectral, function()
 					local cog = Tag("tag_rgmc_cogito")
-					if tag.ability.shiny then cog.ability.shiny = Cryptid.is_shiny() end
+					if self.config.shiny then cog.ability.shiny = Cryptid.is_shiny() end
 					add_tag(cog)
 					tag.triggered = true
 					cog:apply_to_run({ type = "new_blind_choice" })
@@ -987,7 +987,7 @@ local commercial = {
 		local video = pseudorandom_element(videos, pseudoseed('rgmc_meme'))
            G.FUNCS.overlay_menu{
                 definition = MadLib.create_video_uibox(video, 'rgmadcap', 'GET ME OUTTA HERE!', function()
-					ease_dollars(tag.ability.dollars) -- Add money
+					ease_dollars(self.config.dollars) -- Add money
 				end
 				),
                 config = {no_esc = true}

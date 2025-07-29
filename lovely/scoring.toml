@@ -68,6 +68,25 @@ tell("TODO: Add Subhand recording!")
 '''
 match_indent = true
 
+# record da hand before finalizing the shit
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = '''G.GAME.hands[text].visible = true'''
+position = "after"
+payload = '''Madcap.Funcs.record_hand_before()'''
+match_indent = true
+
+# record da hand after finalizing the shit
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = '''check_for_unlock({type = 'chip_score', chips = math.floor(hand_chips*mult)})'''
+position = "after"
+payload = '''Madcap.Funcs.record_hand_after(hand_chips, mult)'''
+match_indent = true
+
+
 [[patches]]
 [patches.pattern]
 target = "functions/state_events.lua"
@@ -85,6 +104,19 @@ pattern = '''mult\s*=\s*mod_mult\([^n\n\r]*\)'''
 position = "at"
 payload = '''mult = mod_mult(MadLib.calculate_mult(G.GAME.hands[text].mult, subhands))'''
 match_indent = true
+
+
+
+
+[[patches]]
+[patches.regex]
+target = "functions/state_events.lua"
+pattern = '''play_area_status_text("Not Allowed!")'''
+position = "after"
+payload = '''mult = mod_mult(0)
+hand_chips = mod_chips(0)'''
+match_indent = true
+
 
 # again
 [[patches]]

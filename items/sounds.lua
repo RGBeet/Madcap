@@ -30,6 +30,10 @@ Madcap.Funcs.LoadSounds({
     MadLib.keypath_simple('door_close',ext),
     MadLib.keypath_simple('clown_fail',ext),
     MadLib.keypath_simple('clown_ow',ext),
+    MadLib.keypath_simple('glass_save',ext),
+    MadLib.keypath_simple('laser',ext),
+    MadLib.keypath_simple('revert',ext),
+    MadLib.keypath_simple('mug_yep',ext),
 }, list)
 
 return {

@@ -36,7 +36,7 @@ local function inject_p_card_suit_compat(suit, rank)
 	end
 	--tell('Before:')
 	--print(G.P_CARDS[suit.card_key .. '_' .. rank.card_key])
-	G.P_CARDS[suit.card_key .. '_' .. rank.card_key] = card
+	--G.P_CARDS[suit.card_key .. '_' .. rank.card_key] = card
 	--tell('After:')
 	--print(G.P_CARDS[suit.card_key .. '_' .. rank.card_key])
 end

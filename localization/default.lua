@@ -796,7 +796,7 @@ return {
                 name = "Sigma Joker",
                 text = {
                     "Each {C:attention}Sum{} held in hand",
-                    "gives {X:chips,C:white}X#1#{} Chips",
+                    "gives {X:chips,C:white}X(Sum x #1#){} Chips",
                     "{C:inactive}(Currently {X:chips,C:white}X#2#{C:inactive})",
                     "{C:inactive}(Updates with hand selection)",
                 },
@@ -818,12 +818,12 @@ return {
                     {
                         "Gains {C:chips}+#1#{} Chips per played hand",
                         "{C:green}#2# in #3#{} chance to {C:red}reset{}",
-                        "at end of {C:attention}Blind}}",
-                        "{C:inactive}(Currently {C:chips}+#4#{C:inactive})"
+                        "at end of {C:attention}Blind",
+                        "{C:inactive}(Currently {C:chips}+#4#{C:inactive} Chips)"
                     },
                     {
-                        "{C:red}Reset{} chance incrases by",
-                        "#5# per used {C:red}discard{}"
+                        "{C:red}Reset{} chance increases by",
+                        "{C:attention}+#5#{} per used {C:red}discard{}"
                     }
                 }
             },
@@ -865,9 +865,9 @@ return {
                 name = "Blindfold Joker",
                 text = {
                     "{X:mult,C:white}X#1#{} Mult against {C:attention}Boss{} Blinds",
-                    "Lose {X:mult,C:white}X#2#{} Mult",
-                    "when Blind is {C:attention}skipped",
-                    "({C:attention}#3#{})"
+                    "({C:inactive}Lose {X:mult,C:white}X#2#{C:inactive} Mult",
+                    "{C:inactive}when {C:attention}Blind{C:inactive} is {C:attention}skipped)",
+                    "{C:inactive}({C:attention}#3#{C:inactive})"
                 },
             },
             j_rgmc_plentiful_ametrine = {
@@ -877,7 +877,7 @@ return {
                     "{C:green}#1# in #2#{} chance",
                     "this Joker gains {C:mult}+#3#{} Mult",
                     "Resets at end of {C:attention}Ante",
-                    "{C:inactive}(Currently {C:mult}+#4# {C:inactive} Mult)"
+                    "{C:inactive}(Currently {C:mult}+#4#{C:inactive} Mult)"
                 },
             },
             j_rgmc_toughened_shungite = {
@@ -887,7 +887,7 @@ return {
                     "{C:green}#1# in #2#{} chance",
                     "this Joker gains {C:chips}+#3# Chips",
                     "Resets at end of {C:attention}Ante",
-                    "{C:inactive}(Currently {C:chips}+#4# {C:inactive} Chips)"
+                    "{C:inactive}(Currently {C:chips}+#4#{C:inactive} Chips)"
                 },
             },
             j_rgmc_jimbos_funeral = {
@@ -1050,7 +1050,7 @@ return {
                 text = {
                     "Scored {C:attention}pentagonal number{} ranks",
                     "give {C:chips}+#1#{} Chips",
-                    "{C:inactive}({C:attention}Queens{C:inactive}count as {C:attention}12{C:inactive})"
+                    "{C:inactive}({C:attention}Queens{C:inactive} count as {C:attention}12{C:inactive})"
                 },
             },
             j_rgmc_null_and_void = {
@@ -1074,7 +1074,7 @@ return {
                 text = {
                     "Scoring cards with {C:attention}Seal{}",
                     "have a {C:green}#1# in #2#{} chance to",
-                    "copy Seal to {C:attention}#3#{} random played card(s){}"
+                    "copy Seal to a {C:attention}random{} played card(s){}"
                 },
             },
             j_rgmc_bball_pasta = {
@@ -4338,7 +4338,7 @@ return {
                     "Upon using a {C:planet}Planet{} card",
                     "level up the last played",
                     "{C:attention}poker hand by #1# level(s)",
-                    "{C:inactive}{Currently {C:attention}#2# {C:inactive})"
+                    "{C:inactive}(Currently {C:attention}#2# {C:inactive})"
                 },
                 unlock = {
                     "???",

@@ -301,6 +301,19 @@ if loaded then -- load the items
 		loc_vars = get_colour_loc_vars(self, info_queue, card),
 	}
 
+	-- ???: Create a Sinister Card for every X rounds held.
+	-- ???: Converts suits to Voids.
+	-- ???: Converts suits to Lanterns.
+	-- ???: Make a Gimmick Tag.
+	-- ???: Make a SPAM!
+	-- ???: Apply random enhancement to a random card
+	-- ???: Create a random playing card
+	-- ???: Apply Chrome to random Joker
+	-- ???: Level up Dark subhand
+	-- ???: Level up Light subhand
+	-- ???: Random Chip Joker
+	-- ???: Random Mult Joker
+
 	-- Load the colors
 	Madcap.Funcs.LoadConsumables({
 		carnation_pink,
@@ -312,12 +325,6 @@ if loaded then -- load the items
 		rose_gold,
 		iridescent_indigo,
 		sugar_plum,
-		-- void color
-		-- lantern color
-		-- upgrade cards to more fluff equivalent?
-		-- gives a random chip joker
-		-- gives a random mult joker
-		-- special
 		lunacy,
 	}, 'Colour', list, 'morefluff_colours', 4, {
 		display_size 	= { w = 71, h = 87 },

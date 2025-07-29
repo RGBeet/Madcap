@@ -229,9 +229,6 @@ end
 function Madcap.Funcs.blind_start()
     -- start of blind
     tell('Blind Start')
-
-	print(MadLib.SuitTypes.Light)
-	print(MadLib.SuitTypes.Dark)
     G.GAME.MADCAP.rank_dist = MadLib.get_ranks_from_cards(G.playing_cards)
 
     local patina_cards, bronze_cards, normal_cards = {}, {}, {}
@@ -249,7 +246,7 @@ function Madcap.Funcs.blind_start()
         end
     end
 
-    tell('Testing - we got ' .. tostring(G.GAME.MADCAP.rank_dist["King"]) .. 'Kings.')
+    --tell('Testing - we got ' .. tostring(G.GAME.MADCAP.rank_dist["King"]) .. 'Kings.')
 
     if #bronze_cards > 0 then
         tell('Bronze seals in deck.')
@@ -409,51 +406,59 @@ function Madcap.Funcs.blind_skip()
 end
 
 -- Record hand
-function Madcap.Funcs.record_hand(hand, chips, text)
 
+function Madcap.Funcs.record_hand_before()
+	local text, disp_text, poker_hands, scoring_hand, non_loc_disp_text = G.FUNCS.get_poker_hand_info(G.play.cards)
     local hand_type = G.GAME.MADCAP.ante.hand_types[text]
-    tell(text)
+	
+	G.GAME.MADCAP.ante.ranks = G.GAME.MADCAP.ante.ranks or {}
 
-    SMODS.calculate_context({ rgmc_total_score = chips })
+	MadLib.loop_func(scoring_hand, function(v)
+		local _rank, _suit = v:get_id(), v.base.suit
 
-    if not hand then return false end
+		G.GAME.MADCAP.ante.ranks[_rank] = G.GAME.MADCAP.ante.ranks[_rank] or 0
+		G.GAME.MADCAP.ante.ranks[_suit] = G.GAME.MADCAP.ante.ranks[_suit] or 0
+		
+		print(_rank .. ':' .. G.GAME.MADCAP.ante.ranks[_rank])
+		print(_suit .. ':' .. G.GAME.MADCAP.ante.ranks[_suit]) -- rank type stuff
 
-    for i=1,#hand do
-        local card = hand[i]
-
-        -- rank type stuff
-        if G.GAME.MADCAP.ante.ranks[card.base.value] == 0 then
+        if G.GAME.MADCAP.ante.ranks[_rank] == 0 then
             G.GAME.MADCAP.ante.unique_ranks = G.GAME.MADCAP.ante.unique_ranks + 1
+			tell('There are now ' .. tostring(G.GAME.MADCAP.ante.unique_ranks) .. ' unique ranks recorded.')
         end
 
         -- suit type stuff
-        if G.GAME.MADCAP.ante.suits[card.base.suit] == 0 then
+        if G.GAME.MADCAP.ante.suits[_suit] == 0 then
             G.GAME.MADCAP.ante.unique_suits = G.GAME.MADCAP.ante.unique_suits + 1
+			tell('There are now ' .. tostring(G.GAME.MADCAP.ante.unique_suits) .. ' unique suits recorded.')
         end
 
-        G.GAME.MADCAP.ante.ranks[card.base.value]   = (G.GAME.MADCAP.ante.ranks[card.base.value] or 0) + 1
-        G.GAME.MADCAP.ante.suits[card.base.suit]    = (G.GAME.MADCAP.ante.suits[card.base.suit] or 0) + 1
-        G.GAME.MADCAP.ante.faces_scored = (G.GAME.MADCAP.ante.faces_scored or 0) + (card:is_face(true) and 1 or 0)
+        G.GAME.MADCAP.ante.ranks[_rank]	= (G.GAME.MADCAP.ante.ranks[_rank] or 0) + 1
+        G.GAME.MADCAP.ante.suits[_suit]	= (G.GAME.MADCAP.ante.suits[_suit] or 0) + 1
+        G.GAME.MADCAP.ante.faces_scored = (G.GAME.MADCAP.ante.faces_scored or 0) + (v:is_face(true) and 1 or 0)
 
-        if card.config.center ~= G.P_CENTERS.c_base then -- Last Enhancement played
-            G.GAME.MADCAP.last_enhancement = card.config.center
-        end
-    end
+    	G.GAME.MADCAP.ante.hand_types[text] = G.GAME.MADCAP.ante.hand_types[text] or 0
+    	G.GAME.MADCAP.ante.hand_types[text] = G.GAME.MADCAP.ante.hand_types[text] + 1
 
-    local current_score, high_score = to_big(chips), to_big(G.GAME.MADCAP.best_hand.score)
+        if v.config.center ~= G.P_CENTERS.c_base then G.GAME.MADCAP.last_enhancement = v.config.center end
+	end)
+end
+
+function Madcap.Funcs.record_hand_after(_chips, _mult)
+	local total_chips = to_big(_chips) * to_big(_mult)
+    local current_score, high_score = to_big(total_chips), to_big(G.GAME.MADCAP.best_hand.score)
 
     if high_score < current_score then -- Update high score information
         G.GAME.MADCAP.best_hand = {
-            score   = chips,
+            score   = total_chips,
             hand    = MadLib.get_hand_info(G.hand.cards),
             play    = MadLib.get_hand_info(G.play.cards),
             ante    = G.GAME.round_resets.ante
         }
+    	SMODS.calculate_context({ rgmc_high_score = total_chips })
+		tell('New High Score! (' .. tostring(total_chips) .. ')')
     end
-
-    G.GAME.MADCAP.ante.hand_types[text] = G.GAME.MADCAP.ante.hand_types[text] or 0
-    G.GAME.MADCAP.ante.hand_types[text] = G.GAME.MADCAP.ante.hand_types[text] + 1
-
+    SMODS.calculate_context({ rgmc_total_score = total_chips })
     return true
 end
 
@@ -760,6 +765,10 @@ function Madcap.Funcs.get_mayhem_state()
 	return G.GAME and G.GAME.MayhemState or 0
 end
 
+function Madcap.Funcs.read_mayhem()
+	tell('Reading Mayhem...')
+end
+
 function Madcap.Funcs.ease_mayhem(_mod, _check, _silent, _instant)
     MadLib.simple_event(function()
         local round_UI = G.HUD:get_UIE_by_ID('mayhem_UI_count')
@@ -786,7 +795,7 @@ function Madcap.Funcs.ease_mayhem(_mod, _check, _silent, _instant)
             end
         end
 
-		local _new = (_old + mod)
+		local _new = (_old + _mod)
 		local mayhem_state = (_new > 9 and 3)
 			or (_new > 6 and 2)
 			or (_new > 3 and 1)
@@ -1002,23 +1011,8 @@ function Node:stop_drag()
 end
 
 function Madcap.Funcs.handle_glass_card_scoring(card)
-
     local dead = not card.debuff and pseudorandom('glass') < G.GAME.probabilities.normal/card.ability.extra
-
-    if
-        find_joker("rgmc_glass_michel")
-        and self.ability.glass_michel
-    then
-        tell('Glass Michel Time')
-        -- Tells you if the card would've otherwise been killed
-        if dead then
-            card_eval_status_text(self,'extra',nil,nil,nil,{
-                message = localize('k_safe_ex')
-            })
-            return false
-        end
-    end
-
+	--print('Glass card is ' .. (dead and 'dead' or 'alive') .. '.')
     return dead -- if the card would be dead, then let the game know
 end
 
@@ -1219,15 +1213,25 @@ end
 -- Gets the nominal ranks of all regular ranks in the group (usually G.hand.cards).
 -- Used for the Sum rank.
 function Madcap.Funcs.get_hand_sigma(group)
+	if type(group) ~= 'table' then return -1 end
 	local total = 0
-    for _, v in ipairs(group) do
-        if not (SMODS.has_no_rank(v) or v:rank_in_list(MadLib.RankTypes.Irregular))  then
-            local rank = SMODS.Ranks[v.base.value]
-            total = total + rank.nominal
-        end
-    end
+	MadLib.loop_func(group or G.hand.cards, function(v)
+		local irregular = v:rank_in_list(MadLib.RankTypes.Irregular)
+		local no_rank = SMODS.has_no_rank(v)
+
+		--tell('Irregular: ' .. tostring(irregular) .. ', ' .. 'No Rank: ' .. tostring(no_rank))
+
+		if not (irregular or no_rank) then
+			total = total + SMODS.Ranks[v.base.value].nominal
+		elseif v:get_id() == 'rgmc_x' then -- X rank gives a random value
+			total = total + (G.GAME.MADCAP.x_value or 0)
+		end
+	end)
+	--tell('Counted ' .. tostring(#group) .. ' cards for a total of ' .. tostring(total) .. '.')
 	return total
 end
+
+Madcap.Funcs.get_sigma_value = Madcap.Funcs.get_hand_sigma
 
 -- Get the "hand sum" for cards such as All-Star Joker
 function MadLib.get_hand_sum(hand, count_irregulars)
@@ -1307,11 +1311,14 @@ end
 if SMODS and SMODS.calculate_individual_effect then
 	local cie = SMODS.calculate_individual_effect
 	function SMODS.calculate_individual_effect(effect, scored_card, key, amount, from_edition)
+		local ret = cie(effect, scored_card, key, amount, from_edition)
+		
 		if
 			MadLib.list_matches_one({'x_mult', 'xmult', 'x_mult_mod', 'xmult_mod'}, function(v)
-				return key == string.lower(v)
+				return v == string.lower(key)
 			end) and amount ~= 1
 		then
+			tell('Looking for Squeezy cheeze...')
 			-- Squeezy Cheeze
 			MadLib.loop_func(SMODS.find_card('j_rgmc_squeezy_cheeze'), function(v)
 				v.ability.extra.xmult_store = lenient_bignum(to_big(v.ability.extra.xmult_store) + to_big(amount))
@@ -1321,18 +1328,14 @@ if SMODS and SMODS.calculate_individual_effect then
 					local m = 0
 					while (v.ability.extra.xmult_store - 1) > 0 do
 						v.ability.extra.xmult_store = v.ability.extra.xmult_store - 1 -- go down bith
-						-- uhhh
 						m = m + 1
 					end
-
 					local xm = 1 + v.ability.extra.xchip_mod * m
-
 					MadLib.simple_event(function()
 						play_sound("tarot2")
 						v:juice_up()
 						return true
 					end)
-
 					card_eval_status_text(v, "extra", nil, nil, nil, {
 						message = localize({
 							type = "variable",
@@ -1360,8 +1363,6 @@ if SMODS and SMODS.calculate_individual_effect then
 				end
 			end
 		end
-
-		local ret = cie(effect, scored_card, key, amount, from_edition)
 		if ret then return ret end
 	end
 end
@@ -1436,14 +1437,25 @@ function reset_castle_card()
 
 end
 
+function Card:glass_michel_save()
+	tell('Glass Michel saved!')
+	self.ability.glass_michel = nil -- no longer needed
+	MadLib.simple_event(function()
+        play_sound('rgmc_glass_save', 1, 0.5)
+		G.play:remove_card(card)
+		G.discard:emplace(self)
+		return true
+	end, 1.5, 'after')
+end
+
 -- Glass Michel better work.
-local crdsht = Card.shatter
+local shatter_ref = Card.shatter
 function Card:shatter()
-	-- if sticker prevents it?
-	if find_joker("rgmc_glass_michel") then
-		return { message = localize("k_safe_ex") }
-	else -- not safe!
-		crdsht()
+	if self.ability.glass_michel then
+		self:glass_michel_save()
+	else
+		print('shatter')
+		shatter_ref(self)
 	end
 end
 
@@ -1451,7 +1463,7 @@ end
 local ease_discard_ref = ease_discard
 function ease_discard(mod, instant, silent)
 	ease_discard_ref(mod,instant,silent)
-	tell_stat('discards',G.GAME.current_round.discards_left)
+	--tell_stat('discards',G.GAME.current_round.discards_left)
     if
         G.GAME.current_round.discards_left + mod == 0
         and G.GAME.MADCAP.temporary_discards > 0
@@ -1475,7 +1487,7 @@ end
 local ease_hands_played_ref = ease_hands_played
 function ease_hands_played(mod, instant)
 	ease_hands_played_ref(mod,instant)
-	tell_stat('hands',G.GAME.current_round.hands_left)
+	--tell_stat('hands',G.GAME.current_round.hands_left)
     if
         G.GAME.current_round.hands_left + mod == 0
         and G.GAME.MADCAP.temporary_hands > 0
@@ -2117,15 +2129,15 @@ function create_UIBox_HUD()
     return orig
 end
 
---[[
 -- fixing
 local eval_play_ref = G.FUNCS.evaluate_play
 function G.FUNCS.evaluate_play(e)
 	eval_play_ref(e)
 
+	--print(e)
     --local text,disp_text,poker_hands,scoring_hand,non_loc_disp_text = G.FUNCS.get_poker_hand_info(G.play.cards)
 	--Madcap.Funcs.record_hand(scoring_hand,math.floor(hand_chips * mult),text)
-end]]
+end
 
 local eval_card_ref = eval_card
 function eval_card(card, context)
@@ -2161,7 +2173,7 @@ function Card:calculate_enhancement(context)
 end
 
 
---[[ Used to mess around with poker hand stuff (e.g. Waveworx)
+--Used to mess around with poker hand stuff (e.g. Waveworx)
 local evaluate_poker_hand_ref = evaluate_poker_hand
 function evaluate_poker_hand(hand)
     local results = evaluate_poker_hand_ref(hand)
@@ -2179,7 +2191,7 @@ function evaluate_poker_hand(hand)
     end
 
     return results
-]]
+end
 
 SMODS.load_file('lib/subhands.lua')()     	-- changes to the scoring system
 SMODS.load_file('lib/scoring.lua')()     	-- changes to the scoring system
@@ -2210,8 +2222,8 @@ function Madcap.Funcs.GetMusic(_k, _select, _vol, _sync)
 end
 
 function Madcap.Funcs.LoadCoords(w, i, width)
-	return (w.atlas and w.atlas ~= 'placeholder' and MLIB.coords(i-1, width))
-		or MLIB.coords(0,0)
+	return (w.atlas and w.atlas ~= 'placeholder' and MadLib.coords(i-1, width))
+		or { x = 0, y = 0}
 end
 
 function Madcap.Funcs.LoadCoordsVertical(w, i)
@@ -2230,9 +2242,12 @@ function Madcap.Funcs.CheckLoadArguments(_f,_t,_atlas,_args)
 end
 
 function Madcap.Funcs.LoadJokers(_f,_t,_atlas,_args)
-	if not Madcap.Funcs.CheckLoadArguments(_f,_t,_atlas,_args) then return false end
+	if not Madcap.Funcs.CheckLoadArguments(_f,_t,_atlas,_args) then
+		tell('Uh oh at LoadJokers!')
+		return false 
+	end
 	-- should have key, rarity, and some sort of vars/calculation.
-	MadLib.loop_func_list(_f,function(w,i)
+	MadLib.loop_func(_f,function(w,i)
 		w.pos         		= w.pos or Madcap.Funcs.LoadCoords(w, i, (w.args and w.args.width or 0))
 		w.order     		= (w.order or Madcap.Orders['Joker']) + (w.args and w.args.priority or 0)
 		w.cost				= w.cost or 3 -- default price is $3

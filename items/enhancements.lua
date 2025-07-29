@@ -1,3 +1,6 @@
+-- TODO: Add check if enhancements are enabled.
+
+-- Ferrous: upgraded Bonus enhancement, adds +chips if held at end of round
 local ferrous = {
 	key = "ferrous",
     config = { extra = { chips = 15, gain = 15 } },
@@ -9,14 +12,14 @@ local ferrous = {
             context.cardarea == G.play
             and context.main_scoring
         then
-            return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips,card.ability.extra.chips)
+            return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips, card, card.ability.extra.chips)
         end
 
         if -- Upgrades if left in hand at end of round
             context.playing_card_end_of_round
             and context.cardarea == G.hand
         then
-            return MadLib.get_simple_upgrade_data(MadLib.ScoreKeys.AddChips,card,card.ability.extra.gain)
+            return MadLib.get_simple_upgrade_data(MadLib.ScoreKeys.AddChips, card, card.ability.extra.gain)
         end
     end,
     draw = function(self, card, layer)
@@ -24,6 +27,7 @@ local ferrous = {
 	end
 }
 
+-- Wolfram: upgraded Mult enhancement, adds +mult if held at end of round
  local wolfram = {
 	key = "wolfram",
     config = { extra = { mult = 3, gain = 3 } },
@@ -35,14 +39,14 @@ local ferrous = {
             context.cardarea == G.play
             and context.main_scoring
         then
-            return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddMult,card.ability.extra.mult)
+            return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddMult, card, card.ability.extra.mult)
         end
 
         if -- Upgrades if left in hand at end of round
             context.playing_card_end_of_round
             and context.cardarea == G.hand
         then
-            return MadLib.get_simple_upgrade_data(MadLib.ScoreKeys.AddMult,card,card.ability.extra.gain)
+            return MadLib.get_simple_upgrade_data(MadLib.ScoreKeys.AddMult, card, card.ability.extra.gain)
         end
     end,
     draw = function(self, card, layer)
@@ -61,14 +65,14 @@ local lustrous = {
             context.cardarea == G.play
             and context.main_scoring
         then
-            return MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiMult,card.ability.extra.mult)
+            return MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiMult, card, card.ability.extra.mult)
         end
 
         if -- Upgrades if left in hand at end of round
             context.playing_card_end_of_round
             and context.cardarea == G.hand
         then
-            return MadLib.get_simple_upgrade_data(MadLib.ScoreKeys.MultiMult,card,card.ability.extra.gain)
+            return MadLib.get_simple_upgrade_data(MadLib.ScoreKeys.MultiMult, card, card.ability.extra.gain)
         end
     end,
     draw = function(self, card, layer)
@@ -119,6 +123,7 @@ local bismuth = {
 	end
 }
 
+-- Unhancement, takes away score when scoring but turns into a Bismuth if scored in winning hand.
 local vino = {
 	key = "vino",
     config = { extra = { x_score = 0.9, active = false } },

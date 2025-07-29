@@ -15,7 +15,6 @@ if loaded then -- load the items
 			hand_size = -2,
 			hands = 	-1
 		},
-		unlocked = true,
 		unlock_condition = { deck = "Pale Deck", stake = 1 },
 		loc_vars = function(self)
 			local key, vars
@@ -90,7 +89,6 @@ if loaded then -- load the items
 		key = "hexing_sleeve",
 		name = "Hexing Sleeve",
 		config = { },
-		unlocked = true,
 		unlock_condition = { deck = "Hexing Deck", stake = 1 },
 		loc_vars = function(self)
 			local key, vars
@@ -125,7 +123,7 @@ if loaded then -- load the items
 		end,
 	}
 
-	local function get_deck_dualsuit_locvars(deck,light_suit,dark_suit)
+	local function get_deck_dualsuit_locvars(self,deck,light_suit,dark_suit)
 		local key
 		if self.get_current_deck_key() == "b_"..deck then
 			key = self.key .. "_alt"
@@ -165,10 +163,9 @@ if loaded then -- load the items
 		key = "sangria_sleeve",
 		name = "Sangria Sleeve",
 		config = { suits = { 'rgmc_goblets','rgmc_towers' } },
-		unlocked = true,
 		unlock_condition = { deck = "Sangria Deck", stake = 1 },
 		loc_vars = function(self)
-			return get_deck_dualsuit_locvars('rgmc_sangria', self.config.suits[1], self.config.suits[2])
+			return get_deck_dualsuit_locvars(self,'rgmc_sangria', self.config.suits[1], self.config.suits[2])
 		end,
 		apply = function(self) -- Start of the run
 			G.GAME.modifiers.rgmc_deck    	= true  -- music activated
@@ -187,10 +184,9 @@ if loaded then -- load the items
 		key = "merlot_sleeve",
 		name = "Merlot Sleeve",
 		config = { suits = { 'rgmc_goblets','rgmc_towers' } },
-		unlocked = true,
 		unlock_condition = { deck = "Merlot Deck", stake = 1 },
 		loc_vars = function(self)
-			return get_deck_dualsuit_locvars('rgmc_merlot', self.config.suits[1], self.config.suits[2])
+			return get_deck_dualsuit_locvars(self,'rgmc_merlot', self.config.suits[1], self.config.suits[2])
 		end,
 		apply = function(self) -- Start of the run
 			G.GAME.modifiers.rgmc_deck    	= true  -- music activated
@@ -212,7 +208,6 @@ if loaded then -- load the items
 			good_max = 0.25,
 			bad_min = 1.25
 		},
-		unlocked = true,
 		unlock_condition = { deck = "Target Deck", stake = 1 },
 		loc_vars = function(self)
 			local key, vars
@@ -322,7 +317,6 @@ if loaded then -- load the items
 			ante_scaling = 0.66,
 			list_index = 5
 		},
-		unlocked = true,
 		unlock_condition = { deck = "Micro Deck", stake = 1 },
 		loc_vars = function(self)
 			local key, vars
@@ -393,7 +387,6 @@ if loaded then -- load the items
 		key = "mayhem_sleeve",
 		name = "Mayhem Sleeve",
 		config = { },
-		unlocked = true,
 		unlock_condition = { deck = 'Mayhem Deck', stake = 1 },
 		trigger_effect = function(self, args)
 		end,
@@ -405,7 +398,6 @@ if loaded then -- load the items
 		key = "capital_sleeve",
 		name = "Capital Sleeve",
 		config = { },
-		unlocked = true,
 		unlock_condition = { deck = 'Capital Deck', stake = 1 },
 		trigger_effect = function(self, args)
 		end,
@@ -417,7 +409,6 @@ if loaded then -- load the items
 		key = "cross_sleeve",
 		name = "Cross Sleeve",
 		config = { },
-		unlocked = true,
 		unlock_condition = { deck = 'Cross Deck', stake = 1 },
 		trigger_effect = function(self, args)
 		end,
@@ -429,7 +420,6 @@ if loaded then -- load the items
 		key = "jumble_sleeve",
 		name = "Jumble Sleeve",
 		config = { },
-		unlocked = true,
 		unlock_condition = { deck = 'Jumble Deck', stake = 1 },
 		trigger_effect = function(self, args)
 		end,
@@ -437,6 +427,7 @@ if loaded then -- load the items
 		end,
 	}
 
+	local sleeves = {}
 	Madcap.Funcs.LoadSleeves({
 		pale,
 		hexing,
@@ -448,10 +439,11 @@ if loaded then -- load the items
 		cross,
 		merlot,
 		jumble
-	}, list, 'rgmc_sleeves')
+	}, sleeves, 'rgmc_sleeves') -- load into sleeves cause 
 
-	MadLib.loop_func(list, function(v)
-		CardSleeves.Sleeve(v)
+	MadLib.loop_func(sleeves, function(w,i)
+		w.unlocked = true
+		CardSleeves.Sleeve(w)
 	end)
 end
 
