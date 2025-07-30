@@ -24,7 +24,9 @@ function Madcap.Funcs.subhand_light_dark(hand)
         end
         return false
     end)
-    local result = (light > dark and 'light') or (dark > light and 'dark') or 'both'
+    local result = (light >= (G.GAME.subhand_minimum or 5) and light > dark and 'light') 
+        or (dark >= (G.GAME.subhand_minimum or 5) and dark > light and 'dark')
+        or 'both'
     return result
 end
 
@@ -59,7 +61,16 @@ SubHands = {
         l_mult     = 0.10,
         l_chips    = 0.10,
         check_hand = function(hand) -- at least 5 unique enhancements (+ voucher unlocked)
-            return MadLib.get_unique_enhancements(hand) >= (G.GAME.subhand_minimum or 5) -- wip
+            local enha = {}
+            local unique = MadLib.loop_func(hand, function(v)
+                if not enha[v.config.center.key] then 
+                    enha[v.config.center.key] = true
+                    return true
+                end
+                return false
+            end)
+            --tell(tostring(unique) .. ' unique entries.')
+            return unique >= (G.GAME.subhand_minimum or 5) -- wip
         end,
     },
     High = {
@@ -183,6 +194,8 @@ MadLib.level_up_subhand = function(card, subhand, instant, amount)
 end
 
 function MadLib.get_subhands(_cards)
+    --print("Cards equals:")
+    --print(#_cards)
     local subhand_list = {}
     for k,v in pairs(SubHands) do
         local result = v.check_hand(_cards)
@@ -190,6 +203,8 @@ function MadLib.get_subhands(_cards)
         subhand_list[#subhand_list+1] = v.name
         end
 	end
+    --print("Subhand lists:")
+    --print(subhand_list)
     return subhand_list
 end
 
@@ -213,10 +228,14 @@ function MadLib.calculate_chips(_chips,sh)
     local final_chips = _chips
     if sh then
         for i=1, #sh do
-            final_chips = final_chips * G.GAME.subhands[sh[i]].chips
+            local _xchips = G.GAME.subhands[sh[i]].chips
+            final_chips = final_chips * _xchips
+            tell("Chips x" .. tostring(_xchips))
         end
     end
+    --if not sh then tell("I don't see any subhands...") end
     if Cryptid then final_chips = Cryptid.ascend(final_chips) end
+    --tell('Final chips is ' .. tostring(final_chips))
     return final_chips
 end
 
@@ -225,10 +244,14 @@ function MadLib.calculate_mult(_mult,sh)
     local final_mult = _mult
     if sh then
         for i=1, #sh do
-            final_mult = final_mult * G.GAME.subhands[sh[i]].mult
+            local _xmult = G.GAME.subhands[sh[i]].mult
+            final_mult = final_mult * _xmult
+            tell("Mult x" .. tostring(_xmult))
         end
     end
+    --if not sh then tell("I don't see any subhands...") end
     if Cryptid then final_mult = Cryptid.ascend(final_mult) end
+    --tell('Final mult is ' .. tostring(final_mult))
     return final_mult
 end
 

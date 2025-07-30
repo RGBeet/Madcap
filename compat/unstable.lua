@@ -148,10 +148,14 @@ if loaded then -- load the items
             -- regardless of # of seals
             local dazzling_ref = MadLib.get_unique_enhancements
             function MadLib.get_unique_enhancements(group)
-                local _add = MadLib.loop_func(group, function(v,i)
-                    return v.seal == 'rgmc_dazzling'
+                local _list = dazzling_ref(group)
+
+                MadLib.loop_func(group, function(v)
+                    if v.seal == 'rgmc_dazzling' then
+                        _list[v.seal] = (_list[v.seal] or 0) + 1
+                    end
                 end)
-                return dazzling_ref(group) + _add
+                return dazzling_ref(_list)
             end
 
             MadLib.merge_tables(aux_cards, {

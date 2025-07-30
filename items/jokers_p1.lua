@@ -2259,7 +2259,7 @@ local la_jokeonde = {
         end
 
         if 
-            context.after 
+            context.final_scoring_step 
             and context.full_hand 
             and (to_big(G.GAME.chips) >= to_big(G.GAME.blind.chips))
         then

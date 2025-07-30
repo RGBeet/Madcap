@@ -293,7 +293,7 @@ function Madcap.Funcs.use_cosma(self, card, area, copier, num_cards, check, func
 	tell_stat('Valid Cards',valid)
 
 	-- up down
-	Madcap.loop_func(G.hand.cards,function(v, i)
+	MadLib.loop_func(G.hand.cards,function(v, i)
 		MadLib.simple_event(function()
 			v:highlight(true)
 			play_sound('card3', math.random()*0.2 + 0.9, 0.35)
@@ -307,7 +307,7 @@ function Madcap.Funcs.use_cosma(self, card, area, copier, num_cards, check, func
 	end)
 
 	-- up
-	Madcap.loop_func(G.hand.cards,function(v, i)
+	MadLib.loop_func(G.hand.cards,function(v, i)
 		MadLib.simple_event(function()
 			play_sound('card3', math.random()*0.2 + 0.9, 0.35)
 			v:highlight(true)
@@ -317,7 +317,7 @@ function Madcap.Funcs.use_cosma(self, card, area, copier, num_cards, check, func
 	end)
 
 	-- change
-	Madcap.loop_func(valid,function(v, i)
+	MadLib.loop_func(valid,function(v, i)
 		MadLib.simple_event(function()
 			func(v,card,i)
 			return true
@@ -325,7 +325,7 @@ function Madcap.Funcs.use_cosma(self, card, area, copier, num_cards, check, func
 	end)
 
 	-- down
-	Madcap.loop_func(G.hand.cards,function(v, i)
+	MadLib.loop_func(G.hand.cards,function(v, i)
 		MadLib.simple_event(function()
 			v:highlight(false)
         	v:flip()
@@ -568,7 +568,7 @@ local soulmates = {
 			return true -- must have suit
 		end, function(v, card)
 			-- try not to have suits swap into the SAME SUIT
-			local _suit = pseudorandom_element(G.GAME.blind_info.suits_played, psuedoseed('rgmc_soulmates')) -- pick a suit
+			local _suit = pseudorandom_element(G.GAME.blind_info.suits_played, pseudoseed('rgmc_soulmates')) -- pick a suit
 			MadLib.simple_event(function()
 				assert(SMODS.change_base(v, _suit, nil))
 				return true
@@ -597,7 +597,7 @@ local spirit_plane = {
 		Madcap.Funcs.use_cosma(self, card, area, copier, 3, function(v)
 			return true -- must have suit
 		end, function(v, card)
-			local _enhancement = pseudorandom_element(_enhancement, psuedoseed('rgmc_spirit_plane')) -- pick a suit
+			local _enhancement = pseudorandom_element(_enhancement, pseudoseed('rgmc_spirit_plane')) -- pick a suit
 			
 			MadLib.simple_event(function()
 				v:set_ability(G.P_CENTERS[_enhancement.center.key])
@@ -659,7 +659,7 @@ function MadLib.compare_and_pick_unique(main_list, compare_list, seed_name)
 		return not MadLib.list_matches_one(compare_list, function(v2)
 			return v2 ~= v1
 		end)
-	end), psuedoseed('rgmc_life_map'))
+	end), pseudoseed('rgmc_life_map'))
 end
 
 -- [Cosma] THE LIFE MAP: 1 in 4 chance to reroll a Joker
@@ -707,7 +707,7 @@ local karma = {
 		Madcap.Funcs.use_cosma(self, card, area, copier, 3, function(v)
 			return true -- must have suit
 		end, function(v, card)
-			local _enhancement = pseudorandom_element(_enhancement, psuedoseed('rgmc_spirit_plane')) -- pick a suit
+			local _enhancement = pseudorandom_element(_enhancement, pseudoseed('rgmc_spirit_plane')) -- pick a suit
 			
 			MadLib.simple_event(function()
 				v:set_ability(G.P_CENTERS[_enhancement.center.key])
@@ -754,7 +754,7 @@ local past_lives = {
 			and (Madcap.Funcs.get_mayhem() - self.config.extra) >= 0
 	end,
 	use = function(self, card, area, copier)
-		local _key = pseudorandom_element(G.GAME.dead_jokers, psuedoseed('rgmc_past_lives'))
+		local _key = pseudorandom_element(G.GAME.dead_jokers, pseudoseed('rgmc_past_lives'))
 		Madcap.Funcs.ease_mayhem(self.config.extra and -self.config.extra or -1, true)
 		MadLib.simple_event(function()
 			local _joker = MadLib.create_joker(_key)
@@ -788,8 +788,8 @@ local maze = {
 		end
 
 		-- shuffle everything
-		pseudoshuffle(shuffle_ranks, psuedoseed('rgmc_maze'))
-		pseudoshuffle(shuffle_suits, psuedoseed('rgmc_maze'))
+		pseudoshuffle(shuffle_ranks, pseudoseed('rgmc_maze'))
+		pseudoshuffle(shuffle_suits, pseudoseed('rgmc_maze'))
 
 		local change_cards = {}
 		
@@ -1321,7 +1321,7 @@ local sigil = {
 	use = function(self, card, area, copier)
 		local _suits = {}
 		MadLib.loop_func_table(MadLib.get_suits_from_cards(G.playing_cards), function(k,v) table.insert(_suits,k) end)
-		local _pick = pseudorandom_element(_suit,psuedoseed('rgmc_anti_sigil'))
+		local _pick = pseudorandom_element(_suit,pseudoseed('rgmc_anti_sigil'))
 		
 		local selection = MadLib.shuffle_sort_list(G.playing_cards, #G.playing_cards, function(v)
 			return v:is_suit(_pick)
@@ -1350,7 +1350,7 @@ local ouija = {
 	use = function(self, card, area, copier)
 		local _ranks = {}
 		MadLib.loop_func_table(MadLib.get_ranks_from_cards(G.playing_cards), function(k,v) table.insert(_ranks,k) end)
-		local _pick = pseudorandom_element(_suit,psuedoseed('rgmc_anti_ouija'))
+		local _pick = pseudorandom_element(_suit,pseudoseed('rgmc_anti_ouija'))
 		
 		local selection = MadLib.shuffle_sort_list(G.playing_cards, #G.playing_cards, function(v)
 			return v:get_id() == _pick
@@ -1448,13 +1448,13 @@ local hex = {
 		local total_money = 0
 
 		local enhanced 	= MadLib.get_enhanced_cards(G.playing_cards)
-		Madcap.loop_func(enhanced, function(v)
+		MadLib.loop_func(enhanced, function(v)
 			v:set_ability(G.P_CENTERS.c_base, nil, true) -- remove enhancement
 			total_money = total_money + self.config.extra.money
 		end)
 		
 		local editioned	= MadLib.get_editioned_cards(G.playing_cards)
-		Madcap.loop_func(editioned, function(v)
+		MadLib.loop_func(editioned, function(v)
 			v:set_edition(nil,true,true) -- remove editions
 			total_money = total_money + self.config.extra.money * 1.5
 		end)

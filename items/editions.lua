@@ -436,7 +436,7 @@ local flipped = {
 		trigger = nil,
 	},
 	sound = {
-		sound = "rgmc_e_disco",
+		sound = "rgmc_e_flipped",
 		per = 1,
 		vol = 0.2,
 	},

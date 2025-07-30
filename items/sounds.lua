@@ -8,6 +8,7 @@ Madcap.Funcs.LoadSounds({
     MadLib.keypath_simple('e_infernal',ext),
     MadLib.keypath_simple('e_chrome',ext),
     MadLib.keypath_simple('e_disco',ext),
+    MadLib.keypath_simple('e_flipped',ext),
     MadLib.key_path('e_phasing','e_disco.ogg'),
     MadLib.keypath_simple('contagion',ext),
     MadLib.keypath_simple('ominous',ext),
@@ -34,6 +35,15 @@ Madcap.Funcs.LoadSounds({
     MadLib.keypath_simple('laser',ext),
     MadLib.keypath_simple('revert',ext),
     MadLib.keypath_simple('mug_yep',ext),
+    MadLib.keypath_simple('flourish',ext),
+    MadLib.keypath_simple('wrench',ext),
+    MadLib.keypath_simple('all_star',ext),
+    MadLib.keypath_simple('bacteria_laugh',ext),
+    MadLib.keypath_simple('chicken_jockey',ext),
+    MadLib.keypath_simple('egglike',ext),
+    MadLib.keypath_simple('pop',ext),
+    MadLib.keypath_simple('bobby',ext),
+    MadLib.keypath_simple('destroy_planet',ext),
 }, list)
 
 return {

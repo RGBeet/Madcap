@@ -874,6 +874,11 @@ function Card:set_rgmc_painted(_painted,tally)
     self:set_temp_sticker('rgmc_painted',bool,tally or 1)
 end
 
+function Card:set_rgmc_immutable(bool)
+    self.ability['rgmc_immutable'] = bool or (self.ability['rgmc_immutable'] and not self.ability['rgmc_immutable']) or true
+end
+
+
 -- A handy little sticker
 local function handle_sticker_calculation(self,id,eval)
     local name      = id
@@ -1883,12 +1888,39 @@ function Game:update(dt)
 	local anim_timer = self.TIMERS.REAL * 1.5
 	local p = 0.5 * (math.sin(anim_timer) + 1)
 	for k, c in pairs(Madcap.C) do
-		if not G.C["RGMC_" .. k] then G.C["RGMC_" .. k] = { 0, 0, 0, 0 } end
+		if not G.C["RGMC_" .. k] 
+			then G.C["RGMC_" .. k] = { 0, 0, 0, 0 }
+		end
 		for i = 1, 4 do
 			G.C["RGMC_" .. k][i] = c[1][i] * p + c[2][i] * (1 - p)
 		end
 	end
+	G.C.RARITY["rgmc_unusual"] = G.C.RGMC_UNUSUAL
+	G.C.RARITY["rgmc_gimmick"] = G.C.RGMC_GIMMICK
+	G.C.RARITY["rgmc_chaotic"] = G.C.RGMC_CHAOTIC
 end
+
+Madcap.EnterNoises = {
+	['j_rgmc_spam'] = { id = 'rgmc_spam_enter' },
+	['j_rgmc_legend_bobby'] = { id = 'rgmc_bobby' },
+}
+
+Madcap.EnterFuncs = {
+	['j_rgmc_lobster_thermidor'] = function()
+		MadLib.simple_event(function()
+			play_sound('rgmc_lobster_thermidor', 1, 1)
+			jl.a("Lobster Thermidor A Crevette", G.SETTINGS.GAMESPEED*1.5, 1, G.C.RGMC_GIMMICK)
+			delay(1.5)
+			jl.a("With A Mornay Sauce", G.SETTINGS.GAMESPEED*1.5, 1, G.C.RGMC_GIMMICK)
+			delay(1.5)
+			jl.a("Garnished With Truffle Pâté", G.SETTINGS.GAMESPEED*1.5, 1, G.C.RGMC_GIMMICK)
+			delay(1.5)
+			jl.a("Brandy and a Fried Egg On Top!", G.SETTINGS.GAMESPEED*1.5, 1, G.C.RGMC_GIMMICK)
+			delay(1.5)
+			return true
+		end)
+	end
+}
 
 local add_to_deckref = Card.add_to_deck
 function Card:add_to_deck(from_debuff)
@@ -1896,25 +1928,12 @@ function Card:add_to_deck(from_debuff)
 		self.ability.set == "Joker"
 		and not from_debuff
 	then
-		if -- SPAM!
-			self.config.center.key == 'j_rgmc_spam'
-		then
-			Madcap.Funcs.play_sound_event('rgmc_spam_enter', 1, 1)
-		elseif -- lobster thermidor!
-			self.config.center.key == 'j_rgmc_lobster_thermidor'
-		then
-			MadLib.simple_event(function()
-				Madcap.Funcs.play_sound_event('rgmc_lobster_thermidor', 1, 1)
-				jl.a("Lobster Thermidor A Crevette", G.SETTINGS.GAMESPEED*1.5, 1, G.C.RGMC_GIMMICK)
-				delay(2.5)
-				jl.a("With A Mornay Sauce", G.SETTINGS.GAMESPEED*1.5, 1, G.C.RGMC_GIMMICK)
-				delay(2.5)
-				jl.a("Garnished With Truffle Pâté", G.SETTINGS.GAMESPEED*1.5, 1, G.C.RGMC_GIMMICK)
-				delay(2.5)
-				jl.a("Brandy and a Fried Egg On Top!", G.SETTINGS.GAMESPEED*1.5, 1, G.C.RGMC_GIMMICK)
-				delay(2.5)
-				return true
-			end)
+		if Madcap.EnterNoises[self.config.center.key] then 
+			local _sound = Madcap.EnterNoises[self.config.center.key]
+			play_sound(_sound.id, _sound.pitch or 1, _sound.volume or 0.6)
+		end
+		if Madcap.EnterFuncs[self.config.center.key] then 
+			Madcap.EnterFuncs[self.config.center.key]()
 		end
 	end
     add_to_deckref(self, from_debuff)
@@ -2145,7 +2164,9 @@ function eval_card(card, context)
 		context.scoring_hand
 		and context.joker_main
 	then
+		--tell('Calculate subhands')
 		context.subhands = MadLib.get_subhands(context.scoring_hand)
+		--print(context.subhands)
 	end
 
 	local ret, post_trig = eval_card_ref(card, context)
@@ -2172,6 +2193,21 @@ function Card:calculate_enhancement(context)
 	return ret
 end
 
+local smods_change_base = SMODS.change_base
+function SMODS.change_base(card, suit, rank)
+	if not card then return nil end
+	-- immutable sticker
+	if card.ability.rgmc_immutable then
+		if suit ~= card.base.suit then
+			return SMODS.change_base(card, suit, rank)
+		else
+			return nil
+		end
+	end
+	local card = smods_change_base(card, suit, rank)
+	-- put shit here i guess idk
+    return card
+end
 
 --Used to mess around with poker hand stuff (e.g. Waveworx)
 local evaluate_poker_hand_ref = evaluate_poker_hand
@@ -2860,6 +2896,9 @@ end
 
 -- Easier way to handle the descaling Joker Logic?
 local function handle_descaling_joker_logic(trigger,card,v1,v2,type)
+	if not (card and context) then 
+		return nil
+	end
     if trigger() and context.main_eval and not context.blueprint then
         if card.ability.extra[v1] - card.ability.extra[v2]<= 0 then
             MadLib.goodbye_card(card)
@@ -2889,26 +2928,28 @@ local VanillaFixing = {
         -- After every hand
         handle_descaling_joker_logic(function()
             return context.after
-        end, 'chips', 'chip_mod', MadLib.ScoreKeys.AddChips)
+        end, 'chips', 'chip_mod', MadLib.ScoreKeys.AddChips, context)
 
         -- Joker main
-        if context.joker_main then return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips, card, card.ability.extra.chips) end
+        if context.joker_main then return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips, card, card.ability.chips) end
     end,
     ['j_popcorn'] = function(self, card, context)
         -- After every hand
         handle_descaling_joker_logic(function()
             return context.end_of_round and context.game_over == false
-        end, 'mult', 'mult_loss', MadLib.ScoreKeys.AddMult)
+        end, 'mult', 'mult_loss', MadLib.ScoreKeys.AddMult, context)
 
-        if context.joker_main then return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddMult, card, card.ability.extra.mult_mod) end
+        if context.joker_main then return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddMult, card, card.ability.mult) end
     end,
     ['j_ramen'] = function(self, card, context)
         -- After every hand
         handle_descaling_joker_logic(function()
             return context.discard and card.ability.special.flag
-        end, 'Xmult', 'Xmult_loss', MadLib.ScoreKeys.MultiMult)
+        end, 'Xmult', 'Xmult_loss', MadLib.ScoreKeys.MultiMult, context)
 
-        if context.joker_main then return MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiMult, card, card.ability.extra.mult_mod) end
+        if context.joker_main then 
+			return MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiMult, card, card.ability.x_mult) 
+		end
     end,
 }
 

@@ -104,6 +104,22 @@ local engraved = {
 	end,
 }
 
+-- Given by Jestogren
+-- Cannot change rank
+local immutable = {
+    key = "rgmc_immutable",
+	config = { },
+	pos = {x=0,y=3},
+	badge_colour = HEX('4666DC'),
+	loc_vars = function(self, info_queue, card)
+		return Madcap.BlankVar
+	end,
+	should_apply = false,
+	apply = function(self, card, val)
+		card.ability.rgmc_immutable = true
+	end,
+}
+
 -- Given by The Grave
 -- Sets Mult to 0 upon scoring (subject to change!)
 local clown = {

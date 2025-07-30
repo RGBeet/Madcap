@@ -21,36 +21,70 @@ position = "at"
 payload = '''{handname = disp_text, level = G.GAME.hands[text].level, mult = MadLib.calculate_mult(G.GAME.hands[text].mult,subhands), chips = MadLib.calculate_chips(G.GAME.hands[text].chips,subhands)}'''
 match_indent = true
 
-# Replace instances of Cryptid.ascend with MadLib.calculate (which includes Cryptid.ascend)
+# Chips (cardarea)
 [[patches]]
-[patches.regex]
+[patches.pattern]
 target = "cardarea.lua"
-pattern = '''hand_chips\s*=\s*mod_chips\(\s*(Cryptid\.ascend\()?G\.GAME\.hands%[text%]%\.chips\s*\)?\)'''
+pattern = '''hand_chips = mod_chips(G.GAME.hands[text].chips)'''
 position = "at"
 match_indent = true
 payload = '''hand_chips = MadLib.calculate_chips(G.GAME.hands[text].chips, subhands)'''
 
-# Same, but with mult
 [[patches]]
-[patches.regex]
+[patches.pattern]
 target = "cardarea.lua"
-pattern = '''mult\s*=\s*mod_chips\(\s*(Cryptid\.ascend\()?G\.GAME\.hands%[text%]%\.mult\s*\)?\)'''
+pattern = '''hand_chips = mod_chips(Cryptid.ascend(G.GAME.hands[text].chips))'''
+position = "at"
+match_indent = true
+payload = '''hand_chips = MadLib.calculate_chips(G.GAME.hands[text].chips, subhands)'''
+
+# Mult (cardarea)
+[[patches]]
+[patches.pattern]
+target = "cardarea.lua"
+pattern = '''mult = mod_mult(G.GAME.hands[text].mult)'''
 position = "at"
 match_indent = true
 payload = '''mult = MadLib.calculate_mult(G.GAME.hands[text].mult, subhands)'''
 
 [[patches]]
-[patches.regex]
+[patches.pattern]
+target = "cardarea.lua"
+pattern = '''mult = mod_mult(Cryptid.ascend(G.GAME.hands[text].mult))'''
+position = "at"
+match_indent = true
+payload = '''mult = MadLib.calculate_mult(G.GAME.hands[text].mult, subhands)'''
+
+# Chips (state_events)
+[[patches]]
+[patches.pattern]
 target = "functions/state_events.lua"
-pattern = '''hand_chips\s*=\s*mod_chips\(\s*(Cryptid\.ascend\()?G\.GAME\.hands%[text%]%\.chips\s*\)?\)'''
+pattern = '''hand_chips = mod_chips(G.GAME.hands[text].chips)'''
 position = "at"
 match_indent = true
 payload = '''hand_chips = MadLib.calculate_chips(G.GAME.hands[text].chips, subhands)'''
 
 [[patches]]
-[patches.regex]
+[patches.pattern]
 target = "functions/state_events.lua"
-pattern = '''mult\s*=\s*mod_chips\(\s*(Cryptid\.ascend\()?G\.GAME\.hands%[text%]%\.mult\s*\)?\)'''
+pattern = '''hand_chips = mod_chips(Cryptid.ascend(G.GAME.hands[text].chips))'''
+position = "at"
+match_indent = true
+payload = '''hand_chips = MadLib.calculate_chips(G.GAME.hands[text].chips, subhands)'''
+
+# Mult (state_events)
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = '''mult = mod_mult(G.GAME.hands[text].mult)'''
+position = "at"
+match_indent = true
+payload = '''mult = MadLib.calculate_mult(G.GAME.hands[text].mult, subhands)'''
+
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = '''mult = mod_mult(Cryptid.ascend(G.GAME.hands[text].mult))'''
 position = "at"
 match_indent = true
 payload = '''mult = MadLib.calculate_mult(G.GAME.hands[text].mult, subhands)'''
@@ -86,37 +120,22 @@ position = "after"
 payload = '''Madcap.Funcs.record_hand_after(hand_chips, mult)'''
 match_indent = true
 
+[[patches]]
+[patches.pattern]
+target = 'functions/state_events.lua'
+pattern = '''check_for_unlock({type = 'hand', handname = text, disp_text = non_loc_disp_text, scoring_hand = scoring_hand, full_hand = G.play.cards})'''
+position = 'before'
+match_indent = true
+payload = '''local subhands = MadLib.get_subhands(scoring_hand)'''
 
 [[patches]]
 [patches.pattern]
-target = "functions/state_events.lua"
-pattern = '''function evaluate_play_main(text, disp_text, poker_hands, scoring_hand, non_loc_disp_text, percent, percent_delta)'''
-position = "after"
-payload = '''local subhands = MadLib.get_subhands(scoring_hand)'''
-match_indent = true
-
-
-# even worse
-[[patches]]
-[patches.regex]
-target = "functions/state_events.lua"
-pattern = '''mult\s*=\s*mod_mult\([^n\n\r]*\)'''
-position = "at"
-payload = '''mult = mod_mult(MadLib.calculate_mult(G.GAME.hands[text].mult, subhands))'''
-match_indent = true
-
-
-
-
-[[patches]]
-[patches.regex]
 target = "functions/state_events.lua"
 pattern = '''play_area_status_text("Not Allowed!")'''
 position = "after"
 payload = '''mult = mod_mult(0)
 hand_chips = mod_chips(0)'''
 match_indent = true
-
 
 # again
 [[patches]]
@@ -132,18 +151,34 @@ match_indent = true
 [[patches]]
 [patches.pattern]
 target = "functions/common_events.lua"
-pattern = '''update_hand_text\(\{delay\s*=\s*0\},\s*\{chips\s*=\s*[^,]+,\s*StatusText\s*=\s*true\}\)'''
+pattern = '''update_hand_text({delay = 0}, {chips = G.GAME.hands[hand].chips, StatusText = true})'''
 position = "at"
 payload = '''update_hand_text({delay = 0}, {chips = MadLib.calculate_chips(G.GAME.hands[hand].chips), StatusText = true})'''
 match_indent = true
 
 [[patches]]
-[patches.regex]
+[patches.pattern]
 target = "functions/common_events.lua"
-pattern = '''update_hand_text\(\{delay\s*=\s*0\},\s*\{mult\s*=\s*[^,]+,\s*StatusText\s*=\s*true\}\)'''
+pattern = '''update_hand_text({delay = 0}, {chips = Cryptid.ascend(G.GAME.hands[hand].chips), StatusText = true})'''
+position = "at"
+payload = '''update_hand_text({delay = 0}, {chips = MadLib.calculate_chips(G.GAME.hands[hand].chips), StatusText = true})'''
+match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = "functions/common_events.lua"
+pattern = '''update_hand_text({delay = 0}, {mult = G.GAME.hands[hand].mult, StatusText = true})'''
 position = "at"
 payload = '''update_hand_text({delay = 0}, {mult = MadLib.calculate_mult(G.GAME.hands[hand].mult), StatusText = true})'''
+match_indent = true
 
+[[patches]]
+[patches.pattern]
+target = "functions/common_events.lua"
+pattern = '''update_hand_text({delay = 0}, {mult = Cryptid.ascend(G.GAME.hands[hand].mult), StatusText = true})'''
+position = "at"
+payload = '''update_hand_text({delay = 0}, {mult = MadLib.calculate_mult(G.GAME.hands[hand].mult), StatusText = true})'''
+match_indent = true
 
 # Adds subhand compat - Checks if the highlighted cards match any subhand
 
@@ -166,15 +201,6 @@ payload = '''
 update_hand_text({immediate = true, nopulse = nil, delay = 0}, {handname=disp_text, level=G.GAME.hands[text].level, mult = MadLib.calculate_mult(G.GAME.hands[text].mult, subhands), chips = MadLib.calculate_chips(G.GAME.hands[text].chips, subhands)})
 '''
 match_indent = true
-
-# we can see subhands now!
-[[patches]]
-[patches.regex]
-target = "function/state_events.lua"
-pattern = '''scoring_name\s*=\s*text,\s*poker_hands\s*=\s*poker_hands'''
-position = "at"
-match_indent = false
-payload = '''scoring_name = text, poker_hands = poker_hands, subhands = MadLib.get_subhands(scoring_hand)'''
 
 # just in case, there's one instance where it should say nu_chip/nu_mult instead
 [[patches]]

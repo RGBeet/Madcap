@@ -1531,31 +1531,31 @@ return {
             j_rgmc_formation = {
                 name = "The Formation",
                 text = {
-                    "{X:mult,C:white} X#1# {} Mult if played",
-                    "hand contains",
+                    "{X:mult,C:white}X#1#{} Mult",
+                    "if played hand contains",
                     "a {C:attention}#2#"
                 },
             },
             j_rgmc_penumbral = {
                 name = "The Penumbral",
                 text = {
-                    "{X:mult,C:white} X#1# {} Mult if played",
-                    "hand contains",
+                    "{X:mult,C:white}X#1#{} Mult",
+                    "if played hand contains",
                     "a {C:rgmc_dark}Dark Spectrum#"
                 },
             },
             j_rgmc_photovoltaic = {
                 name = "The Photovoltaic",
                 text = {
-                    "{X:mult,C:white} X#1# {} Mult if played",
-                    "hand contains",
+                    "{X:mult,C:white}X#1#{} Mult",
+                    "if played hand contains",
                     "a {C:rgmc_light}Light Spectrum"
                 },
             },
             j_rgmc_palette = {
                 name = "The Palette",
                 text = {
-                    "{X:chips,C:white} X#1# {} Chips",
+                    "{X:chips,C:white}X#1#{} Chips",
                     "if scoring hand contains",
                     "{C:attention}5{} unique {C:attention}enhancements",
                 },
@@ -4179,6 +4179,12 @@ return {
                     "{C:inactive}({C:attention}#1#{C:inactive} round(s) remaining)"
 				},
 			},
+			rgmc_immutable = {
+				name = "Immutable",
+				text = {
+                    "Cannot change {C:attention}rank{}"
+				},
+			},
 			rgmc_bismuth_red = {
 				name = "Bismuth - Red Frame",
 				text = {
@@ -4509,9 +4515,14 @@ return {
 
             -- subhands
             ml_sh_light             = "Light",
+            ml_sh_enhanced          = "Dazzling",
             ml_sh_dark              = "Dark",
             ml_sh_high              = "High",
             ml_sh_low               = "Low",
+
+            k_mission_accomplished  = "Mission Accomplished!",
+            k_mission_in_progress   = "Mission in Progress...",
+            k_mission_failed        = "Mission Failed...",
 
             -- Rarities
 			k_cry_epic       = "Epic",
@@ -4523,9 +4534,9 @@ return {
 			k_rgmc_chaotic   = "Chaotic",
 			k_rgmc_felinus   = "Felinus",
 			k_cosmatarot             = "Cosma Tarot",
-			k_antispectral           = "Anti-Spectral Tarot",
+			k_antispectral           = "Sinister Card",
 			b_cosmatarot_cards       = "Cosma Tarots",
-			b_antispectral_cards     = "Anti-Spectral Tarots",
+			b_antispectral_cards     = "Sinister Cards",
 
 
 			k_rgmc_cosma_pack    = "Cosma Pack",

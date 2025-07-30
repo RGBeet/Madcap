@@ -115,12 +115,12 @@ local joker_in_binary = {
             (context.cardarea == G.play and context.other_card)
             or context.forcetrigger
         then
-            print(MadLib.RankIds['1'])
-            print(MadLib.RankIds['0'])
-			local rank   = context.other_card:get_id()
+			local _id = context.other_card:get_id()
+    
 			if
                 context.forcetrigger
-                or rank == MadLib.RankIds['1'] or rank == MadLib.RankIds['0']
+                or _id == SMODS.Ranks[MadLib.RankIds['1']].id
+                or _id == SMODS.Ranks[MadLib.RankIds['0']].id
             then
                 return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips, card, card.ability.extra.chips)
 			end
@@ -605,12 +605,12 @@ local function set_edition_flipped(target)
     MadLib.simple_event(function()
         if success then
             local flip = not (target.edition and target.edition.rgmc_flipped)
-            target:set_edition(flip and 'rgmc_flipped' or nil, true)
+            target:set_edition({ rgmc_flipped = true }, true)
             target:juice_up(0.5, 0.7)
             play_sound('tarot2', 0.76, 0.4)
         end
         return true
-    end, 1.0, 'immediate')
+    end, 1.0, 'after')
     return success
 end
 
@@ -717,7 +717,7 @@ local vibrant_tourmaline = {
     blueprint_compat    = true,
     demicoloncompat     = true,
     config = {
-        extra = { odds = 3, money = 0, money_mod = 2, suit = 'rgmc_blooms' }
+        extra = { odds = 3, money = 0, money_mod = 1, suit = 'rgmc_blooms' }
     },
     loc_vars = function(self, info_queue, card)
         return MadLib.collect_vars(card.ability.extra.suit, MadLib.base_prob(card), card.ability.extra.odds, card.ability.extra.money_mod, card.ability.extra.money)
@@ -746,10 +746,9 @@ local vibrant_tourmaline = {
 
 		-- reset at end of ante
         if
-            context.end_of_round
-            and not context.individual
-            and not context.repetition
-            and G.GAME.round % Madcap.Funcs.get_blinds_per_ante() == 0
+            not context.individual
+            and context.end_of_round and G.GAME.blind.boss
+            and not (context.blueprint or context.repetition)
         then
             return MadLib.get_simple_reset_data(MadLib.ScoreKeys.AddMoney, card, 'money')
         end
@@ -770,7 +769,7 @@ local obsidian_blade = {
     blueprint_compat    = true,
     demicoloncompat     = true,
     config = {
-        extra = { odds = 4, x_mult = 0, xmult_mod = 0.2, suit = 'rgmc_daggers' }
+        extra = { odds = 4, x_mult = 1, xmult_mod = 0.2, suit = 'rgmc_daggers' }
     },
     loc_vars = function(self, info_queue, card)
         return MadLib.collect_vars(card.ability.extra.suit, MadLib.base_prob(card), card.ability.extra.odds, card.ability.extra.xmult_mod, card.ability.extra.x_mult)
@@ -788,20 +787,19 @@ local obsidian_blade = {
         end
 
         if
-            context.cardarea == G.jokers and context.joker_main
+            (context.cardarea == G.jokers and context.joker_main and card.ability.extra.x_mult ~= 1 and card.ability.extra.x_mult > 0)
             or context.forcetrigger
         then
-            return MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiMult, card, card.ability.extra.x_mult * amt)
+            return MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiMult, card, card.ability.extra.x_mult)
         end
 
 		-- reset at end of ante
         if
-            context.end_of_round
-            and not context.individual
-            and not context.repetition
-            and G.GAME.round % Madcap.Funcs.get_blinds_per_ante() == 0
+            not context.individual
+            and context.end_of_round and G.GAME.blind.boss
+            and not (context.blueprint or context.repetition)
         then
-            return MadLib.get_simple_reset_data(MadLib.ScoreKeys.MultiMult, card, 'x_mult')
+            return MadLib.get_simple_reset_data(MadLib.ScoreKeys.MultiMult, card, 'x_mult', 1)
         end
 
     end
@@ -885,45 +883,45 @@ local jestrogen = {
         }
     },
     loc_vars = function(self, info_queue, card)
-        return MadLib.collect_vars(MadLib.base_prob(card), card.ability.extra.odds, card.ability.rank_old, card.ability.rank_new)
+        return MadLib.collect_vars(MadLib.base_prob(card), card.ability.extra.odds,  card.ability.extra.rank_old, card.ability.extra.chip_mod, card.ability.extra.rank_new)
     end,
     calculate = function(self, card, context)
 
-        -- the transition was a success :)
         if
             context.cardarea == G.play
-            and context.individual
             and context.other_card
             and context.scoring_hand
         then
             if MadLib.calculate_roll({ card = card, seed = 'rgmc_jestrogen' }) then
-                if context.other_card:get_id() == card.ability.extra.rank_old then
+                if MadLib.get_card_value(context.other_card) == card.ability.extra.rank_old then
                     -- do the new thing
+                    local target = context.other_card
                     MadLib.simple_event(function()
-                        play_sound('tarot2', 0.76, 0.4)
-                        context.other_card:juice_up()
-                        context.other_card.ability.perma_bonus = (context.other_card.ability.perma_bonus or 0) + card.ability.extra.chip_mod
-                        SMODS.change_base(context.other_card, _, card.ability.extra.rank_new)
+                        play_sound('rgmc_flourish', 1, 0.4)
+                        target:set_rgmc_immutable(true)
+                        target:juice_up()
+                        target.ability.perma_bonus = (target.ability.perma_bonus or 0) + card.ability.extra.chip_mod
+                        SMODS.change_base(target, _, card.ability.extra.rank_new)
                     return true
-                    end)
+                    end, 0.2, 'immediate')
                 end
             end
         end
 
         if context.forcetrigger then
-            local target = MadLib.get_card_from_shuffled_deck(G.hand.cards, function(c)
-                return c:get_id() == card.ability.extra.rank_old
+            local targets = MadLib.get_card_from_shuffled_deck(G.hand.cards, 1, function(c)
+                return MadLib.get_card_value(c) == card.ability.extra.rank_old
             end)
 
-            if target then
+            MadLib.loop_func(targets, function(v)
                 MadLib.simple_event(function()
-                    play_sound('tarot2', 0.76, 0.4)
+                    play_sound('rgmc_flourish', 0.76, 0.4)
                     target:juice_up()
                     target.ability.perma_bonus = (target.ability.perma_bonus or 0) + card.ability.extra.chip_mod
-                    SMODS.change_base(target, _, card.ability.extra.rank_new) -- change da rank
-                    return true
-                end)
-            end
+                    SMODS.change_base(target, _, card.ability.extra.rank_new)
+                return true
+                end, 0.2, 'immediate')
+            end)
         end
     end
 }
@@ -939,7 +937,7 @@ local pogladontasaurus = {
     eternal_compat      = true,
     perishable_compat   = true,
     blueprint_compat    = true,
-	demicoloncompat     = true,
+	demicoloncompat     = false,
     config = {
         extra = { retriggers = 2, rank = "2", },
         immutable = { max_retriggers = 20 }
@@ -955,14 +953,19 @@ local pogladontasaurus = {
             and context.other_card
             and not context.end_of_round
         then
-            if context.other_card:get_id() == card.ability.extra.rank then
+            if MadLib.get_card_value(context.other_card) == card.ability.extra.rank then
+                MadLib.simple_event(function()
+                    play_sound('rgmc_pogladontasaurus', 1, 0.4)
+                return true
+                end, 0.2, 'after')
                 return MadLib.get_retrigger_data(card, math.min(card.ability.extra.retriggers, card.ability.immutable.max_retriggers))
             end
         end
 
+        -- TODO: see if you can force trigger cards?
+
         if -- choose a new rank
-            context.end_of_round
-            or context.forcetrigger
+            context.end_of_round or context.forcetrigger
         then
             card.ability.extra.rank = MadLib.pick_rank_from_deck()
             return { -- new rank
@@ -996,19 +999,18 @@ local sanguine = {
 		return MadLib.collect_vars(card.ability.extra.x_mult)
     end,
     calculate = function(self, card, context)
-
 		if
             (context.joker_main and context.scoring_hand)
             or context.forcetrigger
         then
             local pass = context.forcetrigger
 
-            if
-                not pass
-                and context.scoring_hand
-            then
-                local suits = MadLib.get_suits_from_cards(context.scoring_hand)
-                pass = suits[card.ability.extra.suits[1]] and suits[card.ability.extra.suits[2]]
+            if not pass and context.scoring_hand then
+                pass = MadLib.list_matches_one(context.scoring_hand, function(v)
+                    return v:is_suit(card.ability.extra.suits[1])
+                end) and MadLib.list_matches_one(context.scoring_hand, function(v)
+                    return v:is_suit(card.ability.extra.suits[2])
+                end)
             end
 
             if pass then -- forcetriggered OR passes the thing
@@ -1040,19 +1042,18 @@ local stonebound = {
 		return MadLib.collect_vars(card.ability.extra.chips)
     end,
     calculate = function(self, card, context)
-
 		if
             (context.joker_main and context.scoring_hand)
             or context.forcetrigger
         then
             local pass = context.forcetrigger
 
-            if
-                not pass
-                and context.scoring_hand
-            then
-                local suits = MadLib.get_suits_from_cards(context.scoring_hand)
-                pass = suits[card.ability.extra.suits[1]] and suits[card.ability.extra.suits[2]]
+            if not pass and context.scoring_hand then
+                pass = MadLib.list_matches_one(context.scoring_hand, function(v)
+                    return v:is_suit(card.ability.extra.suits[1])
+                end) and MadLib.list_matches_one(context.scoring_hand, function(v)
+                    return v:is_suit(card.ability.extra.suits[2])
+                end)
             end
 
             if pass then -- forcetriggered OR passes the thing
@@ -1064,12 +1065,12 @@ local stonebound = {
 
 Madcap.Metals = {
     held = {
-        'steel',
-        'gold'
+        'm_steel',
+        'm_gold'
     },
     score = {
-        'rgmc_ferrous',
-        'rgmc_wolfram'
+        'm_rgmc_ferrous',
+        'm_rgmc_wolfram'
     }
 }
 
@@ -1084,19 +1085,26 @@ local metallurgist = {
     eternal_compat      = true,
     perishable_compat   = true,
     blueprint_compat    = true,
-	demicoloncompat     = true,
+	demicoloncompat     = false,
     config =  {
         extra = { retriggers = 1 },
         immutable = { max_retriggers = 40 }
     },
     loc_vars = function(self, info_queue, card)
-        local metals = MadLib.get_combined_list(Madcap.Metals.held, Madcap.Metals.score)
+        local metals = {}
+        MadLib.loop_table(Madcap.Metals, function(k,v)
+            MadLib.loop_func(Madcap.Metals[k], function(v)
+                table.insert(metals, v)
+            end)
+        end)
+        print(metals)
         for i=1, #metals do
-            local m = 'm_' .. tostring(metals[i])
+            local m = metals[i]
             if G.P_CENTERS[m] then
                 info_queue[#info_queue + 1] = G.P_CENTERS[m]
             end
         end
+        return Madcap.BlankVar
     end,
     calculate = function(self, card, context)
 
@@ -1107,13 +1115,17 @@ local metallurgist = {
                 if context.playing_card_end_of_round then -- end of round stuff
                     pass = MadLib.has_enhancement_in_list(context.other_card, Madcap.Metals.held)
                 else -- held in hand
-                    pass = MadLib.has_enhancement_in_list(context.other_card, Madcap.Metals.score)
+                    pass = MadLib.has_enhancement_in_list(context.other_card, Madcap.Metals.held)
                 end
             elseif context.cardarea == G.play then -- played
                 pass = MadLib.has_enhancement_in_list(context.other_card, Madcap.Metals.score)
             end
 
             if pass then -- passes the test
+                MadLib.simple_event(function()
+                    play_sound('rgmc_wrench', 1, 0.4)
+                    return true
+                end, 0.2, 'after', false)
                 return MadLib.get_retrigger_data(context.other_card, lenient_bignum(math.min(card.ability.extra.retriggers, card.ability.immutable.max_retriggers)))
             end
         end
@@ -1149,7 +1161,7 @@ local cosmamancer = {
                 G.GAME.consumeable_buffer = G.GAME.consumeable_buffer + 1
 
                 MadLib.simple_event(function()
-                    local n_card = create_card("Cosma",G.consumeables, nil, nil, nil, nil, nil, 'car')
+                    local n_card = create_card("CosmaTarot", G.consumeables)
                     n_card:add_to_deck()
                     G.consumeables:emplace(n_card)
                     G.GAME.consumeable_buffer = 0
@@ -1183,28 +1195,14 @@ local arkose_michel = {
     calculate = function(self, card, context)
 
         if
-            context.repetition
-            and context.cardarea == G.play
-            and (SMODS.has_enhancement(context.other_card, 'm_stone')
-                or context.forcetrigger)
+            (context.cardarea == G.play and context.other_card and SMODS.has_enhancement(context.other_card, 'm_stone'))
+            or context.forcetrigger
         then
             return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddMult, card, card.ability.extra.mult)
 		end
-
-        -- End of round stuff
-		if
-			context.end_of_round2
-			and not context.individual
-			and not context.repetition
-			and not context.blueprint
-			and not context.retrigger_joker
-		then
-            -- roll to see if banana goes bye!
-            if MadLib.calculate_card_odds(card,'rgmc_arkose_michel') then -- 1 in 6 chance to POOF!
-                return MadLib.banana_remove(card) -- remove it like a banana? maybe have it shatter
-            else
-                return { message = localize("k_safe_ex") } -- safe!
-            end
+        
+        if Madcap.Funcs.banana_context() then
+            return MadLib.banana_logic(card, 'arkose_michel')
         end
     end
 }
@@ -1224,6 +1222,7 @@ local catch_the_clown = {
     config = {
         rand_id = nil,
         caught = false,
+        failed = false,
         extra = {
             chips       = 0,
             chip_mod    = 60,
@@ -1234,19 +1233,39 @@ local catch_the_clown = {
         }
     },
 	loc_vars = function(self, info_queue, card)
-        return MadLib.collect_vars(card.ability.extra.chip_mod, card.ability.immutable.max_misses - card.ability.immutable.misses, card.ability.extra.chips)
+        local _result = (card.ability.caught and 'k_mission_in_progress')
+            or (card.ability.failed and 'k_mission_failed')
+            or 'k_mission_in_progress'
+        return { 
+            vars = {
+                card.ability.extra.chip_mod,
+                number_format(card.ability.immutable.max_misses - card.ability.immutable.misses),
+                number_format(card.ability.extra.chips),
+                localize(_result)
+            } 
+        }
 	end,
     calculate = function(self, card, context)
 
-        if context.shuffled_deck then -- add clown sticker to card in first half of deck
-            local _cards    = MadLib.get_possible_deck(G.deck.cards)
-            local _index   =  math.floor(math.random() * #_cards) + 1
-            tell("Card is ".. tostring(_index))
-            SMODS.Stickers["rgmc_clown"]:apply(_cards[_index], true)
-            card.ability.immutable.caught = false
-            MadLib.pair_cards(self,_cards[_index])
+        if 
+            context.first_hand_drawn 
+        then -- add clown sticker to card in first half of deck
+            MadLib.event({
+                trigger = 'after', 
+                func = function() 
+                    local _cards    = MadLib.get_possible_deck(G.deck.cards)
+                    local _index   =  math.floor(math.random() * #_cards) + 1
+                    tell("Card is ".. tostring(_index))
+                    SMODS.Stickers["rgmc_clown"]:apply(_cards[_index], true)
+                    card.ability.immutable.caught = false
+                    MadLib.pair_cards(self,_cards[_index])
+                    play_sound('tarot2', 1, 0.4)
+                    return true 
+                end
+            })
         end
         
+        --[[
         if context.after then
             local _index = nil
             print(tostring(#G.deck.cards) .. ' cards...')
@@ -1257,18 +1276,38 @@ local catch_the_clown = {
                 end
             end
             tell('Index in deck is ' .. tostring(_index) .. '...')
+        end]]
+
+        -- Check if clown is unscoring
+        if 
+            not card.ability.immutable.caught 
+            and context.before 
+        then
+            local unscoring_cards = MadLib.get_list_matches(G.play.cards, function(v)
+                return not MadLib.list_matches_one(context.scoring_hand, function(v2)
+                    return v2 == v
+                end)
+            end)
+            if MadLib.list_matches_one(unscoring_cards, function(v)
+                return v.config.extra 
+                    and v.config.extra.rand_id ~= nil
+                    and self.config.extra.rand_id == v.config.extra.rand_id
+            end) then
+                card.ability.immutable.caught = true
+            end
         end
 
         if -- gain chippys
             context.individual
             and context.cardarea == G.play
             and context.other_card
+            and not (card.ability.caught or card.ability.failed)
         then
             local _card = context.other_card
             local pairs = _card.config.extra and _card.config.extra.rand_id ~= nil and (self.config.extra.rand_id == _card.config.extra.rand_id)
             if pairs then
                 --tell('Win!')
-                card.ability.immutable.clown_caught = true
+                card.ability.immutable.caught = true
                 card.ability.extra.chips = card.ability.extra.chips + card.ability.extra.chip_mod
                 MadLib.pair_cards(card, _card, nil, true)
                 print(self.config.rand_id)
@@ -1288,8 +1327,7 @@ local catch_the_clown = {
         end
 
 		if -- generic joker type stuff
-            (context.joker_main
-            or context.forcetrigger)
+            (context.joker_main or context.forcetrigger)
             and card.ability.extra.chips > 0
         then
             return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips, card, card.ability.extra.chips)
@@ -1299,7 +1337,7 @@ local catch_the_clown = {
         if
             context.end_of_round
             and context.cardarea == G.joker
-            and not card.ability.immutable.clown_caught -- clown was missed. sad day.
+            and (not card.ability.immutable.caught or card.ability.immutable.failed) -- clown was missed. sad day.
         then
             card.ability.immutable.misses = card.ability.immutable.misses + 1
             -- Get rid of the ID and the sticker.
@@ -1393,12 +1431,19 @@ local all_star_joker = {
             (context.before
             and MadLib.get_hand_sum(context.scoring_hand) == card.ability.immutable.total_sum)
         then
-            for _,v in pairs(G.jokers.cards) do
+            MadLib.loop_func(G.jokers.cards, function(v)
                 MadLib.simple_event(function()
-                    v:juice_up(0.2, 0.5)
+                    play_sound('tarot2', 1, 0.4)
+                    v:juice_up(0.1, 0.3)
                     return true
-                end, 0.15, 'immediate')
-            end
+                end, 1.0, 'after')
+            end)
+            MadLib.simple_event(function()
+                play_sound('rgmc_all_star', 1, 0.4)
+                card:juice_up(0.2, 0.5)
+                --card_eval_status_text(card, 'extra', nil, nil, nil, {message = "Hey Now!", colour = G.C.MONEY})
+                return true
+            end, 3.5, 'after')
             return MadLib.get_simple_upgrade_data(MadLib.ScoreKeys.AddMoney, card, card.ability.extra.money_mod * #G.jokers.cards)
         end
 
@@ -1436,7 +1481,8 @@ local microfiche = {
             and context.individual
             and context.other_card
         then
-            local nominal   = SMODS.Ranks[context.other_card:get_id()].nominal
+			local rank      = MadLib.get_card_value(context.other_card)
+            local nominal   = rank and rank.nominal or 3
 			local irregular = MadLib.has_rank_in_list(MadLib.RankTypes.Irregular)
 
 			if not irregular and nominal < 2 then -- gains the x_mult
@@ -1452,6 +1498,15 @@ local microfiche = {
         end
     end
 }
+
+function MadLib.spectrum_played(context)
+    if type(context) ~= 'table' or not context.poker_hands then return false end
+    local spectrum = tostring(MadLib.SpectrumId) .. 'Spectrum'
+    tell('Finding ' .. tostring(spectrum) .. '...')
+    --print(context.poker_hands)
+    return context.poker_hands[spectrum]
+    --return next(context.poker_hands[spectrum]) and true or false
+end
 
 -- 81. The Penumbral
 local penumbral = {
@@ -1474,8 +1529,8 @@ local penumbral = {
     calculate = function(self, card, context)
 		if
             (context.joker_main
-            and next(context.poker_hands[MadLib.SpectrumId .. 'spectrum'])
-            and MadLib.context_has_subhand(context,'ml_sh_light'))
+            and MadLib.spectrum_played(context)
+            and MadLib.context_has_subhand(context,'ml_sh_dark'))
             or context.forcetrigger
         then
             return MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiMult, card, card.ability.extra.x_mult)
@@ -1504,8 +1559,8 @@ local photovoltaic = {
     calculate = function(self, card, context)
 		if
             (context.joker_main
-            and next(context.poker_hands[MadLib.SpectrumId .. 'spectrum'])
-            and MadLib.context_has_subhand(context,'ml_sh_dark'))
+            and MadLib.spectrum_played(context)
+            and MadLib.context_has_subhand(context,'ml_sh_light'))
             or context.forcetrigger
         then
             return MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiMult, card, card.ability.extra.x_mult)
@@ -1529,7 +1584,7 @@ local palette = {
         extra = { x_chips = 2 }
     },
     loc_vars = function(self, info_queue, card)
-		return MadLib.collect_vars(card.ability.x_chips)
+		return MadLib.collect_vars(card.ability.extra.x_chips)
     end,
     calculate = function(self, card, context)
 		if
@@ -1977,7 +2032,7 @@ function Madcap.Funcs.get_goldenhouse_chipmult(target)
     if not target then return 0, 0 end
     local chips, mult, changed = 0,0,false
 
-    print(target)
+    --print(target)
 
     if -- regular planets
         target.ability.hand_type
@@ -2097,7 +2152,13 @@ local cat_planet = {
 
             -- Acquire the chips/mult, convert to mayhem.
             local chips, mult, changed = Madcap.Funcs.get_goldenhouse_chipmult(target)
-            if changed and chips + mult > 0 then
+
+            --tell('CHIPS, MULT, CHANGED:')
+            --print(chips)
+            --print(mult)
+            --print(changed)
+
+            if changed then
                 local mayhem = (chips/5 + mult/2)
                 MadLib.simple_event(function()
                     Madcap.Funcs.ease_mayhem(mayhem)
@@ -2108,6 +2169,11 @@ local cat_planet = {
                     return true
                 end, 0.4, 'before')
             end
+
+            --[[
+            if changed and (chips + mult) > 0 then
+            end
+            ]]
 
         end
     end
@@ -2137,47 +2203,67 @@ local golden_house = {
 	end,
     calculate = function(self, card, context)
 
-        if
-            (context.setting_blind and not context.blueprint)
-            or context.forcetrigger
-        then
+        if context.setting_blind or context.forcetrigger then
 
             local planets = MadLib.get_list_matches(G.consumeables.cards, function(v)
-                return (v.ability.set == "Planet" or v.ability.set == "Spectral")
+                return (v.ability.set == "Planet")
                     and not (v.getting_sliced or v.ability.eternal)
             end)
 
             local target = pseudorandom_element(planets, pseudoseed("rgmc_golden_house"))
-
             if target then
+                MadLib.simple_event(function()
+                    play_sound('rgmc_destroy_planet', 1, 0.5)
+                    target:start_dissolve({G.C.RED}, nil, 1.6)
+                    return true
+                end, 2, 'after')
+                delay(0.5)
+                
                 local chips, mult, changed = Madcap.Funcs.get_goldenhouse_chipmult(target)
 
                 -- there is chip
-                if chips > 0 then
+                if to_big(chips) > to_big(0) then
                     MadLib.simple_event(function()
-                        card_eval_status_text(context_blueprint_card or self, 'extra', nil, nil, nil, {
-                            message = "+" .. number_format(chips),
-                            colour = G.C.CHIPS
+                        card.ability.extra.chips = card.ability.extra.chips + chips
+                        card_eval_status_text(context_blueprint_card or card, 'extra', nil, nil, nil, {
+                            message = "+" .. number_format(to_big(chips)),
+                            colour = G.C.CHIPS,
+                            card = card
                         })
                         return true
-                    end, 0.4, 'before')
+                    end, 0.4, 'after')
                 end
 
                 -- there is mult
-                if mult > 0 then
+                if to_big(mult) > to_big(0) then
                     MadLib.simple_event(function()
-                        card_eval_status_text(context_blueprint_card or self, 'extra', nil, nil, nil, {
-                            message = "+" .. number_format(mult),
-                            colour = G.C.MULT
+                        card.ability.extra.mult = card.ability.extra.mult + mult
+                        card_eval_status_text(context_blueprint_card or card, 'extra', nil, nil, nil, {
+                            message = "+" .. number_format(to_big(mult)),
+                            colour = G.C.MULT,
+                            card = card
                         })
                         return true
-                    end, 0.4, 'before')
+                    end, 0.4, 'after')
                 end
 
 				return nil, true
             end
         end
+
+        if
+            (context.cardarea == G.jokers and context.joker_main)
+            or context.forcetrigger
+        then
+            if card.ability.extra.mult ~= 0 or card.ability.extra.chips ~= 0 then
+                return {
+                    chip_mod = lenient_bignum(card.ability.extra.chips),
+                    mult_mod = lenient_bignum(card.ability.extra.mult),
+                }
+            end
+        end
     end
+
 }
 
 -- 93. SPAM!
@@ -2222,29 +2308,14 @@ local spam = {
 				mult_mod = lenient_bignum(card.ability.extra.mult),
 				func = function()
                     local sound_effect = math.random(1, 4)
-                    Madcap.Funcs.play_sound_event('rgmc_spam'..tostring(sound_effect), 1, 1)
+                    play_sound('rgmc_spam'..tostring(sound_effect), 1, 1)
+                    return true
 				end
 			}
 		end
 
-        if
-			context.end_of_round
-			and not context.individual
-			and not context.repetition
-			and not context.blueprint
-			and not context.retrigger_joker
-		then
-        local adv_numerator = MadLib.base_prob(card) ^ (1 + (card.ability.numer_factor or 0))
-            local this = card
-            if MadLib.calculate_roll({
-                card    = this,
-                exp     = math.ceil(adv_numerator) -- just to make it less OP on beige deck
-            }) then -- 1 in 200^n chance to POOF!
-                local sound_effect = math.random(1, 3)
-                return MadLib.banana_remove(card, "rgmc_spam_deathex")
-            else
-                return { message = localize("k_safe_ex") } -- safe!
-            end
+        if Madcap.Funcs.banana_context() then
+            return MadLib.banana_logic(card, 'spam')
         end
     end
 }
@@ -2280,7 +2351,7 @@ local lobster_thermidor = {
             and context.joker_main)
             or context.forcetrigger
         then
-            Madcap.Funcs.play_sound_event('rgmc_spam_enter', 1, 1)
+            play_sound('rgmc_spam_enter', 1, 1)
             return MadLib.get_simple_score_data(MadLib.ScoreKeys.ExpMult, card,
                 card.ability.extra.e_mult)
 		end
@@ -2295,7 +2366,7 @@ function Madcap.Funcs.do_gimmick_generator(card,context,success_func)
     if context.forcetrigger then
         pass = true
     else
-        card.ability.extra.rounds = card.ability.extra.rounds + 1
+        card.ability.extra.rounds = (card.ability.extra.rounds or 0) + 1
         pass = not (card.ability.extra.rounds < card.ability.extra.max_rounds)
 
         -- only jiggle if it is one until the end
@@ -2308,8 +2379,7 @@ function Madcap.Funcs.do_gimmick_generator(card,context,success_func)
     end
 
     if not pass then
-        local full_msg = card.ability.extra.rounds .. '/' .. card.ability.extra.max_rounds .. localize('k_rounds')
-
+        local full_msg = card.ability.extra.rounds .. '/' .. card.ability.extra.max_rounds
         return {
             card_eval_status_text(card, "extra", nil, nil, nil, {
                 message = full_msg,
@@ -2317,7 +2387,12 @@ function Madcap.Funcs.do_gimmick_generator(card,context,success_func)
             }),
         }
     else -- force triggered or max rounds
-        return success_func(card)
+        local ret = nil
+        MadLib.simple_event(function()
+            success_func(card)
+            return true
+        end, 1.0, 'after')
+        return ret
     end
 end
 
@@ -2337,7 +2412,7 @@ local chicken_jokey = {
         extra = { rounds = 0, max_rounds = 4 }
     },
     loc_vars = function(self, info_queue, card)
-        return MadLib.collect_vars(card.ability.extra.max_rounds, card.ability.extra.rounds)
+        return MadLib.collect_vars(card.ability.extra.max_rounds or 4, card.ability.extra.rounds or -1)
     end,
     calculate = function(self, card, context)
         if
@@ -2345,7 +2420,7 @@ local chicken_jokey = {
             or context.forcetrigger
         then
             return Madcap.Funcs.do_gimmick_generator(card, context, function(v)
-                local jokey = MadLib.create_joker('popcorn')
+                local jokey = MadLib.create_joker('popcorn', nil, 'rgmc_chicken_jockey')
                 card.ability.extra.rounds = 0
 
                 return {
@@ -2373,7 +2448,7 @@ local egglike_joker = {
         extra = { rounds = 0, max_rounds = 4 }
     },
     loc_vars = function(self, info_queue, card)
-        return MadLib.collect_vars(card.ability.extra.max_rounds, card.ability.extra.rounds)
+        return MadLib.collect_vars(card.ability.extra.max_rounds or 4, card.ability.extra.rounds or -1)
     end,
     calculate = function(self, card, context)
         if
@@ -2381,7 +2456,7 @@ local egglike_joker = {
             or context.forcetrigger
         then
             return Madcap.Funcs.do_gimmick_generator(card, context, function(v)
-                local jokey = MadLib.create_joker('egg')
+                local jokey = MadLib.create_joker('egg', nil, 'rgmc_egglike')
                 card.ability.extra.rounds = 0
 
                 return {
@@ -2406,7 +2481,7 @@ local talking_bacteria_jim = {
     blueprint_compat  = true,
     demicoloncompat   = true,
     config = {
-        extra = { odds = 3 }
+        extra = { odds = 2 }
     },
     loc_vars = function(self, info_queue, card)
         return MadLib.collect_vars(MadLib.base_prob(card), card.ability.extra.odds)
@@ -2419,8 +2494,7 @@ local talking_bacteria_jim = {
     end,
     calculate = function(self, card, context)
         if
-            context.setting_blind
-            or context.forcetrigger
+            context.first_hand_drawn or context.forcetrigger
         then
             if -- Copy card
                 MadLib.calculate_roll({
@@ -2429,25 +2503,47 @@ local talking_bacteria_jim = {
                 })
             then
                 MadLib.simple_event(function()
-                    local sorted = MadLib.get_sorted_list(G.hand.cards, function(a,b)
+                    local hand_cards = MadLib.shuffle_sort_list(G.hand.cards, 1, function(v) 
+                        return not v.mitosis 
+                    end, function(a,b)
                         return a:get_points() > b:get_points()
                     end)
-                    local copy_card = sorted[1]:dupe()
-                    copy_card.mitosis = true
+                    if hand_cards then 
+                        MadLib.simple_event(function()
+                            local new_card = copy_card(hand_cards[1], nil, nil, self.playing_card)
+                            new_card:add_to_deck()
+                            table.insert(G.playing_cards, new_card)
+                            G.hand:emplace(new_card)
+                            new_card.area = G.hand
+                            new_card.mitosis = true
+			                play_sound('rgmc_pop', 1, 1)
+                            return true
+                        end, 1.0, 'after')
+                    end
                     return true
                 end, 2.0, 'after')
             end
         end
 
         if -- Do the laugh
-            (context.discard
-            or context.cardarea == G.play)
-            and MadLib.calculate_roll({
+            context.pre_discard and MadLib.calculate_roll({
                 card    = card,
-                denom   = card.ability.extra.odds * 2
+                denom   = card.ability.extra.odds * 3
             })
         then
-            -- Laugh
+            MadLib.simple_event(function()
+			    play_sound('rgmc_bacteria_laugh', 1, 1)
+                return true
+            end, 2.0, 'immediate')
+            delay(0.3)
+            MadLib.loop_func(G.playing_cards, function(v)
+                if v.mitosis then
+                    MadLib.simple_event(function()
+                        v:start_dissolve({G.C.RED}, nil, 1.6)
+                        return true
+                    end, 1.0, 'after')
+                end
+            end)
         end
 
     end
@@ -2535,7 +2631,6 @@ local legend_bobby = {
                 end
                 return false
             end)
-
             MadLib.loop_func(scored_light_cards, function (v)
                 v.bobby_khan = true
             end)
@@ -2568,7 +2663,7 @@ local legend_bobby = {
             MadLib.simple_event(function()
                 target:start_dissolve({G.C.RED}, nil, 1.6)
                 return true
-            end, 1.0, 'before')
+            end, 1.0, 'after')
 
             MadLib.loop_func(dark_cards, function (v)
                 MadLib.simple_event(function()
@@ -2577,7 +2672,7 @@ local legend_bobby = {
                     v:juice_up(0.5, 0.5)
                     play_sound("timpani")
                     return true
-                end, 0.00, 'before')
+                end, 1.0, 'after')
             end)
         end
     end
