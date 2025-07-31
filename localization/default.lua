@@ -1327,7 +1327,8 @@ return {
                         "{C:inactive}(Currently gives {C:chips}+#3#{C:inactive} Chips)"
                     },
                     {
-                        "I am {C:money}$400,000{} in {C:red}dept{} to {C:attention}Clown College{}",
+                        "#4#"
+                        --"I am {C:money}$400,000{} in {C:red}dept{} to {C:attention}Clown College{}",
                     }
                 },
             },
@@ -1590,7 +1591,9 @@ return {
                 text = {
                     "Using a base edition {C:tarot}#1#{}",
                     "creates a {C:dark_edition}Negative{} copy",
-					"{C:inactive,s:0.9}(Upon triggering, change target tarot)",
+					"{C:inactive,s:0.9}(Upon triggering or",
+                    "{C:inactive,s:0.9}defeating Boss Blind,",
+                    "{C:inactive,s:0.9}change Tarot)",
                 },
             },
             j_rgmc_jonster_cola = {
@@ -1601,14 +1604,15 @@ return {
                     "played this {C:attetion}run{}",
                 },
             },
-            j_rgmc_x_ray_vision = {
+            j_rgmc_xray_vision = {
                 name = "X-Ray Vision",
                 text = {
-                    "{C:green}#1# in #2# chance",
-                    "for each {C:attention}card{} drawn to be",
-                    "{C:rgmc_unusual,E:1}highest value{} card in your",
-                    "remaining deck",
-                    "{C:inactive}(Calculates enhancements, editions, etc.)"
+                    "When {C:attention}drawing{} cards,",
+                    "{C:green}#1# in #2# chance to draw",
+                    "the {C:rgmc_unusual,E:1}highest value{} card",
+                    "in the remaining deck",
+                    "{C:inactive,s:0.9}(Calculates enhancements,",
+                    "{C:inactive,s:0.9}editions, seals, etc.)"
                 },
             },
             j_rgmc_weighted_die = {
@@ -4216,9 +4220,10 @@ return {
 				},
 			},
 			rgmc_clown = {
-				name = "Clowned",
+				name = "spr_clown",
 				text = {
-                    "Catch the clown!",
+                    "IF caught",
+                    "THEN score += 60",
 				},
 			},
             rgmc_bronze_seal = {
@@ -4667,7 +4672,7 @@ return {
 			rgmc_jade_seal      = "Jade Seal",
 			rgmc_umber_seal     = "Umber Seal",
 			rgmc_cream_seal     = "Cream Seal",
-			rgmc_cherry_seal    = "Patina Seal",
+			rgmc_cherry_seal    = "Cherry Seal",
 			rgmc_seafoam_seal   = "Bronze Seal",
 			rgmc_sunset_seal    = "Sunset Seal",
 			rgmc_midnight_seal  = "Midnight Seal",

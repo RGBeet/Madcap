@@ -769,6 +769,12 @@ function Madcap.Funcs.read_mayhem()
 	tell('Reading Mayhem...')
 end
 
+function MadLib.compare_numbers(a,b,and_equals)
+	local v1 = type(a) == 'number' and to_big(a) or a
+	local v2 = type(b) == 'number' and to_big(b) or b
+	return (and_equals and v1 >= v2) or (v1 > v2)
+end
+
 function Madcap.Funcs.ease_mayhem(_mod, _check, _silent, _instant)
     MadLib.simple_event(function()
         local round_UI = G.HUD:get_UIE_by_ID('mayhem_UI_count')
@@ -779,7 +785,9 @@ function Madcap.Funcs.ease_mayhem(_mod, _check, _silent, _instant)
         _mod = _mod or 0
 		local _old = G.GAME.Mayhem
         G.GAME.Mayhem = (G.GAME.Mayhem or 0) + _mod
-        if G.GAME.Mayhem + _mod > G.GAME.max_mayhem then _mod = G.GAME.max_mayhem - (G.GAME.Mayhem + _mod) end
+        if MadLib.compare_numbers(G.GAME.Mayhem, G.GAME.max_mayhem) then 
+			_mod = G.GAME.max_mayhem - (G.GAME.Mayhem + _mod)
+		end
 
         if round_UI then
             G.HUD:recalculate()
@@ -795,11 +803,15 @@ function Madcap.Funcs.ease_mayhem(_mod, _check, _silent, _instant)
             end
         end
 
-		local _new = (_old + _mod)
-		local mayhem_state = (_new > 9 and 3)
-			or (_new > 6 and 2)
-			or (_new > 3 and 1)
-			or 0
+		local _new = lenient_bignum(_old + _mod)
+		local mayhem_state = 0
+		if _new > 9 then
+			mayhem_state = 3
+		elseif _new >= 6 then
+			mayhem_state = 2
+		elseif _new >= 3 then
+			mayhem_state = 1
+		end
 
 		if mayhem_state ~= G.GAME.MayhemState then
 			G.GAME.MayhemState = mayhem_state
@@ -2687,6 +2699,13 @@ Madcap.DefineExtras = {
 	['j_caino'] 			= { ['extra'] = mlibmv['MultiMult'] },
 	['j_triboulet'] 		= { ['extra'] = mlibmv['MultiMult'] },
 	['j_cry_soccer'] 		= { ['holygrail'] = mlibmv['Misc'] }, -- One For All
+}
+
+-- Used for managing the Toy Piano Joker
+
+Madcap.ToyPiano = {
+	Positions = { '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace' },
+	BigSteps = { 12, 9, 7, 4, 6, 7, 5, 9, 6, 4, 1, 3, 4, 2, 6, 7, 5, 9, 10, 8, 12, 13, 11, 14, 12, 12 }
 }
 
 function Madcap.Funcs.change_hand_size(_old,_new)

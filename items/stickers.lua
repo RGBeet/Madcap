@@ -128,6 +128,7 @@ local clown = {
 	pos = {x=4,y=1},
 	badge_colour = HEX('F13938'),
 	loc_vars = function(self, info_queue, card)
+		tell(self.config.rand_id or "NO ID")
 		return Madcap.BlankVar
 	end,
 	calculate = function(self, card, context)

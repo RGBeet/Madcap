@@ -526,7 +526,7 @@ local boss_switch = {
     end,
     min_ante = 4,
     stay_flipped = function(self, area, card)
-        if G.GAME.temp.rgmc_switch[card.base.suit] then
+        if G.GAME.temp.rgmc_switch and G.GAME.temp.rgmc_switch[card.base.suit] then
             card.ability.rgmc_switch = card.base.suit -- set to the old suit
             SMODS.change_base(c, G.GAME.temp.rgmc_switch[card.base.suit], _) -- switch to new suit
         end

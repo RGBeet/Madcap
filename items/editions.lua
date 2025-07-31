@@ -418,7 +418,7 @@ local luxury = {
 
 		if -- takes money at end of round
             context.playing_card_end_of_round
-			and G.GAME.dollars - card.ability.extra.money_mod >= 0
+			and to_big(G.GAME.dollars) - to_big(self.config.extra.money_mod) >= to_big(0)
         then
             ease_dollars(-self.config.extra.money_mod)
         end

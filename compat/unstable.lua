@@ -157,6 +157,10 @@ if loaded then -- load the items
                 end)
                 return dazzling_ref(_list)
             end
+            
+            MadLib.loop_func({'0', '0.5', '1', 'r2', 'e', 'Pi', '???', '21', '11', '12', '13', '25', '161'}, function(v)
+                MadLib.RankKeyId[SMODS.Ranks['unstb_' .. v].id] = ('unstb_' .. v)
+            end)
 
             MadLib.merge_tables(aux_cards, {
                 light,

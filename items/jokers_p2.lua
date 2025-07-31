@@ -116,7 +116,6 @@ local joker_in_binary = {
             or context.forcetrigger
         then
 			local _id = context.other_card:get_id()
-    
 			if
                 context.forcetrigger
                 or _id == SMODS.Ranks[MadLib.RankIds['1']].id
@@ -605,7 +604,7 @@ local function set_edition_flipped(target)
     MadLib.simple_event(function()
         if success then
             local flip = not (target.edition and target.edition.rgmc_flipped)
-            target:set_edition({ rgmc_flipped = true }, true)
+            target:set_edition({ rgmc_flipped = flip }, true)
             target:juice_up(0.5, 0.7)
             play_sound('tarot2', 0.76, 0.4)
         end
@@ -940,7 +939,7 @@ local pogladontasaurus = {
 	demicoloncompat     = false,
     config = {
         extra = { retriggers = 2, rank = "2", },
-        immutable = { max_retriggers = 20 }
+        immutable = { max_retriggers = 20, active = false }
     },
 	loc_vars = function(self, info_queue, card)
 		return MadLib.collect_vars(card.ability.extra.rank, math.min(card.ability.extra.retriggers, card.ability.immutable.max_retriggers))
@@ -954,23 +953,32 @@ local pogladontasaurus = {
             and not context.end_of_round
         then
             if MadLib.get_card_value(context.other_card) == card.ability.extra.rank then
-                MadLib.simple_event(function()
-                    play_sound('rgmc_pogladontasaurus', 1, 0.4)
-                return true
-                end, 0.2, 'after')
-                return MadLib.get_retrigger_data(card, math.min(card.ability.extra.retriggers, card.ability.immutable.max_retriggers))
+                card.ability.immutable.active = true
+                return { 
+                    message = localize('k_again_ex'), 
+                    repetitions = math.min(card.ability.extra.retriggers, card.ability.immutable.max_retriggers), 
+                    card = card
+                }
             end
         end
 
         -- TODO: see if you can force trigger cards?
 
         if -- choose a new rank
-            context.end_of_round or context.forcetrigger
+            (context.after and card.ability.immutable.active)
+            or (context.end_of_round and context.cardarea == G.jokers)
+            or context.forcetrigger
         then
-            card.ability.extra.rank = MadLib.pick_rank_from_deck()
+            local pick = MadLib.shuffle_sort_list(G.playing_cards, 1, function(v)  return true end)
+            card.ability.immutable.active = false
+            if pick then card.ability.extra.rank = pick[1]:get_id() end
             return { -- new rank
                 message = "!",
                 card    = card,
+                func    = function()
+                    play_sound('rgmc_pogladontasaurus', 1, 0.5)
+                    return true
+                end
             }
         end
     end
@@ -1220,21 +1228,21 @@ local catch_the_clown = {
     blueprint_compat    = true,
 	demicoloncompat     = true,
     config = {
-        rand_id = nil,
-        caught = false,
-        failed = false,
         extra = {
             chips       = 0,
             chip_mod    = 60,
+            caught = false,
+            failed = false,
         },
         immutable = {
+            rand_id = nil,
             max_misses  = 3,
             misses      = 0,
         }
     },
 	loc_vars = function(self, info_queue, card)
-        local _result = (card.ability.caught and 'k_mission_in_progress')
-            or (card.ability.failed and 'k_mission_failed')
+        local _result = (card.ability.extra.caught and 'k_mission_in_progress')
+            or (card.ability.extra.failed and 'k_mission_failed')
             or 'k_mission_in_progress'
         return { 
             vars = {
@@ -1250,38 +1258,39 @@ local catch_the_clown = {
         if 
             context.first_hand_drawn 
         then -- add clown sticker to card in first half of deck
+            local _cards    = MadLib.get_possible_deck(G.deck.cards)
+            local _index   =  math.floor(math.random() * #_cards) + 1
+            --tell("Card is ".. tostring(_index))
+            SMODS.Stickers["rgmc_clown"]:apply(_cards[_index], true)
+            card.ability.extra.caught = false
+            MadLib.pair_cards(card, _cards[_index],'rgmc_clown',5)
             MadLib.event({
                 trigger = 'after', 
                 func = function() 
-                    local _cards    = MadLib.get_possible_deck(G.deck.cards)
-                    local _index   =  math.floor(math.random() * #_cards) + 1
-                    tell("Card is ".. tostring(_index))
-                    SMODS.Stickers["rgmc_clown"]:apply(_cards[_index], true)
-                    card.ability.immutable.caught = false
-                    MadLib.pair_cards(self,_cards[_index])
-                    play_sound('tarot2', 1, 0.4)
+
+                    play_sound('rgmc_clown_jingle', 1, 0.4)
                     return true 
                 end
             })
         end
         
-        --[[
         if context.after then
             local _index = nil
             print(tostring(#G.deck.cards) .. ' cards...')
             for i=1,#G.deck.cards do
-                if G.deck.cards[i].config.rand_id == self.config.rand_id then
+                if MadLib.compare_ids(card, G.deck.cards[i], 'rgmc_clown') then
                     _index = i
                     break
                 end
             end
             tell('Index in deck is ' .. tostring(_index) .. '...')
-        end]]
+        end
 
         -- Check if clown is unscoring
         if 
-            not card.ability.immutable.caught 
-            and context.before 
+            not card.ability.extra.caught
+            and not context.blueprint
+            and context.before
         then
             local unscoring_cards = MadLib.get_list_matches(G.play.cards, function(v)
                 return not MadLib.list_matches_one(context.scoring_hand, function(v2)
@@ -1289,32 +1298,59 @@ local catch_the_clown = {
                 end)
             end)
             if MadLib.list_matches_one(unscoring_cards, function(v)
-                return v.config.extra 
-                    and v.config.extra.rand_id ~= nil
-                    and self.config.extra.rand_id == v.config.extra.rand_id
+                return MadLib.compare_ids(card, v, 'rgmc_clown')
             end) then
-                card.ability.immutable.caught = true
+                card.ability.extra.caught = false
+                card.ability.extra.failed = true
+                return {
+                    message = "Mission Failed..."
+                }
+            end
+        end
+
+        if 
+            context.remove_playing_cards 
+            and not context.blueprint
+            and not (card.ability.extra.failed or card.ability.extra.caught)
+        then
+            local failed = MadLib.list_matches_one(context.removed, function(v)
+                return MadLib.compare_ids(card, v, 'rgmc_clown')
+            end)
+            if failed then
+                card.ability.extra.failed = true
+                return {
+                    message = "Mission Failed..."
+                }
             end
         end
 
         if -- gain chippys
-            context.individual
-            and context.cardarea == G.play
+            context.cardarea == G.play
+            and not (card.ability.extra.failed or card.ability.extra.caught)
+            and context.individual
             and context.other_card
-            and not (card.ability.caught or card.ability.failed)
         then
-            local _card = context.other_card
-            local pairs = _card.config.extra and _card.config.extra.rand_id ~= nil and (self.config.extra.rand_id == _card.config.extra.rand_id)
-            if pairs then
-                --tell('Win!')
-                card.ability.immutable.caught = true
+            local target = context.other_card
+            if context.other_card.ids then
+                print(context.other_card.ids)
+            end
+            if MadLib.compare_ids(card, target, 'rgmc_clown') then
+                tell('Win!')
+                card.ability.extra.caught = true
+                card.ability.extra.failed = false
                 card.ability.extra.chips = card.ability.extra.chips + card.ability.extra.chip_mod
-                MadLib.pair_cards(card, _card, nil, true)
-                print(self.config.rand_id)
+                MadLib.pair_cards(card, target, 'rgmc_clown', nil, true)
+                MadLib.event({
+                    trigger = 'immediate', 
+                    func = function() 
+                        SMODS.Stickers["rgmc_clown"]:apply(target, false)
+                        play_sound('rgmc_success', 1, 0.4)
+                        return true 
+                    end
+                })
                 MadLib.event({
                     trigger = 'after', 
                     func = function() 
-                        SMODS.Stickers["rgmc_clown"]:apply(_card, false)
                         return true 
                     end
                 })
@@ -1333,34 +1369,47 @@ local catch_the_clown = {
             return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips, card, card.ability.extra.chips)
         end
 
-        -- Checks if you have caught the clown.
         if
             context.end_of_round
-            and context.cardarea == G.joker
-            and (not card.ability.immutable.caught or card.ability.immutable.failed) -- clown was missed. sad day.
+            and context.cardarea == G.jokers
         then
-            card.ability.immutable.misses = card.ability.immutable.misses + 1
-            -- Get rid of the ID and the sticker.
-            for i=1, #G.playing_cards do
-                local _card = G.playing_cards[i]
-                if 
-                    _card.config.extra 
-                    and _card.config.extra.rand_id
-                    and _card.config.extra.rand_id == self.config.extra.rand_id
-                then
-                    SMODS.Stickers["rgmc_clown"]:apply(_card, false)
-                    MadLib.pair_cards(card, _card, nil, true)
-                    break
+            if 
+                (not card.ability.extra.caught and card.ids and card.ids['rgmc_clown'] ~= nil) 
+                or card.ability.extra.failed 
+            then
+                MadLib.event({
+                    trigger = 'immediate', 
+                    func = function() 
+                        play_sound('rgmc_clown_fail', 1, 0.4)
+                        return true 
+                    end
+                })
+                card.ability.immutable.misses = card.ability.immutable.misses + 1
+                -- Get rid of the ID and the sticker.
+                for i=1, #G.playing_cards do
+                    local _card = G.playing_cards[i]
+                    if MadLib.compare_ids(card, _card, 'rgmc_clown') then
+                        tell('Removed Clown Seal')
+                        SMODS.Stickers["rgmc_clown"]:apply(_card, false)
+                        MadLib.pair_cards(card, _card, 'rgmc_clown', nil, true)
+                        break
+                    end
                 end
-            end
-            -- Remove the card altogether, you failed.
-            if card.ability.immutable.misses == card.ability.immutable.max_misses then
-                return MadLib.banana_remove(card, "rgmc_spam_deathex")
-            else
+                -- Remove the card altogether, you failed.
+                if card.ability.immutable.misses == card.ability.immutable.max_misses then
+                    return MadLib.banana_remove(card, "rgmc_spam_deathex")
+                else
+                    return {
+                        message = localize(k_reset), -- replace with actual thing!
+                        card = card,
+                        colour = G.C.RED
+                    }
+                end
+            else -- clown caught
                 return {
-                    message = '!', -- replace with actual thing!
+                    message = localize(k_reset),
                     card = card,
-                    colour = G.C.RED
+                    colour = G.C.GREEN
                 }
             end
         end
@@ -1472,7 +1521,7 @@ local microfiche = {
         extra = { x_mult = 1.0, xmult_mod  = 0.05 }
     },
     loc_vars = function(self, info_queue, card)
-        return MadLib.collect_vars(card.ability.x_mult, xmult_mod)
+        return MadLib.collect_vars(card.ability.extra.xmult_mod, card.ability.extra.x_mult)
     end,
     calculate = function(self, card, context)
 
@@ -1481,18 +1530,21 @@ local microfiche = {
             and context.individual
             and context.other_card
         then
-			local rank      = MadLib.get_card_value(context.other_card)
+			local rank      = MadLib.get_value_from_id(context.other_card:get_id())
+            print(context.other_card:get_id())
+            print(rank)
+            print(rank and rank.nominal)
             local nominal   = rank and rank.nominal or 3
 			local irregular = MadLib.has_rank_in_list(MadLib.RankTypes.Irregular)
 
 			if not irregular and nominal < 2 then -- gains the x_mult
-                return MadLib.get_simple_upgrade_data(MadLib.ScoreKeys.MultiMult, card, card.ability.extra.xmult_mod)
+                return MadLib.get_simple_upgrade_data(MadLib.ScoreKeys.MultiMult, context.other_card, card.ability.extra.xmult_mod)
 			end
         end
 
         if -- give the xmult
             (context.joker_main or context.forcetrigger)
-            and card.ability.x_mult > 1
+            and card.ability.extra.x_mult > 1
         then
             return MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiMult, card, card.ability.extra.x_mult)
         end
@@ -1642,19 +1694,18 @@ local squash_keychain = {
     blueprint_compat  = true,
     demicoloncompat   = true, -- create a negative of a the specified tarot (and delete a base if it exists), then randomize
     config = {
-        extra = { tarot_id = "fool" }
+        extra = { tarot_id = "c_fool" }
     },
     loc_vars = function(self, info_queue, card)
-        local tarot_id = MadLib.localize_name_text('Tarot', 'c_'..card.ability.extra.tarot_id)
-        --local tarot_id = 'c_'..card.ability.extra.tarot_id
-		return MadLib.collect_vars(localize(tarot_id))
+        local tarot_id = MadLib.localize_name_text('Tarot', card.ability.extra.tarot_id)
+		return MadLib.collect_vars(tarot_id)
     end,
     calculate = function(self, card, context)
 
 		if
             (context.using_consumeable
             and context.consumeable
-            and context.consumeable:get_config().key == ('c_' .. card.ability.extra.tarot_id)
+            and context.consumeable:get_config().key == (card.ability.extra.tarot_id)
             and not (context.consumeable).edition)
             or context.forcetrigger
         then
@@ -1662,25 +1713,29 @@ local squash_keychain = {
             G.GAME.consumeable_buffer = G.GAME.consumeable_buffer + 1
 
             MadLib.simple_event(function()
-                local dupe = SMODS.add_card({ key = 'c_'..card.ability.extra.tarot_id })
+                local dupe = SMODS.add_card({ key = card.ability.extra.tarot_id })
                 dupe:set_edition({negative = true}, true)
                 dupe:set_cost()
                 G.GAME.consumeable_buffer = 0
                 return true
-            end, 0.08, 'before')
+            end, 2.0, 'after')
 
             card_eval_status_text(card, 'extra', nil, nil, nil, {message = localize('k_plus_tarot'), colour = G.C.SECONDARY_SET.Tarot})
 
             -- destroys a random base of this card, if exists
             if context.forcetrigger then
                 local card_to_destroy = MadLib.get_first_list_match(G.consumeables.cards, function(v)
-                    return v:get_config().key == ('c_' .. card.ability.extra.tarot_id)
+                    return v:get_config().key == (card.ability.extra.tarot_id)
                 end)
                 if card_to_destroy then MadLib.handle_consumable_destroy(card_to_destroy) end
             end
 
-            local new_pick = pseudorandom_element(SMODS.Tarots, pseudoseed('rgmc_squash_keychain'))
-            card.ability.extra.tarot_id = new_pick.key -- pick new card?
+
+            MadLib.simple_event(function()
+                local new_pick = pseudorandom_element(G.P_CENTER_POOLS.Tarot, pseudoseed('rgmc_squash_keychain')).key
+                card.ability.extra.tarot_id = new_pick -- pick new card?
+                return true
+            end, 2.0, 'after')
         end
 
     end
@@ -1700,42 +1755,94 @@ local jonster_cola = {
     demicoloncompat   = true,
     calculate = function(self, card, context)
 		if
-            (context.selling_self and not context.blueprint)
-            or context.forcetrigger -- will kill the jonster cola!
+            ((context.selling_self and not context.blueprint)
+            or context.forcetrigger) -- will kill the jonster cola!
+            and type(Madcap.Funcs.safe_get(G.GAME, "MADCAP", "best_hand") or nil) == 'table'
         then
-            local best_hand = Madcap.Funcs.safe_get(G.GAME, "MADCAP", "best_hand") or nil
-            if type(best_hand) == 'table' then
-                local all_cards = MadLib.dupe_from_card_info(MadLib.get_combined_list(best_hand.play, best_hand.hand))
+            local best_hand = G.GAME.MADCAP.best_hand
+            local list = MadLib.get_combined_list(best_hand.play, best_hand.hand)
+            local playing_round = (G.hand and #G.hand.cards > 0)
+            MadLib.simple_event(function()
 
-                -- recreates the entire hand
                 MadLib.simple_event(function()
-                    for _, v in pairs(all_cards) do
-                        v:add_to_deck()
-                        G.deck.config.card_limit = G.deck.config.card_limit + 1
-                        table.insert(G.playing_cards, v)
-                        G.hand:emplace(_card)
+                    if playing_round then
+                        -- unhighlight everything
+                        if #G.hand.highlighted > 0 then
+                            MadLib.simple_event(function()
+                                G.hand:unhighlight_all()
+                                return true
+                            end, 1.0, 'before')
+                        end
+                            -- put hands into the discard deck
+                        MadLib.loop_func(G.hand.cards, function(v,i)
+                            MadLib.simple_event(function()
+                                draw_card(G.hand,G.discard, i*100/#G.hand.cards,'down', nil, nil, 0.15)
+                                return true
+                            end, 0.15, 'before')
+                        end)
                     end
-
-                    playing_card_joker_effects(all_cards)
-                    pseudoshuffle(G.deck.cards, pseudoseed('rgmc_jonster_cola')) -- shuffle the whole deck
                     return true
-                end)
+                end, 0.0, 'before')
+                            
+                -- shuffle the whole deck
+                MadLib.simple_event(function()
+                    pseudoshuffle(G.deck.cards, pseudoseed('rgmc_jonster_cola'))
+                    return true
+                end, 0.3, 'after')
+                    
+                -- do the recreating
+                MadLib.simple_event(function()
+                    local all_cards = MadLib.dupe_from_card_info(list, function(n)
+                        if playing_round then
+                            G.hand:emplace(n)
+                        else
+                            G.deck:emplace(n)
+                        end
+                    end)
+                    play_sound('rgmc_jonster_activate', 1, 0.5)
+                    return true
+                end,0.0,'after')
+                        
+                -- effects
+                MadLib.simple_event(function()
+                    playing_card_joker_effects(all_cards)
+                    return true
+                end, 0.0, 'after')
 
-                if context.forcetrigger then
-                    return MadLib.banana_remove(card) -- BOOM!
-                end
+                return true
+            end, 0.0, 'immediate')
+            if context.forcetrigger then -- the jonster cola has been killed (make it explode later)
+                return MadLib.banana_remove(card)
             end
         end
     end
 }
 
-local function drawing_card_random(card)
+local function drawing_card_random(card, context)
     return (context.drawing_cards and context.amount and context.amount > 0)
         and (SMODS.drawn_cards and #SMODS.drawn_cards > 0)
         and MadLib.calculate_roll({
                 card    = card,
                 denom   = card.ability.extra.odds -- add hand/discard
         })
+end
+
+function MadLib.get_card_total_value(v)
+    local suit          = v.base.suit
+    local rank          = v.base.value
+    local enhance       = v.config.center.key
+    local edition       = v.edition and v.edition.key
+    local seal          = v.seal -- add later
+    local points        = 0
+
+    if edition then 
+        points = points + (MadLib.PointValues.Editions[edition] or 0)
+    end
+    if enhance then 
+        points = points + (MadLib.PointValues.Enhancements[enhance] or 0)
+    end
+
+    return points
 end
 
 -- 87. X-Ray Vision
@@ -1751,21 +1858,50 @@ local xray_vision = {
     blueprint_compat  = true,
     demicoloncompat   = true,
     config = {
-        extra = { odds = 8 }
+        extra = { odds = 3, drawn_cards = 1 }
     },
     loc_vars = function(self, info_queue, card)
-        return MadLib.collect_vars(card.ability.extra.odds)
+        return MadLib.collect_vars(
+            number_format(MadLib.base_prob(card)),
+            number_format(card.ability.extra.odds),
+            number_format(card.ability.extra.drawn_cards or 1))
     end,
     calculate = function(self, card, context)
         if
-            drawing_card_random(card)
+            drawing_card_random(card, context)
             or context.forcetrigger
         then
-            table.sort(G.deck.cards, function(a, b)
-                return MadLib.get_card_points(a) < MadLib.get_card_points(b)
+            -- noise
+            MadLib.simple_event(function()
+                play_sound('rgmc_blip', 1, 0.5)
+                return true
+            end, 0.5, 'after')
+
+            local cards_to_draw = math.min((card.ability.extra.drawn_cards or 1), G.deck.card_limit-1, G.hand.card_limit-1)
+
+            local best = MadLib.shuffle_sort_list(G.deck.cards, cards_to_draw, function(v)
+                return true
+            end, function(a,b)
+                return MadLib.get_card_total_value(a) > MadLib.get_card_total_value(b)
             end)
-            G.FUNCS.draw_from_deck_to_hand(1)
-            pseudoshuffle(G.deck.cards, pseudoseed('rgmc_xray_goggles')) -- shuffle the whole deck
+            
+            local worst = MadLib.shuffle_sort_list(G.hand.cards, cards_to_draw, function(v)
+                return true
+            end, function(a,b)
+                return MadLib.get_card_total_value(a) < MadLib.get_card_total_value(b)
+            end)
+
+            -- yes
+            -- yes
+            MadLib.simple_event(function()
+                -- draw best card
+                if best then  MadLib.loop_func(best, function(v,i) draw_card(G.deck, G.hand, i*100/#best, 'up', nil, v) end) end
+                return true
+            end, 1.0, 'after')
+            MadLib.simple_event(function()
+                if worst then MadLib.loop_func(worst, function(v,i) draw_card(G.hand, G.deck, i*100/#worst, 'down', nil, v) end) end
+                return true
+            end, 1.0, 'after')
         end
     end
 }
@@ -1781,24 +1917,40 @@ local weighted_die = {
     eternal_compat    = true,
     perishable_compat = true,
     blueprint_compat  = true,
-    demicoloncompat   = true,
+    demicoloncompat   = false,
     config = {
         extra = { odds = 6 }
     },
     loc_vars = function(self, info_queue, card)
-        return MadLib.collect_vars(card.ability.extra.odds)
+        return MadLib.collect_vars(
+            number_format(MadLib.base_prob(card)),
+            number_format(card.ability.extra.odds))
     end,
     calculate = function(self, card, context)
-        if
-            drawing_card_random(card)
-            or context.forcetrigger
+
+        if 
+            (context.pre_discard or context.final_scoring_step)
+            and MadLib.calculate_roll({
+                card    = card,
+                denom   = card.ability.extra.odds -- add hand/discard
+            })
         then
-            MadLib.reverse_table(G.deck.cards)
-
-            G.FUNCS.draw_from_deck_to_hand(1) -- draw from bottom
-
-            MadLib.reverse_table(G.deck.cards)
+            -- reverse the deck
+            G.deck:reverse()
+            -- noise
+            MadLib.simple_event(function()
+                card:juice_up(0.8, 0.4)
+                play_sound('rgmc_blip', 1, 0.5)
+                return true
+            end, 0.5, 'before')
         end
+
+        if context.finished_drawing then
+            play_sound('rgmc_pop', 1, 0.5)
+            card:juice_up(0.4, 0.2)
+            G.deck:reverse()
+        end
+
     end
 }
 
@@ -1824,83 +1976,19 @@ local roshambo = {
         immutable = { offset = 1 }
     },
     loc_vars = function(self, info_queue, card)
-
         local full_vars = {
             MadLib.localize_name_text('Enhanced', 'm_stone'),
             MadLib.localize_name_text('Enhanced', 'm_lucky'),
             MadLib.localize_name_text('Enhanced', 'm_steel')
         }
-
         for i=1,3 do
             full_vars[#full_vars+1] = MadLib.localize_name_text('Enhanced', Madcap.Lists.Roshambo[(card.ability.immutable.offset%3+1)])
         end
-
         return { vars = full_vars }
     end,
     calculate = function(self, card, context)
 
-        -- convert the cards
-        if context.before then
-            local converts = MadLib.get_list_matches(MadLib.get_combined_list(scoring_hand, G.hand.cards), function(v)
-                return MadLib.has_enhancement_in_list(v, Madcap.Lists.Roshambo)
-            end)
-            for _,v in pairs(converts) do
-                local enh = SMODS.get_enhancements(v)
-                local old_index = -1
-                for i=1,3 do
-                    local j = ((i + card.ability.immutable.offset)%3)+1
-                    if enh[Madcap.Lists.Roshambo[j]] then
-                        old_index = j
-                        break
-                    end
-                end
-                if old_index == -1 then return true end
-                local new_index = ((old_index + 1) % 3) + 1
-                v.old_index = old_index
-                v.new_index = new_index
-                MadLib.flip_cards(converts,function(v)
-                    v:set_ability(Madcap.Lists.Roshambo[new_index])
-                end)
-            end
-        end
-
-        if
-            (context.other_card and context.other_card.old_index)
-            and (context.cardarea == G.hand or context.cardarea == G.play)
-        then
-            local roshambo = Madcap.Lists.Roshambo[context.other_card.new_index]
-            local ending = nil
-
-            if roshambo == 'm_stone' then
-                ending = MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips, card)
-            elseif roshambo == 'm_steel' then
-                ending = MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiMult, card)
-            elseif roshambo == 'm_lucky' then
-                if MadLib.calculate_roll({ denom = 15 }) then
-                    MadLib.simple_event(function()
-                        return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddMoney, card)
-                    end, 0.0, 'immediate')
-                end
-
-                if MadLib.calculate_roll({ denom = 5 }) then
-                    ending = MadLib.get_simple_score_data(MadLib.ScoreKeys.AddMult, card)
-                end
-            end
-            return ending
-        end
-
-        if context.after then
-            local converts = MadLib.get_list_matches(MadLib.get_combined_list(scoring_hand, G.hand.cards), function(v)
-                return v.old_index ~= nil
-            end)
-            for _,v in pairs(converts) do
-                MadLib.flip_cards(converts,function(v)
-                    v:set_ability(Madcap.Lists.Roshambo[v.old_index])
-                end)
-            end
-            v.old_index = nil
-            v.new_index = nil
-        end
+        
     end
 }
 
@@ -2159,15 +2247,16 @@ local cat_planet = {
             --print(changed)
 
             if changed then
-                local mayhem = (chips/5 + mult/2)
+                local mayhem = (chips/20 + mult/4)
                 MadLib.simple_event(function()
                     Madcap.Funcs.ease_mayhem(mayhem)
+                    play_sound('rgmc_meow3', 1, 0.5)
                     card_eval_status_text(context_blueprint_card or self, 'extra', nil, nil, nil, {
                         message = "+" .. number_format(mayhem),
                         colour = G.C.RGMC_MAYHEM
                     })
                     return true
-                end, 0.4, 'before')
+                end, 0.4, 'immediate')
             end
 
             --[[
@@ -2215,9 +2304,9 @@ local golden_house = {
                 MadLib.simple_event(function()
                     play_sound('rgmc_destroy_planet', 1, 0.5)
                     target:start_dissolve({G.C.RED}, nil, 1.6)
+                    delay(0.5)
                     return true
                 end, 2, 'after')
-                delay(0.5)
                 
                 local chips, mult, changed = Madcap.Funcs.get_goldenhouse_chipmult(target)
 
@@ -2577,22 +2666,25 @@ local legend_foreman = {
         if
             G.GAME.current_round.hands_played == 0  -- first round only!
             and context.cardarea == G.play
+            and context.other_card
             and not context.other_card:is_suit(card.ability.extra.suit)
         then
-            --
+            card.ability.extra.x_mult = card.ability.extra.x_mult + card.ability.extra.xmult_mod
             MadLib.flip_card(context.other_card,function(v)
-                SMODS.change_base(c, SMODS.Suits[card.ability.extra.suit].value, _) --
-            end, nil, function(v)
-                -- After (do the thing!)
-                return MadLib.get_simple_upgrade_data(MadLib.ScoreKeys.MultiMult, card, card.ability.extra.xmult_mod)
+                SMODS.change_base(v, card.ability.extra.suit, _)
             end)
+            local _card = context.other_card
+            MadLib.simple_event(function()
+                _card:juice_up(0.5, 0.5)
+                return true
+            end, 1.0, 'after')
         end
 
         if
             context.cardarea == G.jokers and context.joker_main
             or context.forcetrigger
         then
-            return MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiMult, card, card.ability.extra.x_mult * amt)
+            return MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiMult, card, card.ability.extra.x_mult)
         end
     end
 }

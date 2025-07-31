@@ -25,15 +25,19 @@ local jade = {
     config = {
         extra = { odds = 1 }
     },
+    loc_vars = function(self, info_queue, card)
+        return MadLib.collect_vars(number_format(self.config.extra.odds or 0))
+    end,
     calculate = function(self, card, context)
 
         if context.setting_blind then
-            card.ability.extra.odds = 1
+            self.config.extra.odds = 1
         end
 
 		if context.main_scoring and context.cardarea == G.play then
             --draw_card(G.play,G.deck, it*100/play_count,'down', false, v)
             card.ability.rgmc_jade = true
+            self.config.extra.odds = (self.config.extra.odds or 1) + 1
             --tell("Jade Seal activated!")
 		end
     end,
@@ -48,7 +52,7 @@ local umber = {
         extra = { draw_cards = 2 }
     },
     loc_vars = function(self, info_queue, card)
-        return MadLib.collect_vars(number_format(card.ability.extra.draw_cards or 2))
+        return MadLib.collect_vars(number_format(self.config.extra.draw_cards or 2))
     end,
     calculate = function(self, card, context)
 		if
@@ -77,14 +81,19 @@ local cream = {
         extra = { odds = 3 }
     },
     loc_vars = function(self, info_queue, card)
-        return MadLib.collect_vars(number_format(MadLib.base_prob(card)), number_format(card.ability.odds or 3))
+		return {
+			vars = {
+				number_format(MadLib.base_prob(self)),
+                number_format(self.config.extra.odds)
+			},
+		} -- note that the check for (card.ability.cry_prob or 1) is probably unnecessary due to cards being initialised with ability.cry_prob
     end,
     calculate = function(self, card, context)
 		if
             context.end_of_round
             and context.cardarea == G.hand
             and not context.game_over
-            and MadLib.calculate_card_odds(card,'rgmc_cream_seal')
+            and MadLib.calculate_card_odds(self, 'rgmc_cream_seal')
         then
             tell("Cream Seal activated!")
 		end
@@ -99,7 +108,7 @@ local cherry = {
         active = false -- if active, add to next scoring hand.
     },
     loc_vars = function(self, info_queue, card)
-        return MadLib.collect_vars(card.ability.active)
+        return MadLib.collect_vars(self.config.active)
     end,
     calculate = function(self, card, context)
 		if
@@ -108,6 +117,7 @@ local cherry = {
             and context.scoring_hand
         then
             local index = MadLib.get_item_index(card,G.deck.cards)
+            tell(index)
                 if index then
                 MadLib.simple_event(function()
                     card:bring_card_to_front(G.deck.cards)
@@ -126,7 +136,6 @@ local cherry = {
             and not card.ability.active
         then
             MadLib.simple_event(function()
-                v:set_seal('rgmc_bronze', true)
                 v:juice_up(0.3,0.3)
                 play_sound('tarot2', 1.2, 0.4)
                 return true
@@ -143,7 +152,7 @@ local seafoam = {
         extra = { odds = 2 }
     },
     loc_vars = function(self, info_queue, card)
-        return MadLib.collect_vars(card.ability.odds)
+        return MadLib.collect_vars(number_format(MadLib.base_prob(card)), number_format(self.config.extra.odds))
     end,
     calculate = function(self, card, context)
 		if
@@ -160,9 +169,6 @@ local seafoam = {
 local sunrise = {
     key = "sunrise",
     badge_colour = HEX("C1A769"),
-    loc_vars = function(self, info_queue, card)
-        return MadLib.collect_vars(card.ability.odds)
-    end,
     calculate = function(self, card, context)
 		if
             context.other_card
@@ -183,9 +189,6 @@ local sunrise = {
 local midnight = {
     key = "midnight",
     badge_colour = HEX("8753E0"),
-    loc_vars = function(self, info_queue, card)
-        return MadLib.collect_vars(card.ability.odds)
-    end,
     calculate = function(self, card, context)
 		if
             context.other_card
@@ -209,7 +212,7 @@ local anaglyph = {
         extra = { odds = 3 }
     },
     loc_vars = function(self, info_queue, card)
-        return MadLib.collect_vars(card.ability.odds)
+        return MadLib.collect_vars(number_format(MadLib.base_prob(card)), number_format(self.config.extra.odds))
     end,
     calculate = function(self, card, context)
 		if

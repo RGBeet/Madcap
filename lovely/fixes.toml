@@ -168,3 +168,12 @@ pattern = "G.deck:hard_set_T()"
 position = "before"
 payload = '''SMODS.calculate_context({ shuffled_deck = G.deck.cards })'''
 match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = "if G.GAME.facing_blind then G.GAME.current_round.any_hand_drawn = true end"
+position = "after"
+payload = '''SMODS.calculate_context({ finished_drawing = true, drawn_cards = G.hand.cards })'''
+match_indent = true
+

@@ -23,7 +23,7 @@ if mod_loaded(mod_id) then -- load the items
 			extra = { retriggers = 1 },
 			immutable = { max_retriggers = 25 },
 		},
-		rarity = 'cry_epic',
+		rarity = 'rgmc_unusual',
 		generate_ui = Madcap.Funcs.generate_special_ui,
 		long_title = {
 			"The Demicolon Chad"
