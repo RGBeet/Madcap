@@ -524,33 +524,86 @@ if loaded then -- load the items
 		- Randomize values of [3 random consumables] in Void
 		jokers
 		- add a previously deleted OR skipped joker to the void
+		- add 2 colors to the void
 	]]
 
 	-- NEW RIFT CARDS
-	local rr_rc_wavelength = {
-		key = "wavelength",
+	local rr_rc_void_limit = {
+		key = "void_limit",
 		loc_vars = function(self, info_queue, card)
-			return { }
+        	return MadLib.collect_vars(card.ability.extra or 1)
 		end,
 		config = {
-			extra = { },
+			extra = 1, -- voiding limit
 		},
 		pos = get_pos(0,1),
-		cost = 1,
+		cost = 7,
 		in_pool = function(self, args)
-			return false
+			return false -- void only
+		end,
+		can_use = function(self, card)
+			return true -- always
+		end,
+		use = function(self, card, area)
+			G.GAME.rift_limit = G.GAME.rift_limit + 1
+		end,
+	}
+	
+	local rr_rc_enhanced_cards = {
+		key = "enhanced_cards",
+		loc_vars = function(self, info_queue, card)
+        	return MadLib.collect_vars(card.ability.extra or 1)
+		end,
+		config = {
+			extra = 2, -- number of random cards to add
+		},
+		pos = get_pos(0,1),
+		cost = 7,
+		in_pool = function(self, args)
+			return false -- void only
 		end,
 		can_use = function(self, card)
 			return true
 		end,
 		use = function(self, card, area)
-			-- use
+			MadLib.number_func(card.ability.extra or 1, function(v)
+				local _card = SMODS.create_card { 
+					set = "Enhanced",
+					seal = SMODS.poll_seal({ mod = 10 }), 
+					area = G.hand
+				}
+            	G.playing_card = (G.playing_card and G.playing_card + 1) or 1
+            	_card.playing_card = G.playing_card
+            	table.insert(G.playing_cards, _card)
+			end)
+		end,
+	}
+
+	local rr_rc_cosma_tarots = {
+		key = "cosma_tarots",
+		loc_vars = function(self, info_queue, card)
+        	return MadLib.collect_vars(card.ability.extra or 1)
+		end,
+		config = {
+			extra = 1, -- voiding limit
+		},
+		pos = get_pos(0,1),
+		cost = 7,
+		in_pool = function(self, args)
+			return false -- void only
+		end,
+		can_use = function(self, card)
+			return true -- always
+		end,
+		use = function(self, card, area)
+			G.GAME.rift_limit = G.GAME.rift_limit + 1
 		end,
 	}
 
 	-- Register all Rift Cards
 	MadLib.loop_func({
-		rr_rc_wavelength
+		rr_rc_void_limit,
+		rr_rc_enhanced_cards
 	}, function(v, i)
 		v.set 		= 'Rift'
 		v.atlas 	= 'riftraft_riftcards'
