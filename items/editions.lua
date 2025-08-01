@@ -118,10 +118,7 @@ local infernal = {
 				card.ability.infernaled 		-- has been activated at least once this round
                 and not card.ability.eternal	-- not eternal
             then
-				if  MadLib.calculate_roll({
-                seed = 'rgmc_infernal',
-                denom = self.config.extra.odds
-				}) then
+				if SMODS.pseudorandom_probability(card, 'infernal', 1, card.ability.extra.odds) then
 					if Yahimod then -- yahimod make card go BOOM!
 						tell('Card asplode')
 						explodeCard(card)

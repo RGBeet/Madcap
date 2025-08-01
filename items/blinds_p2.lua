@@ -82,13 +82,11 @@ local boss_cut = {
 local boss_coil = {
     key = 'coil',
     pos = MLIB.coords(14),
-    config = { extra = { odds = 4 } },
     boss_colour = HEX('F4EFF6'),
     in_pool = function(self) return true end,
     loc_vars = function(self, info_queue, blind)
-        return MadLib.collect_vars(
-            number_format(MadLib.base_prob(blind)),
-            number_format(blind.config.odds))
+        local _numer, _denom = SMODS.get_probability_vars(self, 1, 4, 'coil')
+        return MadLib.collect_vars(number_format(_numer), number_format(_denom))
     end,
     min_ante    = 2,
     mult        = 2.5,
@@ -99,10 +97,7 @@ local boss_coil = {
 			and context.final_scoring_step
 		then
             local coilys = MadLib.get_list_matches(context.scoring_hand, function(v)
-                return MadLib.calculate_roll({
-                    seed = 'rgmc_coil',
-                    denom = self.config.extra.odds
-                })
+                return SMODS.pseudorandom_probability(self, 'coil', 1, 4)
             end)
             MadLib.flip_cards(coilys, function(v) v.ability.rgmc_coil = true end)
         end
@@ -579,15 +574,13 @@ local final_vino = {
     key = 'final_vino',
     pos = MLIB.coords(33),
     boss_colour = HEX('43B34D'),
-    config = { extra = { odds = 4 } },
     min_ante = 0,
     in_pool = function(self)
         return true
     end,
     loc_vars = function(self, info_queue, blind)
-        return MadLib.collect_vars(
-            number_format(MadLib.base_prob(blind)),
-            number_format(blind.config.odds))
+        local _numer, _denom = SMODS.get_probability_vars(self, 1, 4, 'final_vino')
+        return MadLib.collect_vars(number_format(_numer), number_format(_denom))
     end,
     calculate = function (self, blind, context)
         if
@@ -596,10 +589,7 @@ local final_vino = {
         then
             local vino_converts = MadLib.get_loop_func(context.pre_discard and G.hand.highlighted or G.hand.cards, function(v)
                 return not SMODS.has_enhancement(v, 'm_rgmc_vino')
-                    and MadLib.calculate_roll({
-                        seed = 'rgmc_vino',
-                        denom = self.config.extra.odds
-                    })
+                    and SMODS.pseudorandom_probability(self, 'final_vino', 1, 4)
             end)
             MadLib.flip_cards(anim, function(v)
                 v.ability.vino_boss = true -- marked by this blind
@@ -659,8 +649,8 @@ local final_claw = {
         local must_play = (G.GAME.blind and G.GAME.blind.key == self.key) -- you are playing this blind
             and hand_limit or (self.config.selection_size + (hand_limit or 5))
         return MadLib.collect_vars(
-            number_format(MadLib.base_prob(must_play)),
-            number_format(self.config.selection_size))
+            number_format(self.config.selection_size),
+            number_format(must_play))
     end,
 	set_blind = function(self, reset, silent)
         if not G.GAME.blind.disabled then

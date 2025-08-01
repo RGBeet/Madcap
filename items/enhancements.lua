@@ -256,7 +256,7 @@ local volatile = {
             and context.main_scoring
         then
             -- 1 in 5 chance it explode.
-            if  MadLib.calculate_roll({ seed = 'rgmc_volatile', denom = self.config.extra.odds }) then
+            if SMODS.pseudorandom_probability(card, 'volatile', 1, card.ability.extra.odds) then
                 card.ability.extra.active = true
                 MadLib.simple_event(function()
                     v:juice_up()

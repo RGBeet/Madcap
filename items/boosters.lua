@@ -237,19 +237,13 @@ local function create_joker_chipmult(i,_area)
 	if not i then return nil end
 	local _cat = nil
 	if i%2 == 0 then -- Chip
-		if not MadLib.calculate_roll({
-			seed = 'chips',
-			denom = 8
-		}) then
+		if SMODS.pseudorandom_probability(card, 'chips', 1, 8) then
 			_cat = MadLib.JokerLists.Chips.Multiply
 		else
 			_cat = MadLib.JokerLists.Chips.Add
 		end
 	else -- Mult
-		if not MadLib.calculate_roll({
-				seed = 'mult',
-				denom = 8
-		}) then
+		if SMODS.pseudorandom_probability(card, 'mult', 1, 8) then
 			_cat = MadLib.JokerLists.Mult.Multiply
 		else
 			_cat = MadLib.JokerLists.Mult.Add
@@ -555,14 +549,10 @@ local function create_joker_spam(_area,i)
 
 	if not is_spam then
 
-
 	elseif
 		G.GAME.spams_killed
 		and G.GAME.spams_killed > 8
-		and MadLib.calculate_roll({
-			seed = 'lobster',
-			denom = 10
-		})
+		and SMODS.pseudorandom_probability(card, 'lobster', 1, 8)
 	then
 		_joker_id = 'j_rgmc_lobster_thermidor'
 	end

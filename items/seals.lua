@@ -81,19 +81,15 @@ local cream = {
         extra = { odds = 3 }
     },
     loc_vars = function(self, info_queue, card)
-		return {
-			vars = {
-				number_format(MadLib.base_prob(self)),
-                number_format(self.config.extra.odds)
-			},
-		} -- note that the check for (card.ability.cry_prob or 1) is probably unnecessary due to cards being initialised with ability.cry_prob
+        local _numer, _denom = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'cream_seal')
+        return MadLib.collect_vars(number_format(_numer), number_format(_denom))
     end,
     calculate = function(self, card, context)
 		if
             context.end_of_round
             and context.cardarea == G.hand
             and not context.game_over
-            and MadLib.calculate_card_odds(self, 'rgmc_cream_seal')
+            and SMODS.pseudorandom_probability(card, 'cream_seal', 1, card.ability.extra.odds)
         then
             tell("Cream Seal activated!")
 		end
@@ -152,13 +148,14 @@ local seafoam = {
         extra = { odds = 2 }
     },
     loc_vars = function(self, info_queue, card)
-        return MadLib.collect_vars(number_format(MadLib.base_prob(card)), number_format(self.config.extra.odds))
+        local _numer, _denom = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'seafoam_seal')
+        return MadLib.collect_vars(number_format(_numer), number_format(_denom))
     end,
     calculate = function(self, card, context)
 		if
             context.pre_discard
             and context.other_card == card
-            and MadLib.calculate_card_odds(card,'rgmc_seafoam_seal')
+            and SMODS.pseudorandom_probability(card, 'seafoam_seal', 1, card.ability.extra.odds)
         then
             tell("Seafoam Seal activated!")
         end
@@ -212,14 +209,15 @@ local anaglyph = {
         extra = { odds = 3 }
     },
     loc_vars = function(self, info_queue, card)
-        return MadLib.collect_vars(number_format(MadLib.base_prob(card)), number_format(self.config.extra.odds))
+        local _numer, _denom = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'anaglyph_seal')
+        return MadLib.collect_vars(number_format(_numer), number_format(_denom))
     end,
     calculate = function(self, card, context)
 		if
             context.end_of_round
             and context.cardarea == G.hand
             and not context.game_over
-            and MadLib.calculate_card_odds(card,'rgmc_anaglyph_seal') -- 1 in 3 chance.
+            and SMODS.pseudorandom_probability(card, 'anaglyph_seal', 1, card.ability.extra.odds)
         then
             MadLib.simple_event(function()
 				add_tag(Tag('tag_double'))

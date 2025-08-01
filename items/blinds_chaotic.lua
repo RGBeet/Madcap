@@ -315,7 +315,7 @@ function Madcap.Funcs.fake_stay_flipped(s, self, area, card)
     if s.stay_flipped and s:stay_flipped(area, card) then return true end
 
     if area == G.hand then
-        if s.name == "The Wheel" and MadLib.calculate_roll({ seed = 'madlib', denom = 7 }) then
+        if s.name == "The Wheel" and SMODS.pseudorandom_probability(card, 'wheel', 1, 7) then
             return true
         end
 

@@ -1552,11 +1552,7 @@ function get_new_boss()
 		local yes_please = G.GAME.round_resets.ante <= G.GAME.win_ante
 
 		if not yes_please then -- past ante 8
-			if MadLib.calculate_roll({
-				seed 	= 'rgmc_finisher',	-- finisher seed
-				numer 	= 1,	-- hardcoded 1 in 3, as to avoid stupidity
-				denom 	= 3
-			}) then
+			if SMODS.pseudorandom_probability(nil, 'finisher_blind', 1, 3) then
 				yes_please = true -- 1 in 3 chance to do the thing
 			end
 		end

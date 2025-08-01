@@ -215,27 +215,24 @@ local boss_elevator = {
     key = 'elevator',
     pos = MLIB.coords(8),
     boss_colour = HEX('A9463B'),
-    config = { extra = { odds = 6, } },
     in_pool = function(self)
         return G.playing_cards and #MadLib.get_list_matches(G.playing_cards,function(v)
             return not v:is_rankless()
         end) > (#G.playing_cards / 4) or Madcap.Data.devmode
     end,
     loc_vars = function(self, info_queue, blind)
-        return MadLib.collect_vars(blind and MadLib.base_prob(blind) or 1, blind and blind.ability.extra.odds or 6)
+        local _numer, _denom = SMODS.get_probability_vars(self, 1, 6, 'elevator')
+        return MadLib.collect_vars(number_format(_numer), number_format(_denom))
     end,
     dollars = 6,
 	calculate = function(self, blind, context)
 		if
 			context.final_scoring_step
             and not G.GAME.blind.disabled
-            and MadLib.calculate_roll({
-                seed = 'rgmc_elevator',
-                denom = self.config.extra.odds
-            })
+            and SMODS.pseudorandom_probability(self, 'elevator', 1, 6)
 		then
             MadLib.flip_cards(context.scoring_hand, function(v)
-                assert(SMODS.modify_rank(v, card.ability.extra.times))
+                assert(SMODS.modify_rank(v, 1))
             end)
         end
     end
@@ -270,14 +267,14 @@ local boss_statue = {
     key = 'statue',
     pos = MLIB.coords(10),
     boss_colour = HEX('454E4D'),
-    config = { extra = { odds = 6, } },
     in_pool = function(self)
         return G.playing_cards and #MadLib.get_list_matches(G.playing_cards,function(v)
             return not SMODS.has_enhancement(v, 'm_stone')
         end) > (#G.playing_cards / 4) or Madcap.Data.devmode
     end,
     loc_vars = function(self, info_queue, card)
-        return MadLib.collect_vars(MadLib.base_prob(self), self.config.extra.odds or 6)
+        local _numer, _denom = SMODS.get_probability_vars(self, 1, 6, 'statue')
+        return MadLib.collect_vars(number_format(_numer), number_format(_denom))
     end,
 	calculate = function(self, blind, context)
 
@@ -285,7 +282,7 @@ local boss_statue = {
             -- Get a random selection.
             local stoned = MadLib.get_list_matches(context.scoring_hand,function (v)
                 return not SMODS.has_enhancement(v, 'm_stone')
-                and MadLib.calculate_roll({ seed = 'rgmc_statue', denom = self.config.extra.odds })
+                and SMODS.pseudorandom_probability(self, 'statue', 1, 6)
             end)
 
             if #stoned > 0 then
@@ -308,14 +305,10 @@ local final_blindfold = {
     key = 'final_blindfold',
     pos = MLIB.coords(15),
     boss_colour = HEX('CFBB8F'),
-    config = { extra = { mult_increase = 0.4, odds = 4 } },
+    config = { extra = { mult_increase = 0.4 } },
     in_pool = function(self)
-        -- 1 in 4* chance to enter pool if you haven't skipped prior to this ante
+        -- Chance to enter pool if you haven't skipped prior to this ante
         return G.GAME.MADCAP.blinds_skipped > 0
-            or MadLib.calculate_roll({
-                seed = 'rgmc_final_blindfold',
-                denom = self.config.extra.odds
-            })
             or Madcap.Data.devmode
     end,
     loc_vars = function(self, info_queue, card)

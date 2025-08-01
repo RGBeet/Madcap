@@ -762,16 +762,13 @@ local jackpot = {
 	min_ante = 2,
 	loc_vars = function(self, info_queue)
 		info_queue[#info_queue + 1] = { set = "Tag", key = "tag_rgmc_cogito" }
-		return MadLib.collect_vars(G.GAME.probabilities.normal or 1, self.config.odds)
+        local _numer, _denom = SMODS.get_probability_vars(card, 1, self.config.odds, 'jackpot')
+		return MadLib.collect_vars(number_format(_numer), number_format(_denom))
 	end,
 	apply = function(self, tag, context)
 		if context.type == "new_blind_choice" then
 			if
-				MadLib.calculate_roll({
-					numer 	= G.GAME.probabilities.normal or 1 ,
-					denom 	= self.config.odds,
-					seed 	= 'rgmc_jackpto'
-				})
+				SMODS.pseudorandom_probability(card, 'jackpot', 1, self.config.odds)
 			then
 				local lock = tag.ID
 				G.CONTROLLER.locks[lock] = true

@@ -57,6 +57,8 @@ local polish = {
     end,
 }
 
+Madcap.ProvidenceEditions = MadLib.get_list_matches(MadLib.PointValues.Editions, function(v) return v < 10 end)
+
 local providence = {
 	set = "Tarot",
 	key = "providence",
@@ -68,18 +70,27 @@ local providence = {
 		},
 	},
 	loc_vars = function(self, info_queue, card)
-		return MadLib.collect_vars(MadLib.base_prob(card), card.ability.odds, card.ability.max_highlighted)
+        local _numer, _denom = SMODS.get_probability_vars(self, 1, card.ability.odds, 'providence')
+        return MadLib.collect_vars(number_format(_numer), number_format(_denom), number_format(card.ability.max_highlighted))
 	end,
     can_use = function(self, card)
-		return #G.hand.cards > 0 -- is there a hand of cards available?
+		return G.hand and G.hand.cards and #G.hand.cards > 0 -- is there a hand of cards available?
     end,
 	cost = 4,
 	use = function(self, card, area, copier)
+		if SMODS.pseudorandom_probability(card, 'providence', 1, card.ability.extra.odds) then
+			local bestish = MadLib.shuffle_sort_list(G.hand.cards, math.min(card.ability.extra.max_cards, #G.hand.cards), function(v)
+                return not v.edition -- no edition
+            end, function(a,b)
+                return (MadLib.get_card_total_value(a) + math.random()*8 - 4) > MadLib.get_card_total_value(b) -- goes for enhanced cards first
+            end)
 
-		MadLib.loop_func(G.jokers.cards, function(v, i)
-			Madcap.Funcs.mayhemize(v)
-		end)
-
+            MadLib.flip_cards(bestish, function(c)
+                c:set_edition(MadLib.get_weighted_edition, Madcap.ProvidenceEditions)
+            end, nil, function(c)
+                c:juice_up(0.3, 0.3)
+            end)
+		end
 	end,
 }
 
@@ -99,7 +110,9 @@ local oxidize = {
 	use = function(self, card, area, copier) --Good enough
 		MadLib.flip_cards(G.hand.highlighted, function(c)
 			MadLib.simple_event(function()
+				used_tarot:juice_up(0.3, 0.5)
 				c:set_seal(card.ability.extra)
+				return true
 			end)
 		end)
 	end,
@@ -121,13 +134,21 @@ local reduct = {
 	use = function(self, card, area, copier) --Good enough
 		MadLib.flip_cards(G.hand.highlighted, function(c)
 			MadLib.simple_event(function()
+				used_tarot:juice_up(0.3, 0.5)
 				c:set_seal(card.ability.extra)
+				return true
 			end)
 		end)
 	end,
 }
 
-local madcrap_list = { "2", "3", "4", "5" }
+Madcap.MadcrapRanks = {
+	MadLib.RankIds['1'],
+	"2",
+	"3",
+	"4", 
+	"5" 
+}
 
 local madcrap = {
 	object_type = "Consumable",
@@ -146,13 +167,11 @@ local madcrap = {
     use = function(self, card, area, copier)
 
 		MadLib.flip_cards(MadLib.get_cards_from_shuffled_deck(G.hand.cards, #G.hand.cards, function(c)
-			return MadLib.calculate_roll({
-                seed = 'rgmc_madcrap',
-                denom = self.config.extra.odds
-            })
+			return SMODS.pseudorandom_probability(card, 'madcrap', 1, card.ability.extra.odds)
 		end), function(c)
 			MadLib.simple_event(function ()
 				SMODS.change_base(c, SMODS.Suits[c.base.suit].value, pseudorandom_element(list, pseudoseed("rgmc_madcrap"))) -- change da rank
+				return true
 			end)
 		end)
 
@@ -168,7 +187,7 @@ local chalice = {
 	},
 	cost = 4,
 	can_use = function(self, card)
-		return #G.hand.cards > 0
+		return G.hand and #G.hand.cards > 0
 	end,
 	use = function(self, card, area, copier)
 		Madcap.Funcs.set_special_suits(true)
@@ -193,7 +212,7 @@ local armoire = {
 	},
 	cost = 4,
 	can_use = function(self, card)
-		return #G.hand.cards > 0
+		return G.hand and #G.hand.cards > 0
 	end,
 	use = function(self, card, area, copier)
 		Madcap.Funcs.set_special_suits(true)
@@ -233,7 +252,7 @@ local bluebell = {
 			offset = {x = 0, y = -1},
 			major = G.play
 		})
-		G.GAME.MADCAP.temporary_hands = G.GAME.MADCAP.temporary_hands + card.ability.extra.add
+		G.GAME.MADCAP.temporary_hands = math.min(G.GAME.MADCAP.temporary_hands + card.ability.extra.add,8)
 	end,
 }
 
@@ -262,7 +281,7 @@ local amaryllis = {
 			offset = {x = 0, y = -1},
 			major = G.play
 		})
-		G.GAME.MADCAP.temporary_discards = G.GAME.MADCAP.temporary_discards + card.ability.extra.add
+		G.GAME.MADCAP.temporary_discards = math.min(G.GAME.MADCAP.temporary_discards + card.ability.extra.add,8)
 	end,
 }
 
@@ -359,15 +378,13 @@ local demise = {
       	local used_tarot = copier or card
 		local card = nil
 		--select a random cosma tarot from 1-21. Has a 1 in 200 chance to give Sleeping Ships instead.
-		if 
-			(G.GAME.last_cosma_tarot and G.GAME.last_cosma_tarot ~= 'c_rgmc_demise')
-			and MadLib.calculate_roll({ denom = card, seed = 'rgmc_demise' }) 
-		then -- copy the thing
-            card = create_card('CosmaTarot', G.consumeables, nil, nil, nil, nil, G.GAME.last_cosma_tarot, 'fool')
-		else
-            card = MadLib.get_random_card("CosmaTarot")
+		if G.GAME.last_cosma_tarot and G.GAME.last_cosma_tarot ~= 'c_rgmc_demise' then -- copy the thing
+			if SMODS.pseudorandom_probability(card, 'demise', 1, 200) then
+				card = create_card('CosmaTarot', G.consumeables, nil, nil, nil, nil, G.GAME.last_cosma_tarot, 'fool')
+			else
+				card = MadLib.get_random_card("CosmaTarot")
+			end
 		end
-
 		if card then
             play_sound('timpani')
             card:add_to_deck()
@@ -625,13 +642,10 @@ local orbs = {
 		end)
 	
 		MadLib.loop_func(selection, function(v,i)
-			if not MadLib.calculate_roll({ -- 3 in 4
-				seed = 'rgmc_madcrap',
-				denom = self.config.extra.odds
-			}) then -- add random enhancement
+			if not SMODS.pseudorandom_probability(card, 'orbs', 1, card.ability.extra.odds) then -- add random enhancement
 				
 			else -- fucking blow up
-			
+			 	print('hi')
 			end
 		end)
 	end
@@ -668,7 +682,7 @@ end
 local life_map = {
     key 	= "life_map",
 	pos 	= get_pos(1,0),
-	config	= { select = 1, extra = { odds = 2 } },
+	config	= { select = 1, extra = { odds = 3 } },
 	cost 	= 7,
 	can_use = function(self, card)
 		return G.jokers and #G.jokers.cards > 0
@@ -676,10 +690,7 @@ local life_map = {
 	use = function(self, card, area, copier)
 		local changed = {}
 		MadLib.number_func(nil, self.config.select, function(i)
-			if MadLib.calculate_roll({ -- 3 in 4
-				seed = 'rgmc_life_map',
-				denom = self.config.extra.odds
-			}) then -- add random enhancement
+			if SMODS.pseudorandom_probability(card, 'life_map', 1, card.ability.extra.odds) then -- add random enhancement
 				local pick = MadLib.compare_and_pick_unique()
 				-- get rarity
 			end
@@ -975,7 +986,7 @@ end
 local unknown = {
     key 	= "unknown",
 	pos 	= get_pos(2,0),
-	config	= { extra = { odds = 4, min = 0.5, max = 1.5 } },
+	config	= { extra = { odds = 2, min = 0.5, max = 1.5 } },
 	cost 	= 7,
 	can_use = function(self, card)
 		return true
@@ -1007,10 +1018,7 @@ local unknown = {
             	G.playing_card = (G.playing_card and G.playing_card + 1) or 1
 			end
 			-- if you don't roll a 1 in 4+i, it ends
-			done = not MadLib.calculate_roll({
-                seed = 'rgmc_madcrap',
-                denom = self.config.extra.odds + i
-            })
+			done = not SMODS.pseudorandom_probability(card, 'demise', 1, card.ability.extra.odds + i)
 		end
 	end
 }

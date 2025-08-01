@@ -246,37 +246,26 @@ local nope_joker = {
         extra = { odds = 4, odds2 = 3 }
     },
 	loc_vars = function(self, info_queue, card)
+        local _numer, _denom    = SMODS.get_probability_vars(card, 1, card.ability.extra.odds)
+        local _numer2, _denom2  = SMODS.get_probability_vars(card, 1, card.ability.extra.odds)
 		return MadLib.collect_vars(
-            MadLib.base_prob(card),
-            card.ability.extra.odds,
-            card.ability.extra.odds2)
+            number_format(_numer),
+            number_format(_denom),
+            number_format(_denom2))
 	end,
 	calculate = function(self, card, context)
-		if
-            ( context.before )
-            or context.forcetrigger
-        then
-            local add = 0
+		if context.before or context.forcetrigger then
+            local add = SMODS.pseudorandom_probability(card, 'nope_joker', 1, card.ability.extra.odds, "Nope.jkr") and 1
+                or SMODS.pseudorandom_probability(card, 'nope_joker', 1, card.ability.extra.odds2, "Nope.jkr") and -1
+                or 0
             local discarding = context.pre_discard and true or false
 
-            if MadLib.calculate_roll({
-                card    = card,
-                denom   = card.ability.extra.odds -- add hand/discard
-            }) then -- add hand or discard
-                add = 1
-            end
-
-            if MadLib.calculate_roll({
-                card    = card,
-                exp     = card.ability.extra.odds2 -- remove hand/discard
-            }) then -- remove hand or discard
-                add = add - 1
-            end
-
-            if discarding then -- hand
-                ease_discard(add)
-            else -- discard
-                ease_hands_played(add)
+            if add ~= 0 then
+                if discarding then -- hand
+                    ease_discard(add)
+                else -- discard
+                    ease_hands_played(add)
+                end
             end
 
             if add == 0 then --
@@ -390,24 +379,21 @@ local radioactive_chinese = {
         immutable = { mode = 1 }
     },
     loc_vars = function(self, info_queue, card)
+        local _numer, _denom = SMODS.get_probability_vars(card, 1, card.ability.extra.odds)
         local str = "null"
-		if
-            card.ability.immutable.mode > 0
-            and card.ability.immutable.mode < 8
-        then
+
+		if card.ability.immutable.mode > 0 and card.ability.immutable.mode < 8 then
              str = "rgmc_rad_chinese_effect"..tostring(card.ability.immutable.mode)
         end
-
-        tell(card.ability.immutable.mode)
-
-		info_queue[#info_queue + 1] = {
+        
+        info_queue[#info_queue + 1] = {
             set = "Other",
             key = str,
             vars = {
-                card.ability.extra.effects[card.ability.immutable.mode][1], -- THE SUCCEED
-                math.max(card.ability.extra.odds - MadLib.base_prob(card), 1), -- NOT X in Y
-                card.ability.extra.odds,
-                card.ability.extra.effects[card.ability.immutable.mode][2], -- THE FAIL
+                number_format(card.ability.extra.effects[card.ability.immutable.mode][1]), -- THE SUCCEED
+                number_format(math.max(_denom - _numer, 1)), -- NOT X in Y
+                number_format(_denom),
+                number_format(card.ability.extra.effects[card.ability.immutable.mode][2]), -- THE FAIL
             }
         }
 
@@ -437,10 +423,11 @@ local radioactive_chinese = {
             context.forcetrigger or
             (context.cardarea == G.jokers and context.joker_main)
         then
-            local passes =  MadLib.calculate_roll({ card = card, seed = 'rgmc_radioactive_chinese_' .. tostring(card.ability.immutable.mode) })
+            local passes = SMODS.pseudorandom_probability(card, 'rgmc_radioactive_chinese_' .. tostring(card.ability.immutable.mode),
+                1, card.ability.extra.odds, "Radioactive Chinese?!")
             local val = passes and 1 or 2
 
-            tell('Value: '..number_format(card.ability.extra.effects[card.ability.immutable.mode]))
+            --tell('Value: '..number_format(card.ability.extra.effects[card.ability.immutable.mode]))
             if
                 card.ability.immutable.mode == 1 -- radioactive stir fry (Xscore)
             then
@@ -629,7 +616,8 @@ local captain_viridian = {
         extra = { chips = 36, odds = 6 }
     },
     loc_vars = function(self, info_queue, card)
-        return MadLib.collect_vars(card.ability.extra.chips, MadLib.base_prob(card), card.ability.extra.odds)
+        local _numer, _denom = SMODS.get_probability_vars(card, 1, card.ability.extra.odds)
+        return MadLib.collect_vars(card.ability.extra.chips, _numer, _denom)
     end,
     calculate = function(self, card, context)
         -- scaling
@@ -637,7 +625,7 @@ local captain_viridian = {
             context.forcetrigger
             or (context.cardarea == G.play 
                 and context.other_card
-                and MadLib.calculate_roll({ card = card, seed = 'rgmc_captain_viridian' }))
+                and SMODS.pseudorandom_probability(card, 'captain_viridian', 1, card.ability.extra.odds))
         then
             local _success = set_edition_flipped(context.other_card)
             if _success then return MadLib.simple_card_message(card, localize("rgmc_flipped_ex")) end
@@ -645,7 +633,7 @@ local captain_viridian = {
     end
 }
 
-local balutro_list = {
+Madcap.BalutroList = {
     'Ace',
     '2',
     '5',
@@ -683,7 +671,7 @@ local balutro = {
             or (context.before
             and context.scoring_hand
             and MadLib.list_matches_all(context.scoring_hand, function(v)
-                return MadLib.has_rank_in_list(v, balutro_list)
+                return MadLib.has_rank_in_list(v, Madcap.BalutroList)
             end))
         then
             card.ability.extra.active = true
@@ -719,7 +707,12 @@ local vibrant_tourmaline = {
         extra = { odds = 3, money = 0, money_mod = 1, suit = 'rgmc_blooms' }
     },
     loc_vars = function(self, info_queue, card)
-        return MadLib.collect_vars(card.ability.extra.suit, MadLib.base_prob(card), card.ability.extra.odds, card.ability.extra.money_mod, card.ability.extra.money)
+        local _numer, _denom = SMODS.get_probability_vars(card, 1, card.ability.extra.odds)
+        return MadLib.collect_vars(card.ability.extra.suit,
+            number_format(_numer),
+            number_format(_denom), 
+            number_format(card.ability.extra.money_mod),
+            number_format(card.ability.extra.money))
     end,
 	calc_dollar_bonus = function(self, card)
 		if to_big(card.ability.extra.money) > to_big(0) then
@@ -734,7 +727,7 @@ local vibrant_tourmaline = {
             and context.individual
             and not context.blueprint
             and context.other_card:is_suit(card.ability.extra.suit)
-            and MadLib.calculate_roll({ card = card, seed = 'rgmc_vibrant_tourmaline' })
+            and SMODS.pseudorandom_probability(card, 'vibrant_tourmaline', 1, card.ability.extra.odds)
         then
             return MadLib.get_simple_upgrade_data(MadLib.ScoreKeys.AddMoney, card, card.ability.extra.money_mod)
         end
@@ -771,7 +764,12 @@ local obsidian_blade = {
         extra = { odds = 4, x_mult = 1, xmult_mod = 0.2, suit = 'rgmc_daggers' }
     },
     loc_vars = function(self, info_queue, card)
-        return MadLib.collect_vars(card.ability.extra.suit, MadLib.base_prob(card), card.ability.extra.odds, card.ability.extra.xmult_mod, card.ability.extra.x_mult)
+        local _numer, _denom = SMODS.get_probability_vars(card, 1, card.ability.extra.odds)
+        return MadLib.collect_vars(card.ability.extra.suit,
+            _numer,
+            _denom,
+            card.ability.extra.xmult_mod,
+            card.ability.extra.x_mult)
     end,
     calculate = function(self, card, context)
 
@@ -780,7 +778,7 @@ local obsidian_blade = {
             and context.individual
             and not context.blueprint
             and context.other_card:is_suit(card.ability.extra.suit)
-            and MadLib.calculate_roll({ card = card, seed = 'rgmc_obsidian_dagger' })
+            and SMODS.pseudorandom_probability(card, 'obsidian_blade', 1, card.ability.extra.odds)
         then
            return MadLib.get_simple_upgrade_data(MadLib.ScoreKeys.MultiMult, card, card.ability.extra.xmult_mod)
         end
@@ -882,7 +880,12 @@ local jestrogen = {
         }
     },
     loc_vars = function(self, info_queue, card)
-        return MadLib.collect_vars(MadLib.base_prob(card), card.ability.extra.odds,  card.ability.extra.rank_old, card.ability.extra.chip_mod, card.ability.extra.rank_new)
+        local _numer, _denom = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'jestrogen')
+        return MadLib.collect_vars(_numer, 
+            _denom,
+            card.ability.extra.rank_old,
+            card.ability.extra.chip_mod,
+            card.ability.extra.rank_new)
     end,
     calculate = function(self, card, context)
 
@@ -891,8 +894,8 @@ local jestrogen = {
             and context.other_card
             and context.scoring_hand
         then
-            if MadLib.calculate_roll({ card = card, seed = 'rgmc_jestrogen' }) then
-                if MadLib.get_card_value(context.other_card) == card.ability.extra.rank_old then
+            if MadLib.get_card_value(context.other_card) == card.ability.extra.rank_old then
+                if SMODS.pseudorandom_probability(card, 'jestrogen', 1, card.ability.extra.odds) then
                     -- do the new thing
                     local target = context.other_card
                     MadLib.simple_event(function()
@@ -1198,7 +1201,8 @@ local arkose_michel = {
         extra = { odds = 8, mult = 10 }
     },
     loc_vars = function(self, info_queue, card)
-        return MadLib.collect_vars(card.ability.extra.mult, MadLib.base_prob(card), card.ability.extra.odds)
+        local _numer, _denom    = SMODS.get_probability_vars(card, 1, card.ability.extra.odds)
+        return MadLib.collect_vars(card.ability.extra.mult, number_format(_numer), number_format(_denom))
     end,
     calculate = function(self, card, context)
 
@@ -1235,7 +1239,6 @@ local catch_the_clown = {
             failed = false,
         },
         immutable = {
-            rand_id = nil,
             max_misses  = 3,
             misses      = 0,
         }
@@ -1267,7 +1270,6 @@ local catch_the_clown = {
             MadLib.event({
                 trigger = 'after', 
                 func = function() 
-
                     play_sound('rgmc_clown_jingle', 1, 0.4)
                     return true 
                 end
@@ -1665,14 +1667,15 @@ local streemerz = {
         extra = { odds = 6 }
     },
     loc_vars = function(self, info_queue, card)
-		return MadLib.collect_vars(MadLib.base_prob(card), card.ability.extra.odds)
+        local _numer, _denom = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'penrose_stairs')
+		return MadLib.collect_vars(number_format(_numer), number_format(_denom))
     end,
     calculate = function(self, card, context)
         if context.discard then
         			for _, v in ipairs(G.hand.highlighted) do
                 if
                     (v.edition and v.edition['rgmc_flipped'])
-                    and MadLib.calculate_card_odds(card,'rgmc_streemerz')
+                    and SMODS.pseudorandom_probability(card, 'streemerz', 1, card.ability.extra.odds)
                 then
                     set_edition_flipped(v) -- flip the card back
                 end
@@ -1818,15 +1821,6 @@ local jonster_cola = {
     end
 }
 
-local function drawing_card_random(card, context)
-    return (context.drawing_cards and context.amount and context.amount > 0)
-        and (SMODS.drawn_cards and #SMODS.drawn_cards > 0)
-        and MadLib.calculate_roll({
-                card    = card,
-                denom   = card.ability.extra.odds -- add hand/discard
-        })
-end
-
 function MadLib.get_card_total_value(v)
     local suit          = v.base.suit
     local rank          = v.base.value
@@ -1861,14 +1855,18 @@ local xray_vision = {
         extra = { odds = 3, drawn_cards = 1 }
     },
     loc_vars = function(self, info_queue, card)
+        local _numer, _denom = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'xray_vision')
         return MadLib.collect_vars(
-            number_format(MadLib.base_prob(card)),
-            number_format(card.ability.extra.odds),
+            number_format(_numer),
+            number_format(_denom),
             number_format(card.ability.extra.drawn_cards or 1))
     end,
     calculate = function(self, card, context)
         if
-            drawing_card_random(card, context)
+            (context.drawing_cards 
+            and (context.amount and context.amount > 0)
+            and (SMODS.drawn_cards and #SMODS.drawn_cards > 0)
+            and SMODS.pseudorandom_probability(card, 'xray_vision', 1, card.ability.extra.odds))
             or context.forcetrigger
         then
             -- noise
@@ -1922,18 +1920,14 @@ local weighted_die = {
         extra = { odds = 6 }
     },
     loc_vars = function(self, info_queue, card)
-        return MadLib.collect_vars(
-            number_format(MadLib.base_prob(card)),
-            number_format(card.ability.extra.odds))
+        local _numer, _denom = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'weighted_die')
+        return MadLib.collect_vars(number_format(_numer), number_format(_denom))
     end,
     calculate = function(self, card, context)
 
         if 
             (context.pre_discard or context.final_scoring_step)
-            and MadLib.calculate_roll({
-                card    = card,
-                denom   = card.ability.extra.odds -- add hand/discard
-            })
+            and SMODS.pseudorandom_probability(card, 'weighted_die', 1, card.ability.extra.odds)
         then
             -- reverse the deck
             G.deck:reverse()
@@ -1973,7 +1967,6 @@ local roshambo = {
             chips   = 50,
             x_mult  = 1.5
         },
-        immutable = { offset = 1 }
     },
     loc_vars = function(self, info_queue, card)
         local full_vars = {
@@ -1982,17 +1975,64 @@ local roshambo = {
             MadLib.localize_name_text('Enhanced', 'm_steel')
         }
         for i=1,3 do
-            full_vars[#full_vars+1] = MadLib.localize_name_text('Enhanced', Madcap.Lists.Roshambo[(card.ability.immutable.offset%3+1)])
+            full_vars[#full_vars+1] = MadLib.localize_name_text('Enhanced', Madcap.Lists.Roshambo[(i%3)+1])
         end
         return { vars = full_vars }
     end,
     calculate = function(self, card, context)
-
         
+        if
+            (context.before or context.final_scoring_step)
+            and (G.hand and G.play)
+        then
+            local change_cards = {}
+            MadLib.loop_func({G.play.cards, G.hand.cards}, function(list)
+                MadLib.loop_func(list, function(v)
+                    if MadLib.list_matches_one(Madcap.Lists.Roshambo, function(m)
+                        return v.config.center.key == m
+                    end) then
+                        table.insert(change_cards,v)
+                    end
+                end)
+            end)
+            local amt = 0
+            MadLib.loop_func(change_cards, function(v,i)
+                MadLib.simple_event(function()
+                    v:flip()
+                    return true
+                end,0.1,'after')
+            end)
+            MadLib.loop_func(change_cards, function(v,i)
+                MadLib.simple_event(function()
+                    local index = MadLib.get_moved_index(MadLib.get_item_index(v.config.center.key,Madcap.Lists.Roshambo), (context.before and 1 or 0), #Madcap.Lists.Roshambo)
+                    local new_enhancement = Madcap.Lists.Roshambo[index]
+                    print(new_enhancement)
+                    v:set_ability(G.P_CENTERS[new_enhancement])
+                    return true
+                end,0.2,'after')
+            end)
+            MadLib.loop_func(change_cards, function(v,i)
+                MadLib.simple_event(function()
+                    v:flip()
+                    return true
+                end,0.15,'after')
+            end)
+            MadLib.loop_func(change_cards, function(v,i)
+                MadLib.simple_event(function()
+                    play_sound('rgmc_blip', math.min(0.8 + i*0.1,2), 0.5)
+                    v:juice_up(0.5, 0.5)
+                    return true
+                end,0.4,'after')
+            end)
+        end
     end
 }
 
+--[[
+    TODO: Update to new version of SMODS so this Joker can work!
+]]
 -- 90. Lucky Troll Doll
+
 local lucky_troll_doll = {
     key     = 'lucky_troll_doll',
     pos     = get_pos(8,9),
@@ -2003,75 +2043,37 @@ local lucky_troll_doll = {
     eternal_compat      = true,
     perishable_compat   = true,
     blueprint_compat    = true,
-    demicoloncompat     = true,
     config =  {
         extra = {
-            cards_to_buff = 1
+            jokers          = 1,
+            numerator_mod   = 1.5
         },
     },
     loc_vars = function(self, info_queue, card)
         return {
-            vars = { card.ability.extra.cards_to_debuff }
+            vars = { card.ability.extra.jokers }
         }
     end,
     calculate = function(self, card, context)
-        if
-            context.before
-            and context.blueprint
+
+        if 
+            context.mod_probability and G.jokers
+            and not context.repetition
+            and context.trigger_obj
         then
-            card.ability.blueprint_extra = cards_to_buff
-        end
+            local doll = MadLib.get_item_index(card, G.jokers.cards)
+            local target = MadLib.get_item_index(context.trigger_obj, G.jokers.cards)
 
-		if
-            context.cardarea == G.jokers
-            and (context.before or context.forcetrigger)
-        then
-            local self_index = MadLib.get_item_index(card, G.jokers.cards)
-
-            local end_point = math.min(self_index + (card.ability.extra.cards_to_buff + (card.ability.blueprint_extra or 0)), #G.jokers.cards)
-
-            local jokers_to_buff = MadLib.list_pick_range(G.jokers.cards,
-                math.min(self_index + 1, #G.jokers.cards), end_point)
-
-            -- not in jokers to buff list
-            local jokers_to_revert = MadLib.get_list_matches(G.jokers.cards, function(v)
-                return not MadLib.list_matches_one(G.jokers.cards, function(v2)
-                    return v == v2
-                end) and v.rgmc_troll_doll == card
-            end)
-
-            print(#jokers_to_revert)
-
-            MadLib.loop_func(jokers_to_revert, function(v)
-                v.rgmc_troll_doll = nil
-                v.ability.cry_prob = v.ability.cry_prob - v.ability.prob_add
-                v.ability_prob_add = nil
-                print(v.ability.cry_prob)
-                MadLib.simple_event(function()
-                    v:juice_up(1.3, 0.4)
-                    return true
-                end, 0.4, 'before')
-            end)
-        end
-
-        MadLib.loop_func(jokers_to_buff, function(v)
-            local odds  = v:get_odds()
-            if odds and not v.rgmc_troll_doll then
-                MadLib.simple_event(function()
-                    v.rgmc_troll_doll = card
-                    v.ability.prob_add = type(v.ability.extra) == 'table'
-                        and v.ability.extra.odds / 2
-                        or v.ability.extra / 2
-                    v.ability.cry_prob = v.ability.cry_prob + v.ability.prob_add
-                    v:juice_up(0.7, 0.5)
-                    return true
-                end, 1.2, 'before')
+            if 
+                (doll and target)
+                and (target > doll)
+                and (target <= (card.ability.extra.jokers or 1) + doll)
+            then 
+                tell('mod probability')
+                return { numerator = context.numerator * card.ability.extra.numerator_mod }
             end
-        end)
-
-        if context.after then -- handle blueprint shit
-            card.ability.blueprint_extra = nil
         end
+
     end,
 }
 
@@ -2092,7 +2094,7 @@ Madcap.GoldenHouseFuncs = {
     ['c_cry_planetlua'] = function(t)
         local chips, mult = 0, 0
 
-        if MadLib.calculate_card_odds(t,'rgmc_golden_house') then
+        if SMODS.pseudorandom_probability(t, 'golden_house', 1, 5) then
             -- Loop through all visible
             MadLib.loop_func(G.GAME.hands, function(v)
                 if v.visible then
@@ -2378,14 +2380,14 @@ local spam = {
         immutable = { mode = 1 }
     },
 	loc_vars = function(self, info_queue, card)
-        local adv_numerator = MadLib.base_prob(card) ^ (1 + (card.ability.numer_factor or 0))
+        local _numer, _denom = SMODS.get_probability_vars(card, 1, card.ability.extra.odds)
         return MadLib.collect_vars(
             number_format(card.ability.extra.mult),
             localize('rgmc_spam'),
             number_format(card.ability.extra.chips),
             localize('rgmc_maps'),
-            number_format(math.ceil(adv_numerator)),
-            number_format(card.ability.extra.odds)
+            number_format(_numer ^ (1 + (card.ability.numer_factor or 0))),
+            number_format(_denom)
         )
 	end,
     calculate = function(self, card, context)
@@ -2404,7 +2406,19 @@ local spam = {
 		end
 
         if Madcap.Funcs.banana_context() then
-            return MadLib.banana_logic(card, 'spam')
+            local numerator, denominator = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'spam', true)
+            numerator = (1 + (card.ability.numer_factor or 0))
+            local result = pseudorandom('redd_dacca') < numerator / denominator
+            SMODS.post_prob = SMODS.post_prob or {}
+            SMODS.post_prob[#SMODS.post_prob+1] = {
+                pseudorandom_result = true,
+                result = result,
+                trigger_obj = card, 
+                numerator = numerator,
+                denominator = denominator, 
+                identifier = 'redd_dacca'
+            }
+            return result and MadLib.banana_remove(card, localize('rgmc_spam_deathex')) or { message = localize("k_safe_ex") }
         end
     end
 }
@@ -2436,8 +2450,7 @@ local lobster_thermidor = {
 	end,
     calculate = function(self, card, context)
         if
-            (context.cardarea == G.jokers
-            and context.joker_main)
+            (context.cardarea == G.jokers and context.joker_main)
             or context.forcetrigger
         then
             play_sound('rgmc_spam_enter', 1, 1)
@@ -2573,7 +2586,8 @@ local talking_bacteria_jim = {
         extra = { odds = 2 }
     },
     loc_vars = function(self, info_queue, card)
-        return MadLib.collect_vars(MadLib.base_prob(card), card.ability.extra.odds)
+        local _numer, _denom = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'talking_bacteria_jim')
+        return MadLib.collect_vars(_numer, _denom)
     end,
     remove_from_deck = function(self, card, from_debuff)
         -- Remove all the mitosis stuff.
@@ -2585,12 +2599,7 @@ local talking_bacteria_jim = {
         if
             context.first_hand_drawn or context.forcetrigger
         then
-            if -- Copy card
-                MadLib.calculate_roll({
-                    card    = card,
-                    denom   = card.ability.extra.odds
-                })
-            then
+            if SMODS.pseudorandom_probability(card, 'talking_bacteria_jim', 1, card.ability.extra.odds) then
                 MadLib.simple_event(function()
                     local hand_cards = MadLib.shuffle_sort_list(G.hand.cards, 1, function(v) 
                         return not v.mitosis 
@@ -2615,10 +2624,8 @@ local talking_bacteria_jim = {
         end
 
         if -- Do the laugh
-            context.pre_discard and MadLib.calculate_roll({
-                card    = card,
-                denom   = card.ability.extra.odds * 3
-            })
+            context.pre_discard
+            and SMODS.pseudorandom_probability(card, 'talking_bacteria_jim', 1, card.ability.extra.odds*2)
         then
             MadLib.simple_event(function()
 			    play_sound('rgmc_bacteria_laugh', 1, 1)

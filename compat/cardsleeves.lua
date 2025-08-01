@@ -1,8 +1,4 @@
-local list = {} -- loads a blank list if mod is not added
-local mod_id, mod_name = "CardSleeves", "CardSleeves"
-local loaded = mod_loaded(mod_id)
-
-if loaded then -- load the items
+if CardSleeves then -- load the items
 
 	SMODS.Atlas{key = "sleeves", path = "sleeves.png", px = 73, py = 95}
 	local sprites = 'rgmc_sleeves'
@@ -448,10 +444,10 @@ if loaded then -- load the items
 end
 
 return {
-    name = mod_name .. " Compatability",
+    name = "CardSleeves Compatability",
     init = function() -- does the non item stuff ig?
-		if not mod_loaded(mod_id) then
-			tell(mod_name .. "is not loaded - skipping!")
+		if not CardSleeves then
+			tell("CardSleeves is not loaded - skipping!")
 			return false
 		end
 

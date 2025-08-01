@@ -217,8 +217,9 @@ if loaded then -- load the items
 		cost = 4,
 		loc_vars = function(self, info_queue, card)
 			-- has odds, unlike most colour cards. bad!
-			local val, max = get_progress_bar(card.ability.partial_rounds, card.ability.upgrade_rounds, MadLib.base_prob(card), card.ability.odds)
-			return MadLib.collect_vars(card.ability.val, val, max, card.ability.upgrade_rounds)
+        	local _numer, _denom = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'mf_torch_red')
+			local val, max = get_progress_bar(card.ability.partial_rounds, card.ability.upgrade_rounds)
+			return MadLib.collect_vars(card.ability.val, val, max, card.ability.upgrade_rounds, _numer, _denom)
 		end,
 		can_use = colour_can_use(self,card),
 		use = function(self, card, area, copier)
@@ -234,10 +235,7 @@ if loaded then -- load the items
 					local pool = (#temp_pool > 0 and temp_pool) or (#backup_pool > 0 and backup_pool)
 					if pool then
 						local eligible_card = pseudorandom_element(pool, pseudoseed(self.config.key))
-						if not MadLib.calculate_roll({ -- not 1 in X
-							seed 	= self.key,
-							denom 	= self.config.extra.odds
-						}) then
+						if SMODS.pseudorandom_probability(card, 'mf_torch_red', 1, card.ability.extra.odds) then
 							eligible_card:set_edition({ ['rgmc_infernal'] = true }, true)
 							check_for_unlock({type = 'have_edition'})
 						else
