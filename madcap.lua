@@ -177,13 +177,7 @@ SMODS.load_file('lib/main.lua')()     		-- main functions\
 function Madcap.Funcs.run_start()
     -- start of run
     tell('Run Start')
-
-
-    --print('Ice Cream')
-    --print(G.P_CENTERS['j_ice_cream'])
-    --print('Caramel')
-    --print(G.P_CENTERS['j_cry_caramel'])
-
+	
     G.GAME.subhands = {}
     G.GAME.temp = {}
 
@@ -196,7 +190,7 @@ function Madcap.Funcs.run_start()
         G.GAME.subhands[k].l_mult   	= v.l_mult or 0.1
         G.GAME.subhands[k].l_chips  	= v.l_chips or 0.1
         G.GAME.subhands[k].enabled  	= false
-        G.GAME.subhands[k].empowered  	= 0
+        G.GAME.subhands[k].empower		= 0
     end
 	--%G.GAME.MADCAP
 	
@@ -225,8 +219,13 @@ function Madcap.Funcs.run_start()
             ante    = 0
         }
     }
+	MadLib.loop_table(madcap_vals, function(k,v) self[k] = v end)
 
-	MadLib.loop_table(madcap_vals, function(k,v) G.GAME[k] = v end)
+
+    --print('Ice Cream')
+    --print(G.P_CENTERS['j_ice_cream'])
+    --print('Caramel')
+    --print(G.P_CENTERS['j_cry_caramel'])
     Madcap.Funcs.set_mayhem(G.GAME.Mayhem,true,true)
     G.GAME.Exotic = G.GAME.Exotic or false -- Used for exotic suits and ranks?
 

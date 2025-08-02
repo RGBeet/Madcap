@@ -10,56 +10,61 @@
 
 ]]
 
-function Madcap.Funcs.subhand_light_dark(hand)
-    if not hand then return nil end
-    local light = MadLib.loop_func(hand, function(v)
-        for i=1, #MadLib.SuitTypes.Light do
-            if v:is_suit(MadLib.SuitTypes.Light[i]) then return true end
-        end
-        return false
-    end)
-    local dark = MadLib.loop_func(hand, function(v)
-        for i=1, #MadLib.SuitTypes.Dark do
-            if v:is_suit(MadLib.SuitTypes.Dark[i]) then return true end
-        end
-        return false
-    end)
-    local result = (light >= (G.GAME.subhand_minimum or 5) and light > dark and 'light') 
-        or (dark >= (G.GAME.subhand_minimum or 5) and dark > light and 'dark')
-        or 'both'
-    return result
+function Card:has_high_rank()
+    return SMODS.has_no_rank(self) and SMODS.Ranks[self:get_id()].nominal > 6
+end
+
+function Card:has_low_rank()
+    return SMODS.has_no_rank(self) and SMODS.Ranks[self:get_id()].nominal <= 6
 end
 
 SubHands = {
     Light = {
         name       = 'ml_sh_light',
         priority   = 2,
-        x_mult     = 1.20,
-        x_chips    = 1.05,
-        l_mult     = 0.10,
-        l_chips    = 0.10,
+        x_mult     = 1.05,
+        x_chips    = 1.12,
+        l_mult     = 0.05,
+        l_chips    = 0.04,
         check_hand = function(hand) -- at least 5 light suits (wilds included)
-            return #hand >= (G.GAME.subhand_minimum or 5) and Madcap.Funcs.subhand_light_dark(hand) == 'light'
+            local light_cards   = MadLib.loop_func(hand, function(v) return v:has_light_suit() end)
+            local dark_cards    = MadLib.loop_func(hand, function(v) return v:has_dark_suit() end)
+            return #hand >= (G.GAME.subhand_minimum or 5) and light_cards > dark_cards
         end,
     },
     Dark = {
         name       = 'ml_sh_dark',
         priority   = 2,
-        x_mult     = 1.05,
-        x_chips    = 1.20,
-        l_mult     = 0.10,
-        l_chips    = 0.10,
+        x_mult     = 1.12,
+        x_chips    = 1.05,
+        l_mult     = 0.04,
+        l_chips    = 0.05,
         check_hand = function(hand) -- at least 5 light suits (wilds included)
-            return #hand >= (G.GAME.subhand_minimum or 5) and Madcap.Funcs.subhand_light_dark(hand) == 'dark'
+            local light_cards   = MadLib.loop_func(hand, function(v) return v:has_light_suit() end)
+            local dark_cards    = MadLib.loop_func(hand, function(v) return v:has_dark_suit() end)
+            return #hand >= (G.GAME.subhand_minimum or 5) and light_cards < dark_cards
+        end,
+    },
+    Balanced = {
+        name       = 'ml_sh_balanced',
+        priority   = 2,
+        x_mult     = 1.10,
+        x_chips    = 1.10,
+        l_mult     = 0.05,
+        l_chips    = 0.05,
+        check_hand = function(hand) -- at least 5 light suits (wilds included)
+            local light_cards   = MadLib.loop_func(hand, function(v) return v:has_light_suit() end)
+            local dark_cards    = MadLib.loop_func(hand, function(v) return v:has_dark_suit() end)
+            return #hand >= (G.GAME.subhand_minimum or 5) and light_cards == dark_cards
         end,
     },
     Dazzling = {
         name       = 'ml_sh_enhanced',
         priority   = 3,
-        x_mult     = 5,
-        x_chips    = 3,
-        l_mult     = 0.10,
-        l_chips    = 0.10,
+        x_mult     = 1.10,
+        x_chips    = 1.10,
+        l_mult     = 0.05,
+        l_chips    = 0.05,
         check_hand = function(hand) -- at least 5 unique enhancements (+ voucher unlocked)
             local enha = {}
             local unique = MadLib.loop_func(hand, function(v)
@@ -76,23 +81,27 @@ SubHands = {
     High = {
         name       = 'ml_sh_high',
         priority   = 1,
-        x_mult     = 11,
-        x_chips    = 11,
-        l_mult     = 0.10,
-        l_chips    = 0.10,
+        x_mult     = 1.10,
+        x_chips    = 1.04,
+        l_mult     = 0.05,
+        l_chips    = 0.04,
         check_hand = function(hand) -- at least 5 ranks 2-6 + Ace (+ voucher unlocked)
-            return false -- wip
+            local high_cards   = MadLib.loop_func(hand, function(v) return v:has_high_rank() end)
+            local low_cards    = MadLib.loop_func(hand, function(v) return v:has_low_rank() end)
+            return #hand >= (G.GAME.subhand_minimum or 5) and high_cards < low_cards
         end,
     },
     Low = {
         name       = 'ml_sh_low',
         priority   = 1,
-        x_mult     = 11,
-        x_chips    = 11,
-        l_mult     = 0.10,
-        l_chips    = 0.10,
+        x_mult     = 1.04,
+        x_chips    = 1.10,
+        l_mult     = 0.04,
+        l_chips    = 0.05,
         check_hand = function(hand) -- at least 5 ranks 7-K + Ace (+ voucher unlocked)
-           return false -- wip
+            local high_cards   = MadLib.loop_func(hand, function(v) return v:has_high_rank() end)
+            local low_cards    = MadLib.loop_func(hand, function(v) return v:has_low_rank() end)
+            return #hand >= (G.GAME.subhand_minimum or 5) and high_cards > low_cards
         end,
     }
 }
@@ -112,7 +121,7 @@ end
 
 function Madcap.Funcs.empower_subhand(_sh,_lvl)
 	if not G.GAME.subhands[_sh] then return false end
-	G.GAME.subhands[_sh].empowered = _lvl or 0
+	G.GAME.subhands[_sh].empower = _lvl or 0
 	return true
 end
 

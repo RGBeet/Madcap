@@ -2322,30 +2322,43 @@ return {
                 name = "Planet.exe",
                 text = {
                     "Gives {C:attention}most played{} hand",
-                    "{C:mult}+#1#{} Mult and {C:chips}+#2#{} Chips",
-                    "per {C:attention}Planet{} Card used{}",
+                    "{X:mult,C:white}X#2#{} Mult and {X:chips,C:white}X#3#{} Chips",
+                    "per {C:cry_code}Code{} Card executed{}",
                     "this Ante",
-                    "{C:inactive}(Currently {C:chips}+#3{C:inactive} and {C:mult}+#4{C:inactive})"
+                    "{C:inactive}(Currently {X:chips,C:white}X#4#{C:inactive} and {X:mult,C:white}X#5#{C:inactive})"
                 },
             },
             c_rgmc_terra = {
                 name = "Terra",
                 text = {
                     "Gives {C:attention}most played{} hand",
-                    "{C:mult}+#1#{} Mult and {C:chips}+#2#{} Chips",
-                    "per {C:attention}Tarot{} Card used{}",
+                    "{C:inactive}(Currently{C:attention,E:1}#1#{}{C:inactive})",
+                    "{X:mult,C:white}X#2#{} Mult and {X:chips,C:white}X#3#{} Chips",
+                    "per {C:tarot}Tarot{} Card used{}",
                     "this Ante",
-                    "{C:inactive}(Currently {C:chips}+#3{C:inactive} and {C:mult}+#4{C:inactive})"
+                    "{C:inactive}(Currently {X:chips,C:white}X#4#{C:inactive} and {X:mult,C:white}X#5#{C:inactive})"
                 },
             },
             c_rgmc_luna = {
                 name = "Luna",
                 text = {
                     "Gives {C:attention}most played{} hand",
-                    "{C:mult}+#1#{} Mult and {C:chips}+#2#{} Chips",
-                    "per {C:attention}Spectral{} Card used{}",
+                    "{C:inactive}(Currently{C:attention,E:1}#1#{}{C:inactive})",
+                    "{X:mult,C:white}X#2#{} Mult and {X:chips,C:white}X#3#{} Chips",
+                    "per {C:spectral}Spectral{} Card used{}",
                     "this Ante",
-                    "{C:inactive}(Currently {C:chips}+#3{C:inactive} and {C:mult}+#4{C:inactive})"
+                    "{C:inactive}(Currently {X:chips,C:white}X#4#{C:inactive} and {X:mult,C:white}X#5#{C:inactive})"
+                },
+            },
+            c_rgmc_pagoon = {
+                name = "Pagoon",
+                text = {
+                    "Gives {C:attention}most played{} hand",
+                    "{C:inactive}(Currently{C:attention,E:1}#1#{}{C:inactive})",
+                    "{X:mult,C:white}X#2#{} Mult and {X:chips,C:white}X#3#{} Chips",
+                    "per {C:rgmc_cosma}Cosma{} Tarot used{}",
+                    "this Ante",
+                    "{C:inactive}(Currently {X:chips,C:white}X#4#{C:inactive} and {X:mult,C:white}X#5#{C:inactive})"
                 },
             },
             c_rgmc_sol_3 = {
@@ -2411,69 +2424,232 @@ return {
             c_rgmc_rigel = {
                 name = "Rigel IV",
                 text = {
-					"Levels up #1# subhand by {C:attention}#2#{}",
-                    "and #3# by {C:attention}#4{}"
+                    {
+                        "{S:0.8}({S:0.8,V:1}lvl.#1#{S:0.8}){} Level up",
+                        "{C:attention}#2#",
+                        "{C:mult}+#3#{} Mult and",
+                        "{C:chips}+#4#{} chips",
+                    },
+                    {
+                        "{S:0.8}({S:0.8,V:2}lvl.#5#{S:0.8}){} Level up",
+                        "{C:attention}#6# {C:inactive}Sub-Hand{}",
+                        "{X:mult,C:white}X#7#{} Mult and",
+                        "{X:chips,C:white}X#8#{} chips",
+                    }
                 },
             },
             c_rgmc_aquaworld = {
                 name = "Aquaworld",
                 text = {
-					"Levels up #1# subhand by {C:attention}#2#{}",
-                    "and #3# by {C:attention}#4{}"
+                    {
+                        "{S:0.8}({S:0.8,V:1}lvl.#1#{S:0.8}){} Level up",
+                        "{C:attention}#2#",
+                        "{C:mult}+#3#{} Mult and",
+                        "{C:chips}+#4#{} chips",
+                    },
+                    {
+                        "{S:0.8}({S:0.8,V:2}lvl.#5#{S:0.8}){} Level up",
+                        "{C:attention}#6# {C:inactive}Sub-Hand{}",
+                        "{X:mult,C:white}X#7#{} Mult and",
+                        "{X:chips,C:white}X#8#{} chips",
+                    }
                 },
             },
             c_rgmc_prometheus = {
                 name = "Prometheus IX",
                 text = {
-					"Levels up #1# subhand by {C:attention}#2#{}",
-                    "and #3# by {C:attention}#4{}"
+                    {
+                        "{S:0.8}({S:0.8,V:1}lvl.#1#{S:0.8}){} Level up",
+                        "{C:attention}#2#",
+                        "{C:mult}+#3#{} Mult and",
+                        "{C:chips}+#4#{} chips",
+                    },
+                    {
+                        "{S:0.8}({S:0.8,V:2}lvl.#5#{S:0.8}){} Level up",
+                        "{C:attention}#6# {C:inactive}Sub-Hand{}",
+                        "{X:mult,C:white}X#7#{} Mult and",
+                        "{X:chips,C:white}X#8#{} chips",
+                    }
                 },
             },
             c_rgmc_tartarus = {
                 name = "Tartarus II",
                 text = {
-					"Levels up #1# subhand by {C:attention}#2#{}",
-                    "and #3# by {C:attention}#4{}"
+                    {
+                        "{S:0.8}({S:0.8,V:1}lvl.#1#{S:0.8}){} Level up",
+                        "{C:attention}#2#",
+                        "{C:mult}+#3#{} Mult and",
+                        "{C:chips}+#4#{} chips",
+                    },
+                    {
+                        "{S:0.8}({S:0.8,V:2}lvl.#5#{S:0.8}){} Level up",
+                        "{C:attention}#6# {C:inactive}Sub-Hand{}",
+                        "{X:mult,C:white}X#7#{} Mult and",
+                        "{X:chips,C:white}X#8#{} chips",
+                    }
                 },
             },
             c_rgmc_varakkis = {
                 name = "Varakkis",
                 text = {
-					"Levels up #1# subhand by {C:attention}#2#{}",
-                    "and #3# by {C:attention}#4{}"
+                    {
+                        "{S:0.8}({S:0.8,V:1}lvl.#1#{S:0.8}){} Level up",
+                        "{C:attention}#2#",
+                        "{C:mult}+#3#{} Mult and",
+                        "{C:chips}+#4#{} chips",
+                    },
+                    {
+                        "{S:0.8}({S:0.8,V:2}lvl.#5#{S:0.8}){} Level up",
+                        "{C:attention}#6# {C:inactive}Sub-Hand{}",
+                        "{X:mult,C:white}X#7#{} Mult and",
+                        "{X:chips,C:white}X#8#{} chips",
+                    }
                 },
             },
             c_rgmc_jurassika = {
                 name = "Jurassika",
                 text = {
-					"Levels up #1# subhand by {C:attention}#2#{}",
-                    "and #3# by {C:attention}#4{}"
+                    {
+                        "{S:0.8}({S:0.8,V:1}lvl.#1#{S:0.8}){} Level up",
+                        "{C:attention}#2#",
+                        "{C:mult}+#3#{} Mult and",
+                        "{C:chips}+#4#{} chips",
+                    },
+                    {
+                        "{S:0.8}({S:0.8,V:2}lvl.#5#{S:0.8}){} Level up",
+                        "{C:attention}#6# {C:inactive}Sub-Hand{}",
+                        "{X:mult,C:white}X#7#{} Mult and",
+                        "{X:chips,C:white}X#8#{} chips",
+                    }
                 },
             },
             c_rgmc_globulos = {
                 name = "Globulos",
                 text = {
-					"Levels up #1# subhand by {C:attention}#2#{}",
-                    "and #3# by {C:attention}#4{}"
+                    {
+                        "{S:0.8}({S:0.8,V:1}lvl.#1#{S:0.8}){} Level up",
+                        "{C:attention}#2#",
+                        "{C:mult}+#3#{} Mult and",
+                        "{C:chips}+#4#{} chips",
+                    },
+                    {
+                        "{S:0.8}({S:0.8,V:2}lvl.#5#{S:0.8}){} Level up",
+                        "{C:attention}#6# {C:inactive}Sub-Hand{}",
+                        "{X:mult,C:white}X#7#{} Mult and",
+                        "{X:chips,C:white}X#8#{} chips",
+                    }
                 },
             },
             c_rgmc_xykulix = {
                 name = "Xykulix",
                 text = {
-					"Levels up #1# subhand by {C:attention}#2#{}",
-                    "and #3# by {C:attention}#4{}"
+                    {
+                        "{S:0.8}({S:0.8,V:1}lvl.#1#{S:0.8}){} Level up",
+                        "{C:attention}#2#",
+                        "{C:mult}+#3#{} Mult and",
+                        "{C:chips}+#4#{} chips",
+                    },
+                    {
+                        "{S:0.8}({S:0.8,V:2}lvl.#5#{S:0.8}){} Level up",
+                        "{C:attention}#6# {C:inactive}Sub-Hand{}",
+                        "{X:mult,C:white}X#7#{} Mult and",
+                        "{X:chips,C:white}X#8#{} chips",
+                    }
                 },
             },
             c_rgmc_blue_moon = {
                 name = "Blue Moon",
                 text = {
-					"Levels up #1# subhand by {C:attention}#2#{}",
+                    "{S:0.8}({S:0.8,V:2}lvl.#1#{S:0.8}){} Level up",
+                    "{C:attention}#2# {C:inactive}Sub-Hand{}",
+                    "{X:mult,C:white}X#3#{} Mult and",
+                    "{X:chips,C:white}X#4#{} chips",
                 },
             },
             c_rgmc_blood_moon = {
                 name = "Blood Moon",
                 text = {
-					"Levels up #1# subhand by {C:attention}#2#{}",
+                    "{S:0.8}({S:0.8,V:2}lvl.#1#{S:0.8}){} Level up",
+                    "{C:attention}#2# {C:inactive}Sub-Hand{}",
+                    "{X:mult,C:white}X#3#{} Mult and",
+                    "{X:chips,C:white}X#4#{} chips",
+                },
+            },
+            c_rgmc_harvest_moon = {
+                name = "Harvest Moon",
+                text = {
+                    "{S:0.8}({S:0.8,V:2}lvl.#1#{S:0.8}){} Level up",
+                    "{C:attention}#2# {C:inactive}Sub-Hand{}",
+                    "{X:mult,C:white}X#3#{} Mult and",
+                    "{X:chips,C:white}X#4#{} chips",
+                },
+            },
+            c_rgmc_crescent = {
+                name = "Waxing Crescent",
+                text = {
+                    "{S:0.8}({S:0.8,V:2}lvl.#1#{S:0.8}){} Level up",
+                    "{C:attention}#2# {C:inactive}Sub-Hand{}",
+                    "{X:mult,C:white}X#3#{} Mult and",
+                    "{X:chips,C:white}X#4#{} chips",
+                },
+            },
+            c_rgmc_gibbous = {
+                name = "Gibbous",
+                text = {
+                    "{S:0.8}({S:0.8,V:2}lvl.#1#{S:0.8}){} Level up",
+                    "{C:attention}#2# {C:inactive}Sub-Hand{}",
+                    "{X:mult,C:white}X#3#{} Mult and",
+                    "{X:chips,C:white}X#4#{} chips",
+                },
+            },
+        },
+        PotentiaCrystal = {
+            c_rgmc_enori = {
+                name = "Enori Crystal",
+                text = {
+					"{S:0.8}({S:0.8,V:1}lvl.#1#{}{S:0.8,C:rgmc_potentiacrystal}#2#{}{S:0.8}){} Empower",
+                    "{C:attention}#3# {C:inactive}Sub-Hand{}",
+					"{C:rgmc_potentiacrystal,E:1}+#4#{} Atomic Power"
+                },
+            },
+            c_rgmc_voide = {
+                name = "Voide Crystal",
+                text = {
+					"{S:0.8}({S:0.8,V:1}lvl.#1#{}{S:0.8,C:rgmc_potentiacrystal}+#2#{}{S:0.8}){} Empower",
+                    "{C:attention}#3# {C:inactive}Sub-Hand{}",
+					"{C:rgmc_potentiacrystal,E:1}+#4#{} Atomic Power"
+                },
+            },
+            c_rgmc_palis = {
+                name = "Palis Crystal",
+                text = {
+					"{S:0.8}({S:0.8,V:1}lvl.#1#{}{S:0.8,C:rgmc_potentiacrystal}#2#{}{S:0.8}){} Empower",
+                    "{C:attention}#3# {C:inactive}Sub-Hand{}",
+					"{C:rgmc_potentiacrystal,E:1}+#4#{} Atomic Power"
+                },
+            },
+            c_rgmc_restonia = {
+                name = "Restonia Crystal",
+                text = {
+					"{S:0.8}({S:0.8,V:1}lvl.#1#{}{S:0.8,C:rgmc_potentiacrystal}#2#{}{S:0.8}){} Empower",
+                    "{C:attention}#3# {C:inactive}Sub-Hand{}",
+					"{C:rgmc_potentiacrystal,E:1}+#4#{} Atomic Power"
+                },
+            },
+            c_rgmc_diamatine = {
+                name = "Diamatine Crystal",
+                text = {
+					"{S:0.8}({S:0.8,V:1}lvl.#1#{}{S:0.8,C:rgmc_potentiacrystal}#2#{}{S:0.8}){} Empower",
+                    "{C:attention}#3# {C:inactive}Sub-Hand{}",
+					"{C:rgmc_potentiacrystal,E:1}+#4#{} Atomic Power"
+                },
+            },
+            c_rgmc_emeradic = {
+                name = "Emeradic Crystal",
+                text = {
+					"{S:0.8}({S:0.8,V:1}lvl.#1#{}{S:0.8,C:rgmc_potentiacrystal}#2#{}{S:0.8}){} Empower",
+                    "{C:attention}#3# {C:inactive}Sub-Hand{}",
+					"{C:rgmc_potentiacrystal,E:1}+#4#{} Atomic Power"
                 },
             },
         },
@@ -4502,11 +4678,13 @@ return {
             rgmc_planet_alt         = "Alt. Reality Planet",
             rgmc_anomality          = "Anomality?!",
             rgmc_moon               = "Moon",
+            rgmc_emp_crystal        = "Empowered Crystal",
 
             -- subhands
             ml_sh_light             = "Light",
-            ml_sh_enhanced          = "Dazzling",
             ml_sh_dark              = "Dark",
+            ml_sh_balanced          = "Neutral",
+            ml_sh_enhanced          = "Dazzling",
             ml_sh_high              = "High",
             ml_sh_low               = "Low",
 
@@ -4529,10 +4707,11 @@ return {
 			b_spatiaplanet_cards     = "Spatia Planets",
 			k_antispectral           = "Sinister Card",
 			b_antispectral_cards     = "Sinister Cards",
-
+			k_potentiacrystal        = "Potentia Crystal",
+			b_potentiacrystal_cards  = "Potentia Crystals",
 
 			k_rgmc_cosma_pack    = "Cosma Pack",
-			k_rgmc_spatia_pack   = "Spatia Pack",
+			k_rgmc_spatia_pack   = "Spatia Pack", -- includes potentia crystals too?!
 			k_rgmc_variety_pack  = "Variety Pack",
 			k_rgmc_reward_pack   = "Reward Pack",
 			k_rgmc_ruinous_pack  = "Ruinous Pack",
@@ -4611,14 +4790,6 @@ return {
             rgmc_pyramid                    = "Pyramid",
             rgmc_pyramid_flush              = "Flush Pyramid",
             rgmc_pyramid_spectrum           = "Spectrum Pyramid",
-            rgmc_spectrum_dark              = "Dark Spectrum",
-            rgmc_spectrum_straight_dark     = "Dark Straight Spectrum",
-            rgmc_spectrum_house_dark        = "Dark Spectrum House",
-            rgmc_spectrum_five_dark         = "Dark Spectrum Five",
-            rgmc_spectrum_light             = "Light Spectrum",
-            rgmc_spectrum_straight_light    = "Light Straight Spectrum",
-            rgmc_spectrum_house_light       = "Light Spectrum House",
-            rgmc_spectrum_five_light        = "Light Spectrum Five",
             rgmc_blazer                     = "Blazer",
             rgmc_pick_five                  = "Pick 5",
             rgmc_kaleidoscope               = "Kaleidoscope",
