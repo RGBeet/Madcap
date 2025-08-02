@@ -24,6 +24,19 @@ local function get_planet_vars(id)
     }
 end
 
+SMODS.ConsumableType({
+    key = "SpatiaPlanet",
+    primary_colour = HEX("5024FF"),
+    secondary_colour = HEX("2600C1"),
+    collection_rows = { 5, 6 },
+    shop_rate = 0.5,
+    loc_txt = {},
+    default = "c_rgmc_rocket",
+    can_stack = true,
+    can_divide = true,
+})
+
+
 local function get_subhand_planet_vars(hand_ids,subhand_ids)
     local vars = {
 		colours = {}
@@ -60,9 +73,6 @@ local tatooine = {
 	aurinko = true, -- Aurinko compatible
 	set_card_type_badge = function(self, card, badges)
 		badges[1] = create_badge(localize("k_planet"), get_type_colour(self or card.config, card), nil, 1.2)
-	end,
-	loc_vars = function(self, info_queue, center)
-		return get_planet_vars(self.config.hand_type)
 	end,
 	generate_ui = 0,
 }
@@ -156,9 +166,6 @@ local genosis = {
 	set_card_type_badge = function(self, card, badges)
 		badges[1] = create_badge(localize("k_planet"), get_type_colour(self or card.config, card), nil, 1.2)
 	end,
-	loc_vars = function(self, info_queue, center)
-		return get_planet_vars(self.config.hand_type)
-	end,
 	generate_ui = 0,
 }
 
@@ -194,9 +201,6 @@ local jakku = {
 	aurinko = true, -- Aurinko compatible
 	set_card_type_badge = function(self, card, badges)
 		badges[1] = create_badge(localize("k_planet"), get_type_colour(self or card.config, card), nil, 1.2)
-	end,
-	loc_vars = function(self, info_queue, center)
-		return get_planet_vars(self.config.hand_type)
 	end,
 	generate_ui = 0,
 }
@@ -250,11 +254,6 @@ end
 -- Dark + Spectrum
 local prometheus = {
 	key = "prometheus",
-	config = {
-		hand_types 	= card_handtypes[1],
-		sub_type 	= 'Dark',
-		softlock 	= true
-	},
 	pos = get_pos(0,3),
 	atlas = "planets",
 	aurinko = true, -- Aurinko compatible
@@ -269,11 +268,6 @@ local prometheus = {
 -- Light + Spectrum
 local rigel = {
 	key = "rigel",
-	config = {
-		hand_types 	= card_handtypes[1],
-		sub_type 	= 'Light',
-		softlock 	= true
-	},
 	pos = get_pos(0,4),
 	atlas = "planets",
 	aurinko = true, -- Aurinko compatible
@@ -289,11 +283,6 @@ local rigel = {
 -- Dark + Full House
 local tartarus = {
 	key = "tartarus",
-	config = {
-		hand_types 	= card_handtypes[2],
-		sub_type 	= 'Dark',
-		softlock 	= true
-	},
 	pos = get_pos(0,5),
 	atlas = "planets",
 	aurinko = true, -- Aurinko compatible
@@ -309,11 +298,6 @@ local tartarus = {
 -- Light + Full House
 local aquaworld = {
 	key = "aquaworld",
-	config = {
-		hand_types 	= card_handtypes[2],
-		sub_type 	= 'Light',
-		softlock 	= true
-	},
 	pos = get_pos(0,6),
 	atlas = "planets",
 	aurinko = true, -- Aurinko compatible
@@ -329,11 +313,6 @@ local aquaworld = {
 -- Dark + Straight
 local varakkis = {
 	key = "varakkis",
-	config = {
-		hand_types 	= card_handtypes[3],
-		sub_type 	= 'Dark',
-		softlock 	= true
-	},
 	pos = get_pos(0,7),
 	atlas = "planets",
 	aurinko = true, -- Aurinko compatible
@@ -348,12 +327,7 @@ local varakkis = {
 
 -- Light + Straight
 local jurassika = {
-	key = "varakkis",
-	config = {
-		hand_types  = card_handtypes[3],
-		sub_type 	= 'Light',
-		softlock 	= true
-	},
+	key = "jurassika",
 	pos = get_pos(1,0),
 	atlas = "planets",
 	aurinko = true, -- Aurinko compatible
@@ -369,11 +343,6 @@ local jurassika = {
 -- Dark + FOAK
 local xykulix = {
 	key = "xykulix",
-	config = {
-		hand_types 	= card_handtypes[4],
-		sub_type 	= 'Dark',
-		softlock 	= true
-	},
 	pos = get_pos(1,1),
 	atlas = "planets",
 	aurinko = true, -- Aurinko compatible
@@ -389,27 +358,26 @@ local xykulix = {
 -- Light + FOAK
 local globulos = {
 	key = "globulos",
-	config = {
-		hand_types 	= card_handtypes[4],
-		sub_type 	= 'Light',
-		softlock 	= true
-	},
 	pos = get_pos(1,2),
 	atlas = "planets",
 	aurinko = true, -- Aurinko compatible
 	set_card_type_badge = function(self, card, badges)
 		badges[1] = create_badge(localize("k_planet"), get_type_colour(self or card.config, card), nil, 1.2)
 	end,
-	loc_vars = function(self, info_queue, center)
-		return get_planet_vars(self.config.hand_type)
-	end,
 	generate_ui = 0,
+}
+
+Madcap.PickFiveDefault = {
+	{ rank = '2' , suit = 'Spades' },
+	{ rank = '4' , suit = 'Hearts' },
+	{ rank = '6' , suit = 'Diamonds' },
+	{ rank = '10' , suit = 'Clubs' },
+	{ rank = 'A' , suit = 'Spades' }
 }
 
 -- Pick Five
 local rocket = {
 	key = "rocket",
-	config = { hand_type = "rgmc_pick_five", softlock = true },
 	pos = get_pos(2,5),
 	atlas = "planets",
 	aurinko = true, -- Aurinko compatible
@@ -417,7 +385,7 @@ local rocket = {
 		badges[1] = create_badge(localize("rgmc_rocket"), get_type_colour(self or card.config, card), nil, 1.2)
 	end,
 	loc_vars = function(self, info_queue, center)
-		return get_planet_vars(self.config.hand_type)
+		return { vars = {} }
 	end,
 	generate_ui = 0,
 }
@@ -425,7 +393,7 @@ local rocket = {
 SMODS.PokerHand({
 	key = "rgmc_pick_five",
 	visible = Madcap.Data.devmode,
-	chips = 100,
+	chips = 1000,
 	mult = 10,
 	l_chips = 50,
 	l_mult = 1,
@@ -437,7 +405,32 @@ SMODS.PokerHand({
 		{ "S_Q", true },
 	},
 	evaluate = function(parts, hand)
-		return {}
+
+		if #hand ~= 5 or not G.GAME.MADCAP then return { } end -- must have 5+ face cards
+		local pass = true
+
+		local hand_data, pick5_data = {}, MadLib.deep_copy(G.GAME.pick_5)
+		
+		MadLib.loop_func(hand, function(v,i)
+			hand_data[i] = { rank = v.base.value, suit = v.base.suit }
+		end)
+
+		MadLib.loop_func({ hand_data, pick5_data }, function(t)
+			table.sort(t, function(a,b) return (a.rank ~= b.rank) and (a.rank > b.rank) or (a.suit > b.suit) end)
+		end)
+
+		local index = 0
+		while pass and index < 5 do
+			if 
+				hand_data[index].rank ~= pick5_data[index].rank
+				or hand_data[index].suit ~= pick5_data[index].suit
+			then
+				pass = false
+			end
+			index = index + 1
+		end
+
+		return pass and { hand } or { }
 	end,
 })
 
@@ -541,7 +534,7 @@ local nowhere = {
 	atlas = "planets",
 	aurinko = true, -- Aurinko compatible
 	set_card_type_badge = function(self, card, badges)
-		badges[1] = create_badge(localize("k_anomality"), get_type_colour(self or card.config, card), nil, 1.2)
+		badges[1] = create_badge(localize("rgmc_anomality"), get_type_colour(self or card.config, card), nil, 1.2)
 	end,
 	loc_vars = function(self, info_queue, center)
 		return get_planet_vars(self.config.hand_type)
@@ -583,7 +576,7 @@ local wormhole = {
 	atlas = "planets",
 	aurinko = true, -- Aurinko compatible
 	set_card_type_badge = function(self, card, badges)
-		badges[1] = create_badge(localize("k_anomality"), get_type_colour(self or card.config, card), nil, 1.2)
+		badges[1] = create_badge(localize("rgmc_anomality"), get_type_colour(self or card.config, card), nil, 1.2)
 	end,
 	loc_vars = function(self, info_queue, center)
 		return get_planet_vars(self.config.hand_type)
@@ -658,66 +651,28 @@ SMODS.PokerHand({
 
 -- Blue Moon - 0.5 levels to all Light Spectrum hand types.
 local blue_moon = {
-	object_type = "Consumable",
-	set = "Planet",
-	key = "rgmc_blue_moon",
+	key = "blue_moon",
 	pos = get_pos(2,6),
-	config = {
-		hand_types = {
-			"rgmc_spectrum_light",
-			"rgmc_spectrum_house_light",
-			"rgmc_spectrum_straight_light",
-			"rgmc_spectrum_five_light",
-		}
-	},
+	config = {},
 	cost = 8,
 	aurinko = true,
 	atlas = "planets",
-	can_use = function(self, card)
-		return true
+	set_card_type_badge = function(self, card, badges)
+		badges[1] = create_badge(localize("rgmc_moon"), get_type_colour(self or card.config, card), nil, 1.2)
 	end,
-	loc_vars = function(self, info_queue, center)
-		return MadLib.get_planet_list_vars(self.config.hand_types)
-	end,
-	use = function(self, card, area, copier)
-		--Cryptid.suit_level_up(card, copier, 1, card.config.center.config.hand_types)
-	end,
-	bulk_use = function(self, card, area, copier, number)
-		--Cryptid.suit_level_up(card, copier, number, card.config.center.config.hand_types)
-	end,
-	calculate = MadLib.calculate_observatory_xmult(self, card, context)
 }
 
 -- Blood Moon - 0.5 levels to all Dark Spectrum hand types.
 local blood_moon = {
-	object_type = "Consumable",
-	set = "Planet",
-	key = "rgmc_blood_moon",
+	key = "blood_moon",
 	pos = get_pos(2,7),
-	config = {
-		hand_types = {
-			"rgmc_spectrum_dark",
-			"rgmc_spectrum_house_dark",
-			"rgmc_spectrum_straight_dark",
-			"rgmc_spectrum_five_dark",
-		}
-	},
+	config = {},
 	cost = 8,
 	aurinko = true,
 	atlas = "planets",
-	can_use = function(self, card)
-		return true
+	set_card_type_badge = function(self, card, badges)
+		badges[1] = create_badge(localize("rgmc_moon"), get_type_colour(self or card.config, card), nil, 1.2)
 	end,
-	loc_vars = function(self, info_queue, center)
-		return MadLib.get_planet_list_vars(self.config.hand_types)
-	end,
-	use = function(self, card, area, copier)
-		Cryptid.suit_level_up(card, copier, 1, card.config.center.config.hand_types)
-	end,
-	bulk_use = function(self, card, area, copier, number)
-		Cryptid.suit_level_up(card, copier, number, card.config.center.config.hand_types)
-	end,
-	calculate = MadLib.calculate_observatory_xmult(self, card, context)
 }
 
 --[[
@@ -728,40 +683,47 @@ local blood_moon = {
 ]]
 
 local planets = {
-
     tatooine,
     genosis,
     jakku,
+    sol_3,
+    lobster,
+    nowhere,
+    wormhole,
+    everywhere,
+}
 
-	--[[
+local spatia = {
     prometheus,
     rigel,
     tartarus,
     aquaworld,
-    varakkis,
+	varakkis,
     jurassika,
     xykulix,
     globulos,
-
-    nowhere,
-    wormhole,
-    everywhere,
-
     blue_moon,
-    blood_moon
-]]
-    rocket,
-    sol_3,
-    lobster,
+    blood_moon,
+	rocket
 }
 
-for i=1, #planets do
-    local obj = planets[i]
-    obj.object_type = "Consumable"
-	obj.set = "Planet"
-	obj.order = i
-    list[#list+1] = obj
-end
+	--[[
+]]
+
+MadLib.loop_func(planets, function(v,i)
+    v.object_type = "Consumable"
+	v.set = "Planet"
+	v.order = i
+	table.insert(list,v)
+end)
+
+MadLib.loop_func(spatia, function(v,i)
+    v.object_type = "Consumable"
+	v.set = "SpatiaPlanet"
+	v.order = i + 20
+	table.insert(list,v)
+end)
+
 
 return {
     name = "Planets",

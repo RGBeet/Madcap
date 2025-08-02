@@ -308,7 +308,7 @@ local final_blindfold = {
     config = { extra = { mult_increase = 0.4 } },
     in_pool = function(self)
         -- Chance to enter pool if you haven't skipped prior to this ante
-        return G.GAME.MADCAP.blinds_skipped > 0
+        return G.GAME.blinds_skipped and G.GAME.blinds_skipped > 0
             or Madcap.Data.devmode
     end,
     loc_vars = function(self, info_queue, card)
@@ -316,7 +316,7 @@ local final_blindfold = {
     end,
 	set_blind = function(self, reset, silent)
 		if not G.GAME.blind.disabled then
-            local blind_increase =  (1 + (G.GAME.MADCAP.blinds_skipped * self.config.extra.mult_increase))
+            local blind_increase =  (1 + (G.GAME.blinds_skipped * self.config.extra.mult_increase))
             local new_amount = G.GAME.blind.chips * blind_increase
 
             tell_stat(blind_increase)
@@ -425,11 +425,11 @@ local final_chimes = {
     boss_colour = HEX('C9A0DC'),
     in_pool = function(self)
         return G.playing_cards and #MadLib.get_list_matches(G.playing_cards,function(v)
-            return v:get_id() == SMODS.Ranks[tostring(G.GAME.MADCAP.x_value)].key
+            return v:get_id() == SMODS.Ranks[tostring(G.GAME.x_value)].key
         end) > 4 or Madcap.Data.devmode
     end,
     loc_vars = function(self, info_queue, card)
-        return  MadLib.collect_vars(number_format((G.GAME and G.GAME.MADCAP) and (SMODS.Ranks[tostring(G.GAME.MADCAP.x_value)].key or "N/A") or "?!?"))
+        return  MadLib.collect_vars(number_format((G.GAME and G.GAME.MADCAP) and (SMODS.Ranks[tostring(G.GAME.x_value)].key or "N/A") or "?!?"))
     end,
     mult = 1.25,
 	debuff_hand = function(self, cards, hand, handname, check)
@@ -439,7 +439,7 @@ local final_chimes = {
             -- Splash scores all cards.
             if next(find_joker('Splash')) then scoring = cards end
 
-            local key = SMODS.Ranks[tostring(G.GAME.MADCAP.x_value)].key
+            local key = SMODS.Ranks[tostring(G.GAME.x_value)].key
             for i = 1, #scoring do
                 if scoring[i].base.value == key then return false end
             end

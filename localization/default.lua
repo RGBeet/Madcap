@@ -2291,96 +2291,6 @@ return {
 					"and {C:attention}#2#{},",
                 },
             },
-            c_rgmc_rigel_iv = {
-                name = "Rigel IV",
-                text = {
-					"{S:0.8}({S:0.8,V:1}lvl.#1#{S:0.8}){} Level up",
-					"{C:attention}#2#",
-					"{C:mult}+#3#{} Mult and",
-					"{C:chips}+#4#{} chip#<s>4#",
-                },
-            },
-            c_rgmc_aquaworld = {
-                name = "Aquaworld",
-                text = {
-					"{S:0.8}({S:0.8,V:1}lvl.#1#{S:0.8}){} Level up",
-					"{C:attention}#2#",
-					"{C:mult}+#3#{} Mult and",
-					"{C:chips}+#4#{} chip#<s>4#",
-                },
-            },
-            c_rgmc_prometheus_ix = {
-                name = "Prometheus IX",
-                text = {
-					"{S:0.8}({S:0.8,V:1}lvl.#1#{S:0.8}){} Level up",
-					"{C:attention}#2#",
-					"{C:mult}+#3#{} Mult and",
-					"{C:chips}+#4#{} chip#<s>4#",
-                },
-            },
-            c_rgmc_tartarus_ii = {
-                name = "Tartarus II",
-                text = {
-					"{S:0.8}({S:0.8,V:1}lvl.#1#{S:0.8}){} Level up",
-					"{C:attention}#2#",
-					"{C:mult}+#3#{} Mult and",
-					"{C:chips}+#4#{} chip#<s>4#",
-                },
-            },
-            c_rgmc_varakkis = {
-                name = "Varakkis",
-                text = {
-					"{S:0.8}({S:0.8,V:1}lvl.#1#{S:0.8}){} Level up",
-					"{C:attention}#2#",
-					"{C:mult}+#3#{} Mult and",
-					"{C:chips}+#4#{} chip#<s>4#",
-                },
-            },
-            c_rgmc_jurassika = {
-                name = "Jurassika",
-                text = {
-					"{S:0.8}({S:0.8,V:1}lvl.#1#{S:0.8}){} Level up",
-					"{C:attention}#2#",
-					"{C:mult}+#3#{} Mult and",
-					"{C:chips}+#4#{} chip#<s>4#",
-                },
-            },
-            c_rgmc_globulos = {
-                name = "Globulos",
-                text = {
-					"{S:0.8}({S:0.8,V:1}lvl.#1#{S:0.8}){} Level up",
-					"{C:attention}#2#",
-					"{C:mult}+#3#{} Mult and",
-					"{C:chips}+#4#{} chip#<s>4#",
-                },
-            },
-            c_rgmc_xykulix = {
-                name = "Xykulix",
-                text = {
-					"{S:0.8}({S:0.8,V:1}lvl.#1#{S:0.8}){} Level up",
-					"{C:attention}#2#",
-					"{C:mult}+#3#{} Mult and",
-					"{C:chips}+#4#{} chip#<s>4#",
-                },
-            },
-            c_rgmc_blue_moon = {
-                name = "Blue Moon",
-                text = {
-					"({V:1}lvl.#6#{})({V:2}lvl.#7#{})({V:3}lvl.#8#{})({V:4}lvl.#8#{})",
-					"Level up",
-					"{C:attention}#1#{}, {C:attention}#2#{},",
-					"{C:attention}#3#{}, and {C:attention}#4#{}",
-                },
-            },
-            c_rgmc_blood_moon = {
-                name = "Blood Moon",
-                text = {
-					"({V:1}lvl.#5#{})({V:2}lvl.#6#{})({V:3}lvl.#7#{})({V:4}lvl.#8#{})",
-					"Level up",
-					"{C:attention}#1#{}, {C:attention}#2#{},",
-					"{C:attention}#3#{}, and {C:attention}#4#{}",
-                },
-            },
             c_rgmc_tatooine = {
                 name = "Tatoiine",
                 text = {
@@ -2408,15 +2318,6 @@ return {
                     "{C:chips}+#4#{} chips",
                 },
             },
-            c_rgmc_rocket = {
-                name = "Rocket Ship",
-                text = {
-                    "{S:0.8}({S:0.8,V:1}lvl.#1#{S:0.8}){} Level up",
-                    "{C:attention}#2#",
-                    "{C:mult}+#3#{} Mult and",
-                    "{C:chips}+#4#{} chips",
-                },
-            },
             c_rgmc_planet_exe = {
                 name = "Planet.exe",
                 text = {
@@ -2427,7 +2328,7 @@ return {
                     "{C:inactive}(Currently {C:chips}+#3{C:inactive} and {C:mult}+#4{C:inactive})"
                 },
             },
-            c_rgmc_planet_terra = {
+            c_rgmc_terra = {
                 name = "Terra",
                 text = {
                     "Gives {C:attention}most played{} hand",
@@ -2437,7 +2338,7 @@ return {
                     "{C:inactive}(Currently {C:chips}+#3{C:inactive} and {C:mult}+#4{C:inactive})"
                 },
             },
-            c_rgmc_planet_luna = {
+            c_rgmc_luna = {
                 name = "Luna",
                 text = {
                     "Gives {C:attention}most played{} hand",
@@ -2447,7 +2348,7 @@ return {
                     "{C:inactive}(Currently {C:chips}+#3{C:inactive} and {C:mult}+#4{C:inactive})"
                 },
             },
-            c_rgmc_planet_sol_3 = {
+            c_rgmc_sol_3 = {
                 name = "Sol III",
                 text = {
                     "{S:0.8}({S:0.8,V:1}lvl.#1#{S:0.8}){} Level up",
@@ -2456,7 +2357,7 @@ return {
                     "{C:chips}+#4#{} chips",
                 },
             },
-            c_rgmc_planet_lobster = {
+            c_rgmc_lobster = {
                 name = "Space Lobster",
                 text = {
                     "{S:0.8}({S:0.8,V:1}lvl.#1#{S:0.8}){} Level up",
@@ -2465,7 +2366,7 @@ return {
                     "{C:chips}+#4#{} chips",
                 },
             },
-            c_rgmc_planet_nowhere = {
+            c_rgmc_nowhere = {
                 name = "Nowhere.",
                 text = {
                     "{S:0.8}({S:0.8,V:1}lvl.#1#{S:0.8}){} Level up",
@@ -2474,7 +2375,7 @@ return {
                     "{C:chips}+#4#{} chips",
                 },
             },
-            c_rgmc_planet_wormhole = {
+            c_rgmc_wormhole = {
                 name = "Wormhole!",
                 text = {
                     "{S:0.8}({S:0.8,V:1}lvl.#1#{S:0.8}){} Level up",
@@ -2483,13 +2384,96 @@ return {
                     "{C:chips}+#4#{} chips",
                 },
             },
-            c_rgmc_planet_everywhere = {
+            c_rgmc_everywhere = {
                 name = "Everywhere?!?",
                 text = {
                     "{S:0.8}({S:0.8,V:1}lvl.#1#{S:0.8}){} Level up",
                     "{C:attention}#2#",
                     "{C:mult}+#3#{} Mult and",
                     "{C:chips}+#4#{} chips",
+                },
+            },
+        },
+        SpatiaPlanet = {
+            c_rgmc_rocket = {
+                name = "Rocket Ship",
+                text = {
+                    "{S:0.8}({S:0.8,V:1}lvl.#1#{S:0.8}){} Level up",
+                    "{C:attention}#2#",
+                    "{C:mult}+#3#{} Mult and",
+                    "{C:chips}+#4#{} chips",
+                    "This {C:orange}Ante{}'s {C:rgmc_unusual}Pick 5{} are:",
+                    "{C:attention}#5#{} of {V:2}#6#{}, {C:attention}#7#{} of {V:3}#8#{}",
+                    "{C:attention}#9#{} of {V:4}#10#{}, {C:attention}#11#{} of {V:5}#12#{}",
+                    "and {C:attention}#13#{} of {V:6}#14#{}",
+                },
+            },
+            c_rgmc_rigel = {
+                name = "Rigel IV",
+                text = {
+					"Levels up #1# subhand by {C:attention}#2#{}",
+                    "and #3# by {C:attention}#4{}"
+                },
+            },
+            c_rgmc_aquaworld = {
+                name = "Aquaworld",
+                text = {
+					"Levels up #1# subhand by {C:attention}#2#{}",
+                    "and #3# by {C:attention}#4{}"
+                },
+            },
+            c_rgmc_prometheus = {
+                name = "Prometheus IX",
+                text = {
+					"Levels up #1# subhand by {C:attention}#2#{}",
+                    "and #3# by {C:attention}#4{}"
+                },
+            },
+            c_rgmc_tartarus = {
+                name = "Tartarus II",
+                text = {
+					"Levels up #1# subhand by {C:attention}#2#{}",
+                    "and #3# by {C:attention}#4{}"
+                },
+            },
+            c_rgmc_varakkis = {
+                name = "Varakkis",
+                text = {
+					"Levels up #1# subhand by {C:attention}#2#{}",
+                    "and #3# by {C:attention}#4{}"
+                },
+            },
+            c_rgmc_jurassika = {
+                name = "Jurassika",
+                text = {
+					"Levels up #1# subhand by {C:attention}#2#{}",
+                    "and #3# by {C:attention}#4{}"
+                },
+            },
+            c_rgmc_globulos = {
+                name = "Globulos",
+                text = {
+					"Levels up #1# subhand by {C:attention}#2#{}",
+                    "and #3# by {C:attention}#4{}"
+                },
+            },
+            c_rgmc_xykulix = {
+                name = "Xykulix",
+                text = {
+					"Levels up #1# subhand by {C:attention}#2#{}",
+                    "and #3# by {C:attention}#4{}"
+                },
+            },
+            c_rgmc_blue_moon = {
+                name = "Blue Moon",
+                text = {
+					"Levels up #1# subhand by {C:attention}#2#{}",
+                },
+            },
+            c_rgmc_blood_moon = {
+                name = "Blood Moon",
+                text = {
+					"Levels up #1# subhand by {C:attention}#2#{}",
                 },
             },
         },
@@ -4516,7 +4500,8 @@ return {
             rgmc_rocket             = "Space Vehicle",
             rgmc_space_lobster      = "Boss Spacecraft",
             rgmc_planet_alt         = "Alt. Reality Planet",
-            rgmc_anomality          = "Anomality",
+            rgmc_anomality          = "Anomality?!",
+            rgmc_moon               = "Moon",
 
             -- subhands
             ml_sh_light             = "Light",
@@ -4539,12 +4524,15 @@ return {
 			k_rgmc_chaotic   = "Chaotic",
 			k_rgmc_felinus   = "Felinus",
 			k_cosmatarot             = "Cosma Tarot",
-			k_antispectral           = "Sinister Card",
 			b_cosmatarot_cards       = "Cosma Tarots",
+			k_spatiaplanet           = "Spatia Planet",
+			b_spatiaplanet_cards     = "Spatia Planets",
+			k_antispectral           = "Sinister Card",
 			b_antispectral_cards     = "Sinister Cards",
 
 
 			k_rgmc_cosma_pack    = "Cosma Pack",
+			k_rgmc_spatia_pack   = "Spatia Pack",
 			k_rgmc_variety_pack  = "Variety Pack",
 			k_rgmc_reward_pack   = "Reward Pack",
 			k_rgmc_ruinous_pack  = "Ruinous Pack",

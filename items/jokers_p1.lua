@@ -404,7 +404,7 @@ local quick_brown_fox = {
     demicoloncompat     = true,
     config = {  extra = { chips = 7 } },
     loc_vars = function(self, info_queue, card)
-        local amt = (G.GAME and G.GAME.MADCAP and G.GAME.MADCAP.ante.unique_ranks) or 0
+        local amt = (G.GAME and G.GAME.MADCAP and G.GAME.ante.unique_ranks) or 0
         return MadLib.collect_vars(number_format(card.ability.extra.chips),
                 number_format(card.ability.extra.chips * amt))
     end,
@@ -414,7 +414,7 @@ local quick_brown_fox = {
             (context.cardarea == G.jokers and context.joker_main)
 			and (to_big(card.ability.extra.chips) > to_big(0))
         then
-            local amt = G.GAME.MADCAP.ante and G.GAME.MADCAP.ante.unique_ranks or 0
+            local amt = G.GAME.ante and G.GAME.ante.unique_ranks or 0
             return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips, card, card.ability.extra.chips * amt)
         end
     end
@@ -2241,7 +2241,7 @@ local waveworx = {
             context.setting_blind
             or context.forcetrigger
         then
-            G.GAME.MADCAP.force_poker_hand = "Straight"
+            G.GAME.force_poker_hand = "Straight"
             local eval = function() return G.GAME.current_round.hands_played > 0 end
             juice_card_until(card, eval, true)
         end
@@ -2250,7 +2250,7 @@ local waveworx = {
             G.GAME.current_round.hands_played == 0
             and context.after
         then
-            G.GAME.MADCAP.force_poker_hand = nil
+            G.GAME.force_poker_hand = nil
         end
     end
 }

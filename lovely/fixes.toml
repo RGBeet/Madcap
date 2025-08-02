@@ -6,10 +6,19 @@ priority = 1000
 # START OF RUN
 [[patches]]
 [patches.pattern]
-target = "back.lua"
-pattern = '''function Back:apply_to_run()'''
+target = "game.lua"
+pattern = '''G.C.UI_MULT[1], G.C.UI_MULT[2], G.C.UI_MULT[3], G.C.UI_MULT[4] = G.C.RED[1], G.C.RED[2], G.C.RED[3], G.C.RED[4]'''
 position = "after"
 payload = '''Madcap.Funcs.run_start()'''
+match_indent = true
+
+# START OF ANTE (start of run)
+[[patches]]
+[patches.pattern]
+target = "game.lua"
+pattern = '''G.GAME.blind = Blind(0,0,2, 1)'''
+position = "after"
+payload = '''Madcap.Funcs.ante_start()'''
 match_indent = true
 
 # START OF BLIND
@@ -156,7 +165,7 @@ target = 'card.lua'
 match_indent = true
 pattern = '''self.removed = true'''
 position = 'after'
-payload = '''if G.GAME.MADCAP and G.GAME.dead_jokers then
+payload = '''if G.GAME.dead_jokers then
 	table.insert(G.GAME.dead_jokers,self.config.center.key)
     --print(tostring(#G.GAME.dead_jokers) .. ' \"unalived\" Jokers.')
 end'''

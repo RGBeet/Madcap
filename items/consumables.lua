@@ -236,7 +236,7 @@ local bluebell = {
 	config = { extra = { add = 1 } },
 	cost = 4,
 	can_use = function(self, card)
-		return G.GAME.MADCAP.temporary_hands < 8
+		return G.GAME.temporary_hands < 8
 	end,
 	loc_vars = function(self, info_queue, card)
 		return MadLib.collect_vars(card.ability.extra.add)
@@ -252,7 +252,7 @@ local bluebell = {
 			offset = {x = 0, y = -1},
 			major = G.play
 		})
-		G.GAME.MADCAP.temporary_hands = math.min(G.GAME.MADCAP.temporary_hands + card.ability.extra.add,8)
+		G.GAME.temporary_hands = math.min(G.GAME.temporary_hands + card.ability.extra.add,8)
 	end,
 }
 
@@ -265,7 +265,7 @@ local amaryllis = {
 	config = { extra = { add = 1 } },
 	cost = 4,
 	can_use = function(self, card)
-		return G.GAME.MADCAP.temporary_discards < 8
+		return G.GAME.temporary_discards < 8
 	end,
 	loc_vars = function(self, info_queue, card)
 		return MadLib.collect_vars(card.ability.extra.add)
@@ -281,7 +281,7 @@ local amaryllis = {
 			offset = {x = 0, y = -1},
 			major = G.play
 		})
-		G.GAME.MADCAP.temporary_discards = math.min(G.GAME.MADCAP.temporary_discards + card.ability.extra.add,8)
+		G.GAME.temporary_discards = math.min(G.GAME.temporary_discards + card.ability.extra.add,8)
 	end,
 }
 

@@ -61,7 +61,16 @@ Madcap.Orders = {
 }
 
 Madcap.Lists = {
-	Roshambo = { 'm_stone', 'm_lucky', 'm_steel' },
+	RoshamboKeys = { 
+		'm_stone',
+		'm_lucky',
+		'm_steel'
+	},
+	RoshamboValues = {
+		{ ['bonus'] = {50, 0} },
+		{ ['mult'] = {20, 0}, ['p_dollars'] = {20, 0} },
+		{ ['h_x_mult'] = {1.5, 1} }
+	},
 	Moons = {
 		Mult = {
 			'vulcanoid',
@@ -189,8 +198,15 @@ function Madcap.Funcs.run_start()
         G.GAME.subhands[k].enabled  	= false
         G.GAME.subhands[k].empowered  	= 0
     end
-
-    G.GAME.MADCAP = {
+	--%G.GAME.MADCAP
+	
+    local madcap_vals = {
+		Mayhem				= 0,
+		MayhemState			= 0,
+		max_mayhem			= 0,
+		luxury_points		= 0,
+		dead_jokers			= {},
+		missed_jokers		= {},
         blinds_skipped      = 0,        -- number of blinds skipped
         boss_blinds         = 0,        -- number of boss blinds defeated
         showdown_blinds     = 0,        -- number of showdown blinds defeated
@@ -210,33 +226,24 @@ function Madcap.Funcs.run_start()
         }
     }
 
-    G.GAME.Mayhem 			= G.GAME.Mayhem or 0
-    G.GAME.MayhemState 		= 0
-    G.GAME.max_mayhem 		= G.GAME.max_mayhem or 10
-    G.GAME.luxury_points 	= G.GAME.luxury_points or 0
-
-    G.GAME.dead_jokers		= {}
-    G.GAME.missed_jokers	= {}
-
+	MadLib.loop_table(madcap_vals, function(k,v) G.GAME[k] = v end)
     Madcap.Funcs.set_mayhem(G.GAME.Mayhem,true,true)
-
     G.GAME.Exotic = G.GAME.Exotic or false -- Used for exotic suits and ranks?
 
-    Madcap.Funcs.ante_start() -- Since the game starts at the first ante...?
 end
 
 -- Upon selecting the blind...
 function Madcap.Funcs.blind_start()
     -- start of blind
     tell('Blind Start')
-    G.GAME.MADCAP.rank_dist = MadLib.get_ranks_from_cards(G.playing_cards)
+    
+	G.GAME.rank_dist = MadLib.get_ranks_from_cards(G.playing_cards)
 
     local patina_cards, bronze_cards, normal_cards = {}, {}, {}
     local new_deck = {}
 
     -- Categorize the cards
     for i, card in ipairs(G.deck.cards) do
-
         if card.seal == 'rgmc_patina' then
             table.insert(patina_cards, { card = card, index = i })
         elseif card.seal == 'rgmc_bronze' then
@@ -245,8 +252,6 @@ function Madcap.Funcs.blind_start()
             table.insert(normal_cards, { card = card, index = i })
         end
     end
-
-    --tell('Testing - we got ' .. tostring(G.GAME.MADCAP.rank_dist["King"]) .. 'Kings.')
 
     if #bronze_cards > 0 then
         tell('Bronze seals in deck.')
@@ -299,12 +304,12 @@ function Madcap.Funcs.blind_end()
         G.GAME.blind
         and G.GAME.blind.boss
     then
-        G.GAME.MADCAP.boss_blinds = G.GAME.MADCAP.boss_blinds + 1
-        if G.GAME.blind.showdown then G.GAME.MADCAP.showdown_blinds = G.GAME.MADCAP.showdown_blinds + 1 end
+        G.GAME.boss_blinds = G.GAME.boss_blinds + 1
+        if G.GAME.blind.showdown then G.GAME.showdown_blinds = G.GAME.showdown_blinds + 1 end
     end
 
-    if G.GAME.MADCAP.punisher_mode then
-        G.GAME.MADCAP.punisher_mode = false
+    if G.GAME.punisher_mode then
+        G.GAME.punisher_mode = false
     end
 
 end
@@ -316,7 +321,7 @@ function Madcap.Funcs.ante_start()
 
 	local blinds = {'Small', 'Big', 'Boss'}
 
-	G.GAME.MADCAP.ante = {
+	G.GAME.ante = {
 		hands			= 0,	-- hands played
 		discards		= 0,	-- discards played
 		purchases		= 0,	-- shop purchases / booster items chosen
@@ -331,9 +336,9 @@ function Madcap.Funcs.ante_start()
 	}
 
 	local x_card = G.playing_cards and pseudorandom_element(G.playing_cards, pseudoseed('rgmc_x_value')) or nil -- pick a card, any card...
-	G.GAME.MADCAP.x_value = x_card and x_card.base.value or "10" -- The rank becomes the x's rank
+	G.GAME.x_value = x_card and x_card.base.value or "10" -- The rank becomes the x's rank
 
-
+	-- Pale Deck
 	if G.GAME.modifiers.rgmc_pale then
         -- check if the force has been defeated
 
@@ -351,6 +356,21 @@ function Madcap.Funcs.ante_start()
             G.GAME.modifiers.rgmc_force_chance = G.GAME.modifiers.rgmc_force_chance - 1
         end
 	end
+
+	
+	G.GAME.pick_5 = {}
+	local pick_5_cards = MadLib.shuffle_sort_list(G.deck.cards, 5, function(v)
+        return not SMODS.has_no_rank(v)
+    end)
+		
+	tell('Pick 5:')
+	MadLib.loop_func(pick_5_cards, function(v)
+		table.insert(G.GAME.pick_5, {
+			rank 	= v.base.value,
+			suit 	= v.base.suit
+		})
+		print(G.GAME.pick_5[#G.GAME.pick_5])
+	end)
 end
 
 -- Upon ending an ante?
@@ -377,14 +397,14 @@ end
 function Madcap.Funcs.play_hand(hand)
     -- recording hand
     tell('Play Hand')
-    G.GAME.MADCAP.ante.hands = G.GAME.MADCAP.ante.hands + 1
+    G.GAME.ante.hands = G.GAME.ante.hands + 1
 end
 
 -- Upon discarding a hand...
 function Madcap.Funcs.discard_hand(hand, chips, text)
     -- recording hand
     tell('Discard Hand')
-    G.GAME.MADCAP.ante.discards = G.GAME.MADCAP.ante.discards + 1
+    G.GAME.ante.discards = G.GAME.ante.discards + 1
 end
 
 -- Start of an Ante (function for the blinds)
@@ -402,54 +422,54 @@ end
 function Madcap.Funcs.blind_skip()
     -- start of blind
     tell('Blind Skip')
-    G.GAME.MADCAP.blinds_skipped = G.GAME.MADCAP.blinds_skipped and G.GAME.MADCAP.blinds_skipped + 1 or 0
+    G.GAME.blinds_skipped = G.GAME.blinds_skipped and G.GAME.blinds_skipped + 1 or 0
 end
 
 -- Record hand
 
 function Madcap.Funcs.record_hand_before()
 	local text, disp_text, poker_hands, scoring_hand, non_loc_disp_text = G.FUNCS.get_poker_hand_info(G.play.cards)
-    local hand_type = G.GAME.MADCAP.ante.hand_types[text]
+    local hand_type = G.GAME.ante.hand_types[text]
 	
-	G.GAME.MADCAP.ante.ranks = G.GAME.MADCAP.ante.ranks or {}
+	G.GAME.ante.ranks = G.GAME.ante.ranks or {}
 
 	MadLib.loop_func(scoring_hand, function(v)
 		local _rank, _suit = v:get_id(), v.base.suit
 
-		G.GAME.MADCAP.ante.ranks[_rank] = G.GAME.MADCAP.ante.ranks[_rank] or 0
-		G.GAME.MADCAP.ante.ranks[_suit] = G.GAME.MADCAP.ante.ranks[_suit] or 0
+		G.GAME.ante.ranks[_rank] = G.GAME.ante.ranks[_rank] or 0
+		G.GAME.ante.ranks[_suit] = G.GAME.ante.ranks[_suit] or 0
 		
-		print(_rank .. ':' .. G.GAME.MADCAP.ante.ranks[_rank])
-		print(_suit .. ':' .. G.GAME.MADCAP.ante.ranks[_suit]) -- rank type stuff
+		print(_rank .. ':' .. G.GAME.ante.ranks[_rank])
+		print(_suit .. ':' .. G.GAME.ante.ranks[_suit]) -- rank type stuff
 
-        if G.GAME.MADCAP.ante.ranks[_rank] == 0 then
-            G.GAME.MADCAP.ante.unique_ranks = G.GAME.MADCAP.ante.unique_ranks + 1
-			tell('There are now ' .. tostring(G.GAME.MADCAP.ante.unique_ranks) .. ' unique ranks recorded.')
+        if G.GAME.ante.ranks[_rank] == 0 then
+            G.GAME.ante.unique_ranks = G.GAME.ante.unique_ranks + 1
+			tell('There are now ' .. tostring(G.GAME.ante.unique_ranks) .. ' unique ranks recorded.')
         end
 
         -- suit type stuff
-        if G.GAME.MADCAP.ante.suits[_suit] == 0 then
-            G.GAME.MADCAP.ante.unique_suits = G.GAME.MADCAP.ante.unique_suits + 1
-			tell('There are now ' .. tostring(G.GAME.MADCAP.ante.unique_suits) .. ' unique suits recorded.')
+        if G.GAME.ante.suits[_suit] == 0 then
+            G.GAME.ante.unique_suits = G.GAME.ante.unique_suits + 1
+			tell('There are now ' .. tostring(G.GAME.ante.unique_suits) .. ' unique suits recorded.')
         end
 
-        G.GAME.MADCAP.ante.ranks[_rank]	= (G.GAME.MADCAP.ante.ranks[_rank] or 0) + 1
-        G.GAME.MADCAP.ante.suits[_suit]	= (G.GAME.MADCAP.ante.suits[_suit] or 0) + 1
-        G.GAME.MADCAP.ante.faces_scored = (G.GAME.MADCAP.ante.faces_scored or 0) + (v:is_face(true) and 1 or 0)
+        G.GAME.ante.ranks[_rank]	= (G.GAME.ante.ranks[_rank] or 0) + 1
+        G.GAME.ante.suits[_suit]	= (G.GAME.ante.suits[_suit] or 0) + 1
+        G.GAME.ante.faces_scored = (G.GAME.ante.faces_scored or 0) + (v:is_face(true) and 1 or 0)
 
-    	G.GAME.MADCAP.ante.hand_types[text] = G.GAME.MADCAP.ante.hand_types[text] or 0
-    	G.GAME.MADCAP.ante.hand_types[text] = G.GAME.MADCAP.ante.hand_types[text] + 1
+    	G.GAME.ante.hand_types[text] = G.GAME.ante.hand_types[text] or 0
+    	G.GAME.ante.hand_types[text] = G.GAME.ante.hand_types[text] + 1
 
-        if v.config.center ~= G.P_CENTERS.c_base then G.GAME.MADCAP.last_enhancement = v.config.center end
+        if v.config.center ~= G.P_CENTERS.c_base then G.GAME.last_enhancement = v.config.center end
 	end)
 end
 
 function Madcap.Funcs.record_hand_after(_chips, _mult)
 	local total_chips = to_big(_chips) * to_big(_mult)
-    local current_score, high_score = to_big(total_chips), to_big(G.GAME.MADCAP.best_hand.score)
+    local current_score, high_score = to_big(total_chips), to_big(G.GAME.best_hand.score)
 
     if high_score < current_score then -- Update high score information
-        G.GAME.MADCAP.best_hand = {
+        G.GAME.best_hand = {
             score   = total_chips,
             hand    = MadLib.get_hand_info(G.hand.cards),
             play    = MadLib.get_hand_info(G.play.cards),
@@ -525,14 +545,14 @@ local get_id_use = false
 
 -- Returns the rank for Rio.
 function Madcap.Funcs.get_rio_rank()
-    if not (G.GAME and G.GAME.MADCAP and G.GAME.MADCAP.rank_dist) then -- this should work, G.GAME.MADCAP is made on start
+    if not (G.GAME and G.GAME.MADCAP and G.GAME.rank_dist) then -- this should work, G.GAME.MADCAP is made on start
         return "Ace"
     end
     local minimum, selection = #G.deck.cards, nil
     local rank_values = { "Queen", "King", "Ace" }
     -- which is the lowest? if tie, prioritize by order
     for i=1, #rank_values do
-        local thing, amt = rank_values[i], G.GAME.MADCAP.rank_dist[rank_values[i]] --tell("There are " .. tostring(amt) .. " of " .. tostring(thing) .. ".")
+        local thing, amt = rank_values[i], G.GAME.rank_dist[rank_values[i]] --tell("There are " .. tostring(amt) .. " of " .. tostring(thing) .. ".")
         if amt <= minimum then --tell("That is enough.")
             minimum = amt
             selection = rank_values[i]
@@ -549,7 +569,7 @@ function Card:get_id()
 		local id = card_get_id_ref(self) or self.base.id
 
 		if id == "rgmc_x" then -- x cards equal
-            id = SMODS.Ranks[G.GAME.MADCAP.x_value].id
+            id = SMODS.Ranks[G.GAME.x_value].id
 		end
 
 		if -- Rio (legendary)
@@ -557,7 +577,7 @@ function Card:get_id()
             and id == 14
         then
             -- counts as either queen, king, or ace depending on which has fewest cards
-            -- at start of blind (using G.GAME.MADCAP.rank_dist)
+            -- at start of blind (using G.GAME.rank_dist)
             id = SMODS.Ranks[Madcap.Funcs.get_rio_rank()].id
         end
 
@@ -1241,7 +1261,7 @@ function Madcap.Funcs.get_hand_sigma(group)
 		if not (irregular or no_rank) then
 			total = total + SMODS.Ranks[v.base.value].nominal
 		elseif v:get_id() == 'rgmc_x' then -- X rank gives a random value
-			total = total + (G.GAME.MADCAP.x_value or 0)
+			total = total + (G.GAME.x_value or 0)
 		end
 	end)
 	--tell('Counted ' .. tostring(#group) .. ' cards for a total of ' .. tostring(total) .. '.')
@@ -1261,7 +1281,7 @@ function MadLib.get_hand_sum(hand, count_irregulars)
 			local rank = SMODS.Ranks[v.base.value]
 			total = total + rank.nominal
 		elseif v:get_id() == 'rgmc_x' then -- X rank gives a random value
-			total = total + G.GAME.MADCAP.x_value
+			total = total + G.GAME.x_value
 		elseif count_irregulars then
 			if v:get_id() == 'rgmc_sum' then -- sum gives sum of deck sans irregulars
 				total = Madcap.Funcs.get_hand_sigma(hand) -- do not count irregulars
@@ -1483,10 +1503,10 @@ function ease_discard(mod, instant, silent)
 	--tell_stat('discards',G.GAME.current_round.discards_left)
     if
         G.GAME.current_round.discards_left + mod == 0
-        and G.GAME.MADCAP.temporary_discards > 0
+        and G.GAME.temporary_discards > 0
     then
         ease_discard(1, instant, silent)
-        G.GAME.MADCAP.temporary_discards = G.GAME.MADCAP.temporary_discards - 1
+        G.GAME.temporary_discards = G.GAME.temporary_discards - 1
 		local words = localize("rgmc_temp_discard_minus_ex")
 		attention_text({
 			scale = 0.7,
@@ -1507,10 +1527,10 @@ function ease_hands_played(mod, instant)
 	--tell_stat('hands',G.GAME.current_round.hands_left)
     if
         G.GAME.current_round.hands_left + mod == 0
-        and G.GAME.MADCAP.temporary_hands > 0
+        and G.GAME.temporary_hands > 0
     then
         ease_hands_played(1, instant, silent)
-        G.GAME.MADCAP.temporary_hands = G.GAME.MADCAP.temporary_hands - 1
+        G.GAME.temporary_hands = G.GAME.temporary_hands - 1
 		local words = localize("rgmc_temp_hand_minus_ex")
 		attention_text({
 			scale = 0.7,
@@ -1545,7 +1565,7 @@ function get_new_boss()
 	-- Some Madcap decks have set finishers
 	if
 		G.GAME.MADCAP
-		and G.GAME.MADCAP.deck_finishers 		-- has a deck finisher list
+		and G.GAME.deck_finishers 		-- has a deck finisher list
 		and G.GAME.round_resets.ante > 0	-- dont do it ante 0 or earlier :(
 		and G.GAME.round_resets.ante % G.GAME.win_ante == 0
 	then
@@ -1560,7 +1580,7 @@ function get_new_boss()
 		if yes_please then
 			local eligible_bosses = {}
 
-			for _, v in pairs(G.GAME.MADCAP.deck_finishers) do -- might be more than one
+			for _, v in pairs(G.GAME.deck_finishers) do -- might be more than one
 				eligible_bosses[v] = true
 			end
 
@@ -1577,8 +1597,8 @@ function get_new_boss()
 	end
 
 	-- Punisher Tag: rerolls boss blind into finisher blind.
-	if G.GAME.MADCAP.force_finisher_blind then
-		G.GAME.MADCAP.force_finisher_blind = nil -- dont need this anymore
+	if G.GAME.force_finisher_blind then
+		G.GAME.force_finisher_blind = nil -- dont need this anymore
 
 		local blind, is_showdown = G.P_BLINDS[G.GAME.round_resets.blind_choices["Boss"]], false
 		if blind.boss and blind.boss.showdown then is_showdown = true end -- if showdown blind
@@ -2223,11 +2243,11 @@ function evaluate_poker_hand(hand)
     local results = evaluate_poker_hand_ref(hand)
 
     -- force poker hand.
-    if G.GAME.MADCAP.force_poker_hand then
-        if not results[G.GAME.MADCAP.force_poker_hand][1] then
+    if G.GAME.force_poker_hand then
+        if not results[G.GAME.force_poker_hand][1] then
             for _, v in ipairs(G.handlist) do
                 if results[v][1] then
-                    results[G.GAME.MADCAP.force_poker_hand] = results[v]
+                    results[G.GAME.force_poker_hand] = results[v]
                     break
                 end
             end
@@ -2925,6 +2945,10 @@ local function handle_descaling_joker_logic(trigger,card,v1,v2,type)
     end
 end
 
+function Madcap.Funcs.get_food_descale(value)
+	return value
+end
+
 --[[
     if context.after and context.main_eval and not context.blueprint then
         if card.ability.extra.chips - card.ability.extra.chip_mod <= 0 then
@@ -2936,49 +2960,6 @@ end
         end
     end
 ]]
-
--- Fixing the functions for the vanilla Jokers!
-local VanillaFixing = {
-    ['j_ice_cream'] = function(self, card, context)
-        -- After every hand
-        handle_descaling_joker_logic(function()
-            return context.after
-        end, 'chips', 'chip_mod', MadLib.ScoreKeys.AddChips, context)
-
-        -- Joker main
-        if context.joker_main then return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips, card, card.ability.chips) end
-    end,
-    ['j_popcorn'] = function(self, card, context)
-        -- After every hand
-        handle_descaling_joker_logic(function()
-            return context.end_of_round and context.game_over == false
-        end, 'mult', 'mult_loss', MadLib.ScoreKeys.AddMult, context)
-
-        if context.joker_main then return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddMult, card, card.ability.mult) end
-    end,
-    ['j_ramen'] = function(self, card, context)
-        -- After every hand
-        handle_descaling_joker_logic(function()
-            return context.discard and card.ability.special.flag
-        end, 'Xmult', 'Xmult_loss', MadLib.ScoreKeys.MultiMult, context)
-
-        if context.joker_main then 
-			return MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiMult, card, card.ability.x_mult) 
-		end
-    end,
-}
-
--- Add the new code
-for k,v in pairs(VanillaFixing) do
-    if
-        G.P_CENTERS[k]
-        and not G.P_CENTERS[k].calculate
-    then
-        --print('Adding support for ' .. k)
-        G.P_CENTERS[k].calculate = v
-        --print(G.P_CENTERS[k].calculate and "Calculated!" or "...?!")
-    end
-end
 
 if not Cryptid then
 

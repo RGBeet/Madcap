@@ -222,9 +222,9 @@ local punisher = {
 	apply = function(self, tag, context)
         if
 			context.type == self.config.type
-			and not G.GAME.MADCAP.punisher_mode
+			and not G.GAME.punisher_mode
 		then
-			G.GAME.MADCAP.punisher_mode = true -- find a better variable, just do this for now
+			G.GAME.punisher_mode = true -- find a better variable, just do this for now
 
 			tag:yep('+', G.C.MONEY, function() return true end)
             ease_dollars(self.config.extra.dollars)

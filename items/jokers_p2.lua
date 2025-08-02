@@ -1762,7 +1762,7 @@ local jonster_cola = {
             or context.forcetrigger) -- will kill the jonster cola!
             and type(Madcap.Funcs.safe_get(G.GAME, "MADCAP", "best_hand") or nil) == 'table'
         then
-            local best_hand = G.GAME.MADCAP.best_hand
+            local best_hand = G.GAME.best_hand
             local list = MadLib.get_combined_list(best_hand.play, best_hand.hand)
             local playing_round = (G.hand and #G.hand.cards > 0)
             MadLib.simple_event(function()
@@ -1948,6 +1948,78 @@ local weighted_die = {
     end
 }
 
+--[[
+	RoshamboValues = {
+		{ ['bonus'] = {50, 0} },
+		{ ['mult'] = {20, 0}, ['p_dollars'] = {20, 0} },
+		{ ['h_x_mult'] = {1.5, 1} }
+	},
+            for k,rsh in pairs(old_values) do
+                v.ability[k]    = base_var
+                v.rgmc_temp[k]  = v.ability[k] or blank_var
+            end
+            tell('xmult is ' .. tostring(v.ability['h_x_mult']))
+]]
+
+function Madcap.Funcs.FlipRoshamboCycle(a,b)
+    local change_cards = {}
+    MadLib.loop_func({G.play.cards, G.hand.cards}, function(list)
+        MadLib.loop_func(list, function(v)
+            if MadLib.list_matches_one(Madcap.Lists.RoshamboKeys, function(m)
+                return v.config.center.key == m
+            end) then
+                table.insert(change_cards,v)
+            end
+        end)
+    end)
+
+    MadLib.loop_func(change_cards, function(v,i)
+        local index = MadLib.get_item_index(v.config.center.key,Madcap.Lists.RoshamboKeys)
+        local old_index = index
+        local old_values = Madcap.Lists.RoshamboValues[index]
+
+        index = MadLib.get_moved_index(index, a, #Madcap.Lists.RoshamboKeys)
+        local new_values = Madcap.Lists.RoshamboValues[index]
+        
+        -- set old value to blank, set new value to base
+        
+        v.config.center = G.P_CENTERS[Madcap.Lists.RoshamboKeys[index]]
+        if b == 'before' then
+            v.rgmc_temp = {}
+            -- set old value
+            for k,rsh in pairs(old_values) do
+                v.rgmc_temp[k]  = v.ability[k] or rsh[1]
+                v.ability[k]    = rsh[2]
+                tell('for enhc ' .. Madcap.Lists.RoshamboKeys[old_index] .. ', ability ' .. k .. ' is now ' .. tostring(v.ability[k]) .. '.')
+            end
+            for k,rsh in pairs(new_values) do
+                v.ability[k]    = rsh[1]
+                tell('for enhc ' .. Madcap.Lists.RoshamboKeys[old_index] .. ', ability ' .. k .. ' is now ' .. tostring(v.ability[k]) .. '.')
+            end
+        elseif b == 'after' then
+            v.rgmc_temp = nil
+        end
+            
+        MadLib.simple_event(function()
+            MadLib.simple_event(function()
+                v:flip()
+                return true
+            end, 0.2, 'after')
+
+            MadLib.simple_event(function()
+            v:set_ability(G.P_CENTERS[Madcap.Lists.RoshamboKeys[index]])
+                return true
+            end, 0.2, 'after')
+
+            MadLib.simple_event(function()
+                v:flip()
+                return true
+            end, 0.2, 'after')
+            return true
+        end, 0.2, 'after')
+    end)
+end
+
 -- 89. Roshambo!
 local roshambo = {
     key     = 'roshambo',
@@ -1975,55 +2047,14 @@ local roshambo = {
             MadLib.localize_name_text('Enhanced', 'm_steel')
         }
         for i=1,3 do
-            full_vars[#full_vars+1] = MadLib.localize_name_text('Enhanced', Madcap.Lists.Roshambo[(i%3)+1])
+            full_vars[#full_vars+1] = MadLib.localize_name_text('Enhanced', Madcap.Lists.RoshamboKeys[(i%3)+1])
         end
         return { vars = full_vars }
     end,
     calculate = function(self, card, context)
         
-        if
-            (context.before or context.final_scoring_step)
-            and (G.hand and G.play)
-        then
-            local change_cards = {}
-            MadLib.loop_func({G.play.cards, G.hand.cards}, function(list)
-                MadLib.loop_func(list, function(v)
-                    if MadLib.list_matches_one(Madcap.Lists.Roshambo, function(m)
-                        return v.config.center.key == m
-                    end) then
-                        table.insert(change_cards,v)
-                    end
-                end)
-            end)
-            local amt = 0
-            MadLib.loop_func(change_cards, function(v,i)
-                MadLib.simple_event(function()
-                    v:flip()
-                    return true
-                end,0.1,'after')
-            end)
-            MadLib.loop_func(change_cards, function(v,i)
-                MadLib.simple_event(function()
-                    local index = MadLib.get_moved_index(MadLib.get_item_index(v.config.center.key,Madcap.Lists.Roshambo), (context.before and 1 or 0), #Madcap.Lists.Roshambo)
-                    local new_enhancement = Madcap.Lists.Roshambo[index]
-                    print(new_enhancement)
-                    v:set_ability(G.P_CENTERS[new_enhancement])
-                    return true
-                end,0.2,'after')
-            end)
-            MadLib.loop_func(change_cards, function(v,i)
-                MadLib.simple_event(function()
-                    v:flip()
-                    return true
-                end,0.15,'after')
-            end)
-            MadLib.loop_func(change_cards, function(v,i)
-                MadLib.simple_event(function()
-                    play_sound('rgmc_blip', math.min(0.8 + i*0.1,2), 0.5)
-                    v:juice_up(0.5, 0.5)
-                    return true
-                end,0.4,'after')
-            end)
+        if context.rgmc_before_scoring then
+            Madcap.Funcs.FlipRoshamboCycle(1,'before')
         end
     end
 }
@@ -2812,11 +2843,6 @@ function Madcap.Funcs.get_food_joker_stats(joker)
     return stats -- must have at least one thing
 end
 
-Madcap.FoodJokerDescale = {
-    ['popcorn'] = { mult = 40 },
-    ['ramen']   = { x_mult = 2 }
-}
-
 -- 100. Retro Lollipop
 local legend_lollipop = {
     key         = 'legend_lollipop',
@@ -2834,11 +2860,11 @@ local legend_lollipop = {
     config =  {
         extra = {
             mult    = 0,
-            x_mult  = 0, -- x
-            e_mult  = 0, -- x
+            x_mult  = 1, -- x
+            e_mult  = 1, -- x
             chips   = 0,
-            x_chips = 0,
-            e_chips = 0,
+            x_chips = 1,
+            e_chips = 1,
             money   = 0,
         },
         immutable = {
@@ -2849,7 +2875,8 @@ local legend_lollipop = {
         -- Not the best way to handle dynamic values
         -- but this'll do for now!
         for k, v in pairs(card.ability.extra) do
-            if v > 0 then
+            local default = MadLib.list_matches_one({'x_','e_'}, function(_k) return string.sub(k, 1, 2) == _k end) and 1 or 0
+            if v ~= default then
                 info_queue[#info_queue + 1] = {
                     set = "Other",
                     key = "rgmc_accum_"..k,
@@ -2862,59 +2889,47 @@ local legend_lollipop = {
     calculate = function(self, card, context)
 
         -- Triggers whenever a compatible Food Joker loses value
-        if context.food_loss then
-            local t = context.food_loss.type
-            local a = math.floor(context.food_loss.amount * card.ability.immutable.div)
-            --print(t)
-                card.ability.extra[t.set] = card.ability.extra[t.set] + a
-            return {
-                message = localize({
-                    type    = "variable",
-                    key     = t.key,
-                    vars    = { number_format(lenient_bignum(to_big(a))) },
-                    card    = card
-                }),
-                colour = t.colour
-            }
-        end
-
-        -- Triggers whenever a compatible Food Joker is destroyed.
-        if
-            context.remove_joker
-        then
-            local stats = Madcap.Funcs.get_food_joker_stats(context.remove_joker)
-            if stats then
-                for k,v in pairs(stats) do
-                    if
-                        card.ability.extra[k]
-                        and MadLib.ScoreKeySets[k]
-                    then
-                        --MadLib.ScoreKeys[MadLib.ScoreKeySets[k]]
-                        card.ability.extra[k] = card.ability.extra[k] + math.floor(v * card.ability.immutable.div)
-                    end
+        if context.rgmc_food_descale then
+            print(context.rgmc_food_descale.value)
+            local value     = context.rgmc_food_descale.value
+            local amount    = MadLib.round(context.rgmc_food_descale.amt * card.ability.immutable.div, 3)
+            local vtype     = MadLib.ScoreKeySets[value]
+            if card.ability.extra[value] and amount > 0 then
+                card.ability.extra[value] = card.ability.extra[value] + amount
+                if MadLib.ScoreKeySets[value] then
+                    local t = MadLib.ScoreKeys[MadLib.ScoreKeySets[value]]
+                    return {
+                        message = localize({
+                            type    = "variable",
+                            key     = t.key,
+                            vars    = { number_format(lenient_bignum(to_big(amount))) },
+                            card    = card
+                        }),
+                    colour = t.colour
+                    }
+                else
+                    return {
+                        message = localize("!"),
+                        colour = G.C.RGMC_UNUSUAL
+                    }
                 end
-                return {
-                    message = localize("k_upgrade_ex"), -- Upgrade!
-                    card = card,
-                    colour = G.C.PURPLE
-                }
             end
         end
-
-        -- The main stuff.
+        
         if
             context.forcetrigger or
             (context.cardarea == G.jokers and context.joker_main)
         then
-            local ret = { card = card }
-            for k, v in pairs(card.ability.extra) do
-                if v > 1 then -- xmult/emult/etc. handled differently
-                    ret[MadLib.ScoreKeys[MadLib.ScoreKeySets[k]].add] = not k[2] == "_"
-                        and v or v+1
-                end
-            end
-            return ret
+            local ret = {}
+            return {
+                chips       = card.ability.extra.chips ~= 0 and card.ability.extra.chips or nil,
+                mult        = card.ability.extra.mult ~= 0 and card.ability.extra.mult or nil,
+                x_mult      = card.ability.extra.x_mult ~= 1 and card.ability.extra.x_mult or nil,
+                x_chips     = card.ability.extra.x_chips ~= 1 and card.ability.extra.x_chips or nil,
+            }
         end
+
+
     end
 }
 

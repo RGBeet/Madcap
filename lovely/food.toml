@@ -1,0 +1,49 @@
+[manifest]
+version = "1.0.0"
+dump_lua = true
+priority = 1
+
+# Ice Cream - record lost chips
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''if self.ability.name == 'Ice Cream' and not context.blueprint then'''
+position = "after"
+payload = '''   SMODS.calculate_context({ rgmc_food_descale = { card = self, value = 'chips', amt = Madcap.Funcs.get_food_descale(self.ability.extra.chip_mod) }})'''
+match_indent = true
+
+# Popcorn - record lost mult
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''if self.ability.name == 'Popcorn' and not context.blueprint then'''
+position = "after"
+payload = '''   SMODS.calculate_context({ rgmc_food_descale = { card = self, value = 'mult', amt = Madcap.Funcs.get_food_descale(self.ability.extra) }})'''
+match_indent = true
+
+# Seltzer - record lost retrigger
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''if self.ability.name == 'Seltzer' and not context.blueprint then'''
+position = "after"
+payload = '''   SMODS.calculate_context({ rgmc_food_descale = { card = self, value = 'retrigger', amt = Madcap.Funcs.get_food_descale(1) }})'''
+match_indent = true
+
+# Turtle Bean - record lost mult
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''if self.ability.name == 'Turtle Bean' and not context.blueprint then'''
+position = "after"
+payload = '''   SMODS.calculate_context({ rgmc_food_descale = { card = self, value = 'h_size', amt = Madcap.Funcs.get_food_descale(self.ability.extra.h_mod) }})'''
+match_indent = true
+
+# Turtle Bean - record lost mult
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''if self.ability.name == 'Ramen' and not context.blueprint then'''
+position = "after"
+payload = '''   SMODS.calculate_context({ rgmc_food_descale = { card = self, value = 'x_mult', amt = Madcap.Funcs.get_food_descale(self.ability.extra) }})'''
+match_indent = true
