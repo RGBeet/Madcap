@@ -72,78 +72,68 @@ local perilous = {
     end
 }
 
+-- CHIPPY: Gives X2 Chips for 1 full round.
 local xchips = {
 	key = "xchips",
 	pos = get_pos(0,6),
-	config = {
-		type = 'hand_played',
-		extra = 2
+	config = { 
+		extra = 2.0,
+		active = false 
 	},
 	loc_vars = function(self, info_queue, tag)
-        return MadLib.collect_vars(number_format(G.GAME and self.config.extra or 1))
+        return MadLib.collect_vars(number_format(self.config.extra))
 	end,
 	in_pool = function()
         return true -- Always appears!
     end,
 	apply = function(self, tag, context)
-		if
-			context.type == self.config.type
-			and context.final_scoring_step
-		then
-			local bonus = self.config.extra or 1
+		if context.type == "new_blind_choice" then
+			tag.config.active = true
+		end
 
-			hand_chips = mod_chips(hand_chips * bonus)
-			update_hand_text({delay = 0}, {chips = hand_chips})
-
-			tag:instayep('X'..tostring(bonus), G.C.CHIPS, function()
-				return false
-			end, 0, "talisman_xchip", false)
-
-			delay(0.5)
-            return true
+		if context.type == "final_scoring_step" then
+        	SMODS.calculate_effect({ xchips = 4 }, tag)
         end
 
-        if context.end_of_round then
+        if 
+			context.type == "end_of_round"
+			and tag.config.active
+		then
+          	tag:yep("X", G.C.BLUE, function() return true end)
 			tag.triggered = true
 			return true
 		end
 	end
 }
 
+-- CHIPPY: Gives X2 Mult for 1 full round.
 local xmult = {
 	key = "xmult",
 	pos = get_pos(0,7),
-	config = {
-		type = 'hand_played',
-		extra = 2.5,
+	config = { 
+		extra = 2.0,
+		active = false 
 	},
-	discovered = true,
 	loc_vars = function(self, info_queue, tag)
-        return MadLib.collect_vars(number_format(G.GAME and self.config.extra or 1))
+        return MadLib.collect_vars(number_format(self.config.extra))
 	end,
 	in_pool = function()
         return true -- Always appears!
     end,
 	apply = function(self, tag, context)
+		if context.type == "new_blind_choice" then
+			tag.config.active = true
+		end
 
-		if
-			context.type == self.config.type
-			and context.final_scoring_step
-		then
-			local bonus = self.config.extra or 1
-
-			mult = mod_mult(mult * bonus)
-			update_hand_text({delay = 0}, {mult = mult})
-
-			tag:instayep('X'..tostring(bonus), G.C.MULT, function()
-				return false
-			end, 0, "polychrome1", false)
-
-			delay(0.5)
-            return true
+		if context.type == "final_scoring_step" then
+        	SMODS.calculate_effect({ xmult = 4 }, tag)
         end
 
-        if context.end_of_round then
+        if 
+			context.type == "end_of_round"
+			and tag.config.active
+		then
+          	tag:yep("X", G.C.RED, function() return true end)
 			tag.triggered = true
 			return true
 		end
@@ -178,25 +168,20 @@ local royal = {
 						and G.pack_cards.cards
 						and G.pack_cards.VT.y < G.ROOM.T.h -- pack cards
 					then
-                        --enable_exotics()
-						local base_suit_cards = MadLib.get_list_matches(G.pack_cards.cards, function (v)
-							for _,k in pairs(Madcap.ModdedSuits) do
-								if not v:is_suit('rgmc_'..k) then return true end
-							end
-							return false
-						end)
-
-						-- Change the suits of all
-                        for _, v in ipairs(base_suit_cards) do
+						local num_cards = math.ceil((#G.pack_cards.cards * math.random() * 0.25) + (#G.pack_cards.cards/2))
+						local targets = MadLib.get_card_from_shuffled_deck(G.pack_cards.cards, num_cards, function(c)
+                			return MadLib.list_matches_one(Madcap.ModdedSuits, function(k)
+								return c:is_suit('rgmc_' .. k)
+							end)
+            			end)
+						MadLib.loop_func(targets, function(v)
 							local suit = pseudorandom_element(Madcap.ModdedSuits, pseudoseed('rgmc_royal_'..G.SEED))
 							v:change_suit('rgmc_'..suit)
-                        end
-
+						end)
                         return true
                     end
                 end
             })
-
             tag.triggered = true
             return true
         end
@@ -208,7 +193,6 @@ local punisher = {
 	key = "punisher",
 	pos = get_pos(0,5),
 	config = {
-		type = 'round_start_bonus',
 		dollars = 15,
 		extra = 2, -- hands left
 	},
@@ -221,17 +205,16 @@ local punisher = {
     end,
 	apply = function(self, tag, context)
         if
-			context.type == self.config.type
+			context.type == 'round_start_bonus'
 			and not G.GAME.punisher_mode
 		then
 			G.GAME.punisher_mode = true -- find a better variable, just do this for now
 
 			tag:yep('+', G.C.MONEY, function() return true end)
-            ease_dollars(self.config.extra.dollars)
-            local hand_diff = math.min(G.GAME.current_round.hands_left,self.config.extra.hands_left)
+            ease_dollars(self.config.dollars)
+            local hand_diff = math.min(G.GAME.current_round.hands_left, self.config.extra.hands_left)
 
-
-            ease_hands_played(-G.GAME.current_round.hands_left + hand_diff)
+            ease_hands_played(hand_diff - G.GAME.current_round.hands_left)
 			ease_discard(-G.GAME.current_round.discards_left) -- bye bye discards
 
             tag.triggered = true
@@ -470,7 +453,6 @@ local luxury = {
     end,
 }
 
-
 function Madcap.Funcs.open_booster_quick(key)
 	local card = Card(
 		G.play.T.x + G.play.T.w / 2 - G.CARD_W * 1.27 / 2,
@@ -493,7 +475,7 @@ end
 local cosma = {
 	key = "cosma",
 	pos = get_pos(1,0),
-	config = { type = "new_blind_choice" },
+	config = { },
 	loc_vars = function(self, info_queue)
 		-- make cosma booster
 		info_queue[#info_queue + 1] = { set = "Other", key = "p_rgmc_cosma", specific_vars = { 1, 3 } }

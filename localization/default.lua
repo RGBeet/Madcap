@@ -3818,7 +3818,7 @@ return {
 			v_rgmc_cosma_merchant = {
 				name = "Cosmic Merchant",
 				text = {
-                    "{C:cosmatarot}Tarot{} cards",
+                    "{C:cosmatarot}Cosma Tarot{} cards",
                     "may appear in the {C:attention}Shop",
 				},
 			},

@@ -1217,6 +1217,17 @@ function Madcap.Funcs.apply_seal_to_random(seal, times, context, cardarea)
     end
 end
 
+function Madcap.Funcs.check_eval_card(card)
+	-- handle mayhem stuff
+	if card:is_suit('rgmc_voids') then
+		Madcap.Funcs.set_mayhem(0.1)
+		card_eval_status_text(card, "extra", nil, nil, nil, { message = "?!?", colour = G.C.PURPLE })
+	elseif card:is_suit('rgmc_lanterns') then
+		Madcap.Funcs.set_mayhem(-0.1)
+		card_eval_status_text(card, "extra", nil, nil, nil, { message = "?!?", colour = G.C.BLUE })
+	end
+end
+
 -- CARD IS RANKLESS SUITLESS
 -- Used for rankless/suitless cards such as Stone, Abstract, and Bismuth
 function Madcap.Funcs.card_is_rankless_suitless(card)

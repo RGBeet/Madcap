@@ -186,3 +186,10 @@ position = "after"
 payload = '''SMODS.calculate_context({ finished_drawing = true, drawn_cards = G.hand.cards })'''
 match_indent = true
 
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = '''--Check for play doubling'''
+position = "after"
+payload = '''Madcap.Funcs.check_eval_card(scoring_hand[i])'''
+match_indent = true
