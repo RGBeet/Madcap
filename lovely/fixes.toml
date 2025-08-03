@@ -7,18 +7,10 @@ priority = 1000
 [[patches]]
 [patches.pattern]
 target = "game.lua"
-pattern = '''G.C.UI_MULT[1], G.C.UI_MULT[2], G.C.UI_MULT[3], G.C.UI_MULT[4] = G.C.RED[1], G.C.RED[2], G.C.RED[3], G.C.RED[4]'''
-position = "after"
-payload = '''Madcap.Funcs.run_start()'''
-match_indent = true
-
-# START OF ANTE (start of run)
-[[patches]]
-[patches.pattern]
-target = "game.lua"
 pattern = '''G.GAME.blind = Blind(0,0,2, 1)'''
 position = "after"
-payload = '''Madcap.Funcs.ante_start()'''
+payload = '''Madcap.Funcs.run_start()
+Madcap.Funcs.ante_start()'''
 match_indent = true
 
 # START OF BLIND

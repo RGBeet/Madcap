@@ -520,7 +520,7 @@ local pandora = {
 	end,
 	in_pool = function()
 		-- will easing the mayhem exceed the max mayhem
-        return G.GAME.Mayhem + 1 <= G.GAME.max_mayhem
+        return not G.GAME.mayhem or (G.GAME.mayhem + 1 <= G.GAME.max_mayhem)
     end,
 	apply = function(self, tag, context)
 		local lock = tag.ID

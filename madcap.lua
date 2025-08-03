@@ -192,12 +192,11 @@ function Madcap.Funcs.run_start()
         G.GAME.subhands[k].enabled  	= false
         G.GAME.subhands[k].empower		= 0
     end
-	--%G.GAME.MADCAP
-	
+
     local madcap_vals = {
-		Mayhem				= 0,
-		MayhemState			= 0,
-		max_mayhem			= 0,
+		mayhem				= 0,
+		mayhem_state		= 0,
+		max_mayhem			= G.GAME.starting_params.add_max_mayhem or 10,
 		luxury_points		= 0,
 		dead_jokers			= {},
 		missed_jokers		= {},
@@ -219,14 +218,13 @@ function Madcap.Funcs.run_start()
             ante    = 0
         }
     }
-	MadLib.loop_table(madcap_vals, function(k,v) self[k] = v end)
+	MadLib.loop_table(madcap_vals, function(k,v) G.GAME[k] = v end)
 
+	if G.GAME.starting_params.add_mayhem then
+		Madcap.Funcs.ease_mayhem(G.GAME.starting_params.add_mayhem, true, false, true)
+		Madcap.Funcs.read_mayhem()
+	end
 
-    --print('Ice Cream')
-    --print(G.P_CENTERS['j_ice_cream'])
-    --print('Caramel')
-    --print(G.P_CENTERS['j_cry_caramel'])
-    Madcap.Funcs.set_mayhem(G.GAME.Mayhem,true,true)
     G.GAME.Exotic = G.GAME.Exotic or false -- Used for exotic suits and ranks?
 
 end
@@ -299,6 +297,30 @@ function Madcap.Funcs.blind_end()
 
     -- end of blind
     tell('Blind End')
+
+	-- Remove round
+	if G.GAME.rgmc_sinister then
+		MadLib.loop_table(G.GAME.rgmc_sinister, function(k,v)
+			v.rounds = v.rounds - 1
+			-- cash out
+			if v.rounds <= 0 then
+				if v.money then ease_dollars(v.money or 5) end
+				if v.consumeable then G.consumables:change_size(v.consumeable or 1) end
+				MadLib.simple_event(function()
+					play_sound('timpani',1.2)
+					return true
+				end, 0.1, 'after')
+				G.GAME.rgmc_sinister[k] = nil -- we are done
+				return true
+			end
+		end)
+	end
+
+	-- Do a mayhem check
+	if G.GAME.mayhem and G.GAME.mayhem > 0 then
+		Madcap.Funcs.blind_end_mayhem_check() -- done in case others want to edit this function
+	end
+
     if
         G.GAME.blind
         and G.GAME.blind.boss
@@ -773,19 +795,33 @@ Madcap.Funcs.make_long_title_line = function(text)
 end
 
 function Madcap.Funcs.get_mayhem()
-	return G.GAME and G.GAME.Mayhem or 0
+	return G.GAME and G.GAME.mayhem or 0
 end
 
 function Madcap.Funcs.get_max_mayhem()
 	return G.GAME and G.GAME.max_mayhem or 10
 end
 
-function Madcap.Funcs.get_mayhem_state()
-	return G.GAME and G.GAME.MayhemState or 0
+function Madcap.Funcs.get_mayhem_state(recalculate)
+	local mayhem = (G.GAME.mayhem or 0)
+	if not recalculate then
+		return G.GAME and G.GAME.mayhem_state or 0
+	else
+		local mayhem_state = 0
+		if mayhem > 9 then
+			mayhem_state = 3
+		elseif mayhem >= 6 then
+			mayhem_state = 2
+		elseif mayhem >= 3 then
+			mayhem_state = 1
+		end
+		return mayhem_state
+	end
 end
 
 function Madcap.Funcs.read_mayhem()
-	tell('Reading Mayhem...')
+	tell('Mayhem is now ' .. tostring(G.GAME.mayhem) .. ' / ' .. tostring(G.GAME.max_mayhem) .. '.')
+	tell('Mayhem State is now ' .. tostring(Madcap.Funcs.get_mayhem_state()) .. '.')
 end
 
 function MadLib.compare_numbers(a,b,and_equals)
@@ -802,10 +838,10 @@ function Madcap.Funcs.ease_mayhem(_mod, _check, _silent, _instant)
         local col   = (add_mayhem and G.C.RGMC_MAYHEM) or (lose_mayhem and G.C.RED) or G.C.FILTER
 
         _mod = _mod or 0
-		local _old = G.GAME.Mayhem
-        G.GAME.Mayhem = (G.GAME.Mayhem or 0) + _mod
-        if MadLib.compare_numbers(G.GAME.Mayhem, G.GAME.max_mayhem) then 
-			_mod = G.GAME.max_mayhem - (G.GAME.Mayhem + _mod)
+		local _old = (G.GAME.mayhem or 0)
+        G.GAME.mayhem = _old + _mod
+        if MadLib.compare_numbers(G.GAME.mayhem, G.GAME.max_mayhem) then 
+			_mod = G.GAME.max_mayhem - (G.GAME.mayhem + _mod)
 		end
 
         if round_UI then
@@ -814,7 +850,7 @@ function Madcap.Funcs.ease_mayhem(_mod, _check, _silent, _instant)
                 attention_text({
                     text            = text .. tostring(math.abs(_mod)),
                     scale           = 1,
-                    hold            = 0.7,
+                    hold            = _instant and 0 or 0.7,
                     cover           = round_UI.parent,
                     cover_colour    = col,
                     align           = 'cm',
@@ -823,17 +859,10 @@ function Madcap.Funcs.ease_mayhem(_mod, _check, _silent, _instant)
         end
 
 		local _new = lenient_bignum(_old + _mod)
-		local mayhem_state = 0
-		if _new > 9 then
-			mayhem_state = 3
-		elseif _new >= 6 then
-			mayhem_state = 2
-		elseif _new >= 3 then
-			mayhem_state = 1
-		end
+		local mayhem_state = Madcap.Funcs.get_mayhem_state(recalculate)
 
-		if mayhem_state ~= G.GAME.MayhemState then
-			G.GAME.MayhemState = mayhem_state
+		if mayhem_state ~= G.GAME.mayhem_state then
+			G.GAME.mayhem_state = mayhem_state
 		end
 
         --Play a SPOOKY noise sound
@@ -852,7 +881,7 @@ function Madcap.Funcs.ease_mayhem(_mod, _check, _silent, _instant)
             end
         end
 
-        SMODS.calculate_context({ mayhem_changed = G.GAME.Mayhem })
+        SMODS.calculate_context({ mayhem_changed = G.GAME.mayhem })
         if _check then Madcap.Funcs.read_mayhem() end -- does post-setting calculations (if requested)
         return true
     end, 0.5, 'immediate')
@@ -868,7 +897,7 @@ function Madcap.Funcs.get_end_of_round(context)
 end
 
 function Madcap.Funcs.set_mayhem(_mod, _check, _silent,_instant)
-    local _diff = (_mod or G.GAME.Mayhem) - G.GAME.Mayhem
+    local _diff = (_mod or G.GAME.mayhem) - G.GAME.mayhem
     return Madcap.Funcs.ease_mayhem(_diff, _check, _silent, _instant)
 end
 
@@ -1228,6 +1257,104 @@ function Madcap.Funcs.check_eval_card(card)
 	end
 end
 
+function Madcap.Funcs.calculate_mayhem_decay(max_mult)
+	-- Mayhem decay
+	local mayhem = G.GAME.mayhem or 0
+	local max_mayhem_mult = max_mult or 1.10
+	local mayhem_mult = MadLib.clamp(G.GAME.mayhem_decay or 0.85, 0.5, max_mayhem_mult)
+
+	local voids, lanterns, modded_suits, base_suits,enhancements,editions,seals = 0,0,0,0,0,0,0
+	local suits = {}
+
+	MadLib.loop_func(G.playing_cards, function(v)
+		-- Voids add more Mayhem than other suits.
+		suits[v.base.suit] = true
+		suits[v.base.suit] = true
+		local check_modded = true
+		if v:is_suit('rgmc_voids') then 
+			voids = voids + 1
+			check_modded = false
+		end
+		-- Lanterns reduce mayhem despite being a modded suit.
+		if v:is_suit('rgmc_lanterns') then 
+			lanterns = lanterns + 1
+			check_modded = false
+		end
+		-- Modded suits add Mayhem, Base suits reduce it
+		if check_modded and not MadLib.list_matches_one(MadLib.SuitTypes.Base, function(s)
+			return v:is_suit(s)
+		end) then
+			modded_suits = modded_suits + 1 -- goblets/towers/blooms/daggers/etc.
+		else
+			base_suits = base_suits + 1 -- hearts/diamonds/spades/clubs
+		end
+		if v.config.center.key ~= 'c_base' then -- has an enhancement
+			enhancements = enhancements + 1
+		end
+		if v.edition then -- has an edition
+			editions = editions + 1
+		end
+		if v.seal then -- has a seal
+			seals = seals + 1
+		end
+	end)
+
+	local starting_cards = 52 -- TODO: modify for decks that start out with fewer cards
+	
+	local sc_deviation = math.abs(#G.playing_cards - starting_cards)
+	--mayhem_mult = mayhem_mult * 0.9 * (1.01 ^ sc_deviation)
+
+	local exponentials = {
+		{n1 = 1.0050, n2 = voids },
+		{n1 = 0.9925, n2 = lanterns },
+		{n1 = 1.0025, n2 = modded_suits },
+		{n1 = 1.0020, n2 = base_suits },
+		{n1 = 1.0025, n2 = editions },
+		{n1 = 1.0015, n2 = enhancements },
+		{n1 = 1.0005, n2 = seals },
+		{n1 = 1.0005, n2 = sc_deviation },
+	}
+
+	MadLib.loop_func(exponentials, function(v)
+		local result = mayhem_mult * (v.n1^v.n2)
+		tell(tostring(mayhem_mult) .. " * " .. "( " .. tostring(v.n1) .. " ^ " .. tostring(v.n2) .. " ) = " .. tostring(result))
+		mayhem_mult = result
+	end)
+	
+	local mayhem_product = MadLib.round(math.max(0.5, math.min(mayhem_mult, max_mayhem_mult)), 2)
+	tell('Final Mayhem product is ' .. tostring(mayhem_product) .. '.')
+
+	return mayhem - math.min(mayhem - (mayhem * mayhem_product), mayhem)
+end
+
+function Madcap.Funcs.blind_end_mayhem_check()
+
+	local mayhem_add = Madcap.Funcs.calculate_mayhem_decay()
+	Madcap.Funcs.set_mayhem(mayhem_add, true, false)
+	local mayhem_state = G.GAME.mayhem_state or 0
+
+	Madcap.Func.read_mayhem()
+
+	-- state 1: randomize values
+	if mayhem_state > 0 then
+		MadLib.loop_func(G.playing_cards, function(v)
+			Madcap.Funcs.mayhemize(v)
+			MadLib.event({
+				trigger = 'after',
+				delay = '0.08',
+				func = function()
+					v:juice_up(0.2,0.2)
+					return true
+				end
+			})
+		end)
+		
+		MadLib.loop_func(G.jokers.cards, function(v)
+			Madcap.Funcs.mayhemize(v)
+		end)
+	end
+end
+
 -- CARD IS RANKLESS SUITLESS
 -- Used for rankless/suitless cards such as Stone, Abstract, and Bismuth
 function Madcap.Funcs.card_is_rankless_suitless(card)
@@ -1241,11 +1368,6 @@ end
 function Madcap.Funcs.get_blinds_per_ante()
 	return 3
 end
-
-
-
-
-
 
 -- From JenLib - used to determine whether the card has no suit.
 function Card:nosuit()
@@ -1779,6 +1901,55 @@ function level_up_hand(card, hand, instant, amount, context)
 	level_up_hand_ref(card, hand, instant, amount)
 end
 
+function Madcap.Funcs.level_up_subhand(card, hand, instant, amount, context)
+	amount = amount or 1
+
+	local basic_func = true
+
+
+	G.GAME.subhands[hand].level = G.GAME.subhands[hand].level + amount
+
+	-- CRYPTID: Universum also applies to sub-hands?!
+    if next(find_joker('cry-Universum')) then
+        universum_mod = 1
+        local effects = {}
+        SMODS.calculate_context({cry_universum = true}, effects)
+        for i = 1, #effects do
+            universum_mod = universum_mod * (effects[i] and effects[i].jokers and effects[i].jokers.mod or 1)
+        end
+        G.GAME.subhands[hand].level = math.max(0, G.GAME.subhands[hand].level + amount)
+        G.GAME.subhands[hand].mult 	= G.GAME.subhands[hand].mult 	* (universum_mod)^amount
+        G.GAME.subhands[hand].chips = G.GAME.subhands[hand].chips 	* (universum_mod)^amount
+		basic_func = false
+	end
+
+	if basic_func then
+    	G.GAME.subhands[hand].mult 	= G.GAME.subhands[hand].mult 	+ G.GAME.subhands[hand].l_mult*amount
+    	G.GAME.subhands[hand].chips = G.GAME.subhands[hand].chips 	+ G.GAME.subhands[hand].l_chips*amount
+	end
+
+    if not instant and not Talisman.config_file.disable_anims then
+        MadLib.event({trigger = 'after', delay = 0.2, func = function()
+            play_sound('tarot1')
+            if card and card.juice_up then card:juice_up(0.6, 0.35) end
+            G.TAROT_INTERRUPT_PULSE = true
+            return true end })
+        update_hand_text({delay = 0}, {mult = MadLib.calculate_mult(G.GAME.subhands[hand].mult), StatusText = true})
+        MadLib.event({trigger = 'after', delay = 0.9, func = function()
+            play_sound('tarot1')
+            if card and card.juice_up then card:juice_up(0.6, 0.35) end
+            return true end })
+        update_hand_text({delay = 0}, {chips = MadLib.calculate_chips(G.GAME.subhands[hand].chips), StatusText = true})
+        MadLib.event({trigger = 'after', delay = 0.9, func = function()
+            play_sound('tarot1')
+            if card and card.juice_up then card:juice_up(0.6, 0.35) end
+            G.TAROT_INTERRUPT_PULSE = nil
+            return true end })
+        update_hand_text({sound = 'rgmc_pop', volume = 0.7, pitch = 1.0, delay = 0}, {level = G.GAME.subhands[hand].level})
+        delay(1.3)
+    end
+end
+
 -- Some stickers prevent debuffs
 local set_debuff_ref = Card.set_debuff
 function Card:set_debuff(should_debuff)
@@ -2166,7 +2337,7 @@ function create_UIBox_HUD()
 								{ n = G.UIT.O,
 									config = {
 										object = DynaText({
-											string = { { ref_table = G.GAME, ref_value = 'Mayhem'} },
+											string = { { ref_table = G.GAME, ref_value = 'mayhem'} },
 											colours = {G.C.RGMC_UNUSUAL},
 											shadow = true,
 											scale = 2*scale
@@ -2819,7 +2990,7 @@ function Madcap.Funcs.mayhemize_table(_card, _table, _args)
 				local _key = k ~= 'extra' and k
 				local _data = k and Madcap.MayhemConversions[_key]
 				if Madcap.DefineExtras[_card.config.center.key] then
-					tell('Finding extra value...')
+					--tell('Finding extra value...')
 					_data = Madcap.DefineExtras[_card.config.center.key][k]
 				end
 				local _xval = _data and _data.multiply
@@ -2831,7 +3002,7 @@ function Madcap.Funcs.mayhemize_table(_card, _table, _args)
 				then
 					return false 
 				end -- don't bother if multiplying value and not set
-				tell('Key ' .. k .. ' explored!')
+				--tell('Key ' .. k .. ' explored!')
 
 				local factor = (_data and _data.factor) or 1
 				local must_round = (_data and _data.round or false)

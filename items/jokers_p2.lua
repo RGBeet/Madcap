@@ -35,11 +35,11 @@ local primordial_joker = {
     config = { extra = { mult = 4 } },
 	loc_vars = function(self, info_queue, card)
 		return MadLib.collect_vars(card.ability.extra.mult,
-            card.ability.extra.mult * (G.GAME and G.GAME.Mayhem or 0))
+            card.ability.extra.mult * (G.GAME and G.GAME.mayhem or 0))
 	end,
     calculate = function(self, card, context)
         if context.joker_main or context.forcetrigger then
-            return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddMult, card, card.ability.extra.mult * (G.GAME and G.GAME.Mayhem or 0))
+            return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddMult, card, card.ability.extra.mult * (G.GAME and G.GAME.mayhem or 0))
         end
     end
 }

@@ -364,15 +364,15 @@ local abyssal = {
 		return G.GAME.edition_rate * self.weight
 	end,
 	loc_vars = function(self, info_queue)
-		local total = (G.GAME.Mayhem or 0) * self.config.extra.xmult_mod
+		local total = (G.GAME.mayhem or 0) * self.config.extra.xmult_mod
 		return MadLib.collect_vars(total, self.config.extra.xmult_mod)
 	end,
 	calculate = function(self, card, context)
 		if
 			Madcap.Funcs.edition_in_play(context,card)
-			and G.GAME.Mayhem > 0
+			and G.GAME.mayhem > 0
 		then
-			local total = G.GAME.Mayhem * self.config.extra.xmult_mod
+			local total = G.GAME.mayhem * self.config.extra.xmult_mod
             return MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiMult, card, total)
 		end
 	end,

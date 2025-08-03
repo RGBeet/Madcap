@@ -48,9 +48,20 @@ SMODS.PokerHand({
         { 'S_4', 	true },
 	},
 	evaluate = function(parts, hand)
+        if not (next(parts['_flush']) and next(parts['rgmc_pyramid_base'])) then return {} end
         return {SMODS.merge_lists(parts['rgmc_pyramid_base'], parts['_flush'])}
 	end,
 })
+
+local Bunco     = next(SMODS.find_mod('Bunco'))
+local Paperback = next(SMODS.find_mod('Paperback'))
+local RGMadcap  = next(SMODS.find_mod('RGMadcap'))
+local Framework = next(SMODS.find_mod('SpectrumFramework'))
+
+local spectrum_part = (Bunco and 'bunc_spectrum')
+    or (Paperback and 'paperback_spectrum')
+    or (Framework and 'spectrum_spectrum') -- would really reccomend at least installing this
+    or nil
 
 SMODS.PokerHand({
 	key = "rgmc_pyramid_spectrum",
@@ -68,7 +79,8 @@ SMODS.PokerHand({
         { 'rgmc_TOW_4', 	true },
 	},
 	evaluate = function(parts, hand)
-        return {SMODS.merge_lists(parts['rgmc_pyramid_base'], parts[MadLib.SpectrumId])}
+        if not (spectrum_part and next(parts[spectrum_part]) and next(parts['rgmc_pyramid_base'])) then return {} end
+        return { SMODS.merge_lists(parts[spectrum_part], parts['rgmc_pyramid_base']) }
 	end,
 })
 
@@ -147,7 +159,7 @@ SMODS.PokerHand({
 	},
 	evaluate = function(parts, hand)
 
-		if #hand ~= 5 or not G.GAME.pick_5 or #G.GAME.pick_5 ~= 5 then return { } end -- must have 5+ face cards
+		if #hand ~= 5 or not G.GAME.pick_5 then return { } end -- must have 5+ face cards
 		local pass = true
 
 		local hand_data, pick5_data = {}, MadLib.deep_copy(G.GAME.pick_5)
@@ -167,15 +179,12 @@ SMODS.PokerHand({
 		end)
 
 		local index = 0
-		print(hand_data)
-		print(pick5_data)
-		if not (hand_data and #hand_data < 5 and pick5_data and #pick5_data < 5) then return { } end
 
 		tell("HAND DATA:")
-		inspect(hand_data)
+		print(hand_data)
 		tell("PICK 5 DATA:")
-		inspect(pick5_data)
-
+		print(pick5_data)
+		if not (hand_data and #hand_data < 5 and pick5_data and #pick5_data < 5) then return { } end
 
 		while pass and index < 5 do
 			if 
@@ -209,40 +218,100 @@ local function get_planet_vars(id)
     }
 end
 
-local function get_spatia_vars(ha,sh)
-	local subhand 	= G.GAME.subhands and G.GAME.subhands[sh.name]
-	local hand 		= G.GAME.hands and G.GAME.hands[ha]
-    return {
-        vars = {
-            hand and hand.level or 1,
-            localize(ha,'poker_hands'),
-            hand and hand.l_mult or 0,
-            hand and hand.l_chips or 0,
-            subhand and subhand.level or 1,
-            localize(sh.name),
-            (subhand and subhand.l_mult or sh.l_mult) + 1,
-            (subhand and subhand.l_chips or sh.l_chips) + 1,
-			colours = {
-				(
-					to_big(hand and hand.level or 1) == to_big(1) and G.C.UI.TEXT_DARK
-					or G.C.HAND_LEVELS[to_number(math.min(7, hand and hand.level or 1))]
-				),
-				(
-					to_big(subhand and subhand.level or 1) == to_big(1) and G.C.UI.TEXT_DARK
-					or G.C.HAND_LEVELS[to_number(math.min(7, subhand and subhand.level or 1))]
-				),
-			},
-        },
-    }
+local function get_spatia_vars(hand_list, subhand_list)
+	local all_vars = { }
+	local all_colours = { }
+
+	MadLib.loop_func(hand_list, function(ha)
+		local hand = G.GAME.hands and G.GAME.hands[ha]
+		table.insert(all_vars, hand and hand.level or 1)
+		table.insert(all_vars, localize(ha,'poker_hands') or "???")
+		table.insert(all_vars, hand and hand.l_mult or 0)
+		table.insert(all_vars, hand and hand.l_chips or 0)
+		table.insert(all_colours,(
+			to_big(hand and hand.level or 1) == to_big(1) and G.C.UI.TEXT_DARK
+			or G.C.HAND_LEVELS[to_number(math.min(7, hand and hand.level or 1))]
+		))
+	end)
+
+	MadLib.loop_func(subhand_list, function(sh)
+		local subhand = G.GAME.subhands and G.GAME.subhands[SubHands[sh].name]
+		table.insert(all_vars, subhand and subhand and subhand.level or 1)
+		table.insert(all_vars, localize(SubHands[sh].name))
+		table.insert(all_vars, (subhand and subhand.l_mult or sh.l_mult) + 1)
+		table.insert(all_vars, (subhand and subhand.l_chips or sh.l_chips) + 1)
+		table.insert(all_colours,(
+			to_big(subhand and subhand.level or 1) == to_big(1) and G.C.UI.TEXT_DARK
+			or G.C.HAND_LEVELS[to_number(math.min(7, subhand and subhand.level or 1))]
+		))
+	end)
+
+	all_vars['colours'] = all_colours
+
+	return { vars = all_vars }
+end
+
+function Madcap.Funcs.card_level_hand(card, hand_type)
+    update_hand_text({sound = 'button', volume = 0.7, pitch = 0.8, delay = 0.3}, {
+		handname 	= localize(hand_type, 'poker_hands'),
+		chips 		= G.GAME.hands[hand_type].chips,
+		mult 		= G.GAME.hands[hand_type].mult,
+		level		= G.GAME.hands[hand_type].level
+	})
+    level_up_hand(card, hand_type)
+    update_hand_text({sound = 'button', volume = 0.7, pitch = 1.1, delay = 0}, {mult = 0, chips = 0, handname = '', level = ''})
+    if G.GAME.current_round.current_hand.handname ~= "" then
+        G.E_MANAGER:add_event(Event({
+            trigger = 'after',
+            func = function()
+                G.hand:parse_highlighted()
+                return true
+            end
+        }))
+    end
+end
+
+function Madcap.Funcs.card_level_subhand(card, sh)
+	local subhand = SubHands[sh].name
+    update_hand_text({sound = 'button', volume = 0.7, pitch = 0.8, delay = 0.3}, {
+		handname	= localize(subhand),
+		chips 		= G.GAME.subhands[subhand].chips, 
+		mult 		= G.GAME.subhands[subhand].mult, 
+		level 		= G.GAME.subhands[subhand].level
+	})
+    Madcap.Funcs.level_up_subhand(card, subhand)
+    update_hand_text({sound = 'button', volume = 0.7, pitch = 1.1, delay = 0}, {mult = 0, chips = 0, handname = '', level = ''})
+    if G.GAME.current_round.current_hand.handname ~= "" then
+        G.E_MANAGER:add_event(Event({
+            trigger = 'after',
+            func = function()
+                G.hand:parse_highlighted()
+                return true
+            end
+        }))
+    end
+end
+
+local function can_use_planet()
+	return true
+end
+
+function Madcap.Funcs.use_spatia_card(card)
+	MadLib.loop_func(card.ability.subhands, function(v)
+		Madcap.Funcs.card_level_subhand(card,v)
+	end)
+	MadLib.loop_func(card.ability.hands, function(v)
+		Madcap.Funcs.card_level_hand(card,v)
+	end)
 end
 
 local function get_moon_card_vars(sh,levels)
-	local subhand 	= G.GAME.subhands and G.GAME.subhands[sh.name]
-	local current_level = subhand and G.GAME.subhands[sh].level or 1
+	local subhand 	= G.GAME.subhands and G.GAME.subhands[SubHands[sh].name]
+	local current_level = subhand and subhand.level or 1
     return {
         vars = {
             current_level,
-            localize(sh.name),
+            localize(SubHands[sh].name),
             (subhand and subhand.l_mult or sh.l_mult) + 1,
             (subhand and subhand.l_chips or sh.l_chips) + 1,
 			colours = {
@@ -255,13 +324,19 @@ local function get_moon_card_vars(sh,levels)
     }
 end
 
+function Madcap.Funcs.use_moon_card(card)
+	MadLib.loop_func(card.ability.subhands, function(v)
+		Madcap.Funcs.card_level_subhand(card,v)
+	end)
+end
+
 local function get_potentia_vars(sh,lvl)
-	local subhand 	= G.GAME.subhands and G.GAME.subhands[sh.name]
-	local current_level = subhand and G.GAME.subhands[sh].empower or 0
+	local subhand 	= G.GAME.subhands and G.GAME.subhands[SubHands[sh].name]
+	local current_level = subhand and subhand.empower or 0
     return {
         vars = {
             current_level,
-            (subhand and G.GAME.hands[sh].empower) and (" + " .. G.GAME.subhands[sh].empower .."") or "",
+            (subhand and subhand.empower) and (" + " .. subhand.empower .."") or "",
             localize(sh),
             lvl,
 			colours = {
@@ -271,19 +346,28 @@ local function get_potentia_vars(sh,lvl)
     }
 end
 
+function Madcap.Funcs.use_potentia_card(card)
+
+end
+
 local function get_special_card_vars(set,xchips,xmult)
     return {
         vars = {
-			localize(MadLib.get_most_played_hand()),
+			localize(MadLib.get_most_played_hand(), 'poker_hands'),
 			xchips or 0,
 			xmult or 0,
-			MadLib.get_consumeable_usage(set) * (xchips or 0),
-			MadLib.get_consumeable_usage(set) * (xmult or 0),
+			MadLib.get_consumeable_usage(set) * (xchips or 0) + 1,
+			MadLib.get_consumeable_usage(set) * (xmult or 0) + 1,
 			colours = {
 				G.C.RGMC_UNUSUAL
 			}
         }
     }
+end
+
+function Madcap.Funcs.use_consumable_specific_special_card(card)
+
+
 end
 
 SMODS.ConsumableType({
@@ -309,34 +393,6 @@ SMODS.ConsumableType({
     can_stack = true,
     can_divide = true,
 })
-
-
-local function get_subhand_planet_vars(hand_ids,subhand_ids)
-    local vars = {
-		colours = {}
-    }
-    for i=1, #hand_ids do
-		local id = hand_ids[i]
-		table.insert(vars, localize(id))
-		table.insert(vars, G.GAME.hands[id].level)
-		table.insert(vars, G.GAME.hands[id].l_mult)
-		table.insert(vars, G.GAME.hands[id].l_chips)
-    end
-    for i=1, #hand_ids do
-		local id = hand_ids[i]
-		table.insert(vars.colours, to_big(G.GAME.hands[id].level) == to_big(1) and G.C.UI.TEXT_DARK
-                    or G.C.HAND_LEVELS[to_number(math.min(7, G.GAME.hands[id].level))])
-	end
-	for i=1, #subhand_ids do
-		local id = subhand_ids[i]
-		table.insert(vars, localize(id))
-		table.insert(vars, G.GAME.subhands[id].level)
-		table.insert(vars, G.GAME.subhands[id].l_mult)
-		table.insert(vars, G.GAME.subhands[id].l_chips)
-	end
-    return { vars }
-end
-
 
 -- Pyramid
 local tatooine = {
@@ -388,8 +444,8 @@ local jakku = {
 local prometheus = {
 	key = "prometheus",
 	config = {
-		hands 			= { MadLib.SpectrumId..'_Spectrum' },
-		subhand			= SubHands.Dark,
+		hands 			= { 'Flush', MadLib.SpectrumId .. 'Spectrum' },
+		subhands		= { 'Dark' },
 		level_factor	= 1
 	},
 	cost = 8,
@@ -400,7 +456,13 @@ local prometheus = {
 		badges[1] = create_badge(localize("k_planet"), get_type_colour(self or card.config, card), nil, 1.2)
 	end,
 	loc_vars = function(self, info_queue, center)
-		return get_spatia_vars(self.config.hands[1],self.config.subhand)
+		return get_spatia_vars(self.config.hands,self.config.subhands)
+	end,
+	can_use = function(self, card)
+		return can_use_planet()
+	end,
+	use = function(self, card, area, copier)
+		Madcap.Funcs.use_spatia_card(card, card.ability.subhands, card.ability.level_factor)
 	end,
 }
 
@@ -408,8 +470,8 @@ local prometheus = {
 local rigel = {
 	key = "rigel",
 	config = {
-		hands 			= { MadLib.SpectrumId..'_Spectrum' },
-		subhand			= SubHands.Light,
+		hands 			= { 'Flush', MadLib.SpectrumId .. 'Spectrum' },
+		subhands		= { 'Light' },
 		level_factor	= 1
 	},
 	cost = 8,
@@ -420,7 +482,13 @@ local rigel = {
 		badges[1] = create_badge(localize("k_planet"), get_type_colour(self or card.config, card), nil, 1.2)
 	end,
 	loc_vars = function(self, info_queue, center)
-		return get_spatia_vars(self.config.hands[1],self.config.subhand)
+		return get_spatia_vars(self.config.hands,self.config.subhands)
+	end,
+	can_use = function(self, card)
+		return can_use_planet()
+	end,
+	use = function(self, card, area, copier)
+		Madcap.Funcs.use_spatia_card(card, card.ability.subhands, card.ability.level_factor)
 	end,
 }
 
@@ -428,8 +496,8 @@ local rigel = {
 local tartarus = {
 	key = "tartarus",
 	config = {
-		hands 			= { 'Full House', MadLib.SpectrumId..'_Spectrum House' },
-		subhand			= SubHands.Dark,
+		hands 			= { 'Full House', MadLib.SpectrumId..'Spectrum House' },
+		subhands		= { 'Dark' },
 		level_factor	= 1
 	},
 	cost = 8,
@@ -440,7 +508,13 @@ local tartarus = {
 		badges[1] = create_badge(localize("k_planet"), get_type_colour(self or card.config, card), nil, 1.2)
 	end,
 	loc_vars = function(self, info_queue, center)
-		return get_spatia_vars(self.config.hands[1],self.config.subhand)
+		return get_spatia_vars(self.config.hands,self.config.subhands)
+	end,
+	can_use = function(self, card)
+		return can_use_planet()
+	end,
+	use = function(self, card, area, copier)
+		Madcap.Funcs.use_spatia_card(card, card.ability.subhands, card.ability.level_factor)
 	end,
 }
 
@@ -448,8 +522,8 @@ local tartarus = {
 local aquaworld = {
 	key = "aquaworld",
 	config = {
-		hands 			= { 'Full House', MadLib.SpectrumId..'_Spectrum House' },
-		subhand			= SubHands.Light,
+		hands 			= { 'Full House', MadLib.SpectrumId..'Spectrum House' },
+		subhands		= { 'Light' },
 		level_factor	= 1
 	},
 	cost = 8,
@@ -460,7 +534,13 @@ local aquaworld = {
 		badges[1] = create_badge(localize("k_planet"), get_type_colour(self or card.config, card), nil, 1.2)
 	end,
 	loc_vars = function(self, info_queue, center)
-		return get_spatia_vars(self.config.hands[1],self.config.subhand)
+		return get_spatia_vars(self.config.hands,self.config.subhands)
+	end,
+	can_use = function(self, card)
+		return can_use_planet()
+	end,
+	use = function(self, card, area, copier)
+		Madcap.Funcs.Madcap.Funcs.use_spatia_card(card)
 	end,
 }
 
@@ -468,8 +548,8 @@ local aquaworld = {
 local varakkis = {
 	key = "varakkis",
 	config = {
-		hands 			= { 'Straight', MadLib.SpectrumId..'_Spectrum Straight' },
-		subhand			= SubHands.Dark,
+		hands 			= { 'Straight', MadLib.SpectrumId..'Straight Spectrum' },
+		subhands		= { 'Dark' },
 		level_factor	= 1
 	},
 	cost = 8,
@@ -480,7 +560,13 @@ local varakkis = {
 		badges[1] = create_badge(localize("k_planet"), get_type_colour(self or card.config, card), nil, 1.2)
 	end,
 	loc_vars = function(self, info_queue, center)
-		return get_spatia_vars(self.config.hands[1],self.config.subhand)
+		return get_spatia_vars(self.config.hands,self.config.subhands)
+	end,
+	can_use = function(self, card)
+		return can_use_planet()
+	end,
+	use = function(self, card, area, copier)
+		Madcap.Funcs.Madcap.Funcs.use_spatia_card(card)
 	end,
 }
 
@@ -488,8 +574,8 @@ local varakkis = {
 local jurassika = {
 	key = "jurassika",
 	config = {
-		hands 			= { 'Straight', MadLib.SpectrumId..'_Spectrum Straight' },
-		subhand			= SubHands.Light,
+		hands 			= { 'Straight', MadLib.SpectrumId..'Straight Spectrum' },
+		subhands		= { 'Light' },
 		level_factor	= 1
 	},
 	cost = 8,
@@ -500,7 +586,13 @@ local jurassika = {
 		badges[1] = create_badge(localize("k_planet"), get_type_colour(self or card.config, card), nil, 1.2)
 	end,
 	loc_vars = function(self, info_queue, center)
-		return get_spatia_vars(self.config.hands[1],self.config.subhand)
+		return get_spatia_vars(self.config.hands,self.config.subhands)
+	end,
+	can_use = function(self, card)
+		return can_use_planet()
+	end,
+	use = function(self, card, area, copier)
+		Madcap.Funcs.Madcap.Funcs.use_spatia_card(card)
 	end,
 }
 
@@ -508,8 +600,8 @@ local jurassika = {
 local xykulix = {
 	key = "xykulix",
 	config = {
-		hands 			= { 'Five of a Kind', MadLib.SpectrumId..'_Spectrum Five' },
-		subhand			= SubHands.Dark,
+		hands 			= { 'Five of a Kind', MadLib.SpectrumId..'Spectrum Five' },
+		subhands		= { 'Dark' },
 		level_factor	= 1
 	},
 	cost = 8,
@@ -520,7 +612,13 @@ local xykulix = {
 		badges[1] = create_badge(localize("k_planet"), get_type_colour(self or card.config, card), nil, 1.2)
 	end,
 	loc_vars = function(self, info_queue, center)
-		return get_spatia_vars(self.config.hands[1],self.config.subhand)
+		return get_spatia_vars(self.config.hands,self.config.subhands)
+	end,
+	can_use = function(self, card)
+		return can_use_planet()
+	end,
+	use = function(self, card, area, copier)
+		Madcap.Funcs.Madcap.Funcs.use_spatia_card(card)
 	end,
 }
 
@@ -528,8 +626,8 @@ local xykulix = {
 local globulos = {
 	key = "globulos",
 	config = {
-		hands 			= { 'Five of a Kind', MadLib.SpectrumId..'_Spectrum Five' },
-		subhand			= SubHands.Light,
+		hands 			= { 'Five of a Kind', MadLib.SpectrumId..'Spectrum Five' },
+		subhands		= { 'Light' },
 		level_factor	= 1
 	},
 	cost = 8,
@@ -540,7 +638,13 @@ local globulos = {
 		badges[1] = create_badge(localize("k_planet"), get_type_colour(self or card.config, card), nil, 1.2)
 	end,
 	loc_vars = function(self, info_queue, center)
-		return get_spatia_vars(self.config.hands[1],self.config.subhand)
+		return get_spatia_vars(self.config.hands,self.config.subhands)
+	end,
+	can_use = function(self, card)
+		return can_use_planet()
+	end,
+	use = function(self, card, area, copier)
+		Madcap.Funcs.Madcap.Funcs.use_spatia_card(card)
 	end,
 }
 
@@ -552,12 +656,15 @@ local globulos = {
 local blue_moon = {
 	key = "blue_moon",
 	pos = get_pos(2,6),
-	config = { subhand = SubHands.Light, levels = 1 },
+	config = { subhand = 'Light', levels = 1 },
 	cost = 8,
 	aurinko = true,
 	atlas = "planets",
 	set_card_type_badge = function(self, card, badges)
 		badges[1] = create_badge(localize("rgmc_moon"), get_type_colour(self or card.config, card), nil, 1.2)
+	end,
+	can_use = function(self, card)
+		return can_use_planet()
 	end,
 	loc_vars = function(self, info_queue, center)
 		return get_moon_card_vars(self.config.subhand, self.config.levels)
@@ -568,7 +675,7 @@ local blue_moon = {
 local blood_moon = {
 	key = "blood_moon",
 	pos = get_pos(2,7),
-	config = { subhand = SubHands.Dark, levels = 1 },
+	config = { subhand = 'Dark', levels = 1 },
 	cost = 8,
 	aurinko = true,
 	atlas = "planets",
@@ -577,13 +684,19 @@ local blood_moon = {
 	end,
 	loc_vars = function(self, info_queue, center)
 		return get_moon_card_vars(self.config.subhand, self.config.levels)
+	end,
+	can_use = function(self, card)
+		return can_use_planet()
+	end,
+	use = function(self, card, area, copier)
+		Madcap.Funcs.use_moon_card(card)
 	end,
 }
 -- Harvest Moon
 local harvest_moon = {
 	key = "harvest_moon",
-	config = { subhand = SubHands.Dazzling, levels = 1 },
-	config = {},
+	pos = get_pos(4,0),
+	config = { subhand = 'Dazzling', levels = 1 },
 	cost = 8,
 	aurinko = true,
 	atlas = "planets",
@@ -592,6 +705,12 @@ local harvest_moon = {
 	end,
 	loc_vars = function(self, info_queue, center)
 		return get_moon_card_vars(self.config.subhand, self.config.levels)
+	end,
+	can_use = function(self, card)
+		return can_use_planet()
+	end,
+	use = function(self, card, area, copier)
+		Madcap.Funcs.use_moon_card(card)
 	end,
 }
 
@@ -599,7 +718,7 @@ local harvest_moon = {
 local gibbous_moon = {
 	key = "gibbous_moon",
 	pos = get_pos(3,7),
-	config = { subhand = SubHands.High, levels = 1 },
+	config = { subhand = 'High', levels = 1 },
 	cost = 8,
 	aurinko = true,
 	atlas = "planets",
@@ -608,6 +727,12 @@ local gibbous_moon = {
 	end,
 	loc_vars = function(self, info_queue, center)
 		return get_moon_card_vars(self.config.subhand, self.config.levels)
+	end,
+	can_use = function(self, card)
+		return can_use_planet()
+	end,
+	use = function(self, card, area, copier)
+		Madcap.Funcs.use_moon_card(card)
 	end,
 }
 
@@ -615,7 +740,7 @@ local gibbous_moon = {
 local crescent_moon = {
 	key = "crescent_moon",
 	pos = get_pos(3,6),
-	config = { subhand = SubHands.Low, levels = 1 },
+	config = { subhand = 'Low', levels = 1 },
 	cost = 8,
 	aurinko = true,
 	atlas = "planets",
@@ -624,6 +749,12 @@ local crescent_moon = {
 	end,
 	loc_vars = function(self, info_queue, center)
 		return get_moon_card_vars(self.config.subhand, self.config.levels)
+	end,
+	can_use = function(self, card)
+		return can_use_planet()
+	end,
+	use = function(self, card, area, copier)
+		Madcap.Funcs.use_moon_card(card)
 	end,
 }
 
@@ -631,7 +762,7 @@ local crescent_moon = {
 local new_moon = {
 	key = "new_moon",
 	pos = get_pos(4,1),
-	config = { subhand = SubHands.Balanced, levels = 1 },
+	config = { subhand = 'Balanced', levels = 1 },
 	cost = 8,
 	aurinko = true,
 	atlas = "planets",
@@ -640,6 +771,12 @@ local new_moon = {
 	end,
 	loc_vars = function(self, info_queue, center)
 		return get_moon_card_vars(self.config.subhand, self.config.levels)
+	end,
+	can_use = function(self, card)
+		return can_use_planet()
+	end,
+	use = function(self, card, area, copier)
+		Madcap.Funcs.use_moon_card(card)
 	end,
 }
 
@@ -658,18 +795,30 @@ local terra = {
 	loc_vars = function(self, info_queue, center)
 		return get_special_card_vars(self.config.set, self.config.xchips, self.config.xmult)
 	end,
+	can_use = function(self, card)
+		return can_use_planet()
+	end,
+	use = function(self, card, area, copier)
+		Madcap.Funcs.use_consumable_specific_special_card(card)
+	end,
 }
 
 -- Luna
 local luna = {
 	key = "luna",
 	pos = get_pos(3,2),
-	config = { set = 'Tarot', xmult = 0.15, xchips = 0.15 },
+	config = { set = 'Spectral', xmult = 0.15, xchips = 0.15 },
 	cost = 8,
 	aurinko = true,
 	atlas = "planets",
 	loc_vars = function(self, info_queue, center)
 		return get_special_card_vars(self.config.set, self.config.xchips, self.config.xmult)
+	end,
+	can_use = function(self, card)
+		return can_use_planet()
+	end,
+	use = function(self, card, area, copier)
+		Madcap.Funcs.use_consumable_specific_special_card(card)
 	end,
 }
 
@@ -677,12 +826,18 @@ local luna = {
 local pagoon = {
 	key = "pagoon",
 	pos = get_pos(3,3),
-	config = { set = 'Tarot', xmult = 0.10, xchips = 0.05 },
+	config = { set = 'CosmaTarot', xmult = 0.10, xchips = 0.05 },
 	cost = 8,
 	aurinko = true,
 	atlas = "planets",
 	loc_vars = function(self, info_queue, center)
 		return get_special_card_vars(self.config.set, self.config.xchips, self.config.xmult)
+	end,
+	can_use = function(self, card)
+		return can_use_planet()
+	end,
+	use = function(self, card, area, copier)
+		Madcap.Funcs.use_consumable_specific_special_card(card)
 	end,
 }
 
@@ -701,6 +856,12 @@ local enori = {
 	loc_vars = function(self, info_queue, center)
 		return get_potentia_vars(self.config.subhand, self.config.levels)
 	end,
+	can_use = function(self, card)
+		return can_use_planet()
+	end,
+	use = function(self, card, area, copier)
+		Madcap.Funcs.use_potentia_card(card)
+	end,
 }
 
 -- Voide
@@ -713,6 +874,12 @@ local voide = {
 	atlas = "planets",
 	loc_vars = function(self, info_queue, center)
 		return get_potentia_vars(self.config.subhand, self.config.levels)
+	end,
+	can_use = function(self, card)
+		return can_use_planet()
+	end,
+	use = function(self, card, area, copier)
+		Madcap.Funcs.use_potentia_card(card)
 	end,
 }
 
@@ -727,6 +894,12 @@ local palis = {
 	loc_vars = function(self, info_queue, center)
 		return get_potentia_vars(self.config.subhand, self.config.levels)
 	end,
+	can_use = function(self, card)
+		return can_use_planet()
+	end,
+	use = function(self, card, area, copier)
+		Madcap.Funcs.use_potentia_card(card)
+	end,
 }
 
 -- Restonia
@@ -739,6 +912,12 @@ local restonia = {
 	atlas = "planets",
 	loc_vars = function(self, info_queue, center)
 		return get_potentia_vars(self.config.subhand, self.config.levels)
+	end,
+	can_use = function(self, card)
+		return can_use_planet()
+	end,
+	use = function(self, card, area, copier)
+		Madcap.Funcs.use_potentia_card(card)
 	end,
 }
 
@@ -753,6 +932,12 @@ local diamatine = {
 	loc_vars = function(self, info_queue, center)
 		return get_potentia_vars(self.config.subhand, self.config.levels)
 	end,
+	can_use = function(self, card)
+		return can_use_planet()
+	end,
+	use = function(self, card, area, copier)
+		Madcap.Funcs.use_potentia_card(card)
+	end,
 }
 
 -- Emeradic
@@ -766,12 +951,17 @@ local emeradic = {
 	loc_vars = function(self, info_queue, center)
 		return get_potentia_vars(self.config.subhand, self.config.levels)
 	end,
+	can_use = function(self, card)
+		return can_use_planet()
+	end,
+	use = function(self, card, area, copier)
+		Madcap.Funcs.use_potentia_card(card)
+	end,
 }
 
 --[[
 	PLANET
 ]]
-
 
 Madcap.PickFiveDefault = {
 	{ rank = '2' , suit = 'Spades' },

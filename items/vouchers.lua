@@ -229,7 +229,7 @@ local high_roller = {
 }
 
 local function clamp_mayhem(val)
-	local _total 	= ((G.GAME and G.GAME.Mayhem) or 0) + math.max(0,val)
+	local _total 	= ((G.GAME and G.GAME.mayhem) or 0) + math.max(0,val)
 	local _max 		= ((G.GAME and G.GAME.max_mayhem) or 10)
 	return _total < _max and _total or (_max - _total)
 end

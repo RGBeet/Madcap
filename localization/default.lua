@@ -2328,39 +2328,6 @@ return {
                     "{C:inactive}(Currently {X:chips,C:white}X#4#{C:inactive} and {X:mult,C:white}X#5#{C:inactive})"
                 },
             },
-            c_rgmc_terra = {
-                name = "Terra",
-                text = {
-                    "Gives {C:attention}most played{} hand",
-                    "{C:inactive}(Currently{C:attention,E:1}#1#{}{C:inactive})",
-                    "{X:mult,C:white}X#2#{} Mult and {X:chips,C:white}X#3#{} Chips",
-                    "per {C:tarot}Tarot{} Card used{}",
-                    "this Ante",
-                    "{C:inactive}(Currently {X:chips,C:white}X#4#{C:inactive} and {X:mult,C:white}X#5#{C:inactive})"
-                },
-            },
-            c_rgmc_luna = {
-                name = "Luna",
-                text = {
-                    "Gives {C:attention}most played{} hand",
-                    "{C:inactive}(Currently{C:attention,E:1}#1#{}{C:inactive})",
-                    "{X:mult,C:white}X#2#{} Mult and {X:chips,C:white}X#3#{} Chips",
-                    "per {C:spectral}Spectral{} Card used{}",
-                    "this Ante",
-                    "{C:inactive}(Currently {X:chips,C:white}X#4#{C:inactive} and {X:mult,C:white}X#5#{C:inactive})"
-                },
-            },
-            c_rgmc_pagoon = {
-                name = "Pagoon",
-                text = {
-                    "Gives {C:attention}most played{} hand",
-                    "{C:inactive}(Currently{C:attention,E:1}#1#{}{C:inactive})",
-                    "{X:mult,C:white}X#2#{} Mult and {X:chips,C:white}X#3#{} Chips",
-                    "per {C:rgmc_cosma}Cosma{} Tarot used{}",
-                    "this Ante",
-                    "{C:inactive}(Currently {X:chips,C:white}X#4#{C:inactive} and {X:mult,C:white}X#5#{C:inactive})"
-                },
-            },
             c_rgmc_sol_3 = {
                 name = "Sol III",
                 text = {
@@ -2425,16 +2392,22 @@ return {
                 name = "Rigel IV",
                 text = {
                     {
-                        "{S:0.8}({S:0.8,V:1}lvl.#1#{S:0.8}){} Level up",
-                        "{C:attention}#2#",
-                        "{C:mult}+#3#{} Mult and",
-                        "{C:chips}+#4#{} chips",
+                        "{S:0.6}({S:0.6,V:1}lvl.#1#{S:0.6}){S:0.75} Level up",
+                        "{S:0.75,C:attention}#2#",
+                        "{S:0.75,C:mult}+#3#{S:0.75} Mult and",
+                        "{S:0.75,C:chips}+#4#{S:0.75} Chips",
                     },
                     {
-                        "{S:0.8}({S:0.8,V:2}lvl.#5#{S:0.8}){} Level up",
-                        "{C:attention}#6# {C:inactive}Sub-Hand{}",
-                        "{X:mult,C:white}X#7#{} Mult and",
-                        "{X:chips,C:white}X#8#{} chips",
+                        "{S:0.6}({S:0.6,V:2}lvl.#5#{S:0.6}){S:0.75} Level up",
+                        "{S:0.75,C:attention}#6#",
+                        "{S:0.75,C:mult}+#7#{S:0.75} Mult and",
+                        "{S:0.75,C:chips}+#8#{S:0.75} Chips",
+                    },
+                    {
+                        "{S:0.6}({S:0.6,V:3}lvl.#9#{S:0.6}){S:0.75} Level up",
+                        "{S:0.75,C:attention}#10# {C:inactive}Sub-Hand{}",
+                        "{S:0.75,X:mult,C:white}X#11#{S:0.75} Mult and",
+                        "{S:0.75,X:chips,C:white}X#12#{S:0.75} Chips",
                     }
                 },
             },
@@ -2442,16 +2415,22 @@ return {
                 name = "Aquaworld",
                 text = {
                     {
-                        "{S:0.8}({S:0.8,V:1}lvl.#1#{S:0.8}){} Level up",
-                        "{C:attention}#2#",
-                        "{C:mult}+#3#{} Mult and",
-                        "{C:chips}+#4#{} chips",
+                        "{S:0.6}({S:0.6,V:1}lvl.#1#{S:0.6}){S:0.75} Level up",
+                        "{S:0.75,C:attention}#2#",
+                        "{S:0.75,C:mult}+#3#{S:0.75} Mult and",
+                        "{S:0.75,C:chips}+#4#{S:0.75} Chips",
                     },
                     {
-                        "{S:0.8}({S:0.8,V:2}lvl.#5#{S:0.8}){} Level up",
-                        "{C:attention}#6# {C:inactive}Sub-Hand{}",
-                        "{X:mult,C:white}X#7#{} Mult and",
-                        "{X:chips,C:white}X#8#{} chips",
+                        "{S:0.6}({S:0.6,V:2}lvl.#5#{S:0.6}){S:0.75} Level up",
+                        "{S:0.75,C:attention}#6#",
+                        "{S:0.75,C:mult}+#7#{S:0.75} Mult and",
+                        "{S:0.75,C:chips}+#8#{S:0.75} Chips",
+                    },
+                    {
+                        "{S:0.6}({S:0.6,V:3}lvl.#9#{S:0.6}){S:0.75} Level up",
+                        "{S:0.75,C:attention}#10# {C:inactive}Sub-Hand{}",
+                        "{S:0.75,X:mult,C:white}X#11#{S:0.75} Mult and",
+                        "{S:0.75,X:chips,C:white}X#12#{S:0.75} Chips",
                     }
                 },
             },
@@ -2459,16 +2438,22 @@ return {
                 name = "Prometheus IX",
                 text = {
                     {
-                        "{S:0.8}({S:0.8,V:1}lvl.#1#{S:0.8}){} Level up",
-                        "{C:attention}#2#",
-                        "{C:mult}+#3#{} Mult and",
-                        "{C:chips}+#4#{} chips",
+                        "{S:0.6}({S:0.6,V:1}lvl.#1#{S:0.6}){S:0.75} Level up",
+                        "{S:0.75,C:attention}#2#",
+                        "{S:0.75,C:mult}+#3#{S:0.75} Mult and",
+                        "{S:0.75,C:chips}+#4#{S:0.75} Chips",
                     },
                     {
-                        "{S:0.8}({S:0.8,V:2}lvl.#5#{S:0.8}){} Level up",
-                        "{C:attention}#6# {C:inactive}Sub-Hand{}",
-                        "{X:mult,C:white}X#7#{} Mult and",
-                        "{X:chips,C:white}X#8#{} chips",
+                        "{S:0.6}({S:0.6,V:2}lvl.#5#{S:0.6}){S:0.75} Level up",
+                        "{S:0.75,C:attention}#6#",
+                        "{S:0.75,C:mult}+#7#{S:0.75} Mult and",
+                        "{S:0.75,C:chips}+#8#{S:0.75} Chips",
+                    },
+                    {
+                        "{S:0.6}({S:0.6,V:3}lvl.#9#{S:0.6}){S:0.75} Level up",
+                        "{S:0.75,C:attention}#10# {C:inactive}Sub-Hand{}",
+                        "{S:0.75,X:mult,C:white}X#11#{S:0.75} Mult and",
+                        "{S:0.75,X:chips,C:white}X#12#{S:0.75} Chips",
                     }
                 },
             },
@@ -2476,16 +2461,22 @@ return {
                 name = "Tartarus II",
                 text = {
                     {
-                        "{S:0.8}({S:0.8,V:1}lvl.#1#{S:0.8}){} Level up",
-                        "{C:attention}#2#",
-                        "{C:mult}+#3#{} Mult and",
-                        "{C:chips}+#4#{} chips",
+                        "{S:0.6}({S:0.6,V:1}lvl.#1#{S:0.6}){S:0.75} Level up",
+                        "{S:0.75,C:attention}#2#",
+                        "{S:0.75,C:mult}+#3#{S:0.75} Mult and",
+                        "{S:0.75,C:chips}+#4#{S:0.75} Chips",
                     },
                     {
-                        "{S:0.8}({S:0.8,V:2}lvl.#5#{S:0.8}){} Level up",
-                        "{C:attention}#6# {C:inactive}Sub-Hand{}",
-                        "{X:mult,C:white}X#7#{} Mult and",
-                        "{X:chips,C:white}X#8#{} chips",
+                        "{S:0.6}({S:0.6,V:2}lvl.#5#{S:0.6}){S:0.75} Level up",
+                        "{S:0.75,C:attention}#6#",
+                        "{S:0.75,C:mult}+#7#{S:0.75} Mult and",
+                        "{S:0.75,C:chips}+#8#{S:0.75} Chips",
+                    },
+                    {
+                        "{S:0.6}({S:0.6,V:3}lvl.#9#{S:0.6}){S:0.75} Level up",
+                        "{S:0.75,C:attention}#10# {C:inactive}Sub-Hand{}",
+                        "{S:0.75,X:mult,C:white}X#11#{S:0.75} Mult and",
+                        "{S:0.75,X:chips,C:white}X#12#{S:0.75} Chips",
                     }
                 },
             },
@@ -2493,16 +2484,22 @@ return {
                 name = "Varakkis",
                 text = {
                     {
-                        "{S:0.8}({S:0.8,V:1}lvl.#1#{S:0.8}){} Level up",
-                        "{C:attention}#2#",
-                        "{C:mult}+#3#{} Mult and",
-                        "{C:chips}+#4#{} chips",
+                        "{S:0.6}({S:0.6,V:1}lvl.#1#{S:0.6}){S:0.75} Level up",
+                        "{S:0.75,C:attention}#2#",
+                        "{S:0.75,C:mult}+#3#{S:0.75} Mult and",
+                        "{S:0.75,C:chips}+#4#{S:0.75} Chips",
                     },
                     {
-                        "{S:0.8}({S:0.8,V:2}lvl.#5#{S:0.8}){} Level up",
-                        "{C:attention}#6# {C:inactive}Sub-Hand{}",
-                        "{X:mult,C:white}X#7#{} Mult and",
-                        "{X:chips,C:white}X#8#{} chips",
+                        "{S:0.6}({S:0.6,V:2}lvl.#5#{S:0.6}){S:0.75} Level up",
+                        "{S:0.75,C:attention}#6#",
+                        "{S:0.75,C:mult}+#7#{S:0.75} Mult and",
+                        "{S:0.75,C:chips}+#8#{S:0.75} Chips",
+                    },
+                    {
+                        "{S:0.6}({S:0.6,V:3}lvl.#9#{S:0.6}){S:0.75} Level up",
+                        "{S:0.75,C:attention}#10# {C:inactive}Sub-Hand{}",
+                        "{S:0.75,X:mult,C:white}X#11#{S:0.75} Mult and",
+                        "{S:0.75,X:chips,C:white}X#12#{S:0.75} Chips",
                     }
                 },
             },
@@ -2510,16 +2507,22 @@ return {
                 name = "Jurassika",
                 text = {
                     {
-                        "{S:0.8}({S:0.8,V:1}lvl.#1#{S:0.8}){} Level up",
-                        "{C:attention}#2#",
-                        "{C:mult}+#3#{} Mult and",
-                        "{C:chips}+#4#{} chips",
+                        "{S:0.6}({S:0.6,V:1}lvl.#1#{S:0.6}){S:0.75} Level up",
+                        "{S:0.75,C:attention}#2#",
+                        "{S:0.75,C:mult}+#3#{S:0.75} Mult and",
+                        "{S:0.75,C:chips}+#4#{S:0.75} Chips",
                     },
                     {
-                        "{S:0.8}({S:0.8,V:2}lvl.#5#{S:0.8}){} Level up",
-                        "{C:attention}#6# {C:inactive}Sub-Hand{}",
-                        "{X:mult,C:white}X#7#{} Mult and",
-                        "{X:chips,C:white}X#8#{} chips",
+                        "{S:0.6}({S:0.6,V:2}lvl.#5#{S:0.6}){S:0.75} Level up",
+                        "{S:0.75,C:attention}#6#",
+                        "{S:0.75,C:mult}+#7#{S:0.75} Mult and",
+                        "{S:0.75,C:chips}+#8#{S:0.75} Chips",
+                    },
+                    {
+                        "{S:0.6}({S:0.6,V:3}lvl.#9#{S:0.6}){S:0.75} Level up",
+                        "{S:0.75,C:attention}#10# {C:inactive}Sub-Hand{}",
+                        "{S:0.75,X:mult,C:white}X#11#{S:0.75} Mult and",
+                        "{S:0.75,X:chips,C:white}X#12#{S:0.75} Chips",
                     }
                 },
             },
@@ -2527,16 +2530,22 @@ return {
                 name = "Globulos",
                 text = {
                     {
-                        "{S:0.8}({S:0.8,V:1}lvl.#1#{S:0.8}){} Level up",
-                        "{C:attention}#2#",
-                        "{C:mult}+#3#{} Mult and",
-                        "{C:chips}+#4#{} chips",
+                        "{S:0.6}({S:0.6,V:1}lvl.#1#{S:0.6}){S:0.75} Level up",
+                        "{S:0.75,C:attention}#2#",
+                        "{S:0.75,C:mult}+#3#{S:0.75} Mult and",
+                        "{S:0.75,C:chips}+#4#{S:0.75} Chips",
                     },
                     {
-                        "{S:0.8}({S:0.8,V:2}lvl.#5#{S:0.8}){} Level up",
-                        "{C:attention}#6# {C:inactive}Sub-Hand{}",
-                        "{X:mult,C:white}X#7#{} Mult and",
-                        "{X:chips,C:white}X#8#{} chips",
+                        "{S:0.6}({S:0.6,V:2}lvl.#5#{S:0.6}){S:0.75} Level up",
+                        "{S:0.75,C:attention}#6#",
+                        "{S:0.75,C:mult}+#7#{S:0.75} Mult and",
+                        "{S:0.75,C:chips}+#8#{S:0.75} Chips",
+                    },
+                    {
+                        "{S:0.6}({S:0.6,V:3}lvl.#9#{S:0.6}){S:0.75} Level up",
+                        "{S:0.75,C:attention}#10# {C:inactive}Sub-Hand{}",
+                        "{S:0.75,X:mult,C:white}X#11#{S:0.75} Mult and",
+                        "{S:0.75,X:chips,C:white}X#12#{S:0.75} Chips",
                     }
                 },
             },
@@ -2544,16 +2553,22 @@ return {
                 name = "Xykulix",
                 text = {
                     {
-                        "{S:0.8}({S:0.8,V:1}lvl.#1#{S:0.8}){} Level up",
-                        "{C:attention}#2#",
-                        "{C:mult}+#3#{} Mult and",
-                        "{C:chips}+#4#{} chips",
+                        "{S:0.6}({S:0.6,V:1}lvl.#1#{S:0.6}){S:0.75} Level up",
+                        "{S:0.75,C:attention}#2#",
+                        "{S:0.75,C:mult}+#3#{S:0.75} Mult and",
+                        "{S:0.75,C:chips}+#4#{S:0.75} Chips",
                     },
                     {
-                        "{S:0.8}({S:0.8,V:2}lvl.#5#{S:0.8}){} Level up",
-                        "{C:attention}#6# {C:inactive}Sub-Hand{}",
-                        "{X:mult,C:white}X#7#{} Mult and",
-                        "{X:chips,C:white}X#8#{} chips",
+                        "{S:0.6}({S:0.6,V:2}lvl.#5#{S:0.6}){S:0.75} Level up",
+                        "{S:0.75,C:attention}#6#",
+                        "{S:0.75,C:mult}+#7#{S:0.75} Mult and",
+                        "{S:0.75,C:chips}+#8#{S:0.75} Chips",
+                    },
+                    {
+                        "{S:0.6}({S:0.6,V:3}lvl.#9#{S:0.6}){S:0.75} Level up",
+                        "{S:0.75,C:attention}#10# {C:inactive}Sub-Hand{}",
+                        "{S:0.75,X:mult,C:white}X#11#{S:0.75} Mult and",
+                        "{S:0.75,X:chips,C:white}X#12#{S:0.75} Chips",
                     }
                 },
             },
@@ -2584,7 +2599,7 @@ return {
                     "{X:chips,C:white}X#4#{} chips",
                 },
             },
-            c_rgmc_crescent = {
+            c_rgmc_crescent_moon = {
                 name = "Waxing Crescent",
                 text = {
                     "{S:0.8}({S:0.8,V:2}lvl.#1#{S:0.8}){} Level up",
@@ -2593,13 +2608,46 @@ return {
                     "{X:chips,C:white}X#4#{} chips",
                 },
             },
-            c_rgmc_gibbous = {
+            c_rgmc_gibbous_moon = {
                 name = "Gibbous",
                 text = {
                     "{S:0.8}({S:0.8,V:2}lvl.#1#{S:0.8}){} Level up",
                     "{C:attention}#2# {C:inactive}Sub-Hand{}",
                     "{X:mult,C:white}X#3#{} Mult and",
                     "{X:chips,C:white}X#4#{} chips",
+                },
+            },
+            c_rgmc_terra = {
+                name = "Terra",
+                text = {
+                    "Gives {C:attention}most played{} hand",
+                    "{C:inactive}(Currently{C:attention,E:1}#1#{}{C:inactive})",
+                    "{X:mult,C:white}X#2#{} Mult and {X:chips,C:white}X#3#{} Chips",
+                    "per {C:tarot}Tarot{} Card used{}",
+                    "this Ante",
+                    "{C:inactive}(Currently {X:chips,C:white}X#4#{C:inactive} and {X:mult,C:white}X#5#{C:inactive})"
+                },
+            },
+            c_rgmc_luna = {
+                name = "Luna",
+                text = {
+                    "Gives {C:attention}most played{} hand",
+                    "{C:inactive}(Currently{C:attention,E:1}#1#{}{C:inactive})",
+                    "{X:mult,C:white}X#2#{} Mult and {X:chips,C:white}X#3#{} Chips",
+                    "per {C:spectral}Spectral{} Card used{}",
+                    "this Ante",
+                    "{C:inactive}(Currently {X:chips,C:white}X#4#{C:inactive} and {X:mult,C:white}X#5#{C:inactive})"
+                },
+            },
+            c_rgmc_pagoon = {
+                name = "Pagoon",
+                text = {
+                    "Gives {C:attention}most played{} hand",
+                    "{C:inactive}(Currently{C:attention,E:1}#1#{}{C:inactive})",
+                    "{X:mult,C:white}X#2#{} Mult and {X:chips,C:white}X#3#{} Chips",
+                    "per {C:rgmc_cosmatarot}Cosma{} Tarot used{}",
+                    "this Ante",
+                    "{C:inactive}(Currently {X:chips,C:white}X#4#{C:inactive} and {X:mult,C:white}X#5#{C:inactive})"
                 },
             },
         },
@@ -2615,7 +2663,7 @@ return {
             c_rgmc_voide = {
                 name = "Voide Crystal",
                 text = {
-					"{S:0.8}({S:0.8,V:1}lvl.#1#{}{S:0.8,C:rgmc_potentiacrystal}+#2#{}{S:0.8}){} Empower",
+					"{S:0.8}({S:0.8,V:1}lvl.#1#{}{S:0.8,C:rgmc_potentiacrystal}#2#{}{S:0.8}){} Empower",
                     "{C:attention}#3# {C:inactive}Sub-Hand{}",
 					"{C:rgmc_potentiacrystal,E:1}+#4#{} Atomic Power"
                 },
@@ -2787,148 +2835,214 @@ return {
             c_rgmc_demise = {
                 name = 'Demise',
                 text = {
-                    '???'
+                    "Spawns a random {C:rgmc_cosmatarot}Cosma Tarot{}",
+                    "{C:green}#1# in #2#{} chance to instead",
+                    "copy last {C:rgmc_cosmatarot}Cosma Tarot",
+                    "{C:inactive}(Currently{C:attention}#3#{C:inactive})",
+                    "{s:0.8,C:rgmc_cosmatarot}Demise{s:0.8} excluded"
                 }
             },
             c_rgmc_crow = {
                 name = 'The Crow',
                 text = {
-                    '???'
+                    "Randomly select {C:attention}#1#{} card(s) and",
+                    "{C:attention}convert{} them to {V:1}#2#",
+                    "If converted card is already {V:1}#2#{},",
+                    "add {C:mult}+#2#{} permanent Mult"
                 }
             },
             c_rgmc_swan = {
                 name = 'The Swan',
                 text = {
-                    '???'
+                    "Randomly select {C:attention}#1#{} card(s) and",
+                    "{C:attention}convert{} them to {V:1}#2#",
+                    "If converted card is already {V:1}#2#{},",
+                    "add {X:mult,C:white}X#2#{} permanent Mult"
                 }
             },
             c_rgmc_peacock = {
                 name = 'The Peacock',
                 text = {
-                    '???'
+                    "Randomly select {C:attention}#1#{} card(s) and",
+                    "{C:attention}convert{} them to {V:1}#2#",
+                    "If converted card is already {V:1}#2#{},",
+                    "add {C:money}X#2#{} cash bonus"
                 }
             },
             c_rgmc_pelican = {
                 name = 'The Pelican',
                 text = {
-                    '???'
+                    "Randomly select {C:attention}#1#{} card(s) and",
+                    "{C:attention}convert{} them to {V:1}#2#",
+                    "If converted card is already {V:1}#2#{},",
+                    "add {C:chips}X#2#{} permanent Chips"
                 }
             },
             c_rgmc_phoenix = {
                 name = 'The Phoenix',
                 text = {
-                    '???'
+                    "Randomly select {C:attention}#1#{} card(s) and",
+                    "{C:attention}halves{} their {C:chips}chips{}",
+                    "Converted card gains {C:attention}X#2#{}",
+                    "their {C:chips}chip{} value as {C:mult}Mult{}"
                 }
             },
             c_rgmc_soulmates = {
                 name = 'The Soulmates',
                 text = {
-                    '???'
+                    "Randomly select {C:attention}#1#{} card(s) and",
+                    "{C:attention}convert{} them to a",
+                    "random {C:attention}suit{} played this {C:attention}Blind",
                 }
             },
             c_rgmc_spirit_plane = {
                 name = 'The Spirit Plane',
                 text = {
-                    '???'
+                    "Randomly select {C:attention}#1#{} card(s) and",
+                    "{C:attention}convert{} them to a",
+                    "random {C:attention}enhancements{} in {C:attention}deck",
+                    "If {C:red}no{} enhancements exist in {C:attention}deck{},",
+                    "convert cards to any random {C:attention}enhancements{}"
                 }
             },
             c_rgmc_orbs = {
                 name = 'The Orbs',
                 text = {
-                    '???'
+                    "Randomly select {C:attention}#1#{} card(s)",
+                    "If card has no {C:attention}enhancement{},",
+                    "apply a {C:attention}random{} enhancement",
+                    "If card has an enhancement with {C:rgmc_unusual}counterpart{},",
+                    "convert card into counterpart",
+                    "{C:green}#2# in #3#{} chance to instead",
+                    "{C:attention}destroy{} selected card"
                 }
             },
             c_rgmc_cosmic_tree = {
                 name = 'The Cosmic Tree',
                 text = {
-                    '???'
+                    "For every unique {C:attention}suit{}/{C:attention}rank",
+                    "held in {C:attention}hand{},",
+                    "gain {C:money}$#1#{} / {C:money}$#2#{}",
+                    "{C:inactive}(Currently {C:money}$#3#{C:inactive})"
                 }
             },
             c_rgmc_life_map = {
                 name = 'The Life Map',
                 text = {
-                    '???'
+                    "{C:green}#1# in #2#{} chance to reroll",
+                    "{C:attention}rightmost{} Joker into",
+                    "one of a higher {C:attention}rarity"
                 }
             },
             c_rgmc_karma = {
                 name = 'Karma',
                 text = {
-                    '???'
+                    "Randomly select {C:attention}#1#{} card(s)",
+                    "reduce {C:attention}higher{} rank(s) by {C:attention}+#2#{}",
+                    "and increase {C:attention}lower{} rank(s) by {C:attention}-#2#{}"
                 }
             },
             c_rgmc_sacrifice= {
                 name = 'Sacrifice',
                 text = {
-                    '???'
+                    "Gain {C:rgmc_unusual,S:1}+#1#{} Mayhem",
+                    "but {C:red}destroy{} a {C:attention}random{} Joker",
                 }
             },
             c_rgmc_past_lives = {
                 name = 'Past Lives',
                 text = {
-                    '???'
+                    "Creates a base",
+                    "{C:attention}previously destroyed{} Joker",
+                    "at the cost of {C:rgmc_unusual,E:1}-#1#{} Mayhem",
+                    "{C:inactive}(Must have room)",
                 }
             },
             c_rgmc_maze = {
                 name = 'The Maze',
                 text = {
-                    '???'
+                    "Randomly select {C:attention}#1#{} card(s)",
+                    "all other cards have their",
+                    "{C:attention}rank{} and {C:attention}suit {C:attention,E:1}shuffled",
+                    "Gain {C:money}$#2#{} per",
+                    "changed {C:attention}rank{} or {C:attention}suit"
                 }
             },
             c_rgmc_vessel = {
                 name = 'The Vessel',
                 text = {
-                    '???'
+                    "Randomly select {C:attention}#1#{} card(s)",
+                    "and {C:rgmc_unusual,E:1}multiply",
+                    "their values by {C:attention}X#2#",
                 }
             },
             c_rgmc_shore = {
                 name = 'The Shore',
                 text = {
-                    '???'
+                    "Randomly select {C:attention}#1#{} card(s)",
+                    "and apply {C:attention}Shielding{},",
+                    "{C:attention}Chipped{}, or {C:attention}Multed{} sticker"
                 }
             },
             c_rgmc_veil = {
                 name = 'The Veil',
                 text = {
-                    '???'
+                    "Randomly select {C:attention}#1#{}",
+                    "{C:rgmc_spatiaplanet}Light{} card(s), then {C:rgmc_cosmatarot,S:1}Invert{} them",
+                    "into their {C:rgmc_spatiaplanet}Dark{} counterparts"
                 }
             },
             c_rgmc_bridge = {
                 name = 'The Bridge',
                 text = {
-                    '???'
+                    "Randomly select {C:attention}#1#{}",
+                    "{C:rgmc_spatiaplanet}Dark{} card(s), then {C:rgmc_cosmatarot,S:1}Invert{} them",
+                    "into their {C:rgmc_spatiaplanet}Light{} counterparts"
                 }
             },
             c_rgmc_pathways = {
                 name = 'Pathways',
                 text = {
-                    '???'
+                    "For the next {C:attention}Shop{}, gives a choice",
+                    "between {C:attention}+1{} Booster, {C:attention}+1{} Shop Item,",
+                    "and {C:attention}+1{} Booster",
+                    "{C:inactive}(Can only choose one)"
                 }
             },
             c_rgmc_unknown = {
                 name = 'The Unknown',
                 text = {
-                    '???'
+                    "Creates a random {C:dark_edition}Negative",
+                    "consumable, Joker, or card and",
+                    "{C:rgmc_unusual,E:1}Mayhemize{} its values",
+                    "{C:inactive}({C:attention}Values{C:inactive}are randomized",
+                    "{C:inactive}between {C:attention}X#1#{C:inactive} and{C:attention}X#2#{C:inactive})",
+                    "{C:inactive}(Must have room)",
                 }
             },
             c_rgmc_life_on_earth  = {
                 name = 'Life on Earth',
                 text = {
-                    '???'
+                    "Randomly select {C:attention}#1#{} card(s), then {C:rgmc_unusual,S:1}convert{} them",
+                    "into {C:rgmc_voids}Void{} or {C:rgmc_lanterns}Lanterns{}"
                 }
             },
             c_rgmc_sleeping_ships = {
                 name = 'Sleeping Ships',
                 text = {
-                    '???'
+                    "Creates an {C:rgmc_unusual, E:1}Unusual{} Joker",
+                    "{C:inactive}(Must have room)",
                 }
             },
             c_rgmc_aversion = {
                 name = 'Aversion',
                 text = {
-                    '???'
+                    "Creates a {C:rgmc_chaotic, E:1}Chaotic{} Joker",
+                    "and {C:red}destroy{} all other Jokers",
+                    "{C:inactive}Would you like to",
+                    "{C:inactive}play my little game?{}"
                 }
             },
-
         },
         AntiSpectral = {
             c_rgmc_anti_familiar= {
@@ -2999,7 +3113,8 @@ return {
             c_rgmc_anti_ectoplasm = {
                 name = 'Ectoplasm...?',
                 text = {
-                    "I forgot.",
+                    "Debuffs {C:red}#1#{} random Jokers",
+                    "for {C:attention}#1#{} round(s)"
                 }
             },
             c_rgmc_anti_immolate = {
@@ -3283,7 +3398,7 @@ return {
                 text = {
 					"Add a {C:rgmc_patina}Patina Seal{}",
 					"to {C:attention}#1#{} selected",
-					"card#<s>1# in your hand",
+					"card(s) in your hand",
                 }
             },
             c_rgmc_reduct = {
@@ -3291,7 +3406,7 @@ return {
                 text = {
 					"Add a {C:rgmc_bronze}Bronze Seal{}",
 					"to {C:attention}#1#{} selected",
-					"card#<s>1# in your hand",
+					"card(s) in your hand",
                 }
             },
             c_rgmc_encore = {
@@ -3299,7 +3414,7 @@ return {
                 text = {
 					"Add a {C:rgmc_jade}Jade Seal{}",
 					"to {C:attention}#1#{} selected",
-					"card#<s>1# in your hand",
+					"card(s) in your hand",
                 }
             },
             c_rgmc_reverb = {
@@ -3307,7 +3422,7 @@ return {
                 text = {
 					"Add an {C:rgmc_umber}Umber Seal{}",
 					"to {C:attention}#1#{} selected",
-					"card#<s>1# in your hand",
+					"card(s) in your hand",
                 }
             },
             c_rgmc_ember = {
@@ -3315,7 +3430,7 @@ return {
                 text = {
 					"Add a {C:rgmc_cream}Ether Seal{}",
 					"to {C:attention}#1#{} selected",
-					"card#<s>1# in your hand",
+					"card(s) in your hand",
                 }
             },
             c_rgmc_chalice = {
@@ -3323,7 +3438,7 @@ return {
                 text = {
                     "Converts all {C:hearts}Hearts{} and",
 					"{C:diamonds}Diamonds{} in hand",
-                    "to {C:rgmc_goblets}Goblets{}",
+                    "to {C:rgmc_goblets}Goblets{} and {C:rgmc_blooms}Blooms{}",
                 }
             },
             c_rgmc_armoire = {
@@ -3331,7 +3446,7 @@ return {
                 text = {
                     "Converts all {C:clubs}Clubs{} and",
 					"{C:spades}Spades{} in hand",
-                    "to {C:rgmc_towers}Towers{}",
+                    "to {C:rgmc_towers}Towers{} and {C:rgmc_daggers}Daggers{}",
                 }
             },
             c_rgmc_bluebell = {
@@ -3351,6 +3466,22 @@ return {
                 text = {
                     "Converts all cards in hand",
                     "to {C:attention}2{}s, {C:attention}3{}s, {C:attention}4{}s, or {C:attention}5{}s"
+                }
+            },
+            c_rgmc_warp_speed = {
+                name = "Warp Speed",
+                text = {
+                    "Upgrade every",
+                    "{C:rgmc_unusual,E:1}Sub-Hand",
+                    "by {C:attention}#1#{} level(s)"
+                },
+            },
+            c_rgmc_aspire = {
+                name = 'Aspire',
+                text = {
+                    "If held {C:tarot}Tarot{} has a",
+                    "{E:1,C:rgmc_cosmatarot}Cosma{} equivalent,",
+                    "convert it into equivalent",
                 }
             },
         },

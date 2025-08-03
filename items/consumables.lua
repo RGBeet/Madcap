@@ -1262,26 +1262,35 @@ local talisman = {
 -- Anti Aura: debuff editions for +2 rounds, gives $2 for each edition card debuffed
 local aura = {
 	key		= 'anti_aura',
-	config	= { extra = 2 },
+	config	= { extra = { value = 2, rounds = 2} },
 	can_use = function(self, card) -- at least one editioned playing card
 		return MadLib.valid_table(MadLib.get_editioned_cards(G.playing_cards), 1)
 	end,
 	use = function(self, card, area, copier)
+        play_sound('timpani')
 		Madcap.Funcs.add_sinister('aura', self.config.extra.rounds or 2)
-		ease_dollars(#MadLib.get_editioned_cards(G.playing_cards) * (self.config.extra or 2))
+		ease_dollars(#MadLib.get_editioned_cards(G.playing_cards) * (self.config.extra.value or 2))
 	end
 }
 
 -- Anti Wraith: debuffs all jokers above uncommon for +2 rounds, gives $3 for each joker debuffed
 local wraith = {
 	key		= 'anti_wraith',
-	config	= { extra = 3 },
+	config	= { extra = { value = 3, rounds = 2} },
 	can_use = function(self, card)
 		return MadLib.valid_table(MadLib.get_jokers_matching_min_rarity(G.jokers.cards, 'Uncommon', true), 1)
 	end,
 	use = function(self, card, area, copier)
+        play_sound('timpani')
 		Madcap.Funcs.add_sinister('wraith', self.config.extra.rounds or 2)
-		ease_dollars(#MadLib.get_jokers_matching_min_rarity(G.jokers.cards, 'Uncommon', true) * (self.config.extra or 3))
+
+		local wraith_targets = MadLib.get_jokers_matching_min_rarity(G.jokers.cards, 'Uncommon', true)
+		MadLib.loop_func(wraith_targets, function(v)
+			if not v.sinister_debuff then v:set_debuff(true) end
+			v.sinister_debuff = v.sinister_debuff or {}
+			v.sinister_debuff['wraith'] = true
+		end)
+		ease_dollars(#wraith_targets * (self.config.extra.value or 3))
 	end
 }
 
@@ -1375,15 +1384,23 @@ local ouija = {
 	end
 }
 
--- Anti Ectoplasm: -1 Joker slot, +1 hand size
+-- Anti Ectoplasm: ???
 local ectoplasm = {
 	key		= 'anti_ectoplasm',
-	config	= { extra = 1 },
+	config	= { extra = { jokers = 1, h_size = 1 } },
 	can_use = function(self, card)
 		return (G.jokers.config.card_limit - self.config.extra) >= 0
 	end,
 	use = function(self, card, area, copier)
+        play_sound('timpani')
+		Madcap.Funcs.add_sinister('ectoplasm', self.config.extra.rounds or 2)
 
+		local ectoplasm_targets = MadLib.get_cards_from_shuffled_deck(G.joker.cards, math.max(self.config.card_limit - 4, 1), function(v) return true end)
+		MadLib.loop_func(ectoplasm_targets, function(v)
+			if not v.sinister_debuff then v:set_debuff(true) end
+			v.sinister_debuff = v.sinister_debuff or {}
+			v.sinister_debuff['ectoplasm'] = true
+		end)
 	end
 }
 
@@ -1512,7 +1529,7 @@ local medium = {
 		return true
 	end,
 	use 	= function(self, card, area, copier)
-		Madcap.Funcs.add_sinister('medium', self.config.extra.rounds or 2, 'consumeable', self.config.extra.slots or 10)
+		Madcap.Funcs.add_sinister('medium', self.config.extra.rounds or 2, 'consumeable', self.config.extra.slots or 1)
 	end
 }
 

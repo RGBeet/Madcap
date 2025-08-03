@@ -34,16 +34,16 @@ if loaded then -- load the items
 	
 	-- Gets the "number of cards rifted"
 	function Madcap.Funcs.get_rift_amount()
-		return G.GAME.cards_rifted and G.GAME.cards_rifted.blind or 0
+		return (G.GAME.cards_rifted_blind or 0)
 	end
 
 	-- Gets the rifting limit.
 	function Madcap.Funcs.get_rift_limit()
-		local _limit = G.GAME.rift_limit
+		local _limit, _mayhem_state = G.GAME.rift_limit, (G.GAME.mayhem_state or 0)
 		-- add onto the limit when mayhem is higher.
-		if G.GAME.MayhemState > 2 then -- 100% higher limit
+		if _mayhem_state > 2 then -- 100% higher limit
 			_limit = math.floor(_limit * 2)
-		elseif G.GAME.MayhemState > 1 then -- 50% higher limit
+		elseif _mayhem_state > 1 then -- 50% higher limit
 			_limit = math.floor(_limit * 1.5)
 		end
 		return _limit
@@ -88,7 +88,7 @@ if loaded then -- load the items
 		local cost = 0
 
 		-- check rift limit
-		if G.GAME.cards_rifted.blind >= G.GAME.rift_limit then
+		if G.GAME.rift_limit and (G.GAME.cards_rifted_blind or 0) >= G.GAME.rift_limit then
 			self.limit_reached = true 
 			return false
 		elseif self.limit_reached then
@@ -182,24 +182,20 @@ if loaded then -- load the items
 	local run_start_ref = mfuncs.run_start
 	function Madcap.Funcs.run_start()
 		G.GAME.rift_limit = G.GAME.starting_params.rift_limit or 3
-		G.GAME.cards_rifted = {
-			run 	= 0,
-			ante 	= 0,
-			blind 	= 0
-		}
+		G.GAME.cards_rifted_total = 0
 		run_start_ref()
 	end
 
 	local ante_start_ref = mfuncs.ante_start
 	function Madcap.Funcs.ante_start()
 		ante_start_ref()
-		G.GAME.cards_rifted.ante = 0
+		G.GAME.cards_rifted_ante = 0
 	end
 
 	local blind_start_ref = mfuncs.blind_start
 	function Madcap.Funcs.blind_start()
 		blind_start_ref()
-		G.GAME.cards_rifted.blind = 0
+		G.GAME.cards_rifted_blind = 0
 	end
 
 	Madcap.RiftCard = SMODS.Consumable:extend {

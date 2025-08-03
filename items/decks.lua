@@ -289,7 +289,7 @@ local mayhem = {
     end,
 	apply = function(self, back)
         G.GAME.modifiers.rgmc_deck     = true  -- music activated
-		G.GAME.Mayhem = 5
+		G.GAME.starting_params.add_mayhem = 5
 	end,
 	calculate = function(self, card, context)
 	end
@@ -350,7 +350,7 @@ local lunacy = {
 	apply = function(self, back)
         G.GAME.modifiers.rgmc_deck      = true  -- music activated
 		G.GAME.modifiers.rgmc_lunacy    = true
-		G.GAME.Mayhem = 10
+		G.GAME.mayhem = 10
 
 	end,
 	calculate = function(self, card, context)

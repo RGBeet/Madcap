@@ -399,7 +399,7 @@ function Madcap.Funcs.change_phase(args)
     fix_hand_size()
 
     -- remove 10% of current mayhem
-    local _mayhem = (G.GAME.Mayhem or 0) * 0.10
+    local _mayhem = (G.GAME.mayhem or 0) * 0.10
     Madcap.Funcs.ease_mayhem(-_mayhem)
 
     if _old then
