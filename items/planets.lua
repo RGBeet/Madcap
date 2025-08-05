@@ -180,10 +180,10 @@ SMODS.PokerHand({
 
 		local index = 0
 
-		tell("HAND DATA:")
-		print(hand_data)
-		tell("PICK 5 DATA:")
-		print(pick5_data)
+		--tell("HAND DATA:")
+		--print(hand_data)
+		--tell("PICK 5 DATA:")
+		--print(pick5_data)
 		if not (hand_data and #hand_data < 5 and pick5_data and #pick5_data < 5) then return { } end
 
 		while pass and index < 5 do
@@ -332,12 +332,13 @@ end
 
 local function get_potentia_vars(sh,lvl)
 	local subhand 	= G.GAME.subhands and G.GAME.subhands[SubHands[sh].name]
-	local current_level = subhand and subhand.empower or 0
+	local current_level = subhand and subhand.level 	or 1
+	local empower_level = subhand and subhand.empower 	or 0
     return {
         vars = {
             current_level,
-            (subhand and subhand.empower) and (" + " .. subhand.empower .."") or "",
-            localize(sh),
+            (empower_level > 0) and (" + " .. empower_level .."") or "",
+            localize(SubHands[sh].name),
             lvl,
 			colours = {
 				to_big(current_level) < to_big(2) and G.C.BLACK or G.C.HAND_LEVELS[to_number(math.min(7, current_level))]
@@ -346,8 +347,57 @@ local function get_potentia_vars(sh,lvl)
     }
 end
 
-function Madcap.Funcs.use_potentia_card(card)
+function Madcap.Funcs.pre_hand_display_mod(hand, text, disp_text, poker_hands)
+	if not hand then return end
+	if AKYRS then AKYRS.hand_display_mod(hand, text, disp_text, poker_hands) end
+	return true
+end
 
+function Madcap.Funcs.hand_display_mod(hand, text, disp_text, poker_hands, scoring_hand, subhands)
+	if not mfuncs.pre_hand_display_mod(hand, text, disp_text, poker_hands) then return end
+	if #subhands > 0 and (#scoring_hand > 0 or #hand > 0) then
+		local pre_lvl_col	= G.hand_text_area.hand_level.config.colour or G.C.HAND_LEVELS[1]
+		local suffix		= ' (+'
+		local prefix		= ''
+		
+		MadLib.loop_func(subhands,function(v,i)
+			-- hand name prefix
+        	prefix = prefix .. ' '.. localize(v)
+
+			-- level suffix
+			if not G.GAME.subhands and G.GAME.subhands[v] and G.GAME.subhands[v].level > 0 then return end
+			suffix = suffix .. tostring(G.GAME.subhands[v].level)
+
+			if G.GAME.subhands[v].empower > 0 then
+				suffix = suffix .. '(' .. tostring(G.GAME.subhands[v].empower) .. ')'
+			end
+
+			if i < #subhands then 
+				suffix = suffix .. ','
+			else
+				suffix = suffix .. ')'
+			end
+		end)
+
+		local _mult 	= MadLib.calculate_mult(G.GAME.hands[text].mult, subhands)
+		local _chips 	= MadLib.calculate_chips(G.GAME.hands[text].chips, subhands)
+        disp_text = prefix .. ' ' .. disp_text
+
+		tell(disp_text)
+        update_hand_text({ immediate = nil, nopulse = true, delay = 0}, { 
+			level = G.GAME.hands[text].level .. suffix, 
+			handname = disp_text,
+			mult = _mult, 
+			chips = _chips 
+		})
+		G.hand_text_area.hand_level.config.colour = pre_lvl_col
+		return true
+	end
+end
+
+function Madcap.Funcs.use_potentia_card(card)
+	local subhand = SubHands[card.ability.subhand or 'Balanced'].name
+	Madcap.Funcs.empower_subhand(card, subhand, false, card.ability.levels or 1)
 end
 
 local function get_special_card_vars(set,xchips,xmult)
@@ -540,7 +590,7 @@ local aquaworld = {
 		return can_use_planet()
 	end,
 	use = function(self, card, area, copier)
-		Madcap.Funcs.Madcap.Funcs.use_spatia_card(card)
+		Madcap.Funcs.use_spatia_card(card)
 	end,
 }
 
@@ -566,7 +616,7 @@ local varakkis = {
 		return can_use_planet()
 	end,
 	use = function(self, card, area, copier)
-		Madcap.Funcs.Madcap.Funcs.use_spatia_card(card)
+		Madcap.Funcs.use_spatia_card(card)
 	end,
 }
 
@@ -592,7 +642,7 @@ local jurassika = {
 		return can_use_planet()
 	end,
 	use = function(self, card, area, copier)
-		Madcap.Funcs.Madcap.Funcs.use_spatia_card(card)
+		Madcap.Funcs.use_spatia_card(card)
 	end,
 }
 
@@ -618,7 +668,7 @@ local xykulix = {
 		return can_use_planet()
 	end,
 	use = function(self, card, area, copier)
-		Madcap.Funcs.Madcap.Funcs.use_spatia_card(card)
+		Madcap.Funcs.use_spatia_card(card)
 	end,
 }
 
@@ -644,7 +694,7 @@ local globulos = {
 		return can_use_planet()
 	end,
 	use = function(self, card, area, copier)
-		Madcap.Funcs.Madcap.Funcs.use_spatia_card(card)
+		Madcap.Funcs.use_spatia_card(card)
 	end,
 }
 
@@ -849,7 +899,7 @@ local pagoon = {
 local enori = {
 	key = "enori",
 	pos = get_pos(4,2),
-	config = { subhand = SubHands.Light.name, levels = 1 },
+	config = { subhand = 'Light', levels = 1 },
 	cost = 8,
 	aurinko = true,
 	atlas = "planets",
@@ -868,7 +918,7 @@ local enori = {
 local voide = {
 	key = "voide",
 	pos = get_pos(4,3),
-	config = { subhand = SubHands.Dark.name, levels = 1 },
+	config = { subhand = 'Dark', levels = 1 },
 	cost = 8,
 	aurinko = true,
 	atlas = "planets",
@@ -887,7 +937,7 @@ local voide = {
 local palis = {
 	key = "palis",
 	pos = get_pos(4,4),
-	config = { subhand = SubHands.High.name, levels = 1 },
+	config = { subhand = 'High', levels = 1 },
 	cost = 8,
 	aurinko = true,
 	atlas = "planets",
@@ -906,7 +956,7 @@ local palis = {
 local restonia = {
 	key = "restonia",
 	pos = get_pos(4,5),
-	config = { subhand = SubHands.Low.name, levels = 1 },
+	config = { subhand = 'Low', levels = 1 },
 	cost = 8,
 	aurinko = true,
 	atlas = "planets",
@@ -925,7 +975,7 @@ local restonia = {
 local diamatine = {
 	key = "diamatine",
 	pos = get_pos(4,6),
-	config = { subhand = SubHands.Dazzling.name, levels = 1 },
+	config = { subhand = 'Dazzling', levels = 1 },
 	cost = 10,
 	aurinko = true,
 	atlas = "planets",
@@ -944,7 +994,7 @@ local diamatine = {
 local emeradic = {
 	key = "emeradic",
 	pos = get_pos(4,7),
-	config = { subhand = SubHands.Balanced.name, levels = 1 },
+	config = { subhand = 'Balanced', levels = 1 },
 	cost = 10,
 	aurinko = true,
 	atlas = "planets",

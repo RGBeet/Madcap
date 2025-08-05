@@ -2847,8 +2847,8 @@ return {
                 text = {
                     "Randomly select {C:attention}#1#{} card(s) and",
                     "{C:attention}convert{} them to {V:1}#2#",
-                    "If converted card is already {V:1}#2#{},",
-                    "add {C:mult}+#2#{} permanent Mult"
+                    "If converted card is already {V:1}#3#{},",
+                    "add {C:mult}+#4#{} permanent Mult"
                 }
             },
             c_rgmc_swan = {
@@ -2856,8 +2856,8 @@ return {
                 text = {
                     "Randomly select {C:attention}#1#{} card(s) and",
                     "{C:attention}convert{} them to {V:1}#2#",
-                    "If converted card is already {V:1}#2#{},",
-                    "add {X:mult,C:white}X#2#{} permanent Mult"
+                    "If converted card is already {V:1}#3#{},",
+                    "add {X:mult,C:white}X#4#{} permanent Mult"
                 }
             },
             c_rgmc_peacock = {
@@ -2865,8 +2865,8 @@ return {
                 text = {
                     "Randomly select {C:attention}#1#{} card(s) and",
                     "{C:attention}convert{} them to {V:1}#2#",
-                    "If converted card is already {V:1}#2#{},",
-                    "add {C:money}X#2#{} cash bonus"
+                    "If converted card is already {V:1}#3#{},",
+                    "add {C:money}X#4#{} cash bonus"
                 }
             },
             c_rgmc_pelican = {
@@ -2874,8 +2874,8 @@ return {
                 text = {
                     "Randomly select {C:attention}#1#{} card(s) and",
                     "{C:attention}convert{} them to {V:1}#2#",
-                    "If converted card is already {V:1}#2#{},",
-                    "add {C:chips}X#2#{} permanent Chips"
+                    "If converted card is already {V:1}#3#{},",
+                    "add {C:chips}+#4#{} permanent Chips"
                 }
             },
             c_rgmc_phoenix = {
@@ -2899,8 +2899,8 @@ return {
                 name = 'The Spirit Plane',
                 text = {
                     "Randomly select {C:attention}#1#{} card(s) and",
-                    "{C:attention}convert{} them to a",
-                    "random {C:attention}enhancements{} in {C:attention}deck",
+                    "{C:attention}convert{} apply",
+                    "random {C:attention}enhancements{} from {C:attention}deck",
                     "If {C:red}no{} enhancements exist in {C:attention}deck{},",
                     "convert cards to any random {C:attention}enhancements{}"
                 }
@@ -2920,9 +2920,10 @@ return {
             c_rgmc_cosmic_tree = {
                 name = 'The Cosmic Tree',
                 text = {
-                    "For every unique {C:attention}suit{}/{C:attention}rank",
-                    "held in {C:attention}hand{},",
-                    "gain {C:money}$#1#{} / {C:money}$#2#{}",
+                    "Gain {C:money}$#1#{} for every {C:attention}3{}",
+                    "unique {C:attention}ranks{} in deck",
+                    "and {C:money}$#2#{} for every {C:attention}2{}",
+                    "unique {C:attention}suits{} in deck",
                     "{C:inactive}(Currently {C:money}$#3#{C:inactive})"
                 }
             },
@@ -2946,7 +2947,7 @@ return {
                 name = 'Sacrifice',
                 text = {
                     "Gain {C:rgmc_unusual,S:1}+#1#{} Mayhem",
-                    "but {C:red}destroy{} a {C:attention}random{} Joker",
+                    "but {C:red}destroy{} {C:attention}#2#{} {C:attention}random{} Joker(s)",
                 }
             },
             c_rgmc_past_lives = {
@@ -2973,7 +2974,7 @@ return {
                 text = {
                     "Randomly select {C:attention}#1#{} card(s)",
                     "and {C:rgmc_unusual,E:1}multiply",
-                    "their values by {C:attention}X#2#",
+                    "their values by {X:dark_edition,C:white}X#2#",
                 }
             },
             c_rgmc_shore = {
@@ -3024,7 +3025,7 @@ return {
                 name = 'Life on Earth',
                 text = {
                     "Randomly select {C:attention}#1#{} card(s), then {C:rgmc_unusual,S:1}convert{} them",
-                    "into {C:rgmc_voids}Void{} or {C:rgmc_lanterns}Lanterns{}"
+                    "into {V:1}#2#{} or {V:2}#3#{}"
                 }
             },
             c_rgmc_sleeping_ships = {
@@ -4183,11 +4184,32 @@ return {
 					"{C:attention}#2#{C:rgmc_cosmatarot} Cosma Tarot{} cards",
 				},
 			},
+			p_rgmc_spatia = {
+				name = "Spatia Pack",
+				text = {
+					"Choose {C:attention}#1#{} of up to",
+					"{C:attention}#2#{C:rgmc_spatiaplanet} Spatia Planet{} cards",
+				},
+			},
+			p_rgmc_spatia_jumbo = {
+				name = "Jumbo Spatia Pack",
+				text = {
+					"Choose {C:attention}#1#{} of up to",
+					"{C:attention}#2#{C:rgmc_spatiaplanet} Spatia Planet{} cards",
+				},
+			},
+			p_rgmc_spatia_mega = {
+				name = "Mega Spatia Pack",
+				text = {
+					"Choose {C:attention}#1#{} of up to",
+					"{C:attention}#2#{C:rgmc_spatiaplanet} Spatia Planet{} cards",
+				},
+			},
 			p_rgmc_cogito = {
 				name = "Cogito Pack",
 				text = {
-					"Choose {C:attention}#1#{} of up to",
-					"{C:attention}#2#{C:rgmc_cosmatarot} Cosma Tarot{} card#<s>2#",
+					"Comes with a {C:rgmc_unusual}Sleeping Ships{}",
+                    "and {C:rgmc_chaotic}Aversion{}",
 					"{s:0.8,C:inactive}(Generated by Jackpot Tag)",
 				},
 			},
@@ -4209,7 +4231,7 @@ return {
 				name = "Jumbo Ruinous Pack",
 				text = {
 					"Choose {C:attention}#1#{} of up to",
-					"{C:attention}#2#{C:attention} Anti-Spectral{} cards",
+					"{C:attention}#2#{C:rgmc_antispectral} Sinister{} Cards",
                     "({C:attention}Unskippable{}!)",
 				},
 			},
@@ -4217,7 +4239,7 @@ return {
 				name = "Mega Ruinous Pack",
 				text = {
 					"Choose {C:attention}#1#{} of up to",
-					"{C:attention}#2#{C:attention} Anti-Spectral{} cards",
+					"{C:attention}#2#{C:rgmc_antispectral} Sinister{} Cards",
                     "({C:attention}Unskippable{}!)",
 				},
 			},

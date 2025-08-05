@@ -70,8 +70,8 @@ local providence = {
 		},
 	},
 	loc_vars = function(self, info_queue, card)
-        local _numer, _denom = SMODS.get_probability_vars(self, 1, card.ability.odds, 'providence')
-        return MadLib.collect_vars(number_format(_numer), number_format(_denom), number_format(card.ability.max_highlighted))
+        local _numer, _denom = SMODS.get_probability_vars(self, 1, card.ability.extra.odds, 'providence')
+        return MadLib.collect_vars(_numer, _denom, (card.ability.extra.max_cards or 2))
 	end,
     can_use = function(self, card)
 		return G.hand and G.hand.cards and #G.hand.cards > 0 -- is there a hand of cards available?
@@ -86,7 +86,7 @@ local providence = {
             end)
 
             MadLib.flip_cards(bestish, function(c)
-                c:set_edition(MadLib.get_weighted_edition, Madcap.ProvidenceEditions)
+                c:set_edition(MadLib.get_weighted_edition(Madcap.ProvidenceEditions))
             end, nil, function(c)
                 c:juice_up(0.3, 0.3)
             end)
@@ -369,7 +369,13 @@ end
 local demise = {
     key 	= "demise",
 	pos 	= get_pos(0,0),
-	config	= {},
+	config	= {
+		odds = 4
+	},
+	loc_vars = function(self, info_queue, card)
+        local _numer, _denom = SMODS.get_probability_vars(self, 1, card.ability.odds, 'demise')
+        return MadLib.collect_vars(number_format(_numer), number_format(_denom))
+	end,
 	cost 	= 6,
 	can_use = function(self, card)
 		return (#G.consumeables.cards < G.consumeables.config.card_limit or card.area == G.consumeables)
@@ -401,6 +407,17 @@ local crow = {
     key 	= "crow",
 	pos 	= get_pos(0,1),
 	config	= { select = 2, extra = { mult_mod = 2, suit = 'rgmc_daggers'} },
+	loc_vars = function(self, info_queue, card)
+		return {
+			vars = {
+				number_format(card.ability.select), 
+            	localize(card.ability.extra.suit, 'suits_plural'),
+            	localize(card.ability.extra.suit, 'suits_singular'),
+				number_format(card.ability.extra.mult_mod),
+				colours = { G.C.SUITS[card.ability.extra.suit] or G.C.RED }
+			}
+		}
+	end,
 	cost 	= 5,
 	can_use = cosma_can_use,
 	use = function (self, card, area, copier)
@@ -437,6 +454,17 @@ local swan = {
     key 	= "swan",
 	pos 	= get_pos(0,2),
 	config	= { select = 2, extra = { xmult_mod = 0.04, suit = 'rgmc_goblets'} },
+	loc_vars = function(self, info_queue, card)
+		return {
+			vars = {
+				number_format(card.ability.select), 
+            	localize(card.ability.extra.suit, 'suits_plural'),
+            	localize(card.ability.extra.suit, 'suits_singular'),
+				number_format(card.ability.extra.xmult_mod),
+				colours = { G.C.SUITS[card.ability.extra.suit] or G.C.RED }
+			}
+		}
+	end,
 	cost 	= 5,
 	can_use = cosma_can_use,
 	use = function (self, card, area, copier)
@@ -473,6 +501,17 @@ local peacock = {
     key 	= "peacock",
 	pos 	= get_pos(0,3),
 	config	= { select = 2, extra = { money_mod = 1, suit = 'rgmc_blooms'} },
+	loc_vars = function(self, info_queue, card)
+		return {
+			vars = {
+				number_format(card.ability.select), 
+            	localize(card.ability.extra.suit, 'suits_plural'),
+            	localize(card.ability.extra.suit, 'suits_singular'),
+				number_format(card.ability.extra.money_mod),
+				colours = { G.C.SUITS[card.ability.extra.suit] or G.C.RED }
+			}
+		}
+	end,
 	cost 	= 5,
 	can_use = cosma_can_use,
 	use = function (self, card, area, copier)
@@ -509,6 +548,17 @@ local pelican = {
     key 	= "pelican",
 	pos 	= get_pos(0,4),
 	config	= { select = 2, extra = { chip_mod = 10, suit = 'rgmc_towers'} },
+	loc_vars = function(self, info_queue, card)
+		return {
+			vars = {
+				number_format(card.ability.select), 
+            	localize(card.ability.extra.suit, 'suits_plural'),
+            	localize(card.ability.extra.suit, 'suits_singular'),
+				number_format(card.ability.extra.chip_mod),
+				colours = { G.C.SUITS[card.ability.extra.suit] or G.C.RED }
+			}
+		}
+	end,
 	cost 	= 5,
 	can_use = cosma_can_use,
 	use = function (self, card, area, copier)
@@ -544,10 +594,13 @@ local pelican = {
 local phoenix = {
     key 	= "phoenix",
 	pos 	= get_pos(0,5),
-	config	= { extra = 0.2 },
+	config	= { select = 2, extra = 0.2 },
+	loc_vars = function(self, info_queue, card)
+		return { vars = { number_format(card.ability.select), number_format(card.ability.extra) } }
+	end,
 	cost 	= 7,
 	can_use = function(self, card)
-		return G.hand
+		return G.hand and G.hand.cards
 	end,
 	use = function (self, card, area, copier)
 		Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 2, function(v)
@@ -576,6 +629,9 @@ local soulmates = {
     key 	= "soulmates",
 	pos 	= get_pos(0,6),
 	config	= { select = 3 },
+	loc_vars = function(self, info_queue, card)
+        return MadLib.collect_vars(number_format(card.ability.select))
+	end,
 	cost 	= 7,
 	can_use = function(self, card)
 		return G.GAME.blind_info and G.GAME.blind_info.suits_played
@@ -600,7 +656,10 @@ local soulmates = {
 local spirit_plane = {
     key 	= "spirit_plane",
 	pos 	= get_pos(0,7),
-	config	= { },
+	config	= { select = 2 },
+	loc_vars = function(self, info_queue, card)
+        return MadLib.collect_vars(number_format(card.ability.select))
+	end,
 	cost 	= 7,
 	can_use = function(self, card)
 		return #MadLib.get_enhanced_cards(G.playing_cards) > 1
@@ -624,6 +683,14 @@ local spirit_plane = {
 	end
 }
 
+local coin_flip = function(a,b)
+	if math.random() > 0.5 then
+		return 1
+	else
+		return 0
+	end
+end
+
 -- [Cosma] THE ORBS: Select two cards - 3 in 4 chance to
 -- add random enhancement or change specific enhancement
 -- to Madcap equivalent, destroy otherwise
@@ -631,25 +698,62 @@ local spirit_plane = {
 local orbs = {
     key 	= "orbs",
 	pos 	= get_pos(0,8),
-	config	= { extra = { select = 2, odds = 4 } },
+	config	= { select = 2, extra = { odds = 4 } },
+	loc_vars = function(self, info_queue, card)
+        local _numer, _denom = SMODS.get_probability_vars(self, 1, card.ability.odds, 'orbs')
+        return MadLib.collect_vars(number_format(card.ability.select), number_format(_numer), number_format(_denom))
+	end,
 	cost 	= 7,
 	can_use = function(self, card)
 		return true
 	end,
 	use = function(self, card, area, copier)
-		local selection = MadLib.shuffle_sort_list(G.hand.cards, self.config.select or 2, nil, function(a,b)
-			return math.random() > 0.5 -- coin flip
-		end)
+		local selection = MadLib.deep_copy(G.hand.cards)
+		pseudoshuffle(selection)
+		selection = MadLib.shuffle_sort_list(G.hand.cards, self.config.select or 2)
 	
+		print(selection)
 		MadLib.loop_func(selection, function(v,i)
 			if not SMODS.pseudorandom_probability(card, 'orbs', 1, card.ability.extra.odds) then -- add random enhancement
-				
+			print("this passes")
+				local _enhancement = MadLib.get_weighted_enhancement()
+				MadLib.event({
+					func = function()
+						v:juice_up(0.5,0.5)
+						v:set_ability(G.P_CENTERS[_enhancement.center.key])
+						return true
+					end,
+					delay 	= 0.5,
+					trigger = 'immediate'
+				})
 			else -- fucking blow up
-			 	print('hi')
+			print("this does not pass")
+				local _first_dissolve = nil
+				MadLib.simple_event(function()
+					_card:start_dissolve(nil, _first_dissolve)
+					_first_dissolve = true
+					return true
+				end, 0.08, 'after')
 			end
 		end)
 	end
 }
+
+function Madcap.Funcs.get_num_suits_and_ranks(cards)
+	local rank_map, suit_map 	= {}, {}
+	local rank_list, suit_list	= {}, {}
+		MadLib.loop_func(cards, function(v)
+			if not rank_map[v.base.value] then
+				rank_map[v.base.value] = true
+				table.insert(rank_list,v.base.suit)
+			end
+			if not suit_map[v.base.suit] then
+				suit_map[v.base.suit] = true
+				table.insert(suit_list,v.base.suit)
+			end
+		end)
+	return rank_list, suit_list
+end
 
 -- [Cosma] THE COSMIC TREE: Gain $2/$1 for every
 -- unique suit / rank in hand.
@@ -657,14 +761,20 @@ local orbs = {
 local cosmic_tree = {
     key 	= "cosmic_tree",
 	pos 	= get_pos(0,9),
-	config	= { extra = { money = 2 } },
+	config	= { extra = { money_a = 2, money_b = 2} },
 	cost 	= 7,
 	can_use = function(self, card)
 		return true -- always time for money
 	end,
+	loc_vars = function(self, info_queue, card)
+		return MadLib.collect_vars(math.ceil(card.ability.extra.money_a or 2), math.ceil(card.ability.extra.money_b or 2))
+	end,
 	use = function(self, card, area, copier)
-		local ranks, suits = #get_ranks_from_cards(G.playing_cards), #get_suits_from_cards(G.playing_cards)
-		ease_dollars(ranks + suits * (self.config.extra.money or 2))
+		local suits, ranks 	= Madcap.Funcs.get_num_suits_and_ranks(G.playing_cards)
+		local rank_cash 	= math.floor(#ranks/3) * card.ability.extra.money_a
+		local suit_cash 	= math.floor(#suits/2) * card.ability.extra.money_b
+		local base 			= card.ability.extra.money or 2
+		ease_dollars(rank_cash + suit_cash)
 	end
 }
 
@@ -683,6 +793,10 @@ local life_map = {
     key 	= "life_map",
 	pos 	= get_pos(1,0),
 	config	= { select = 1, extra = { odds = 3 } },
+	loc_vars = function(self, info_queue, card)
+        local _numer, _denom = SMODS.get_probability_vars(self, 1, card.ability.odds, 'orbs')
+        return MadLib.collect_vars(number_format(card.ability.select), number_format(_numer), number_format(_denom))
+	end,
 	cost 	= 7,
 	can_use = function(self, card)
 		return G.jokers and #G.jokers.cards > 0
@@ -698,6 +812,14 @@ local life_map = {
 	end
 }
 
+
+function MadLib.compare_rank_nominals(a,b)
+	local rank_a = (SMODS.has_no_rank(self) and nil) or MadLib.get_value_from_id(a:get_id())
+	local rank_b = (SMODS.has_no_rank(self) and nil) or MadLib.get_value_from_id(b:get_id())
+	local nominal_a = rank_a and (rank_a.nominal + (rank_a.face_nominal or 0)) or -99
+	local nominal_b = rank_b and (rank_b.nominal + (rank_b.face_nominal or 0)) or -99
+	return nominal_a > nominal_b
+end
 -- [Cosma] KARMA - choose two cards, reduce higher rank by 2
 -- and increase lower rank by 2
 -- Parallels XI - Strength (+1 rank).
@@ -705,25 +827,42 @@ local karma = {
     key 	= "karma",
 	pos 	= get_pos(1,1),
 	config	= { select = 2, extra = 2 },
+	loc_vars = function(self, info_queue, card)
+        return MadLib.collect_vars(number_format(card.ability.select), number_format(math.abs(card.ability.extra)))
+	end,
 	cost 	= 7,
 	can_use = function(self, card)
-		return true
+		return G.hand and #G.hand.cards > 1
 	end,
 	use = function(self, card, area, copier)
 		-- targets cards with no enhancement
-		local to_destroy = MadLib.shuffle_sort_list(G.hand.cards, self.config.select or 2, nil, function(a,b)
-			return math.random() < 0.5
+		local pick_random = MadLib.shuffle_sort_list(G.hand.cards, self.config.select or 2, nil, function(a,b)
+			if math.random() < 0.5 then
+				return true
+			else
+				return false
+			end
+		end)
+		table.sort(pick_random, MadLib.compare_rank_nominals)
+		local high, low = {}, {}
+
+		MadLib.loop_func(pick_random, function(v,i)
+			if i <= math.ceil(#pick_random/2) then
+				table.insert(low,v)
+			else
+				table.insert(high,v)
+			end
 		end)
 
 		Madcap.Funcs.use_cosma(self, card, area, copier, 3, function(v)
 			return true -- must have suit
 		end, function(v, card)
-			local _enhancement = pseudorandom_element(_enhancement, pseudoseed('rgmc_spirit_plane')) -- pick a suit
-			
-			MadLib.simple_event(function()
-				v:set_ability(G.P_CENTERS[_enhancement.center.key])
-				return true
-			end, 0.2, 'after')
+			MadLib.loop_func(high,function(v)
+                assert(SMODS.modify_rank(v, card.ability.extra))
+			end)
+			MadLib.loop_func(low,function(v)
+                assert(SMODS.modify_rank(v, -card.ability.extra))
+			end)
 		end)
 	end
 }
@@ -735,6 +874,9 @@ local sacrifice = {
     key 	= "sacrifice",
 	pos 	= get_pos(1,2),
 	config	= { select = 1, extra = 1.0 },
+	loc_vars = function(self, info_queue, card)
+        return MadLib.collect_vars(number_format(card.ability.select), number_format(card.ability.extra))
+	end,
 	cost 	= 7,
 	can_use = function(self, card)
 		return (G.jokers and #G.jokers.cards > 1) and (Madcap.Funcs.get_mayhem() + self.config.extra) <= Madcap.Funcs.get_max_mayhem()
@@ -742,12 +884,20 @@ local sacrifice = {
 	use = function(self, card, area, copier)
 		Madcap.Funcs.ease_mayhem(self.config.extra or 1, true)
 
-		local selection = MadLib.shuffle_sort_list(G.jokers.cards, self.config.select or 2, nil, function(a,b)
-			return math.random() < 0.5
+		local selection = MadLib.shuffle_sort_list(G.jokers.cards, self.config.select or 1, function(v)
+			return SMODS.is_eternal(v, card)
+		end, function(a,b)
+			if math.random() < 0.5 then
+				return true
+			else
+				return false
+			end
 		end)
 	
+        local _first_dissolve = nil
 		MadLib.loop_func(selection, function(v,i)
-			-- destroy v
+            v:start_dissolve(v, _first_dissolve)
+            _first_dissolve = true
 		end)
 	end
 }
@@ -759,6 +909,9 @@ local past_lives = {
     key 	= "past_lives",
 	pos 	= get_pos(1,3),
 	config	= { extra = 1 },
+	loc_vars = function(self, info_queue, card)
+        return MadLib.collect_vars(number_format(card.ability.extra))
+	end,
 	cost 	= 7,
 	can_use = function(self, card)
 		return (G.GAME.dead_jokers and #G.GAME.dead_jokers or 0) > 0
@@ -787,8 +940,14 @@ local maze = {
 		return true
 	end,
 	use = function(self, card, area, copier)
-		local shuffled_deck = MadLib.shuffle_sort_list(G.hand.cards, nil, nil, function(a,b)
-			return math.random() < 0.5
+		local shuffled_deck = MadLib.shuffle_sort_list(G.hand.cards, nil, function(v)
+			return not SMODS.has_no_rank(self) and not SMODS.has_no_suit(self)
+		end, function(a,b)
+			if math.random() < 0.5 then
+				return true
+			else
+				return false
+			end
 		end)
 
 		local shuffle_suits, shuffle_ranks = {}, {}
@@ -823,6 +982,9 @@ local vessel = {
     key 	= "vessel",
 	pos 	= get_pos(1,5),
 	config	= { select = 2, extra = 1.25},
+	loc_vars = function(self, info_queue, card)
+        return MadLib.collect_vars(number_format(card.ability.select), number_format(card.ability.extra))
+	end,
 	cost 	= 7,
 	can_use = function(self, card)
 		return G.hand and #G.hand.cards > 1
@@ -845,6 +1007,9 @@ local shore = {
     key 	= "shore",
 	pos 	= get_pos(1,6),
 	config	= { select = 1 },
+	loc_vars = function(self, info_queue, card)
+        return MadLib.collect_vars(number_format(card.ability.select))
+	end,
 	cost 	= 7,
 	can_use = function(self, card)
 		return true
@@ -866,6 +1031,9 @@ local veil = {
     key 	= "veil",
 	pos 	= get_pos(1,7),
 	config	= { select = 3 },
+	loc_vars = function(self, info_queue, card)
+        return MadLib.collect_vars(number_format(card.ability.select))
+	end,
 	cost 	= 7,
 	can_use = function(self, card)
 		return G.hand and MadLib.loop_func(G.hand.cards, function(v)
@@ -888,6 +1056,9 @@ local bridge = {
     key 	= "bridge",
 	pos 	= get_pos(1,8),
 	config	= { select = 3 },
+	loc_vars = function(self, info_queue, card)
+        return MadLib.collect_vars(number_format(card.ability.select))
+	end,
 	cost 	= 7,
 	can_use = function(self, card)
 		return G.hand and MadLib.loop_func(G.hand.cards, function(v)
@@ -932,7 +1103,10 @@ end
 local pathways = {
     key 	= "pathways",
 	pos 	= get_pos(1,9),
-	config	= { extra = 1},
+	config	= { extra = 1 },
+	loc_vars = function(self, info_queue, card)
+        return MadLib.collect_vars(number_format(card.ability.select))
+	end,
 	cost 	= 7,
 	can_use = function(self, card)
 		return not G.shop -- not in shop
@@ -986,7 +1160,10 @@ end
 local unknown = {
     key 	= "unknown",
 	pos 	= get_pos(2,0),
-	config	= { extra = { odds = 2, min = 0.5, max = 1.5 } },
+	config	= { extra = { min = 0.5, max = 1.5 } },
+	loc_vars = function(self, info_queue, card)
+        return MadLib.collect_vars(number_format(card.ability.extra.min), number_format(card.ability.extra.max))
+	end,
 	cost 	= 7,
 	can_use = function(self, card)
 		return true
@@ -1029,6 +1206,19 @@ local life_on_earth = {
     key 	= "life_on_earth",
 	pos 	= get_pos(2,1),
 	config	= { select = 2, extra = { suits = {'rgmc_voids', 'rgmc_lanterns'} } },
+	loc_vars = function(self, info_queue, card)
+		return {
+			vars = {
+				number_format(card.ability.select), 
+            	localize(card.ability.extra.suits[1], 'suits_plural'),
+            	localize(card.ability.extra.suits[2], 'suits_plural'),
+				colours = { 
+					G.C.SUITS[card.ability.extra.suits[1]] or G.C.RED,
+					G.C.SUITS[card.ability.extra.suits[2]] or G.C.RED
+				}
+			}
+		}
+	end,
 	cost 	= 7,
 	can_use = function(self, card)
 		return G.hand and MadLib.loop_func(G.hand.cards, function(v)
@@ -1039,9 +1229,9 @@ local life_on_earth = {
 		Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 2, function(v)
 			return not (v:is_suit(self.config.extra[1]) or v:is_suit(self.config.extra[2]))
 		end, function(v)
-			local _suit = v:has_light_suit() and self.config.extra[2] 
-				or v:has_dark_suit() and self.config.extra[1]
-				or pseudorandom_element(self.config.suits)
+			local _suit = v:has_light_suit() and self.config.extra.suits[2] 
+				or v:has_dark_suit() and self.config.extra.suits[1]
+				or pseudorandom_element(self.config.suits,psuedoseed('life_on_earth'))
 			MadLib.simple_event(function() assert(SMODS.change_base(v, _suit, nil)) end)
 		end)
 	end
@@ -1054,11 +1244,7 @@ local sleeping_ships = {
     key 		= "sleeping_ships",
 	pos 		= get_pos(2,2),
 	soul_pos	= get_pos(2,3),
-	config		= { extra = 1 },
 	cost 		= 24,
-	loc_vars = function(self, info_queue, card)
-		return MadLib.collect_vars(card.ability.extra)
-	end,
 	can_use 	= function(self, card)
 		return true -- Always
 	end,
@@ -1087,9 +1273,8 @@ local aversion = {
 	key 	= "aversion",
 	atlas 	= "aversion",
 	order 	= 10000,
-	pos 	= 	{ x = 0, y = 0},
-	soul_pos = { x = 1, y = 0, extra = { x = 2, y = 0 } },
-	config 	= { },
+	pos 		= { x = 0, y = 0},
+	soul_pos 	= { x = 1, y = 0, extra = { x = 2, y = 0 } },
 	cost 	= 66,
 	can_use = function(self, card)
 		return true -- Always
@@ -1350,6 +1535,7 @@ local sigil = {
 			MadLib.simple_event(function()
 				_card:start_dissolve(nil, _first_dissolve)
 				_first_dissolve = true
+				return true
 			end, 0.08, 'after')
 		end)
 	end
@@ -1379,6 +1565,7 @@ local ouija = {
 			MadLib.simple_event(function()
 				_card:start_dissolve(nil, _first_dissolve)
 				_first_dissolve = true
+				return true
 			end, 0.08, 'after')
 		end)
 	end

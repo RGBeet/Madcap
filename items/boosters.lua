@@ -13,11 +13,11 @@ Madcap.Funcs.booster_loc_vars = function(self, info_queue, card)
 			card and card.ability.extra or self.config.extra)
 end
 
-function Madcap.Funcs.digital_hallucinations_compat(set,loc,colour)
+function Madcap.Funcs.digital_hallucinations_compat(set,loc,colour,func)
 	return {
 		colour 		= colour,
 		loc_key 	= 'k_'.. loc,
-		create 		= function()
+		create 		= func or function()
 			local cc = MadLib.get_random_card(set, G.consumeables)
 			cc:set_edition({ negative = true }, true)
 			cc:add_to_deck()
@@ -25,6 +25,8 @@ function Madcap.Funcs.digital_hallucinations_compat(set,loc,colour)
 		end,
 	}
 end
+
+
 
 Madcap.BoosterTiers = {
 	['base'] = {
@@ -58,6 +60,10 @@ Madcap.BoosterTiers = {
 
 }
 
+function Madcap.Funcs.get_spatia_pack_potentia()
+	return math.ceil(math.random()*100) <= 10
+end
+
 Madcap.BoosterSets = {
 	['cosma'] = {
 		kind 			= 'CosmaTarot',
@@ -66,13 +72,37 @@ Madcap.BoosterSets = {
 		in_pool			= true,
 		base_weight 	= 0.96,
 		base_price		= 6,
-		create_card		= function(self, card)
+		create_card		= function(self, card, i)
 			return Madcap.Funcs.booster_create_card(self, card, 'CosmaTarot', 'cosma')
 		end,
 		ease_background_colour	= function(self)
 			Madcap.Funcs.booster_ease_bg(self, G.C.SET.CosmaTarot, G.C.BLACK)
 		end,
 		digital_hallucinations_compat = Madcap.Funcs.digital_hallucinations_compat('CosmaTarot', 'rgmc_plus_cosma', G.C.SET.CosmaTarot)
+	},
+	['spatia'] = {
+		kind 			= 'SpatiaPlanet',
+		list			= {'base', 'jumbo', 'mega'},
+		istart			= 16,
+		in_pool			= true,
+		base_weight 	= 0.96,
+		base_price		= 7,
+		create_card		= function(self, card, i)
+			if Madcap.Funcs.get_spatia_pack_potentia() then
+				return Madcap.Funcs.booster_create_card(self, card, 'PotentiaCrystal', 'potentia')
+			else
+				return Madcap.Funcs.booster_create_card(self, card, 'SpatiaPlanet', 'spatia')
+			end
+		end,
+		ease_background_colour	= function(self)
+			Madcap.Funcs.booster_ease_bg(self, G.C.SET.SpatiaPlanet, G.C.BLACK)
+		end,
+		digital_hallucinations_compat = function()
+			local cc = MadLib.get_random_card(Madcap.Funcs.get_spatia_pack_potentia() and 'PotentiaCrystal' or 'SpatiaPlanet', G.consumeables)
+			cc:set_edition({ negative = true }, true)
+			cc:add_to_deck()
+			G.consumeables:emplace(cc)
+		end
 	},
 	['reward'] = {
 		kind 			= 'Reward',
@@ -678,6 +708,7 @@ MadLib.loop_func({
 		spam,
 		madcap_select
 	},
+	boosters['spatia'],
 }, function(_list,i)
 	MadLib.loop_func(_list, function(v, i)
 		table.insert(all_boosters, v)

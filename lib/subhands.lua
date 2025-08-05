@@ -11,11 +11,15 @@
 ]]
 
 function Card:has_high_rank()
-    return SMODS.has_no_rank(self) and SMODS.Ranks[self:get_id()].nominal > 6
+    if SMODS.has_no_rank(self) then return false end
+    local _rank = MadLib.get_value_from_id(self:get_id())
+    return (_rank and _rank.nominal > 6)
 end
 
 function Card:has_low_rank()
-    return SMODS.has_no_rank(self) and SMODS.Ranks[self:get_id()].nominal <= 6
+    if SMODS.has_no_rank(self) then return false end
+    local _rank = MadLib.get_value_from_id(self:get_id())
+    return (_rank and _rank.nominal <= 6)
 end
 
 SubHands = {
@@ -29,7 +33,7 @@ SubHands = {
         check_hand = function(hand) -- at least 5 light suits (wilds included)
             local light_cards   = MadLib.loop_func(hand, function(v) return v:has_light_suit() end)
             local dark_cards    = MadLib.loop_func(hand, function(v) return v:has_dark_suit() end)
-            return #hand >= (G.GAME.subhand_minimum or 5) and light_cards > dark_cards
+            return light_cards >= (G.GAME.subhand_minimum or 5) and light_cards > dark_cards
         end,
     },
     Dark = {
@@ -42,7 +46,7 @@ SubHands = {
         check_hand = function(hand) -- at least 5 light suits (wilds included)
             local light_cards   = MadLib.loop_func(hand, function(v) return v:has_light_suit() end)
             local dark_cards    = MadLib.loop_func(hand, function(v) return v:has_dark_suit() end)
-            return #hand >= (G.GAME.subhand_minimum or 5) and light_cards < dark_cards
+            return dark_cards >= (G.GAME.subhand_minimum or 5) and light_cards < dark_cards
         end,
     },
     Balanced = {
@@ -88,7 +92,7 @@ SubHands = {
         check_hand = function(hand) -- at least 5 ranks 2-6 + Ace (+ voucher unlocked)
             local high_cards   = MadLib.loop_func(hand, function(v) return v:has_high_rank() end)
             local low_cards    = MadLib.loop_func(hand, function(v) return v:has_low_rank() end)
-            return #hand >= (G.GAME.subhand_minimum or 5) and high_cards < low_cards
+            return #hand >= (G.GAME.subhand_minimum or 5) and high_cards > low_cards
         end,
     },
     Low = {
@@ -101,7 +105,7 @@ SubHands = {
         check_hand = function(hand) -- at least 5 ranks 7-K + Ace (+ voucher unlocked)
             local high_cards   = MadLib.loop_func(hand, function(v) return v:has_high_rank() end)
             local low_cards    = MadLib.loop_func(hand, function(v) return v:has_low_rank() end)
-            return #hand >= (G.GAME.subhand_minimum or 5) and high_cards > low_cards
+            return #hand >= (G.GAME.subhand_minimum or 5) and high_cards < low_cards
         end,
     }
 }
@@ -116,12 +120,6 @@ end
 function Madcap.Funcs.set_subhand(_sh,_state)
 	if not G.GAME.subhands[_sh] then return false end
 	G.GAME.subhands[_sh].enabled = _state or (not G.GAME.subhands[_sh].enabled)
-	return true
-end
-
-function Madcap.Funcs.empower_subhand(_sh,_lvl)
-	if not G.GAME.subhands[_sh] then return false end
-	G.GAME.subhands[_sh].empower = _lvl or 0
 	return true
 end
 
@@ -262,27 +260,6 @@ function MadLib.calculate_mult(_mult,sh)
     if Cryptid then final_mult = Cryptid.ascend(final_mult) end
     --tell('Final mult is ' .. tostring(final_mult))
     return final_mult
-end
-
-local poker_hand_info_ref = G.FUNCS.get_poker_hand_info
-function G.FUNCS.get_poker_hand_info(_cards)
-	local text, loc_disp_text, poker_hands, scoring_hand, disp_text = poker_hand_info_ref(_cards)
-
-	local active = MadLib.get_subhands(scoring_hand)
-    --print(number_format(#active) .. ' subhands.')
-	if #active > 0 then
-        local changed = G.GAME.total_selected and G.GAME.total_selected ~= #scoring_hand
-        local scoring = hand_chips ~= nil
-        local prefix = ''
-
-        for i=1, #active do
-            prefix = prefix .. ' '.. localize(active[i])
-        end
-        loc_disp_text = prefix .. ' ' .. loc_disp_text
-        G.GAME.total_selected = #scoring_hand
-    end
-
-    return text, loc_disp_text, poker_hands, scoring_hand, disp_text
 end
 
 --[[
