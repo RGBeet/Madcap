@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "../MadLib"
+		},
+		{
+			"path": "../Pacdam"
 		}
 	],
 	"settings": {}

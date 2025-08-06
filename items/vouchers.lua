@@ -1,5 +1,4 @@
-
-
+-- COMBO MEAL: Overshooting gives you a free Tarot (may include modded tarots?)
 local combo_meal = {
 	key 		= "combo_meal",
 	cost 		= 6,
@@ -35,6 +34,8 @@ local combo_meal = {
     end,
 }
 
+-- SUPERSIZE: Ditto, but gives up to 9 extra consumables based on how far over the chip requirement.
+-- Think chips ^ 1.07 ^ n.
 local supersize = {
 	key 		= "supersize",
 	cost 		= 9,
@@ -86,6 +87,7 @@ local supersize = {
     end,
 }
 
+-- EVERYMAN: X2 Score per Common Joker in hand.
 local everyman = {
 	key 		= "everyman",
 	cost 		= 6,
@@ -96,13 +98,14 @@ local everyman = {
 		return MadLib.collect_vars(number_format(card.ability.extra))
     end,
     calculate 	= function (self, card, context)
-        if context.after then
+        if context.final_scoring_step then
 			local commons = Madcap.Funcs.get_common_jokers()
 			if commons > 0 then return MadLib.do_x_score(card.ability.extra, commons) end
         end
     end,
 }
 
+-- EVERYMAN: Ditto, but with ^1.01 Score.
 local exceptional = {
 	key 		= "exceptional",
 	cost 		= 11,
@@ -114,13 +117,14 @@ local exceptional = {
 		return MadLib.collect_vars(number_format(card.ability.extra))
     end,
     calculate 	= function (self, card, context)
-        if context.after then
+        if context.final_scoring_step then
 			local commons = Madcap.Funcs.get_common_jokers()
 			if commons > 0 then return MadLib.do_e_score(card.ability.extra, commons) end
         end
     end,
 }
 
+-- All bonus-based enhancements (according to MadLib) give an extra +8 Chips upon scoring.
 local big_bonus = {
 	key 		= "big_bonus",
 	cost 		= 3,
@@ -150,6 +154,7 @@ local big_bonus = {
     end
 }
 
+-- All mult-based enhancements (according to MadLib) give an extra +2 Mult upon scoring.
 local massive_mult = {
 	key 		= "massive_mult",
 	cost 		= 7,
@@ -177,6 +182,7 @@ local massive_mult = {
     end
 }
 
+-- HIGH RISE: Retrigger all scored cards in a High Card hand.
 local high_rise = {
 	key = "high_rise",
 	cost = 4,
@@ -202,6 +208,7 @@ local high_rise = {
     end
 }
 
+-- HIGH ROLLER: Retrigger all HELD cards in a High Card hand.
 local high_roller = {
 	key 		= "high_roller",
 	cost 		= 8,
@@ -234,11 +241,12 @@ local function clamp_mayhem(val)
 	return _total < _max and _total or (_max - _total)
 end
 
+-- MANIFEST: +2 Mayhem, +1 Ante.
 local manifest = {
 	key 		= "manifest",
-	cost 		= 5,
+	cost 		= 7,
     config = {
-        extra = { antes = 1, mayhem = 1 },
+        extra = { antes = 1, mayhem = 2 },
         immutable = { max_antes = 25 }
     },
     loc_vars 	= function(self, info_queue, card)
@@ -252,12 +260,13 @@ local manifest = {
     end,
 }
 
+-- MINDMELT: +4 Mayhem, +2 Ante.
 local mindmelt = {
 	key 		= "mindmelt",
-	cost 		= 8,
+	cost 		= 11,
 	requires 	= MadLib.get_voucher_reqs('rgmc_manifest'),
     config = {
-        extra = { antes = 1, mayhem = 1 },
+        extra = { antes = 2, mayhem = 4 },
         immutable = { max_antes = 25 }
     },
     loc_vars 	= function(self, info_queue, card)
@@ -271,6 +280,7 @@ local mindmelt = {
     end,
 }
 
+-- COSMA MERCHANT: Cosma Tarots are 2X more likely to appear
 local cosma_merchant = {
 	key 		= "cosma_merchant",
 	cost 		= 6,
@@ -286,6 +296,7 @@ local cosma_merchant = {
     end,
 }
 
+-- COSMA TYCOON: Cosma Tarots are 4X more likely to appear
 local cosma_tycoon = {
 	key 		= "cosma_tycoon",
 	cost 		= 9,
@@ -302,9 +313,61 @@ local cosma_tycoon = {
     end,
 }
 
+-- SPATIA MERCHANT: Spatia Planets are 1.5X more likely to appear
+local spatia_merchant = {
+	key 		= "spatia_merchant",
+	cost 		= 6,
+    config 		= { extra = 1.5 },
+    loc_vars 	= function(self, info_queue, card)
+		return MadLib.collect_vars_colours( number_format(card.ability.extra), { G.C.SET.SpatiaPlanet })
+    end,
+	redeem 		= function(self)
+		MadLib.simple_event(function()
+			G.GAME.spatia_rate = (G.GAME.spatia_rate or 3) * card.ability.extra.display
+			return true
+		end)
+    end,
+}
+
+-- SPATIA TYCOON: Spatia Planets are 3X more likely to appear
+local spatia_tycoon = {
+	key 		= "spatia_tycoon",
+	cost 		= 9,
+    config 		= { extra = 3 },
+	requires 	= MadLib.get_voucher_reqs('rgmc_spatia_merchant'),
+    loc_vars 	= function(self, info_queue, card)
+		return MadLib.collect_vars_colours( number_format(card.ability.extra), { G.C.SET.SpatiaPlanet })
+    end,
+	redeem 		= function(self)
+		MadLib.simple_event(function()
+			G.GAME.spatia_rate = (G.GAME.spatia_rate or 6) * math.floor(card.ability.extra.display / 2)
+			return true
+		end)
+    end,
+}
+
+-- ATOMIC RECONSTRUCTOR: Potentia Crystals are 2X more likely to appear
+-- in place of Spatia Planets
+local atomic_reconstructor = {
+	key 		= "atomic_reconstructor",
+	cost 		= 9,
+    config 		= { extra = 2 },
+	requires 	= MadLib.get_voucher_reqs('rgmc_spatia_merchant'),
+    loc_vars 	= function(self, info_queue, card)
+		return MadLib.collect_vars_colours( number_format(card.ability.extra), { G.C.SET.PotentiaCrystal })
+    end,
+	redeem 		= function(self)
+		MadLib.simple_event(function()
+			G.GAME.potentia_rate = (G.GAME.potentia_rate or 0.5) * math.floor(card.ability.extra.display / 2)
+			return true
+		end)
+    end,
+}
+
+-- DAY AND NIGHT: Gain access to Light and Dark subhands.
 local day_and_night = {
 	key 		= "day_and_night",
-	cost 		= 6,
+	cost 		= 4,
     config 		= { },
     loc_vars 	= function(self, info_queue, card)
 		return Madcap.BlankVar
@@ -318,9 +381,10 @@ local day_and_night = {
     end,
 }
 
+-- MIDDAY: Light subhands are now 25% more efficient.
 local midday = {
 	key 		= "midday",
-	cost 		= 8,
+	cost 		= 7,
     config 		= { },
     loc_vars 	= function(self, info_queue, card)
 		return Madcap.BlankVar
@@ -328,15 +392,16 @@ local midday = {
 	requires 	= MadLib.get_voucher_reqs('rgmc_day_and_night'),
 	redeem 		= function(self)
 		MadLib.simple_event(function()
-			Madcap.Funcs.empower_subhand('light', 1)
+			Madcap.Funcs.set_subhand_voucher_level('light', 1)
 			return true
 		end)
     end,
 }
 
+-- MIDNIGHT: Dark subhands are now 25% more efficient.
 local midnight = {
 	key 		= "midnight",
-	cost 		= 8,
+	cost 		= 7,
     config 		= { },
     loc_vars 	= function(self, info_queue, card)
 		return Madcap.BlankVar
@@ -344,15 +409,16 @@ local midnight = {
 	requires 	= MadLib.get_voucher_reqs('rgmc_day_and_night'),
 	redeem 		= function(self)
 		MadLib.simple_event(function()
-			Madcap.Funcs.empower_subhand('dark', 1)
+			Madcap.Funcs.set_subhand_voucher_level('dark', 1)
 			return true
 		end)
     end,
 }
 
+-- TWILIGHT: Dark and Ligh subhands are now 50% more efficient.
 local twilight = {
 	key 		= "twilight",
-	cost 		= 11,
+	cost 		= 10,
     config 		= { },
     loc_vars 	= function(self, info_queue, card)
 		return Madcap.BlankVar
@@ -360,13 +426,14 @@ local twilight = {
 	requires 	= MadLib.get_voucher_reqs('rgmc_day_and_night','rgmc_midday','rgmc_midnight'),
 	redeem 		= function(self)
 		MadLib.simple_event(function()
-			Madcap.Funcs.empower_subhand('dark', 2)
-			Madcap.Funcs.empower_subhand('light', 2)
+			Madcap.Funcs.set_subhand_voucher_level('light', 2)
+			Madcap.Funcs.set_subhand_voucher_level('dark', 2)
 			return true
 		end)
     end,
 }
 
+-- EBB AND FLOW: Gain access to Low and High subhands.
 local ebb_and_flow = {
 	key 		= "ebb_and_flow",
 	cost 		= 5,
@@ -393,7 +460,7 @@ local eensy_weensy = {
 	requires 	= MadLib.get_voucher_reqs('rgmc_ebb_and_flow'),
 	redeem 		= function(self)
 		MadLib.simple_event(function()
-			Madcap.Funcs.empower_subhand('low', 1)
+			Madcap.Funcs.set_subhand_voucher_level('low', 1)
 			return true
 		end)
     end,
@@ -409,7 +476,7 @@ local extra_large = {
 	requires 	= MadLib.get_voucher_reqs('rgmc_ebb_and_flow'),
 	redeem 		= function(self)
 		MadLib.simple_event(function()
-			Madcap.Funcs.empower_subhand('high', 1)
+			Madcap.Funcs.set_subhand_voucher_level('high', 1)
 			return true
 		end)
     end,
@@ -425,8 +492,8 @@ local the_median = {
 	requires 	= MadLib.get_voucher_reqs('rgmc_ebb_and_flow','rgmc_eensy_weensy','rgmc_extra_large'),
 	redeem 		= function(self)
 		MadLib.simple_event(function()
-			Madcap.Funcs.empower_subhand('high', 2)
-			Madcap.Funcs.empower_subhand('low', 2)
+			Madcap.Funcs.set_subhand_voucher_level('high', 2)
+			Madcap.Funcs.set_subhand_voucher_level('low', 2)
 			return true
 		end)
     end,
@@ -517,7 +584,10 @@ Madcap.Funcs.LoadVouchers({
 	ebb_and_flow,
 	eensy_weensy,
 	extra_large,
-	the_median
+	the_median,
+	spatia_merchant,
+	spatia_tycoon,
+	atomic_reconstructor
 }, list, 'vouchers')
 
 return {

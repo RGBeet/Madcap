@@ -86,7 +86,7 @@ local providence = {
             end)
 
             MadLib.flip_cards(bestish, function(c)
-                c:set_edition(MadLib.get_weighted_edition, Madcap.ProvidenceEditions)
+                c:set_edition(MadLib.get_weighted_edition(), Madcap.ProvidenceEditions)
             end, nil, function(c)
                 c:juice_up(0.3, 0.3)
             end)
@@ -668,14 +668,6 @@ local cosmic_tree = {
 	end
 }
 
-function MadLib.compare_and_pick_unique(main_list, compare_list, seed_name)
-	return pseudorandom_element(MadLib.list_matches_all(main_list, function(v1)
-		return not MadLib.list_matches_one(compare_list, function(v2)
-			return v2 ~= v1
-		end)
-	end), pseudoseed('rgmc_life_map'))
-end
-
 -- [Cosma] THE LIFE MAP: 1 in 4 chance to reroll a Joker
 -- into one of a higher rarity.
 -- Parallels X - The Wheel of Fortune ("1 in 4").
@@ -691,7 +683,7 @@ local life_map = {
 		local changed = {}
 		MadLib.number_func(nil, self.config.select, function(i)
 			if SMODS.pseudorandom_probability(card, 'life_map', 1, card.ability.extra.odds) then -- add random enhancement
-				local pick = MadLib.compare_and_pick_unique()
+				--??!
 				-- get rarity
 			end
 		end)

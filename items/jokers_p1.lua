@@ -220,7 +220,7 @@ local spectator = {
             MadLib.loop_func(context.full_hand, function(v)
 				if not v.rgmc_garbage_incompat then
 					cards = cards + 1
-					MadLib.simple_juice(v)
+					v:juice_up()
 				end
             end)
 

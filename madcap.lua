@@ -191,6 +191,7 @@ function Madcap.Funcs.run_start()
         G.GAME.subhands[k].l_chips  	= v.l_chips or 0.1
         G.GAME.subhands[k].enabled  	= false
         G.GAME.subhands[k].empower		= 0
+        G.GAME.subhands[k].voucher		= 0
     end
 
     local madcap_vals = {
@@ -3089,7 +3090,6 @@ for set, objs in pairs(Madcap.object_buffer) do
 end
 
 -- File loading ended!
-
 print(errors)
 for f, e in ipairs(errors) do
     tell_stat("Error loading file",e)

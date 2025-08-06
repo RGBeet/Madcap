@@ -119,6 +119,12 @@ function Madcap.Funcs.set_subhand(_sh,_state)
 	return true
 end
 
+function Madcap.Funcs.set_subhand_voucher_level(_sh,_lvl)
+	if not G.GAME.subhands[_sh] then return false end
+	G.GAME.subhands[_sh].voucher = _lvl or 0
+	return true
+end
+
 function Madcap.Funcs.empower_subhand(_sh,_lvl)
 	if not G.GAME.subhands[_sh] then return false end
 	G.GAME.subhands[_sh].empower = _lvl or 0
