@@ -803,21 +803,19 @@ function Madcap.Funcs.get_max_mayhem()
 	return G.GAME and G.GAME.max_mayhem or 10
 end
 
-function Madcap.Funcs.get_mayhem_state(recalculate)
+function Madcap.Funcs.get_mayhem_state()
 	local mayhem = (G.GAME.mayhem or 0)
-	if not recalculate then
-		return G.GAME and G.GAME.mayhem_state or 0
-	else
-		local mayhem_state = 0
-		if mayhem > 9 then
-			mayhem_state = 3
-		elseif mayhem >= 6 then
-			mayhem_state = 2
-		elseif mayhem >= 3 then
-			mayhem_state = 1
-		end
-		return mayhem_state
+	
+	local mayhem_state = 0
+	if mayhem > 9 then
+		mayhem_state = 3
+	elseif mayhem >= 6 then
+		mayhem_state = 2
+	elseif mayhem >= 3 then
+		mayhem_state = 1
 	end
+		
+	return mayhem_state
 end
 
 function Madcap.Funcs.read_mayhem()
@@ -860,11 +858,9 @@ function Madcap.Funcs.ease_mayhem(_mod, _check, _silent, _instant)
         end
 
 		local _new = lenient_bignum(_old + _mod)
-		local mayhem_state = Madcap.Funcs.get_mayhem_state(recalculate)
 
-		if mayhem_state ~= G.GAME.mayhem_state then
-			G.GAME.mayhem_state = mayhem_state
-		end
+		local mayhem_state 		= Madcap.Funcs.get_mayhem_state(recalculate)
+		local sound 			= 'rgmc_mayhem_t' .. tostring(math.max(1,math.min(3,mayhem_state)))
 
         --Play a SPOOKY noise sound
         if (not Talisman.config_file.disable_anims) and (not _silent) then
@@ -872,8 +868,8 @@ function Madcap.Funcs.ease_mayhem(_mod, _check, _silent, _instant)
                 play_sound('rgmc_mayhem_down', 0.8)
                 play_sound('timpani')
 			elseif add_mayhem then
-				if mayhem_state ~= nil then
-					play_sound('rgmc_mayhem_t' .. tostring(state_up), 0.8)
+				if mayhem_state > G.GAME.mayhem_state then
+					play_sound(sound)
 					delay(2.0)
 				else
 					play_sound('timpani')
@@ -881,6 +877,11 @@ function Madcap.Funcs.ease_mayhem(_mod, _check, _silent, _instant)
 				end
             end
         end
+
+		if mayhem_state ~= G.GAME.mayhem_state then
+			G.GAME.mayhem_state = mayhem_state
+		end
+
 
         SMODS.calculate_context({ mayhem_changed = G.GAME.mayhem })
         if _check then Madcap.Funcs.read_mayhem() end -- does post-setting calculations (if requested)
@@ -1247,14 +1248,39 @@ function Madcap.Funcs.apply_seal_to_random(seal, times, context, cardarea)
     end
 end
 
+function table_loopy(table)
+	for k,v in pairs(table) do
+		if type(v) ~= 'table' then 
+			print(tostring(k) .. ': ' .. tostring(v))
+		end
+	end
+end
+
 function Madcap.Funcs.check_eval_card(card)
 	-- handle mayhem stuff
-	if card:is_suit('rgmc_voids') then
-		Madcap.Funcs.set_mayhem(0.1)
-		card_eval_status_text(card, "extra", nil, nil, nil, { message = "?!?", colour = G.C.PURPLE })
-	elseif card:is_suit('rgmc_lanterns') then
-		Madcap.Funcs.set_mayhem(-0.1)
-		card_eval_status_text(card, "extra", nil, nil, nil, { message = "?!?", colour = G.C.BLUE })
+	if card:is_suit('rgmc_voids') or card.base.value == 'rgmc_voids' then
+		table_loopy(card.ability)
+
+
+		local mayhem_gain = 0.1
+		local eval = {
+			message = '+' .. tostring(mayhem_gain) .. ' M!', 
+			colour = G.C.RED,
+			func = function()
+				Madcap.Funcs.ease_mayhem(mayhem_gain)
+			end 
+		}
+		card_eval_status_text(card, "extra", nil, nil, nil, eval)
+	elseif card:is_suit('rgmc_lanterns') or card.base.value == 'rgmc_lanterns' then
+		local mayhem_loss = -0.1
+		local eval = { 
+			message = tostring(mayhem_loss) .. ' M!', 
+			colour = G.C.RED,
+			func = function()
+				Madcap.Funcs.ease_mayhem(mayhem_loss)
+			end 
+		}
+		card_eval_status_text(card, "extra", nil, nil, nil, eval)
 	end
 end
 
@@ -1333,13 +1359,15 @@ function Madcap.Funcs.blind_end_mayhem_check()
 	local mayhem_add = Madcap.Funcs.calculate_mayhem_decay()
 	Madcap.Funcs.set_mayhem(mayhem_add, true, false)
 	local mayhem_state = G.GAME.mayhem_state or 0
-
-	Madcap.Func.read_mayhem()
+	Madcap.Funcs.read_mayhem()
 
 	-- state 1: randomize values
 	if mayhem_state > 0 then
-		MadLib.loop_func(G.playing_cards, function(v)
+		MadLib.loop_func(G.playing_cards, function(v,i)
 			Madcap.Funcs.mayhemize(v)
+		end)
+		
+		MadLib.loop_func(G.jokers.cards, function(v)
 			MadLib.event({
 				trigger = 'after',
 				delay = '0.08',
@@ -1348,9 +1376,6 @@ function Madcap.Funcs.blind_end_mayhem_check()
 					return true
 				end
 			})
-		end)
-		
-		MadLib.loop_func(G.jokers.cards, function(v)
 			Madcap.Funcs.mayhemize(v)
 		end)
 	end
@@ -1904,11 +1929,8 @@ end
 
 function Madcap.Funcs.level_up_subhand(card, hand, instant, amount, context)
 	amount = amount or 1
-
 	local basic_func = true
-
-
-	G.GAME.subhands[hand].level = G.GAME.subhands[hand].level + amount
+    G.GAME.subhands[hand].level = math.max(0, G.GAME.subhands[hand].level + amount)
 
 	-- CRYPTID: Universum also applies to sub-hands?!
     if next(find_joker('cry-Universum')) then
@@ -1918,7 +1940,6 @@ function Madcap.Funcs.level_up_subhand(card, hand, instant, amount, context)
         for i = 1, #effects do
             universum_mod = universum_mod * (effects[i] and effects[i].jokers and effects[i].jokers.mod or 1)
         end
-        G.GAME.subhands[hand].level = math.max(0, G.GAME.subhands[hand].level + amount)
         G.GAME.subhands[hand].mult 	= G.GAME.subhands[hand].mult 	* (universum_mod)^amount
         G.GAME.subhands[hand].chips = G.GAME.subhands[hand].chips 	* (universum_mod)^amount
 		basic_func = false
@@ -1951,12 +1972,203 @@ function Madcap.Funcs.level_up_subhand(card, hand, instant, amount, context)
     end
 end
 
+function Madcap.Funcs.pulse_flame(duration, intensity) -- duration is in seconds
+	G.rgmc_flame_override 				= G.rgmc_flame_override or {}
+	G.rgmc_flame_override["duration"] 	= duration or 0.01
+	G.rgmc_flame_override["intensity"] 	= intensity or 2
+end
+
+function Madcap.Funcs.calculate_empower_bonus(hand)
+	if not G.GAME.subhands or G.GAME.subhands[hand] then return 0 end
+
+	local level 	= G.GAME.subhands[hand].level
+	local emplvl 	= (G.GAME.subhands[hand].empower or 0)
+	local chips 	= G.GAME.subhands[hand].chips 	^ (1 + level * 0.002) ^ (1 + emplvl * 0.005)
+	local mult 		= G.GAME.subhands[hand].mult 	^ (1 + level * 0.002) ^ (1 + emplvl * 0.005)
+
+	return math.ceil(chips), math.ceil(mult)
+end
+
+function Madcap.Funcs.empower_subhand(card, hand, instant, amount, context)
+	amount = amount or 1
+	local basic_func = true
+	local empower_level = (G.GAME.subhands[hand].empower or 0)
+
+	if basic_func then
+    	empower_level = math.max(0, empower_level + amount)
+	end
+    if not instant then
+        -- update the UI before setting the new values
+		update_hand_text({
+            sound = 'button', volume = 0.7, pitch = 0.8, delay = 1.0
+        }, {
+            handname = localize(hand),
+            level    = G.GAME.subhands[hand].level,
+            chips    = G.GAME.subhands[hand].chips,
+            mult     = G.GAME.subhands[hand].mult
+        })
+
+		if not Talisman.config_file.disable_anims  then
+		local nu_chips, nu_mult = mfuncs.calculate_empower_bonus(hand)
+
+		update_hand_text({ sound = 'rgmc_empower', volume = 0.7, pitch = 0.8, delay = 2.5 }, {
+			handname = localize(hand),
+			level    = to_big(empower_level),
+			chips    = to_big(nu_chips),
+			mult     = to_big(nu_mult)
+		})
+		MadLib.simple_event(function()
+				ease_colour(G.C.UI_CHIPS, copy_table(G.C.RGMC_UNUSUAL), 0.1)
+				ease_colour(G.C.UI_MULT, copy_table(G.C.RGMC_UNUSUAL), 0.1)
+				Madcap.Funcs.pulse_flame(0.01, empower_level)
+				MadLib.event({
+					trigger = "after",
+					blockable = false,
+					blocking = false,
+					delay = 2.5,
+					func = function()
+					ease_colour(G.C.UI_CHIPS, G.C.BLUE, 1)
+					ease_colour(G.C.UI_MULT, G.C.RED, 1)
+					return true
+					end,
+				})
+				return true
+			end, 2.5, 'after')
+		end
+	end
+	
+	update_hand_text({ sound = "button", volume = 0.7, pitch = 0.9, delay = 0 }, { level = to_big(empower_level) })
+	delay(2.6)
+    G.GAME.subhands[hand].empower = empower_level
+	MadLib.clear_hand_text()
+end
+
+function Madcap.Funcs.get_flame_intensity_override(_F,flame)
+
+	if 
+		G.cry_flame_override 
+		and G.cry_flame_override['duration'] > 0 
+	then
+		return (_F.real_intensity + G.cry_flame_override['intensity']) / 2
+	elseif 
+		G.rgmc_flame_override 
+		and G.rgmc_flame_override['duration'] > 0 
+	then
+		return (_F.real_intensity + G.rgmc_flame_override['intensity']) / 2
+	end
+
+	return flame
+end
+
+function Madcap.Funcs.get_flame_change_override(_F,flame)
+
+	if 
+		G.cry_flame_override 
+		and G.cry_flame_override['duration'] > 0 
+	then
+		return (_F.change + G.cry_flame_override['intensity']) / 2
+	elseif 
+		G.rgmc_flame_override 
+		and G.rgmc_flame_override['duration'] > 0 
+	then
+		return (_F.change + G.rgmc_flame_override['intensity']) / 2
+	end
+
+	return flame
+end
+
+G.FUNCS.flame_handler = function(e)
+  	G.C.UI_CHIPLICK = G.C.UI_CHIPLICK or {1, 1, 1, 1}
+  	G.C.UI_MULTLICK = G.C.UI_MULTLICK or {1, 1, 1, 1}
+  	
+	for i=1, 3 do
+    	G.C.UI_CHIPLICK[i] = math.min(math.max(((G.C.UI_CHIPS[i]*0.5+G.C.YELLOW[i]*0.5) + 0.1)^2, 0.1), 1)
+    	G.C.UI_MULTLICK[i] = math.min(math.max(((G.C.UI_MULT[i]*0.5+G.C.YELLOW[i]*0.5) + 0.1)^2, 0.1), 1)
+  	end
+
+  	G.ARGS.flame_handler = G.ARGS.flame_handler or {
+    	chips = {
+      		id = 'flame_chips', 
+      		arg_tab = 'chip_flames',
+      		colour = G.C.UI_CHIPS,
+      		accent = G.C.UI_CHIPLICK
+    	},
+    	mult = {
+      		id = 'flame_mult', 
+      		arg_tab = 'mult_flames',
+      		colour = G.C.UI_MULT,
+      		accent = G.C.UI_MULTLICK
+    	}
+  	}
+
+  	for k, v in pairs(G.ARGS.flame_handler) do
+    	if e.config.id == v.id then 
+			if not e.config.object:is(Sprite) or e.config.object.ID ~= v.ID then 
+				e.config.object:remove()
+				e.config.object = Sprite(0, 0, 2.5, 2.5, G.ASSET_ATLAS["ui_1"], {x = 2, y = 0})
+				v.ID = e.config.object.ID
+				G.ARGS[v.arg_tab] = {
+					intensity = 0,
+					real_intensity = 0,
+					intensity_vel = 0,
+					colour_1 = v.colour,
+					colour_2 = v.accent,
+					timer = G.TIMERS.REAL
+				}      
+				e.config.object:set_alignment({
+					major = e.parent,
+					type = 'bmi',
+					offset = {x=0,y=0},
+					xy_bond = 'Weak'
+				})
+				e.config.object:define_draw_steps({{
+					shader = 'flame',
+					send = {
+						{name = 'time', ref_table = G.ARGS[v.arg_tab], ref_value = 'timer'},
+						{name = 'amount', ref_table = G.ARGS[v.arg_tab], ref_value = 'real_intensity'},
+						{name = 'image_details', ref_table = e.config.object, ref_value = 'image_dims'},
+						{name = 'texture_details', ref_table = e.config.object.RETS, ref_value = 'get_pos_pixel'},
+						{name = 'colour_1', ref_table =  G.ARGS[v.arg_tab], ref_value = 'colour_1'},
+						{name = 'colour_2', ref_table =  G.ARGS[v.arg_tab], ref_value = 'colour_2'},
+						{name = 'id', val =  e.config.object.ID},
+					}
+				}
+			})
+			e.config.object:get_pos_pixel()
+		end
+		
+			local _F = G.ARGS[v.arg_tab]
+			local exptime = math.exp(-0.4*G.real_dt)
+			  
+			if 
+				to_big(G.ARGS.score_intensity.earned_score) >= to_big(G.ARGS.score_intensity.required_score) 
+				and to_big(G.ARGS.score_intensity.required_score) > to_big(0) then
+				_F.intensity = ((G.pack_cards and not G.pack_cards.REMOVED) or (G.TAROT_INTERRUPT)) and 0 or math.max(0., math.log(G.ARGS.score_intensity.earned_score, 5)-2)
+			else
+				_F.intensity = 0
+			end
+
+			_F.timer = _F.timer + G.real_dt*(1 + _F.intensity*0.2)
+			if _F.intensity_vel < 0 then 
+				_F.intensity_vel = _F.intensity_vel * (1 - 10 * G.real_dt)
+			end
+			_F.intensity_vel = (1 - exptime) * (_F.intensity - _F.real_intensity) * G.real_dt * 25 + exptime * _F.intensity_vel
+			
+			_F.real_intensity = math.max(0, _F.real_intensity + _F.intensity_vel)
+			_F.real_intensity = Madcap.Funcs.get_flame_change_override(_F,_F.real_intensity)
+			
+			_F.change = (_F.change or 0) * (1 - 4. * G.real_dt) + ( 4. * G.real_dt) * (_F.real_intensity < _F.intensity - 0.0 and 1 or 0) * _F.real_intensity
+			_F.change = Madcap.Funcs.get_flame_change_override(_F,_F.change)
+		end
+  	end
+end
+
 -- Some stickers prevent debuffs
 local set_debuff_ref = Card.set_debuff
 function Card:set_debuff(should_debuff)
     if
 		(self.edition and self.edition.rgmc_flipped and next(find_joker("rgmc_streemerz"))) -- Streemerz
-		and not self.ability.shielded 			-- shielded cannot be debuffed
+		and not self.ability.shielded 		-- shielded cannot be debuffed
 		and not self.ability.engraved       -- this would be too easy
 		and not self.ability.painted 		-- painted cannot be debuffed because paint is cool
 	then
@@ -2758,15 +2970,23 @@ Madcap.MayhemConversions = {
 	['add_mayhem']		= mlibmv['Mayhem'],
 	['retriggers']		= mlibmv['Retriggers'],
 	['repetitions']		= mlibmv['Retriggers'],
+	['x_mult']			= mlibmv['MultiMult'],
+	['h_x_mult']		= mlibmv['MultiMult'],
+	['x_chips']			= mlibmv['MultiChips'],
+	['h_x_chips']		= mlibmv['MultiChips'],
+	['perma_x_mult']		= mlibmv['MultiMult'],
+	['perma_h_x_mult']		= mlibmv['MultiMult'],
+	['perma_x_chips']		= mlibmv['MultiChips'],
+	['perma_h_x_chips']		= mlibmv['MultiChips'],
 }
 
 -- 
 local function loop_keys_add(list, target, value)
 	MadLib.loop_func(list, function(k) target[k] = value end)
 end
-loop_keys_add({ 'mult', 'mult_mod', 'perma_mult', 'perma_h_mult', 's_mult', 't_mult' },
+loop_keys_add({ 'mult', 'mult_mod', 'perma_mult', 'perma_h_mult', 's_mult', 't_mult', 'h_mult' },
 	Madcap.MayhemConversions,  mlibmv['AddMult'])
-loop_keys_add({ 'chips', 'chip_mod', 'perma_bonus', 'perma_h_chips' },
+loop_keys_add({ 'chips', 'chip_mod', 'perma_bonus', 'perma_h_chips', 't_chips', 'h_chips', 'bonus' },
 	Madcap.MayhemConversions,  mlibmv['AddChips'])
 loop_keys_add({ 'score', 'score_mod', 'perma_score', 'perma_h_score' },
 	Madcap.MayhemConversions,  mlibmv['AddScore'])
@@ -2778,40 +2998,29 @@ loop_keys_add({ 'd_size', 'discard_size', 'discards', 'discard', 'discard_mod' }
 	Madcap.MayhemConversions,  mlibmv['PlayDiscards'])
 loop_keys_add({ 'hands', 'hand_mod', 'hand' },
 	Madcap.MayhemConversions,  mlibmv['PlayHands'])
+loop_keys_add({ 'extra_value', 'hands_played_at_create' },
+	Madcap.MayhemConversions,  mlibmv['Misc'])
 
--- Handle the mult, chips, and score stuff
-MadLib.loop_func({ 'x', 'e', 'ee', 'eee', 'hyper' }, function(v)
-	local _cat = (v ~= 'x') and 'Exp' or 'Multi'
-	local v1 = string.upper(v)
-	
-	loop_keys_add({ v..'mult', v..'mult_mod', v..'_mult', v1..'mult', v1..'mult_mod', 'h_'..v..'_mult',
-		'perma_'..v..'_mult', 'perma_h_'..v..'_mult', },
-		Madcap.MayhemConversions,  mlibmv[_cat..'Mult'])
-
-	loop_keys_add({ 
-		v..'chips', v..'_chips', v..'chip_mod', v..'chips_mod', 
-		v1..'chips', v1..'chip_mod', v1..'chips_mod', 'h_'..v..'_chips',
-		'perma_'..v..'_chips', 'perma_h_'..v..'_chips' },
-		Madcap.MayhemConversions,  mlibmv[_cat..'Chips'])
-
-	loop_keys_add({ v..'score', v..'score_mod', v..'_score', v1..'score', v1..'score_mod', 'h_'..v..'_score',
-		'perma_'..v..'_score', 'perma_h_'..v..'_score' },
-		Madcap.MayhemConversions,  mlibmv[_cat..'Score'])
-end)
+if AKYRS then
+	loop_keys_add({ 'akyrs_perma_h_score', 'akyrs_perma_score',  },
+		Madcap.MayhemConversions,  mlibmv['AddScore'])
+end
 
 Madcap.MayhemBlacklist = {
-	id 		= false,
-	qty 	= false,
-	colour 	= false,
-	immutable = false,
-	h_x_chips = false,
-	suit_nominal 	= false,
-	base_nominal 	= false,
-	face_nominal 	= false,
-	times_played 	= false,
-	selected_d6_face 	= false,
-	cry_hook_id			= false,
+	id 						= false,
+	order					= false,
+	qty 					= false,
+	colour 					= false,
+	immutable 				= false,
+	suit_nominal 			= false,
+	base_nominal 			= false,
+	face_nominal 			= false,
+	times_played 			= false,
+	selected_d6_face 		= false,
+	cry_hook_id				= false,
 	suit_nominal_original 	= false,
+	cry_prob				= false,
+	entr_times_played		= false
 }
 
 function Madcap.Funcs.get_mayhem_multiplier(mayhem)
@@ -2988,18 +3197,22 @@ function Madcap.Funcs.mayhemize_table(_card, _table, _args)
 			if type(v) == 'table' then -- we must go deeper
 				Madcap.Funcs.mayhemize_table(_card, v, _args)
 			elseif type(v) == 'number' then -- do the number
-				local _key = k ~= 'extra' and k
-				local _data = k and Madcap.MayhemConversions[_key]
+				local _prefix = string.sub(_card.config.center.key,1,2)
+				local _type = (_prefix == 'j_') and 'joker'
+					or (_card.config.center.key == 'c_base' or _prefix == 'm_') and 'card'
+				local _xval
+				local _key = k ~= 'extra' and k and string.lower(k)
+				local _data = Madcap.MayhemConversions[_key]
 				if Madcap.DefineExtras[_card.config.center.key] then
-					--tell('Finding extra value...')
+					tell('Finding extra value...')
 					_data = Madcap.DefineExtras[_card.config.center.key][k]
 				end
-				local _xval = _data and _data.multiply
+				_xval = (_data and _data.multiply)
 
 				if 
 					not _data -- no data
-					or (not _xval and v == 0) -- additive value at 0.00
-					or (_xval and v == 1) -- multiplying value at 1.00 (or 0.00)
+					or (not _xval and v == 0) 			-- additive value at 0.00
+					or (_xval and v == 1 or v == 0)		-- multiplying value at 1.00 (or 0.00)
 				then
 					return false 
 				end -- don't bother if multiplying value and not set

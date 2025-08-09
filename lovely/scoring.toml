@@ -187,18 +187,48 @@ match_indent = true
 target = "cardarea.lua"
 pattern = '''local text,disp_text,poker_hands = G.FUNCS.get_poker_hand_info(self.highlighted)'''
 position = "at"
-payload = '''local text, disp_text, poker_hands, scoring_hand, non_loc_disp_text = G.FUNCS.get_poker_hand_info(self.highlighted)
-local subhands = MadLib.get_subhands(scoring_hand)'''
+payload = '''local text, disp_text, poker_hands, scoring_hand = G.FUNCS.get_poker_hand_info(self.highlighted)
+local subhands = MadLib.get_subhands(scoring_hand)
+if #subhands > 0 then
+    local changed = G.GAME.total_selected and G.GAME.total_selected ~= #scoring_hand
+    local scoring = hand_chips ~= nil
+    local prefix = ''
+    MadLib.loop_func(active, function(v) prefix = prefix .. ' '.. localize(v) end)
+    disp_text = prefix .. ' ' .. disp_text
+    G.GAME.total_selected = #scoring_hand
+end
+'''
 match_indent = true
 
 # Fix the cardarea.
+[[patches]]
+[patches.pattern]
+target = "cardarea.lua"
+pattern = '''                update_hand_text({immediate = true, nopulse = nil, delay = 0}, {handname=disp_text, level=G.GAME.hands[text].level, mult = G.GAME.hands[text].mult, chips = G.GAME.hands[text].chips})'''
+position = "before"
+payload = '''
+if Madcap.Funcs.hand_display_mod(self.highlighted,text,disp_text,poker_hands,scoring_hand,subhands) then
+else
+'''
+overwrite = true
+match_indent = true
+
+# Incorporates AKYRS.hand_display_mod() into final hand_display_mod
+[[patches]]
+[patches.pattern]
+target = "cardarea.lua"
+pattern = '''if AKYRS.hand_display_mod(self.highlighted,text,disp_text,poker_hands) then'''
+position = "at"
+payload = '''if Madcap.Funcs.hand_display_mod(self.highlighted,text,disp_text,poker_hands,scoring_hand,subhands) then'''
+match_indent = true
+
 [[patches]]
 [patches.regex]
 target = "cardarea.lua"
 pattern = '''update_hand_text\(\{immediate\s*=\s*true,\s*nopulse\s*=\s*nil,\s*delay\s*=\s*0\},\s*\{handname\s*=\s*disp_text,\s*level\s*=\s*G\.GAME\.hands\[text\]\.level,\s*mult\s*=\s*[^,]+,\s*chips\s*=\s*[^}]+\}\)'''
 position = "at"
 payload = '''
-update_hand_text({immediate = true, nopulse = nil, delay = 0}, {handname=disp_text, level=G.GAME.hands[text].level, mult = MadLib.calculate_mult(G.GAME.hands[text].mult, subhands), chips = MadLib.calculate_chips(G.GAME.hands[text].chips, subhands)})
+            update_hand_text({immediate = true, nopulse = nil, delay = 0}, {handname=disp_text, level=G.GAME.hands[text].level, mult = MadLib.calculate_mult(G.GAME.hands[text].mult, subhands), chips = MadLib.calculate_chips(G.GAME.hands[text].chips)})
 '''
 match_indent = true
 

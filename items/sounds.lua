@@ -49,6 +49,7 @@ Madcap.Funcs.LoadSounds({
     MadLib.keypath_simple('jonster_activate',ext),
     MadLib.keypath_simple('meow3',ext),
     MadLib.keypath_simple('blip',ext),
+    MadLib.keypath_simple('empower',ext),
 }, list)
 
 return {

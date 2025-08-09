@@ -49,7 +49,6 @@ position = 'at'
 payload = '''Madcap.Funcs.ante_finish()'''
 match_indent = true
 
-
 # START OF SHOP
 [[patches]]
 [patches.pattern]
@@ -68,7 +67,6 @@ position = 'after'
 payload = '''Madcap.Funcs.play_hand(G.hand.highlighted)'''
 match_indent = true
 
-
 [[patches]]
 [patches.pattern]
 target = 'functions/button_callbacks.lua'
@@ -76,6 +74,29 @@ pattern = '''G.CONTROLLER.locks.skip_blind = true'''
 position = 'after'
 payload = '''Madcap.Funcs.blind_skip()'''
 match_indent = true
+
+# fix
+[[patches]]
+[patches.pattern]
+target = 'functions/button_callbacks.lua'
+pattern = '''_F.change = (G.cry_flame_override and G.cry_flame_override['duration'] > 0) and ((_F.change + G.cry_flame_override['intensity'])/2) or _F.change'''
+position = 'at'
+payload = ''
+match_indent = true
+
+# fix
+[[patches]]
+[patches.pattern]
+target = 'functions/misc_functions.lua'
+pattern = '''G.ARGS.score_intensity.required_score = G.GAME.blind and G.GAME.blind.chips or 0'''
+position = 'after'
+payload = '''if G.rgmc_flame_override and G.rgmc_flame_override['duration'] > 0 then
+  	G.rgmc_flame_override['duration'] = math.max(0, G.rgmc_flame_override['duration'] - dt)
+  end'''
+match_indent = true
+
+
+
 
 # DISCARD HAND
 [[patches]]
@@ -181,7 +202,43 @@ match_indent = true
 [[patches]]
 [patches.pattern]
 target = "functions/state_events.lua"
-pattern = '''--Check for play doubling'''
+pattern = '''for i=1, #scoring_hand do'''
 position = "after"
-payload = '''Madcap.Funcs.check_eval_card(scoring_hand[i])'''
+payload = '''    Madcap.Funcs.check_eval_card(scoring_hand[i])'''
 match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = '''functions/state_events.lua'''
+pattern = '''if not G.GAME.badarg or (G.GAME.badarg and not G.GAME.badarg[text]) then'''
+position = "at"
+payload = ''''''        
+match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = '''functions/state_events.lua'''
+pattern = '''if G.GAME.current_round.current_hand.handname ~= disp_text then delay(0.3) end'''
+position = "after"
+payload = '''if 
+    not (G.GAME.badarg or (G.GAME.badarg and not G.GAME.badarg[text]))
+    and Madcap.Funcs.hand_display_mod(G.hand.highlighted,text,disp_text,poker_hands,scoring_hand,subhands) ~= true
+then'''        
+match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = '''functions/common_events.lua'''
+pattern = '''text = extra.message or text'''
+position = "after"
+payload = '''extrafunc = extra.func or extrafunc'''        
+match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = '''functions/common_events.lua'''
+pattern = '''local extrafunc = nil'''
+position = "at"
+payload = '''local extrafunc = (extra and extra.func)'''        
+match_indent = true
+

@@ -212,7 +212,7 @@ local punisher = {
 
 			tag:yep('+', G.C.MONEY, function() return true end)
             ease_dollars(self.config.dollars)
-            local hand_diff = math.min(G.GAME.current_round.hands_left, self.config.extra.hands_left)
+            local hand_diff = math.min(G.GAME.current_round.hands_left, self.config.extra)
 
             ease_hands_played(hand_diff - G.GAME.current_round.hands_left)
 			ease_discard(-G.GAME.current_round.discards_left) -- bye bye discards
@@ -271,7 +271,7 @@ local function activate_edition(self, tag, context)
 			G.CONTROLLER.locks[lock] = true
 			context.card.temp_edition = true
 			tag:yep('+', G.C.DARK_EDITION, function()
-				context.card:set_edition('e_rgmc_iridescent', true)
+				context.card:set_edition(self.config.type or 'e_foil', true)
 				context.card.ability.couponed = true
 				context.card:set_cost()
 				context.card.temp_edition = nil
@@ -727,7 +727,7 @@ local concept = {
 		-- copy
 		if
 			target ~= nil
-			and context.type == G.GAME.tags[self.config.extra].config.type
+			and context.type == G.GAME.tags[self.config.target].config.type
 		then
 			add_tag(Tag(self.config.key))
 		end
