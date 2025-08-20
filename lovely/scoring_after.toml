@@ -42,5 +42,15 @@ target = "functions/state_events.lua"
 pattern = '''scoring_hand = final_scoring_hand
     delay(0.2)'''
 position = "after"
-payload = '''scoring_hand = Madcap.Funcs.modify_scoring_hand(scoring_hand)'''
+payload = '''scoring_hand = Madcap.Funcs.modify_scoring_hand(scoring_hand)
+Madcap.Funcs.record_hand_before(scoring_hand,text)'''
+match_indent = true
+
+# Record the hand afterwards
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = '''local glass_shattered = {}'''
+position = "before"
+payload = '''Madcap.Funcs.record_hand_after(hand_chips, mult)'''
 match_indent = true

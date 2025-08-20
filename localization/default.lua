@@ -776,7 +776,8 @@ return {
                     "Retrigger {C:attention}#1#{} played",
                     "card used in scoring",
                     "{C:attention}#2#{} additional time(s)",
-                    "{C:inactive,s:0.7}(Position changes each hand)"
+                    "Upon successful trigger,",
+                    "change retrigger position"
                 },
             },
             j_rgmc_glass_michel = {
@@ -1454,7 +1455,7 @@ return {
                     "this Joker gains {C:money}$#4#",
                     "Resets at end of {C:attention}Ante",
                     "{C:inactive}(Currently gives",
-                    "{C:money}$#5# {C:inactive} at end of round)"
+                    "{C:money}$#5#{C:inactive} at end of round)"
                 },
             },
             j_rgmc_obsidian_blade = {
@@ -2621,7 +2622,7 @@ return {
                 name = "Terra",
                 text = {
                     "Gives {C:attention}most played{} hand",
-                    "{C:inactive}(Currently{C:attention,E:1}#1#{}{C:inactive})",
+                    "{C:inactive}(Currently {C:attention,E:1}#1#{}{C:inactive})",
                     "{X:mult,C:white}X#2#{} Mult and {X:chips,C:white}X#3#{} Chips",
                     "per {C:tarot}Tarot{} Card used{}",
                     "this Ante",
@@ -2632,7 +2633,7 @@ return {
                 name = "Luna",
                 text = {
                     "Gives {C:attention}most played{} hand",
-                    "{C:inactive}(Currently{C:attention,E:1}#1#{}{C:inactive})",
+                    "{C:inactive}(Currently {C:attention,E:1}#1#{}{C:inactive})",
                     "{X:mult,C:white}X#2#{} Mult and {X:chips,C:white}X#3#{} Chips",
                     "per {C:spectral}Spectral{} Card used{}",
                     "this Ante",
@@ -2643,7 +2644,7 @@ return {
                 name = "Pagoon",
                 text = {
                     "Gives {C:attention}most played{} hand",
-                    "{C:inactive}(Currently{C:attention,E:1}#1#{}{C:inactive})",
+                    "{C:inactive}(Currently {C:attention,E:1}#1#{}{C:inactive})",
                     "{X:mult,C:white}X#2#{} Mult and {X:chips,C:white}X#3#{} Chips",
                     "per {C:rgmc_cosmatarot}Cosma{} Tarot used{}",
                     "this Ante",
@@ -4611,22 +4612,22 @@ return {
                     "create a {C:attention}#1#{}",
                 }
 			},
-            rgmc_sunset_seal = {
-				name = "Sunset Seal",
+            rgmc_sunrise_seal = {
+				name = "Sunrise Seal",
 				text = {
-                    "If {C:attention}held{} in hand at end of round",
-                    "swap suits to #1#",
-                    "{C:inactive}(Switches between {C:rgmc_light}Light{}",
-                    "and {C:rgmc_dark}Dark{} suits)",
+                    "Upon discarding, switch suit to",
+                    "{C:rgmc_light}Light{} or {C:rgmc_dark}Dark{} equivalent",
+                    "{C:inactive}(Does nothing if",
+                    "{C:inactive}no equivalent exists)",
                 }
 			},
             rgmc_midnight_seal = {
 				name = "Midnight Seal",
 				text = {
-                    "If {C:attention}held{} in hand at end of round",
-                    "swap suits to #1#",
-                    "{C:inactive}(Switches between base",
-                    "and new suits)",
+                    "Upon discarding, switch suit to",
+                    "{C:attention}parallel equivalent{}",
+                    "{C:inactive}(Does nothing if",
+                    "{C:inactive}no equivalent exists)",
                 }
 			},
             rgmc_umber_seal = {
@@ -4868,10 +4869,6 @@ return {
             k_costs                 = "Costs",
 
             -- Rarities
-			k_cry_epic       = "Epic",
-			k_cry_exotic     = "Exotic",
-			k_cry_candy      = "Candy",
-			k_cry_cursed     = "Cursed",
 			k_rgmc_unusual   = "Unusual",
 			k_rgmc_gimmick   = "Gimmick",
 			k_rgmc_chaotic   = "Chaotic",
@@ -5008,7 +5005,7 @@ return {
 			rgmc_cream_seal     = "Cream Seal",
 			rgmc_cherry_seal    = "Cherry Seal",
 			rgmc_seafoam_seal   = "Bronze Seal",
-			rgmc_sunset_seal    = "Sunset Seal",
+			rgmc_sunrise_seal   = "Sunrise Seal",
 			rgmc_midnight_seal  = "Midnight Seal",
 			rgmc_anaglyph_seal  = "Anaglyphic Seal",
 			rgmc_obsidian_seal  = "Obsidian Seal",

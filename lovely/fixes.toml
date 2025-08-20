@@ -235,7 +235,11 @@ overwrite = true
 payload = '''rgmc_evil = G.C.RGMC_EVIL,
 rgmc_hotpink = G.C.RGMC_HOT_PINK,
 rgmc_light = G.C.RGMC_LIGHT,
-rgmc_dark = G.C.RGMC_DARK,'''
+rgmc_dark = G.C.RGMC_DARK,
+rgmc_mayhem = G.C.RGMC_MAYHEM,
+rgmc_unusual = G.C.RGMC_UNUSUAL,
+rgmc_gimmick = G.C.GIMMICK,
+rgmc_chaotic = G.C.RGMC_CHAOTIC,'''
 
 # For the Madcap Select booster, make Madcap Jokers
 [[patches]]

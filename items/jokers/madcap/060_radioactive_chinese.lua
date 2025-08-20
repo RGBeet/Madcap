@@ -25,7 +25,7 @@ return {
             immutable = { mode = 1 }
         },
         loc_vars = function(self, info_queue, card)
-            local _numer, _denom = SMODS.get_probability_vars(card, 1, card.ability.extra.odds)
+            local _numer, _denom = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'radioactive_chinese')
             local str = "null"
 
             if card.ability.immutable.mode > 0 and card.ability.immutable.mode < 8 then

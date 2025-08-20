@@ -14,24 +14,28 @@ return {
         end,
         calculate = function(self, card, context)
             -- if held at end of round, convert to parallel/base suit
-            if context.end_of_round and context.cardarea == G.hand and not context.game_over then
+            if context.discard and (context.other_card and context.other_card == card) then
                 local to_suit = MadLib.suit_get_counterpart_lightdark(card.base.suit)
-                tell('Converting to ' .. to_suit)
-                MadLib.simple_event(function()
-                    card:highlight(true)
-                end, 0.8, 'after')
-                MadLib.simple_event(function()
-                    card:flip()
-                end, 0.8, 'after')
-                MadLib.simple_event(function()
-                    SMODS.change_base(c, SMODS.Suits[to_suit].value, _)
-                end, 0.8, 'after')
-                MadLib.simple_event(function()
-                    card:flip()
-                end, 0.8, 'after')
-                MadLib.simple_event(function()
-                    card:highlight(true)
-                end, 0.8, 'false')
+                if to_suit then
+                    MadLib.simple_event(function()
+                        card:highlight(true)
+                        return true
+                    end, 0.5, 'after')
+                    MadLib.simple_event(function()
+                        card:flip()
+                        return true
+                    end, 0.5, 'after')
+                    MadLib.simple_event(function()
+                        SMODS.change_base(card, to_suit, _)
+                        card:flip()
+                        play_sound('rgmc_flourish')
+                        return true
+                    end, 0.8, 'after')
+                    MadLib.simple_event(function()
+                        card:highlight(false)
+                        return true
+                    end, 0.5, 'after')
+                end
             end
         end
     }
