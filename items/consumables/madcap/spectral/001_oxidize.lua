@@ -1,0 +1,28 @@
+function Madcap.Funcs.can_use_selection_card(max,min)
+    return G.hand and #G.hand.highlighted >= math.max(min or 1, 1) and #G.hand.highlighted <= max
+end
+
+return {
+    categories = {
+        'Seals'
+    },
+    data = {
+        object_type = 'Consumable',
+        set     = "Spectral",
+        key     = "oxidize",
+        atlas   = "spectrals",
+        pos     = MLIB.get_coords(0,5),
+        cost    = 4,
+        config  = { seal = 'rgmc_patina', max_highlighted = 1 },
+        loc_vars = function(self, info_queue, card)
+            MadLib.add_to_queue(G.P_SEALS[card.ability.extra])
+            return MadLib.collect_vars(card.ability.max_highlighted)
+        end,
+        can_use = function(self, card)
+            return Madcap.Funcs.can_use_selection_card(card.ability.max_highlighted)
+        end,
+        use = function(self, card, area, copier)
+            MadLib.apply_seals(G.hand.highlighted, card.ability.seal)
+        end,
+    }
+}

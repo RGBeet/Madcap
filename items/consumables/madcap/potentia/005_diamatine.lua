@@ -1,0 +1,22 @@
+return {
+    categories = {
+        'Subhands',
+        'Potentia'
+    },
+    data = {
+        object_type = 'Consumable',
+        set     = "PotentiaCrystal",
+        key     = "diamatine",
+        atlas   = "potentia",
+        pos     = MLIB.coords(0,4),
+        cost    = 10,
+        config  = { subhand = 'Dazzling', levels = 1 },
+        aurinko = true,
+        loc_vars = function(self, info_queue, center)
+            return Madcap.Funcs.get_potentia_vars(self.config.subhand, self.config.levels)
+        end,
+        use = function(self, card, area, copier)
+            Madcap.Funcs.use_potentia_card(card)
+        end,
+    }
+}

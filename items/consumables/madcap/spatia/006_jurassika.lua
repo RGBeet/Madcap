@@ -1,0 +1,32 @@
+return {
+    categories = {
+        'Subhands',
+        'Spatia'
+    },
+    data = {
+        object_type = 'Consumable',
+        set     = "SpatiaPlanet",
+        key     = "jurassika",
+        atlas   = "spatia",
+        pos     = MLIB.coords(0,5),
+        cost    = 4,
+        aurinko = false,
+        config  = {
+            hands 			= { 'Straight', MadLib.SpectrumId..'Straight Spectrum' },
+            subhands		= { 'Light' },
+            level_factor	= 1
+        },
+        set_card_type_badge = function(self, card, badges)
+            badges[1] = create_badge(localize("k_planet"), get_type_colour(self or card.config, card), nil, 1.2)
+        end,
+        can_use = function(self, card)
+            return true
+        end,
+        loc_vars = function(self, info_queue, center)
+            return Madcap.Funcs.get_spatia_vars(self.config.hands,self.config.subhands)
+        end,
+        use = function(self, card, area, copier)
+            Madcap.Funcs.use_spatia_card(card, card.ability.subhands, card.ability.level_factor)
+        end,
+    }
+}
