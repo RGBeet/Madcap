@@ -116,7 +116,7 @@ end
 -- Partner API
 if next(SMODS.find_mod("partner")) then
 	add_atlases({
-		create('partners', 'partners.png', 46, 58)
+		create('partners', 'crossmod/partners.png', 46, 58)
 	})
 end
 
