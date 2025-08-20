@@ -33,7 +33,7 @@ SubHands = {
         check_hand = function(hand) -- at least 5 light suits (wilds included)
             local light_cards   = MadLib.loop_func(hand, function(v) return v:has_light_suit() end)
             local dark_cards    = MadLib.loop_func(hand, function(v) return v:has_dark_suit() end)
-            return light_cards >= (G.GAME.subhand_minimum or 5) and light_cards > dark_cards
+            return light_cards >= (G.GAME.subhand_minimum or 5) and light_cards > 3 and light_cards > dark_cards
         end,
     },
     Dark = {
@@ -46,7 +46,7 @@ SubHands = {
         check_hand = function(hand) -- at least 5 light suits (wilds included)
             local light_cards   = MadLib.loop_func(hand, function(v) return v:has_light_suit() end)
             local dark_cards    = MadLib.loop_func(hand, function(v) return v:has_dark_suit() end)
-            return dark_cards >= (G.GAME.subhand_minimum or 5) and light_cards < dark_cards
+            return dark_cards >= (G.GAME.subhand_minimum or 5) and dark_cards > 3 and light_cards < dark_cards
         end,
     },
     Balanced = {
@@ -92,7 +92,7 @@ SubHands = {
         check_hand = function(hand) -- at least 5 ranks 2-6 + Ace (+ voucher unlocked)
             local high_cards   = MadLib.loop_func(hand, function(v) return v:has_high_rank() end)
             local low_cards    = MadLib.loop_func(hand, function(v) return v:has_low_rank() end)
-            return #hand >= (G.GAME.subhand_minimum or 5) and high_cards > low_cards
+            return #hand >= (G.GAME.subhand_minimum or 5) and high_cards > 3 and high_cards > low_cards
         end,
     },
     Low = {
@@ -105,7 +105,7 @@ SubHands = {
         check_hand = function(hand) -- at least 5 ranks 7-K + Ace (+ voucher unlocked)
             local high_cards   = MadLib.loop_func(hand, function(v) return v:has_high_rank() end)
             local low_cards    = MadLib.loop_func(hand, function(v) return v:has_low_rank() end)
-            return #hand >= (G.GAME.subhand_minimum or 5) and high_cards < low_cards
+            return #hand >= (G.GAME.subhand_minimum or 5) and low_cards > 3 and high_cards < low_cards
         end,
     }
 }
@@ -123,21 +123,6 @@ function Madcap.Funcs.set_subhand(_sh,_state)
 	return true
 end
 
-<<<<<<< HEAD
-function Madcap.Funcs.set_subhand_voucher_level(_sh,_lvl)
-	if not G.GAME.subhands[_sh] then return false end
-	G.GAME.subhands[_sh].voucher = _lvl or 0
-	return true
-end
-
-function Madcap.Funcs.empower_subhand(_sh,_lvl)
-	if not G.GAME.subhands[_sh] then return false end
-	G.GAME.subhands[_sh].empower = _lvl or 0
-	return true
-end
-
-=======
->>>>>>> 7cd2b8371ee356a86322e9a52d86390d26a396ed
 -- Levels up the subhand
 MadLib.level_up_subhand = function(card, subhand, instant, amount)
     tell('Level Up Subhand')
@@ -216,17 +201,15 @@ MadLib.level_up_subhand = function(card, subhand, instant, amount)
 end
 
 function MadLib.get_subhands(_cards)
-    --print("Cards equals:")
-    --print(#_cards)
     local subhand_list = {}
-    for k,v in pairs(SubHands) do
+    MadLib.loop_table(SubHands, function(k,v)
+        if not G.GAME.subhands[v.name] and (G.GAME.subhands[v.name].enabled or Madcap.Data.devmode) then return false end
         local result = v.check_hand(_cards)
-        if result then
+        if not result then return false end
         subhand_list[#subhand_list+1] = v.name
-        end
-	end
-    --print("Subhand lists:")
-    --print(subhand_list)
+        return true
+    end)
+    print(subhand_list)
     return subhand_list
 end
 
@@ -236,12 +219,72 @@ end
 
 function MadLib.has_subhand(list,name)
     for i, v in ipairs(list) do
-        if v == name then
-            return true
-        end
+        if v == name then return true end
     end
     return false
 end
+
+function Madcap.Funcs.hand_display_mod(hand, text, disp_text, poker_hands, scoring_hand)
+	if not hand then return end
+
+    local subhands = MadLib.get_subhands(scoring_hand)
+    local return_true = nil
+    local prefix, suffix = '', ''
+
+    -- Add subhands stuff first
+	if #subhands > 0 and (#scoring_hand > 0 or #hand > 0) then
+        tell('SUBHANDS ARE:')
+        print(subhands)
+		local pre_lvl_col	= G.hand_text_area.hand_level.config.colour or G.C.HAND_LEVELS[1]
+		suffix = ' (+'
+		prefix= ''
+
+		MadLib.loop_func(subhands,function(v,i)
+			-- hand name prefix
+        	prefix = prefix .. ' '.. localize(v)
+			-- level suffix
+			if not G.GAME.subhands and G.GAME.subhands[v] and G.GAME.subhands[v].level > 0 then return end
+			suffix = suffix .. tostring(G.GAME.subhands[v].level)
+
+			if G.GAME.subhands[v].empower > 0 then
+				suffix = suffix .. '(' .. tostring(G.GAME.subhands[v].empower) .. ')'
+			end
+
+			if i < #subhands then
+				suffix = suffix .. ','
+			else
+				suffix = suffix .. ')'
+			end
+		end)
+
+		local _mult 	= MadLib.calculate_mult(G.GAME.hands[text].mult, subhands)
+		local _chips 	= MadLib.calculate_chips(G.GAME.hands[text].chips, subhands)
+        disp_text = prefix .. ' ' .. disp_text
+
+        update_hand_text({ immediate = nil, nopulse = true, delay = 0}, {
+			level = G.GAME.hands[text].level .. suffix,
+			handname = disp_text,
+			mult = _mult,
+			chips = _chips
+		})
+		G.hand_text_area.hand_level.config.colour = pre_lvl_col
+		return_true = true
+	end
+
+	disp_text = MadLib.normalize_spaces(disp_text)
+
+	if AKYRS then
+        return_true = AKYRS.hand_display_mod(hand, text, disp_text, poker_hands) ~= nil
+    end
+
+    return return_true
+end
+
+local parse_highlighted_ref = CardArea.parse_highlighted
+function CardArea:parse_highlighted()
+    parse_highlighted_ref(self)
+end
+
 
 -- Assumes subhands is a list of PASSED subhand types.
 

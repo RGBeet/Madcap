@@ -204,27 +204,9 @@ match_indent = true
 target = "functions/state_events.lua"
 pattern = '''for i=1, #scoring_hand do'''
 position = "after"
-payload = '''    Madcap.Funcs.check_eval_card(scoring_hand[i])'''
+payload = '''    Madcap.Funcs.check_eval_card(scoring_hand[i],i)'''
 match_indent = true
-
-[[patches]]
-[patches.pattern]
-target = '''functions/state_events.lua'''
-pattern = '''if not G.GAME.badarg or (G.GAME.badarg and not G.GAME.badarg[text]) then'''
-position = "at"
-payload = ''''''        
-match_indent = true
-
-[[patches]]
-[patches.pattern]
-target = '''functions/state_events.lua'''
-pattern = '''if G.GAME.current_round.current_hand.handname ~= disp_text then delay(0.3) end'''
-position = "after"
-payload = '''if 
-    not (G.GAME.badarg or (G.GAME.badarg and not G.GAME.badarg[text]))
-    and Madcap.Funcs.hand_display_mod(G.hand.highlighted,text,disp_text,poker_hands,scoring_hand,subhands) ~= true
-then'''        
-match_indent = true
+times = 1
 
 [[patches]]
 [patches.pattern]
@@ -242,3 +224,59 @@ position = "at"
 payload = '''local extrafunc = (extra and extra.func)'''        
 match_indent = true
 
+# Add new colors
+[[patches]]
+[patches.pattern]
+target = "functions/misc_functions.lua"
+pattern = '''legendary = G.C.RARITY[4],'''
+position = "after"
+match_indent = true
+overwrite = true
+payload = '''rgmc_evil = G.C.RGMC_EVIL,
+rgmc_hotpink = G.C.RGMC_HOT_PINK,
+rgmc_light = G.C.RGMC_LIGHT,
+rgmc_dark = G.C.RGMC_DARK,'''
+
+# For the Madcap Select booster, make Madcap Jokers
+[[patches]]
+[patches.pattern]
+target = "functions/common_events.lua"
+pattern = "if add and not G.GAME.banned_keys[v.key] then "
+position = "after"
+match_indent = true
+payload = '''
+    local is_madcap_select =
+      (G.GAME.selected_back_key or {}).key == 'b_rgmc_madcap'
+      or G.GAME.selected_sleeve == 'sleeve_rgmc_madcap'
+
+    if is_madcap_select and v.key:find('j_rgmc_') then
+      for i = 1, 2 do
+        _pool[#_pool + 1] = v.key
+        _pool_size = _pool_size + 1
+      end
+    end
+'''
+
+[[patches]]
+[patches.pattern]
+target = "functions/UI_definitions.lua"
+pattern = "config = {major = G.HUD:get_UIE_by_ID('row_blind_bottom'), align = 'bmi', offset = {x=0,y=-10}, bond = 'Weak'}"
+position = "at"
+match_indent = true
+payload = '''config = {major = G.HUD:get_UIE_by_ID('row_blind_bottom'), align = 'bmi', offset = {x=0,y=-12}, bond = 'Weak'}'''
+
+[[patches]]
+[patches.pattern]
+target = "functions/common_events.lua"
+pattern = "chip_UI:juice_up()"
+position = "at"
+match_indent = true
+payload = ""
+
+[[patches]]
+[patches.pattern]
+target = "functions/common_events.lua"
+pattern = "G.deck:shuffle('nr'..G.GAME.round_resets.ante)"
+position = "after"
+match_indent = true
+payload = "G.deck.cards = Madcap.Funcs.shuffle_deck(G.deck.cards)"

@@ -160,7 +160,7 @@ return {
 				name = "Galactic",
 				text = {
 					"{C:chips}+#4#{} Chips",
-                    "{C:inactive}(Gives {X:planet,C:white}0.5X{}{C:inactive}chip value times",
+                    "{C:inactive}(Gives {X:planet,C:white}0.5X{C:inactive} chip value times",
                     "{C:planet}level{} of {C:attention}last played{C:inactive} Poker Hand -",
                     "{C:inactive}currently{C:attention} #1#{C:inactive})",
                     "({C:chips}(#2# / 2){C:inactive} x {C:planet}#3#{C:inactive})",
@@ -850,8 +850,8 @@ return {
             j_rgmc_cavalier = {
                 name = "Cavalier",
                 text = {
-                    "Each {C:attention}Knight{} held in hand",
-                    "gives {X:chips,C:white}X#1#{} Chips"
+                    "Each {C:attention}#1#{} held in hand",
+                    "gives {X:chips,C:white}X#2#{} Chips"
                 },
             },
             j_rgmc_crystal_cola = {
@@ -960,8 +960,8 @@ return {
                 text = {
                     "If played hand only contains",
                     "{C:attention}Aces{}, {C:attention}2s{}, {C:attention}3s{}, {C:attention}5s{}, and {C:attention}8s{},",
-                    "gain {C:chips}+6{} Chips",
-                    "{C:inactive,s:0.9}(Currently {C:chips,s:0.9}+#1#{C:inactive,s:0.9})"
+                    "gain {C:chips}+#1#{} Chips",
+                    "{C:inactive,s:0.9}(Currently {C:chips,s:0.9}+#2#{C:inactive,s:0.9})"
                 },
             },
             j_rgmc_ball_breaker_extra = {
@@ -977,7 +977,7 @@ return {
                 name = "Pretentious Joker",
                 text = {
                     'Played cards with',
-                    '{C:rgmc_goblets}#2#{} suit give',
+                    '{V:1}#2#{} suit give',
                     '{C:mult}+#1#{} Mult when scored',
                 },
             },
@@ -985,7 +985,7 @@ return {
                 name = "Deceitful Joker",
                 text = {
                     'Played cards with',
-                    '{C:rgmc_towers}#2#{} suit give',
+                    '{V:1}#2#{} suit give',
                     '{C:mult}+#1#{} Mult when scored',
                 },
             },
@@ -993,7 +993,7 @@ return {
                 name = "Barbershop Joker",
                 text = {
                     'Played cards with',
-                    '{C:purple}#1#{} suit give',
+                    '{V:1}#1#{} suit give',
                     '{C:mult}+#2#{} Mult when scored',
                     'Suit changes after',
                     'each trigger',
@@ -1033,7 +1033,7 @@ return {
             j_rgmc_redd_dacca = {
                 name = "Redd Dacca",
                 text = {
-                    "{X:dark_edition,C:white}^#1#{} Mult",
+                    "{X:rgmc_emult,C:white}^#1#{} Mult",
                     "{C:green}#2# in #3#{} chance this card is",
                     "destroyed at end of {C:attention}round{}",
                 },
@@ -1057,7 +1057,7 @@ return {
                 name = "Null and Void",
                 text = {
                     "Before scoring,",
-                    "debuffs the next {C:attention}#1#{} Joker(s)",
+                    "{C:rgmc_evil}debuffs{} the next {C:attention}#1#{} Joker(s)",
                     "to the right",
                 },
             },
@@ -1065,7 +1065,7 @@ return {
                 name = "Lady Liberty",
                 text = {
                     "Upon playing first {C:attention}hand{},",
-                    "apply a {C:attention}Patina Seal{} to",
+                    "apply a {C:rgmc_patina}Patina Seal{} to",
                     "{C:attention}first played card{}",
                 },
             },
@@ -1099,7 +1099,7 @@ return {
                 name = "Three Trees",
                 text = {
                     "If played hand contains",
-                    "a {C:attention}light{} suit, a {C:attention}dark{} suit,",
+                    "a {C:rgmc_light}Light{} suit, a {C:rgmc_dark}Dark{} suit,",
                     "and a {C:attention}modded suit{}, give {X:mult,C:white}X3{} Mult",
                     "{C:inactive,s:0.7}(Requires at least 3 suits)"
                 },
@@ -1107,7 +1107,7 @@ return {
             j_rgmc_shovel_joker = {
                 name = "Shovel Joker",
                 text = {
-                    "Scored {C:attention}Knights{} with {C:attention}dark suits{}",
+                    "Scored {C:attention}Knights{} with {C:rgmc_dark}Dark{} suits",
                     "give {C:mult}X#1#{} Mult",
                     "{C:inactive,s:0.7}({C:clubs}Clubs{}, {C:spades}Spades{}, etc.)"
                 },
@@ -1115,9 +1115,9 @@ return {
             j_rgmc_rhodochrosite = {
                 name = "Rhodochrosite",
                 text = {
-                    "Scored #1# give",
+                    "Scored {V:1}#1#{} give",
                     "{C:mult}+#4#{} Mult/{C:chips}+#5#{} Chips",
-                    "if played after #2#/#3#"
+                    "if played after {V:2}#2#{}/{V:3}#3#{}"
                 },
             },
             j_rgmc_waveworx = {
@@ -1131,7 +1131,7 @@ return {
                 name = "Miracle Pop",
                 text = {
                     "Gains {C:chips}+#3#{}/{C:chips}+#4#{} Chips per",
-                    "scored #1#/#2#",
+                    "scored {V:1}#1#{}/{V:2}#2#{}",
                     "When {C:attention}sold, distribute {C:chips}#5#{} chips{}",
                     "among {C:attention}#6#{} cards in {C:attention}hand",
                     "{C:inactive}(or {C:chips}+#7#{} {C:inactive}bonus chips)"
@@ -1178,19 +1178,19 @@ return {
                 text = {
                     "Scored {C:attention}suits{} in the",
                     "{C:attention}first hand{} of round are",
-                    "converted to {C:rgmc_goblets}Goblets",
-                    "Gives {X:mult,C:white}X#1#{} Mult",
+                    "converted to {V:1}#1#{}",
+                    "Gives {X:mult,C:white}X#2#{} Mult",
                     "per {C:attention}converted{} card",
-                    "{C:inactive}(Currently {X:mult,C:white}X#2#{C:inactive})"
+                    "{C:inactive}(Currently {X:mult,C:white}X#3#{C:inactive})"
                 },
             },
             j_rgmc_legend_bobby = {
                 name = "Bobby Khan",
                 text = {
-                    "Destroys scored {C:attention}light{} suit cards",
+                    "{C:rgmc_evil}Destroys{} scored {C:attention}light{} suit cards",
                     "Base {C:chips}chips{} are split between",
-                    "all {C:attention}dark{} suit cards",
-                    "{C:rgmc_towers}Towers{} gain #2#X value"
+                    "all {C:rgmc_dark}Dark{} suit cards",
+                    "{V:1}#1#{} gain {X:chips,C:white}#2#X{} value"
                 },
             },
             j_rgmc_legend_lollipop = {
@@ -1216,14 +1216,14 @@ return {
             j_rgmc_conspiracy_wizard = {
                 name = "Conspiracy Wizard",
                 text = {
-                    "A {C:attention}#3#{} rank gives {C:mult}+#1#{} Mult",
-                    "A {C:attention}#4#{} suit gives {C:chips}+#2#{} Chips"
+                    "Scored {C:attention}#3#s{} give {C:mult}+#1#{} Mult",
+                    "Scored {C:attention}#4#{} give {C:chips}+#2#{} Chips"
                 },
             },
             j_rgmc_continuum = {
                 name = "Continuum",
                 text = {
-                    "First scored {C:attention}8{} retriggers",
+                    "First scored {C:attention}#1#{} retriggers",
                     "all previously scored cards"
                 },
             },
@@ -1231,10 +1231,10 @@ return {
                 name = "Six Shooter",
                 text = {
                     "{C:green}#1# in #2#{} chance for",
-                    "each scored {C:attention}6{} to",
-                    "get {C:red}shot{} and",
-                    "give this {C:attention}Joker{} {C:chips}+#3#{} Chips}",
-                    "{C:inactive}(Currently {C:chips}+#4#{C:inactive})"
+                    "each scored {C:attention}#3#{} to",
+                    "get {C:rgmc_evil}shot{} and",
+                    "give this {C:attention}Joker{} {C:chips}+#4#{} Chips}",
+                    "{C:inactive}(Currently {C:chips}+#5#{C:inactive})"
                 },
             },
             j_rgmc_easter_egg = {
@@ -1293,8 +1293,8 @@ return {
             j_rgmc_joker_in_binary = {
                 name = "Joker In Binary",
                 text = {
-                    "Played {C:attention}1s{} and {C:attention}0s{}",
-                    "give {C:chips}+#1#{} Chips when scored",
+                    "Played {C:attention}#1#{} and {C:attention}#2#{}",
+                    "give {C:chips}+#3#{} Chips when scored",
                 },
             },
             j_rgmc_captain_viridian = {
@@ -1311,7 +1311,7 @@ return {
                 name = "Balutro",
                 text = {
                     "If all {C:attention}scored{} cards include",
-                    "digits of {C:attention}1{}, {C:attention}2{}, or {C:attention}5{}",
+                    "digits of {C:attention}#1#{}, {C:attention}#2#{}, or {C:attention}#3#{}",
                     "retrigger {C:attention}scoring{} cards"
                 },
             },
@@ -1434,7 +1434,7 @@ return {
                 name = "Voracious Joker",
                 text = {
                     'Played cards with',
-                    '#2# suit give',
+                    '{V:1}#2#{} suit give',
                     '{C:mult}+#1#{} Mult when scored',
                 },
             },
@@ -1442,14 +1442,14 @@ return {
                 name = "Arrogant Joker",
                 text = {
                     'Played cards with',
-                    '#2# suit give',
+                    '{V:1}#2#{} suit give',
                     '{C:mult}+#1#{} Mult when scored',
                 },
             },
             j_rgmc_vibrant_tourmaline= {
                 name = "Vibrant Tourmaline",
                 text = {
-                    "For each scored #1# card,",
+                    "For each scored {V:1}#1#{} card,",
                     "{C:green}#2# in #3#{} chance",
                     "this Joker gains {C:money}$#4#",
                     "Resets at end of {C:attention}Ante",
@@ -1460,7 +1460,7 @@ return {
             j_rgmc_obsidian_blade = {
                 name = "Obsidian Blade",
                 text = {
-                    "For each scored #1# card,",
+                    "For each scored {V:1}#1#{} card,",
                     "{C:green}#2# in #3#{} chance",
                     "this Joker gains {X:mult,C:white}X#4#{} Mult",
                     "Resets at end of {C:attention}Ante",
@@ -1489,17 +1489,17 @@ return {
             j_rgmc_sanguine = {
                 name = "Sanguine",
                 text = {
-                    "{X:mult,C:white}X#1#{} Mult",
+                    "{X:mult,C:white}X#3#{} Mult",
                     "if hand contains both a scoring",
-                    "{C:rgmc_goblets}Goblet{} and {C:rgmc_daggers}Dagger{}"
+                    "{V:1}#1#{} and {V:2}#2#{}"
                 },
             },
             j_rgmc_stonebound = {
                 name = "Stonebound",
                 text = {
-                    "{C:chips}+#1#{} Chips",
+                    "{C:chips}+#3#{} Chips",
                     "if hand contains both a scoring",
-                    "{C:rgmc_towers}Tower{} and {C:rgmc_blooms}Bloom{}"
+                    "{V:1}#1#{} and {V:2}#2#{}"
                 },
             },
             j_rgmc_metallurgist = {
@@ -1542,7 +1542,7 @@ return {
                 text = {
                     "{X:mult,C:white}X#1#{} Mult",
                     "if played hand contains",
-                    "a {C:rgmc_dark}Dark Spectrum#"
+                    "a {C:rgmc_dark}Dark #2#"
                 },
             },
             j_rgmc_photovoltaic = {
@@ -1550,7 +1550,7 @@ return {
                 text = {
                     "{X:mult,C:white}X#1#{} Mult",
                     "if played hand contains",
-                    "a {C:rgmc_light}Light Spectrum"
+                    "a {C:rgmc_light}Light #2#"
                 },
             },
             j_rgmc_palette = {
@@ -1582,7 +1582,7 @@ return {
                 name = "Microfiche",
                 text = {
                     "This Joker gains {X:chips,C:white}X#1#{} Chips",
-                    "for every scored rank under {C:attention}2{}",
+                    "for every scored rank under {C:attention}#3#{}",
 					"{C:inactive,s:0.9}(Currently {X:chips,C:white}X#2#{C:inactive,s:0.9})"
                 },
             },
@@ -1645,7 +1645,7 @@ return {
                 name = "Cat Planet",
                 text = {
                     "Using {C:planet}planets{}",
-                    "give {C:rgmc_unusual,E:1}Mayhem{}",
+                    "give {C:rgmc_mayhem,E:1}Mayhem{}",
                 },
             },
             j_rgmc_liberty_bell = {
@@ -3015,10 +3015,9 @@ return {
                 text = {
                     "Creates a random {C:dark_edition}Negative",
                     "consumable, Joker, or card and",
-                    "{C:rgmc_unusual,E:1}Mayhemize{} its values",
+                    "{C:rgmc_mayhem,E:1}Mayhemize{} its values",
                     "{C:inactive}({C:attention}Values{C:inactive}are randomized",
                     "{C:inactive}between {C:attention}X#1#{C:inactive} and{C:attention}X#2#{C:inactive})",
-                    "{C:inactive}(Must have room)",
                 }
             },
             c_rgmc_life_on_earth  = {
@@ -3056,17 +3055,19 @@ return {
             c_rgmc_anti_grim= {
                 name = 'Grim...?',
                 text = {
-                    "Destroys {C:red}#1#{} of",
+                    "Destroys {C:red}#1#%{} of",
                     "your highest rank",
-                    "from your deck"
+                    "from your deck",
+                    "{C:inactive}(Will destroy {C:attention}#2#{C:inactive} #3#s)"
                 }
             },
             c_rgmc_anti_incantation = {
                 name = 'Incantation...?',
                 text = {
-                    "Destroys {C:red}#1#{} of your",
-                    "{C:attention}lowest number{} rank",
-                    "from your deck"
+                    "Destroys {C:red}#1#%{} of your",
+                    "{C:attention}lowest{} number rank",
+                    "from your deck",
+                    "{C:inactive}(Will destroy {C:attention}#2#{C:inactive} #3#s)"
                 }
             },
             c_rgmc_anti_talisman= {
@@ -3091,37 +3092,42 @@ return {
                 text = {
                     "Debuffs all {C:attention}Jokers{}",
                     "above {C:green}Uncommon{} rarity",
-                    "Gives {C:money}#2#{} for",
+                    "for {C:attention}#1#{} round(s)",
+                    "Gives {C:money}+#2#{} for",
                     "each Joker debuffed",
                 }
             },
             c_rgmc_anti_sigil = {
                 name = 'Sigil...?',
                 text = {
-                    "Destroys {C:red}#1#{} of",
-                    "{C:attention}???{} {C:attention}suit{}",
-                    "from your deck",
+                    "Chooses a random {C:attention}suit{}",
+                    "from your deck and",
+                    "destroys {C:red}#1#%{} of cards",
+                    "matching selected suit"
                 }
             },
             c_rgmc_anti_ouija = {
                 name = 'Ouija...?',
                 text = {
-                    "Destroys {C:red}#1#{} of",
-                    "{C:attention}???{} {C:attention}rank{}",
-                    "from your deck",
+                    "Chooses a random {C:attention}rank{}",
+                    "from your deck and",
+                    "destroys {C:red}#1#%{} of cards",
+                    "matching selected rank"
                 }
             },
             c_rgmc_anti_ectoplasm = {
                 name = 'Ectoplasm...?',
                 text = {
                     "Debuffs {C:red}#1#{} random Jokers",
-                    "for {C:attention}#1#{} round(s)"
+                    "for {C:attention}#1#{} round(s)",
+                    "Gain {C:attention}+1{} hand size",
+                    "afterwards"
                 }
             },
             c_rgmc_anti_immolate = {
                 name = 'Immolate...?',
                 text = {
-                    "Creates {C:attention}#1#{} {C:rgmc_stone}Stone{} cards",
+                    "Creates {C:attention}#1#{} {C:rgmc_vino}Vino{} cards",
                     "{C:money}-$#2#{}",
                 }
             },
@@ -3144,9 +3150,11 @@ return {
             c_rgmc_anti_hex = {
                 name = 'Hex...?',
                 text = {
-                    "Removes editions and",
-                    "enhancements from",
-                    "{C:attention}#1#{} cards",
+                    "Removes {C:attention}editions{} and",
+                    "{C:attention}enhancements{} from",
+                    "{C:attention}all{} cards in deck",
+                    "Gain {C:money}$#2#{} per {C:orange}edition{}",
+                    "and {C:money}$#3#{} per {C:orange}enhancement{}",
                 }
             },
             c_rgmc_anti_trance = {
@@ -3462,8 +3470,8 @@ return {
 					"{C:red}+#1#{} temporary discard(s)",
                 }
             },
-            c_rgmc_madcrap = {
-                name = 'Madcrap',
+            c_rgmc_lowbrow = {
+                name = 'Lowbrow',
                 text = {
                     "Converts all cards in hand",
                     "to {C:attention}2{}s, {C:attention}3{}s, {C:attention}4{}s, or {C:attention}5{}s"
@@ -4566,9 +4574,8 @@ return {
 				name = "Cherry Seal",
 				text = {
                     "When this card is played",
-                    "and scores, {C:attention}stays in hand and",
+                    "and scores, it {C:attention}returns{} and ",
                     "scores {C:green}again{} next hand",
-                    "{C:inactive}(Currently #1#!)"
                 }
 			},
             rgmc_accent_seal = {
@@ -4609,8 +4616,8 @@ return {
 				text = {
                     "If {C:attention}held{} in hand at end of round",
                     "swap suits to #1#",
-                    "{C:inactive}(Switches between light",
-                    "and dark suits)",
+                    "{C:inactive}(Switches between {C:rgmc_light}Light{}",
+                    "and {C:rgmc_dark}Dark{} suits)",
                 }
 			},
             rgmc_midnight_seal = {
@@ -4738,27 +4745,39 @@ return {
             rgmc_lanterns   = 'Lanterns',
 		},
         ranks = {
+            -- unstb
             ["rgmc_0"]          = "0",
             ["rgmc_0.5"]        = "Half",
             ["rgmc_1"]          = "1",
-            ["rgmc_10.5"]       = "10 and a Half",
             ["rgmc_11"]         = "11",
             ["rgmc_12"]         = "12",
             ["rgmc_13"]         = "13",
-            ["rgmc_14"]         = "14",
-            ["rgmc_15"]         = "15",
-            ["rgmc_16"]         = "16",
             ["rgmc_20"]         = "20",
             ["rgmc_21"]         = "21",
-            ["rgmc_24"]         = "24",
             ["rgmc_25"]         = "25",
+            -- Fibonacci ranks
+            ["rgmc_34"]         = "34",
+            ["rgmc_55"]         = "55",
+            ["rgmc_Phi"]        = "Golden Ratio",
+            -- Funny numbers
+            ["rgmc_10.5"]       = "10 and a Half",
+            ["rgmc_24"]         = "24",
+            -- Base2 numbers
             ["rgmc_32"]         = "32",
             ["rgmc_64"]         = "64",
             ["rgmc_128"]        = "128",
+            -- Uno cards
+            ["rgmc_Draw2"]      = "Draw 2",
+            ["rgmc_Skip"]       = "Skip",
+            ["rgmc_Reverse"]    = "Reverse",
+            -- And the rest!
+            ["rgmc_16"]         = "16",
+            ["rgmc_52"]         = "52",
             ["rgmc_Knight"]     = "Knight",
-            ["rgmc_x"]          = "X",
+            ["rgmc_X"]          = "X",
             ["rgmc_Sum"]        = "Sum",
             ["rgmc_Infinity"]   = "Infinity",
+            ["rgmc_Madcap"]     = "M",
         },
 		dictionary = {
             rgmc_patina_seal         = "Patina Seal",
@@ -4844,6 +4863,9 @@ return {
             k_mission_accomplished  = "Mission Accomplished!",
             k_mission_in_progress   = "Mission in Progress...",
             k_mission_failed        = "Mission Failed...",
+
+
+            k_costs                 = "Costs",
 
             -- Rarities
 			k_cry_epic       = "Epic",

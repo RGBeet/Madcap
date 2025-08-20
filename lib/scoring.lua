@@ -1,28 +1,28 @@
-function Madcap.Funcs.play_hand_before(scoring_hand)
-    tell('Play Hand Before')
+local base_cm_mod_ref = MadLib.base_cm_mod
+function MadLib.base_cm_mod(hand,poker_info,data)
+    -- Goes before Pacdam, if installed
+    --{text,disp_text,poker_hands,scoring_hand,non_loc_disp_text}
+    data = data or {}
+    local subhands = MadLib.get_subhands(poker_info[4])
+    tell('Hand/Chips Before:' .. tostring(hand_chips) .. "," .. tostring(mult))
 
-    -- Handle subhands
-	local active = MadLib.get_subhands(scoring_hand)
+    -- Do subhand shtuff
+	MadLib.loop_func(subhands, function(a)
+        local sh = G.GAME.subhands[a]
+        local x_chips   = (sh.chips > 0 and sh.chips) or 1
+        local x_mult    = (sh.mult > 0 and sh.mult) or 1
 
-	if #active > 0 then
-        for i=1, #active do
-            tell('Hand/Chips Before:' .. tostring(hand_chips) .. "," .. tostring(mult))
-            if active[i].x_chips > 0 then
-                tell(tostring(hand_chips) .. " + " .. tostring(active[i].x_chips) .. " = " .. tostring(hand_chips*active[i].x_chips))
-                hand_chips  = mod_chips(hand_chips + active[i].x_chips)
-                G.HUD:get_UIE_by_ID('hand_chips'):juice_up(0.3, 0.3)
-            end
-
-            if active[i].x_mult > 0 then
-                tell(tostring(mult) .. " + " .. tostring(active[i].x_mult) .. " = " .. tostring(mult*active[i].x_mult))
-                mult        = mult + active[i].x_mult
-                G.HUD:get_UIE_by_ID('hand_mult'):juice_up(0.3, 0.3)
-            end
-
-            update_hand_text({ sound = 'chips2', delay = 3.0 }, { chips = hand_chips, mult = mult })
-            tell('Hand/Chips After:' .. tostring(hand_chips) .. "," .. tostring(mult))
+        if sh.empower > 0 then
+            x_chips     = x_chips ^ (1 + 0.02 * sh.empower)
+            x_mult      = x_mult ^ (1 + 0.02 * sh.empower)
         end
-	end
+
+        hand_chips  = mod_chips(hand_chips * x_chips)
+        mult        = mod_mult(mult * x_mult)
+    end)
+
+    tell('Hand/Chips After:' .. tostring(hand_chips) .. "," .. tostring(mult))
+    return base_cm_mod_ref(hand, poker_info, data) -- just in case...
 end
 
 function Madcap.Funcs.finalize_chips_mult(scoring_hand)

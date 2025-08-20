@@ -1,0 +1,46 @@
+[manifest]
+version = "1.0.0"
+dump_lua = true
+priority = 40000
+
+# Get scoring hand
+[[patches]]
+[patches.pattern]
+target = "cardarea.lua"
+pattern = '''local text,disp_text,poker_hands = G.FUNCS.get_poker_hand_info(self.highlighted)'''
+position = "at"
+payload = '''local text,disp_text,poker_hands,scoring_hand = G.FUNCS.get_poker_hand_info(self.highlighted)'''
+match_indent = true
+
+# Implemented in Madcap's function
+[[patches]]
+[patches.pattern]
+target = "cardarea.lua"
+pattern = '''if AKYRS.hand_display_mod(self.highlighted,text,disp_text,poker_hands) then
+            else'''
+position = "at"
+payload = ''
+match_indent = true
+
+
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = '''update_hand_text({sound = G.GAME.current_round.current_hand.handname ~= disp_text and 'button' or nil, volume = 0.4, immediate = true, nopulse = nil,
+                delay = G.GAME.current_round.current_hand.handname ~= disp_text and 0.4 or 0}, {handname=disp_text, level=G.GAME.hands[text].level, mult = G.GAME.hands[text].mult, chips = G.GAME.hands[text].chips})'''
+position = "at"
+payload = '''if not Madcap.Funcs.hand_display_mod(G.play.cards,text,disp_text,poker_hands,scoring_hand) then
+    update_hand_text({sound = G.GAME.current_round.current_hand.handname ~= disp_text and 'button' or nil, volume = 0.4, immediate = true, nopulse = nil,
+                delay = G.GAME.current_round.current_hand.handname ~= disp_text and 0.4 or 0}, {handname=disp_text, level=G.GAME.hands[text].level, mult = G.GAME.hands[text].mult, chips = G.GAME.hands[text].chips})
+end'''
+match_indent = true
+
+# add cherry seal type shit
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = '''scoring_hand = final_scoring_hand
+    delay(0.2)'''
+position = "after"
+payload = '''scoring_hand = Madcap.Funcs.modify_scoring_hand(scoring_hand)'''
+match_indent = true
