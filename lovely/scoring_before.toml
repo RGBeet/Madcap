@@ -18,7 +18,7 @@ pattern = """                update_hand_text({immediate = true, nopulse = nil, 
 position = "before"
 payload = """
 if Madcap.Funcs.hand_display_mod(self.highlighted,text,disp_text,poker_hands,scoring_hand) then
-else
+else end
 """
 overwrite = true
 match_indent = true
