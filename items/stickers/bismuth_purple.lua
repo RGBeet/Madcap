@@ -8,7 +8,7 @@ return {
         atlas   = 'stickers',
         pos     = MLIB.coords(2,3),
         badge_colour = HEX("3867DD"),
-        config  = { x_score = 1.2 },
+        config  = { x_score = 1.5 },
         loc_vars = function(self, info_queue, card)
             return MadLib.collect_vars(number_format(card.ability.x_score) or '??')
         end,

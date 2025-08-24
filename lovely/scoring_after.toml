@@ -54,3 +54,13 @@ pattern = '''local glass_shattered = {}'''
 position = "before"
 payload = '''Madcap.Funcs.record_hand_after(hand_chips, mult)'''
 match_indent = true
+
+# Last played hand
+[[patches]]
+[patches.pattern]
+target = 'functions/state_events.lua'
+pattern = "-- TARGET: effects after hand evaluation"
+position = 'after'
+payload = 'G.GAME.last_played_hand = text'
+match_indent = true
+times = 1

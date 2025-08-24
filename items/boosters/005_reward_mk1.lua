@@ -13,9 +13,8 @@ function Madcap.Funcs.get_reward_card(seed)
     return SMODS.create_card({
         set = 'Consumables',
         area = G.pack_cards,
-        legendary = leg,
         skip_materialize = true,
-        soulable = true,
+        soulable = false,
         key = Madcap.Funcs.get_random_consumable('rgmc'),
         key_append = 'rgmc'
     })
@@ -44,8 +43,8 @@ return {
             return MadLib.collect_vars(cfg.choose, cfg.extra)
         end,
 		update_pack		= function(self, dt)
-			ease_colour(G.C.DYN_UI.MAIN, G.C.RGMC_UNUSUAL)
-			ease_background_colour({ new_colour = G.C.RGMC_UNUSUAL, special_colour = G.C.BLACK, contrast = 2 })
+			ease_colour(G.C.DYN_UI.MAIN, G.C.DARK_EDITION)
+			ease_background_colour({ new_colour = G.C.DARK_EDITION, special_colour = G.C.BLACK, contrast = 2 })
 			SMODS.Booster.update_pack(self, dt)
 		end,
         particles = function(self)
@@ -64,7 +63,7 @@ return {
             G.booster_pack_sparkles:fade(1, 0)
         end,
         create_card = function(self, card, i)
-            return Madcap.Funcs.get_reward_card('reward_mk1')
+            return SMODS.create_card({ set = 'Consumables', area = G.pack_cards, legendary = leg, skip_materialize = true, soulable = true, key = leg and 'c_soul' or Madcap.Funcs.get_random_consumable('rar'), key_append = 'reward_mk1'})
         end,
 		digital_hallucinations_compat = Madcap.Funcs.digital_hallucinations_compat('Reward', 'rgmc_plus_reward', G.C.GOLD, function()
             local cc = Madcap.Funcs.get_reward_card('reward_mk1')

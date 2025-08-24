@@ -4,6 +4,28 @@ function Madcap.Funcs.get_pale_score(card)
     return edition
 end
 
+Madcap.DeckFuncs['pale'] = {
+    calculate = function(self, card, context)
+        if context.setting_blind then
+            local seed = pseudoseed('rgmc_pale_deck_'..tostring(G.GAME.round_resets.ante))
+            local number = math.floor(#G.playing_cards/4)
+            local shuffle = MadLib.shuffle_sort_list(G.playing_cards, number, function(v,k)
+                return not (v.edition and v.edition.negative)
+            end, function(a,b)
+                return Madcap.Funcs.get_pale_score(a) > Madcap.Funcs.get_pale_score(b)
+            end)
+            MadLib.loop_func(shuffle, function(c)
+                c.pale_deck = true
+                c:set_temp_sticker('rgmc_twinkling', true, 1)
+                c:set_edition({ negative = true }, true, true)
+            end)
+            MadLib.loop_func(MadLib.list_pick_range(shuffle, number+1, #shuffle), function(c)
+                c.pale_deck = nil
+            end)
+        end
+    end
+}
+
 return {
     categories = {
         'Decks'
@@ -24,24 +46,6 @@ return {
                 finishers       = { 'bl_rgmc_final_void' } -- force Midnight Void
             })
         end,
-        calculate = function(self, card, context)
-            if context.setting_blind then
-                local seed = pseudoseed('rgmc_pale_deck_'..tostring(G.GAME.round_resets.ante))
-                local number = math.floor(#G.playing_cards/4)
-                local shuffle = MadLib.shuffle_sort_list(G.playing_cards, number, function(v,k)
-                    return not (v.edition and v.edition.negative)
-                end, function(a,b)
-                    return get_pale_score(a) > get_pale_score(b)
-                end)
-                MadLib.loop_func(shuffle, function(c)
-                    c.pale_deck = true
-                    c:set_rgmc_twinkling(true)
-                    c:set_edition({ negative = true }, true, true)
-                end)
-                MadLib.loop_func(MadLib.list_pick_range(shuffle, number+1, #shuffle), function(c)
-                    c.pale_deck = nil
-                end)
-            end
-        end
+        calculate = Madcap.DeckFuncs['pale'].calculate,
     }
 }

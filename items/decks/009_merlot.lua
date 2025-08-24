@@ -17,6 +17,7 @@ return {
                 finishers       = { 'bl_rgmc_final_moon' } -- force ???
             })
             G.GAME.Exotic = true -- Exotic Suits show up!
+            Madcap.Funcs.set_subhand('dark',true)
         end
     }
 }

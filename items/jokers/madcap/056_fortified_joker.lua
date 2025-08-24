@@ -14,7 +14,7 @@ return {
             extra = { chips = 90, poker_hand = 'rgmc_pyramid' }
         },
         loc_vars = function(self, info_queue, card)
-            return MadLib.collect_vars(card.ability.extra.mult, localize(card.ability.extra.poker_hand, 'poker_hands'))
+            return MadLib.collect_vars(card.ability.extra.chips, localize(card.ability.extra.poker_hand, 'poker_hands'))
         end,
         calculate = function(self, card, context)
             if

@@ -11,7 +11,7 @@ return {
         set     = "Spectral",
         key     = "oxidize",
         atlas   = "spectrals",
-        pos     = MLIB.get_coords(0,5),
+        pos     = MLIB.get_coords(0,0),
         cost    = 4,
         config  = { seal = 'rgmc_patina', max_highlighted = 1 },
         loc_vars = function(self, info_queue, card)

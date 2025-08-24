@@ -82,10 +82,11 @@ return {
 			b_rgmc_lunacy = {
 				name = "Deck of Lunacy",
 				text = {
-					"Start with {C:attention}maximum {C:rgmc_mayhem}Mayhem{}",
-					"Finisher Blinds appear,",
-					"every {C:attention}#1#{} ante(s)",
-					"Win on Ante {C:attention}#2#",
+					"No words can describe the",
+                    "madness contained within",
+                    "the {C:rgmc_bismuth}Deck of Lunacy{}",
+					"Combines most {C:attention}Vanilla{}",
+                    "and {C:rgmc_madcap}"
 				},
 			},
 			b_rgmc_jumble = {
@@ -129,13 +130,13 @@ return {
 				name = "Iridescent",
 				text = {
 					"Redistributes {C:chips}chips{} and {C:mult}mult",
-					"in a 70-30 split"
+					"in a {C:chips}70{}-{C:mult}30{} split"
 				},
 			},
 			e_rgmc_infernal = {
 				name = "Infernal",
 				text = {
-					"{X:purple,C:white}X#1#{}... Score?",
+					"{X:rgmc_xscore,C:white}X#1#{} Score",
 					"{C:green}#2# in #3#{} chance to",
 					"burn up upon",
                     "end of round"
@@ -144,7 +145,7 @@ return {
 			e_rgmc_chrome = {
 				name = "Chrome",
 				text = {
-					"{X:purple,C:white}X#1#{}... Score?"
+					"{X:rgmc_xscore,C:white}X#1#{} Score"
 				},
 			},
 			e_rgmc_disco= {
@@ -152,7 +153,7 @@ return {
 				text = {
 					"Gives either {C:chips}+#1#{} Chips,",
 					"{C:mult}+#2#{} Mult, {X:mult,C:white}X#3#{} Mult,",
-					"{C:money}$#4#{}, {X:purple,C:white}X#5#{} Score,",
+					"{C:money}$#4#{}, {X:rgmc_xscore,C:white}X#5#{} Score,",
 					"or {X:money,C:white}X#6#{} Money",
 				},
 			},
@@ -1312,7 +1313,7 @@ return {
                 name = "Balutro",
                 text = {
                     "If all {C:attention}scored{} cards include",
-                    "digits of {C:attention}#1#{}, {C:attention}#2#{}, or {C:attention}#3#{}",
+                    "digits of {C:attention}1{}, {C:attention}2#{}, or {C:attention}5{}",
                     "retrigger {C:attention}scoring{} cards"
                 },
             },
@@ -1775,9 +1776,9 @@ return {
                 text = {
                     "{C:green}#1# in #2#{} chance to",
                     "replace enhancements with {C:attention}Vino{}",
-                    "Gains {X:purple}X#3#{} Score per",
+                    "Gains {X:rgmc_xscore}X#3#{} Score per",
                     "{C:attention}Vino{} card added to deck",
-                    "{C:inactive}(Currently {X:purple,C:white}X#3#{C:inactive} Score)"
+                    "{C:inactive}(Currently {X:rgmc_xscore,C:white}X#3#{C:inactive} Score)"
                 },
             },
             j_rgmc_finity_claw = {
@@ -1813,9 +1814,9 @@ return {
                 text = {
                     "Apply {C:red}Forked{} to",
                     "all discarded cards",
-                    "Gains {X:purple,C:white}X#2#{} Score",
+                    "Gains {X:rgmc_xscore,C:white}X#2#{} Score",
                     "per destroyed {C:attention}Forked{} card",
-                    "{C:inactive}(Currently {X:purple,C:white}X#3#{C:inactive} Score)"
+                    "{C:inactive}(Currently {X:rgmc_xscore,C:white}X#3#{C:inactive} Score)"
                 },
             },
             j_rgmc_finity_gauntlet = {
@@ -2050,84 +2051,85 @@ return {
 			m_rgmc_vino = {
 				name = "Vino Card",
 				text = {
-                    "No rank or suit",
-                    "Card always scores",
-                    "{C:purple}X#1#{} Score",
-                    "when held in hand",
-                    "When played in winning hand,",
-                    "convert to {C:attention}Bismuth{}",
+                    { "{X:rgmc_xscore,C:white}X#1#{} Score, no {C:attention}rank{} or {C:attention}suit{}",
+                        "Always scores" },
+                    { "When {C:orange}held{} in hand, {C:green}#3# in #4#{} chance",
+                        "to give {X:rgmc_xscore,C:white}X#2#{}" },
+                    { "When {C:blue}played{} in {C:attention}winning{} hand,",
+                        "convert to {C:rgmc_bismuth}Bismuth{} " },
+                    { "Classified as an {C:rgmc_evil}Unhancement{}" }
 				},
 			},
-			m_rgmc_volatile = {
-				name = "Volatile Card",
+			m_rgmc_dynamite = {
+				name = "Dynamite Card",
 				text = {
-                    "Card always scores",
-                    "{X:purple,C:white}X#1# Score{}",
-                    "{C:green}#2# in #3#{} chance to",
-                    "destroy itself and adjacent cards",
-                    "upon {C:blue}play{} or {C:red}discard{}",
+                    { "{X:rgmc_xscore,C:white}X#1#{} Score" },
+                    { "When {C:blue}scored{} or {C:red}discarded{},",
+                        "{C:green}#1# in #2# chance to {C:rgmc_evil}destroy{}",
+                        "itself and any {C:attention}adjacent{} cards" },
+                    { "Classified as an {C:rgmc_evil}Unhancement{}" }
 				},
 			},
 			m_rgmc_bismuth = {
 				name = "Bismuth Card",
 				text = {
-                    "Gains {C:attention}1{} of {C:attention}5{}",
-                    "random powers at start of Blind",
-				},
-			},
-			m_rgmc_quartz = {
-				name = "Quartz Card",
-				text = {
-                    "Copies effects of",
-                    "{C:attention}leftmost{} card in hand",
+                    { "No {C:attention}rank{} or {C:attention}suit{}",
+                    "Gains a {C:rgmc_bismuth}random power{}",
+                    "upon entering hand" },
+                    { "Comes in {C:red}red{}, {C:gold}gold{}, {C:green}green{},",
+                    "{C:blue}blue{}, and {C:purple}purple{}" }
 				},
 			},
 			m_rgmc_lazurite = {
 				name = "Lazurite Card",
 				text = {
-                    "Copies rank and suit of",
-                    "card to its {C:attention}right{}",
+                    "When scored, scores {C:attention}again",
+                    "using the {C:attention}rank{} and {C:attention}suit",
+                    "of the card to its right"
 				},
 			},
-			m_rgmc_rutile = {
-				name = "Rutile Card",
+			m_rgmc_deluxe = {
+				name = "Deluxe Card",
 				text = {
-                    "{C:money}+$#1#{} when {C:attention}scored",
-                    "Gains {C:money}$#2#{} mult",
-                    "if held in hand at",
-                    "end of {C:attention}round{}",
-                    "({C:green}#3# in #4#{} chance to",
-                    "lose {C:money}$#5#{} of value",
-                    "when {C:attention}scored)",
+                    { "Earn {C:rgmc_luxury}£#1#{} when",
+                    "this card is scored" },
+                    { "Gains {C:rgmc_luxury}+£#2#{} if",
+                    "held in hand at",
+                    "end of {C:attention}round{}" },
 				},
 			},
-			m_rgmc_mythril = {
-				name = "Mythril Card",
+			m_rgmc_plumbum = {
+				name = "Plumbum Card",
 				text = {
-                    "{C:green}#1# in #3#{} chance for",
-                    "{X:chips,C:white}X#2#{} Chips",
-                    "{C:green}#1# in #4#{} chance for",
-                    "{X:chips,C:white}X#5#{} Chips",
+                    { "{X:mult,C:white}X#1#{} Mult when scored" },
+                    { "Always shuffled to {C:attention}back{} of deck",
+                        "{C:inactive}The heaviest card..." },
 				},
 			},
-			m_rgmc_pyrite = {
-				name = "Pyrite Card",
+			m_rgmc_aesthetic = {
+				name = "Aesthetic Card",
 				text = {
-                    "{C:green}#1# in #2#{} chance to",
-                    "increase {C:green}probability{}",
-                    "by #3# for duration of {C:attention}Blind{}"
+                    {
+                        "{C:mult}+4{} Mult",
+                        "Counts as an {C:attention}#1#",
+                        "of its {C:rgmc_bismuth}own suit{}",
+                        "{C:inactive}(So Retro!)"
+                    },
+                    {
+                        "When included in {C:attention}scoring{} hand,",
+                        "this card {C:attention}reduces{}",
+                        "the minimum card requirement",
+                        "for {C:rgmc_bismuth}all subhands{} by {C:attention}1{}",
+                    }
 				},
 			},
-			m_rgmc_carbonado = {
-				name = "Carbonado Card",
-				text = {
-                    "{X:dark_edition,C:white} ^#1# {} Mult",
-                    "while this card",
-                    "stays in hand.",
-                    "{C:green}#2# in #3#{} chance to",
-                    "destroy card at end of {C:attention}round{}",
-				},
-			},
+            m_rgmc_boba_tea_card = {
+                name = "Boba Tea Card",
+                text = {
+                    "{X:rgmc_xscore,C:white}X#1#{} Score",
+                    "{C:attention}after{} scoring",
+                }
+            },
 			m_rgmc_magnet = {
 				name = "Magnet Card",
 				text = {
@@ -3438,7 +3440,7 @@ return {
             c_rgmc_ember = {
                 name = 'Ember',
                 text = {
-					"Add a {C:rgmc_cream}Ether Seal{}",
+					"Add a {C:rgmc_ether}Ether Seal{}",
 					"to {C:attention}#1#{} selected",
 					"card(s) in your hand",
                 }
@@ -3876,14 +3878,14 @@ return {
 				name = "Everyman",
 				text = {
 					"{C:blue}Common{} Jokers give...",
-					"{X:purple,C:white}X#1#{} Score?"
+					"{X:rgmc_xscore,C:white}X#1#{} Score?"
 				},
 			},
 			v_rgmc_exceptional = {
 				name = "Exceptional",
 				text = {
 					"{C:blue}Common{} Jokers give...",
-					"{X:purple,C:white}^#1#{} Score?!"
+					"{X:rgmc_purple,C:white}^#1#{} Score?!"
 				},
 			},
             -- Bonus/mult enhancements
@@ -4252,7 +4254,7 @@ return {
                     "({C:attention}Unskippable{}!)",
 				},
 			},
-			p_rgmc_chip_mult = {
+			p_rgmc_chipmult = {
 				name = "Variety Pack: Red Pill, Blue Pill",
 				text = {
 					"There are two Jokers:",
@@ -4278,7 +4280,7 @@ return {
                     "{C:inactive}(must have room)",
 				},
 			},
-			p_rgmc_common = {
+			p_rgmc_riff_raff = {
 				name = "Variety Pack: Riff-Raff",
 				text = {
 					"Choose {C:attention}#1#{} of up to {C:attention}#2#{}",
@@ -4286,7 +4288,7 @@ return {
                     "{C:inactive}(must have room)",
 				},
 			},
-			p_rgmc_misprint = {
+			p_rgmc_factory_error = {
 				name = "Variety Pack: Factory Error",
 				text = {
 					"Choose {C:attention}#1#{} of up to {C:attention}#2#{}",
@@ -4391,13 +4393,13 @@ return {
             rgmc_chinese_effect8 = {
 				name = "General Tsao's Chicken",
 				text = {
-					"{X:purple,C:white}X#1#{}... Score?"
+					"{X:rgmc_purple,C:white}X#1#{} Score"
 				},
             },
             rgmc_chinese_effect9 = {
 				name = "General Tsao's Chicken...?!",
 				text = {
-					"{X:purple,C:white}X#1#{}... Score?"
+					"{X:rgmc_xscore,C:white}X#1#{} Score"
 				},
             },
 
@@ -4412,9 +4414,9 @@ return {
 				name = "Radioactive Stir Fry",
 				text = {
                     "{C:green}#2# in #3#{} chance for",
-					"{X:purple,C:white}X#1#{} Score",
+					"{X:rgmc_xscore,C:white}X#1#{} Score",
 					"Otherwise,",
-					"{X:purple,C:white}X#4#{} Score",
+					"{X:rgmc_xscore,C:white}X#4#{} Score",
 				},
             },
             rgmc_rad_chinese_effect2 = {
@@ -4478,7 +4480,6 @@ return {
 				name = "Shielded",
 				text = {
                     "Cannot be {C:attention}debuffed{} or {C:attention}destroyed{}",
-                    "for {C:attention}#1#{} rounds",
                     "{C:inactive}({C:attention}#2#{C:inactive} remaining)"
 				},
 			},
@@ -4493,9 +4494,9 @@ return {
 			rgmc_twinkling = {
 				name = "Twinkling",
 				text = {
-                    "Removes {C:attention}Edition{} and {C:attention}this Sticker{}",
-                    "at end of {C:attention}Blind",
-                    "{C:inactive}(Cannot change Editions)"
+                    "Upon removing sticker,",
+                    "Remove {C:dark_edition}edition{}",
+                    "{C:inactive}({C:attention}#2#{C:inactive} remaining)",
 				},
 			},
 			rgmc_engraved = {
@@ -4512,47 +4513,43 @@ return {
 				},
 			},
 			rgmc_bismuth_red = {
-				name = "Bismuth - Red Frame",
+				name = "{C:red}Red{} Frame",
 				text = {
-                    "???"
+                    "{C:mult}+#1#{} Mult"
 				},
 			},
 			rgmc_bismuth_yellow = {
-				name = "Bismuth - Yellow Frame",
+				name = "{C:gold}Gold{} Frame",
 				text = {
-                    "???"
+                    "Earn {C:gold}#$1#{}",
+                    "when scored"
 				},
 			},
 			rgmc_bismuth_green = {
-				name = "Bismuth - Green Frame",
+				name = "{C:green}Green{} Frame",
 				text = {
-                    "???"
+                    "Retrigger this",
+                    "card {C:attention}#1#{} time(s)"
 				},
 			},
 			rgmc_bismuth_blue = {
-				name = "Bismuth - Blue Frame",
+				name = "{C:blue}Blue{} Frame",
 				text = {
-                    "???"
+                    "{C:chips}+#1#{} Chips"
 				},
 			},
 			rgmc_bismuth_purple = {
-				name = "Bismuth - Purple Frame",
+				name = "{C:purple}Purple{} Frame",
 				text = {
-                    "???"
+                    "{X:rgmc_xscore, C:white}X#1#{} Score",
+                    "at {C:attention}end{} of scoring"
 				},
 			},
 			rgmc_clown = {
 				name = "spr_clown",
 				text = {
-                    "IF caught",
-                    "THEN score += 60",
-				},
-			},
-            rgmc_bronze_seal = {
-				name = "Cuprum Seal",
-				text = {
-					"This card is placed closer",
-					"to {C:attention}rear of deck{}"
+                    "{C:attention}IF{} caught {C:attention}THEN{}",
+                    "chips {C:chips}+= 60{}",
 				},
 			},
             -- Seal descriptions
@@ -4560,7 +4557,20 @@ return {
 				name = "Patina Seal",
 				text = {
 					"This card is placed closer",
-					"to {C:attention}front of deck{}"
+                    "to {C:attention}front{} of deck",
+                    "{C:inactive}(Rolls #3# times",
+                    "{C:inactive}with a #1# in #2# chance to",
+                    "{C:inactive}advance one position)",
+				},
+			},
+            rgmc_bronze_seal = {
+				name = "Cuprum Seal",
+				text = {
+					"This card is placed closer",
+                    "to {C:attention}rear{} of deck",
+                    "{C:inactive}(Rolls #3# times",
+                    "{C:inactive}with a #1# in #2# chance to",
+                    "{C:inactive}move back one position)",
 				},
 			},
             rgmc_jade_seal = {
@@ -4584,7 +4594,7 @@ return {
 				text = {
                     "If {C:attention}held{} in hand at end of round",
                     "levels up applicable {C:attention}subhands{}",
-                    "of winning poker hand by {C:attention}1{}"
+                    "of winning poker hand by {C:attention}#1#{}"
                 }
 			},
             rgmc_seafoam_seal = {
@@ -4596,7 +4606,7 @@ return {
                     "{C:inactive}(Must have room)",
                 }
 			},
-            rgmc_cream_seal = {
+            rgmc_ether_seal = {
 				name = "Ether Seal",
 				text = {
                     "#1# in #2# chance to create a",
@@ -4660,7 +4670,7 @@ return {
                     "if suceeding",
                     "{C:clubs}Clubs{} / {C:spades}Spades{}"
                 },
-                unlock = {
+                unlock = { -- trigger
                     "???",
                 },
             },
@@ -4780,10 +4790,18 @@ return {
             ["rgmc_Infinity"]   = "Infinity",
             ["rgmc_Madcap"]     = "M",
         },
+        challenge_names={
+            c_rgmc_pickys_challenge = "Picky's Challenge",
+            c_rgmc_rios_challenge   = "Rio's Challenge",
+            c_rgmc_recession        = "The Recession",
+            c_rgmc_heartless        = "Heartless!",
+            c_rgmc_crunch_numbers   = "Crunch the Numbers",
+            c_rgmc_rocket_man       = "Rocket Man",
+        },
 		dictionary = {
             rgmc_patina_seal         = "Patina Seal",
             rgmc_bronze_seal         = "Cuprum Seal",
-            rgmc_cream_seal          = "Ether Seal",
+            rgmc_ether_seal          = "Ether Seal",
             rgmc_umber_seal          = "Umber Seal",
             rgmc_jade_seal           = "Jade Seal",
             rgmc_cherry_seal         = "Cherry Seal",
@@ -4865,8 +4883,9 @@ return {
             k_mission_in_progress   = "Mission in Progress...",
             k_mission_failed        = "Mission Failed...",
 
-
             k_costs                 = "Costs",
+            k_luxury_pts            = "Luxury Points",
+            ['£']                   = '£',
 
             -- Rarities
 			k_rgmc_unusual   = "Unusual",
@@ -4910,19 +4929,22 @@ return {
             rgmc_pyramid = {
                 "Three or more groups of cards",
                 "of descending rank and",
-                "ascending quantity"
+                "ascending quantity",
+                "(Can be inverted!)"
             },
             rgmc_pyramid_flush = {
                 "Three or more groups of cards",
                 "of descending rank,",
                 "ascending quantity, and",
-                "identical suit"
+                "identical suit",
+                "(Can be inverted!)"
             },
             rgmc_pyramid_spectrum = {
                 "Three or more groups of cards",
                 "of descending rank",
                 "and rank, containing five",
-                "or more suits"
+                "or more suits",
+                "(Can be inverted!)"
             },
             rgmc_blazer = {
                 "5 face cards containing",
@@ -5002,7 +5024,7 @@ return {
 			rgmc_bronze_seal    = "Bronze Seal",
 			rgmc_jade_seal      = "Jade Seal",
 			rgmc_umber_seal     = "Umber Seal",
-			rgmc_cream_seal     = "Cream Seal",
+			rgmc_ether_seal     = "Ether Seal",
 			rgmc_cherry_seal    = "Cherry Seal",
 			rgmc_seafoam_seal   = "Bronze Seal",
 			rgmc_sunrise_seal   = "Sunrise Seal",

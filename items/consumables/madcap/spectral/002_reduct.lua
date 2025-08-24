@@ -7,7 +7,7 @@ return {
         set     = "Spectral",
         key     = "reduct",
         atlas   = "spectrals",
-        pos     = MLIB.get_coords(0,4),
+        pos     = MLIB.get_coords(0,1),
         cost    = 3,
         config  = { seal = 'rgmc_bronze', max_highlighted = 1 },
         loc_vars = function(self, info_queue, card)

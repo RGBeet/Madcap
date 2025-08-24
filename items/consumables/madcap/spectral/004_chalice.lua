@@ -7,7 +7,7 @@ return {
         set     = "Spectral",
         key     = "chalice",
         atlas   = "spectrals",
-        pos     = MLIB.coords(0,7),
+        pos     = MLIB.coords(0,3),
         cost    = 4,
         config  = { suit = 'rgmc_goblets' },
         can_use = function(self, card)

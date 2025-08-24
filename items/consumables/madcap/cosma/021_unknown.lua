@@ -39,7 +39,7 @@ return {
                     key_append = 'rgmc'
                 }
                 G.GAME.joker_buffer = 0
-                return { message = "+1", colour = G.C.DARK_EDITION }
+                return { message = "+1", colour = G.C.RGMC_MAYHEM}
         end
     }
 }

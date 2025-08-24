@@ -4,10 +4,11 @@ dump_lua = true
 priority = 1000
 
 # START OF RUN
+
 [[patches]]
 [patches.pattern]
 target = "game.lua"
-pattern = '''G.GAME.blind = Blind(0,0,2, 1)'''
+pattern = '''self.GAME.current_round.reroll_cost = self.GAME.base_reroll_cost'''
 position = "after"
 payload = '''Madcap.Funcs.run_start()
 Madcap.Funcs.ante_start()'''
@@ -142,20 +143,6 @@ payload = '''for k,v in pairs(Madcap.CustomCashouts) do
 end'''
 match_indent = true
 
-# Add context for Junk Mail to trigger correctly
-# as it normally only triggers for Tags
-[[patches]]
-[patches.pattern]
-target = 'game.lua'
-match_indent = true
-pattern = '''for i = 1, #G.GAME.tags do
-    G.GAME.tags[i]:apply_to_run({type = 'voucher_add'})
-end'''
-position = 'after'
-payload = '''
-SMODS.calculate_context{ rgmc_luxury_check = G.GAME.luxury_points }
-'''
-
 # Missed jokers list
 [[patches]]
 [patches.pattern]
@@ -237,9 +224,11 @@ rgmc_hotpink = G.C.RGMC_HOT_PINK,
 rgmc_light = G.C.RGMC_LIGHT,
 rgmc_dark = G.C.RGMC_DARK,
 rgmc_mayhem = G.C.RGMC_MAYHEM,
+rgmc_luxury = G.C.RGMC_LUXURY,
 rgmc_unusual = G.C.RGMC_UNUSUAL,
 rgmc_gimmick = G.C.GIMMICK,
-rgmc_chaotic = G.C.RGMC_CHAOTIC,'''
+rgmc_chaotic = G.C.RGMC_CHAOTIC,
+rgmc_rainbow = G.C.BEET_RAINBOW,'''
 
 # For the Madcap Select booster, make Madcap Jokers
 [[patches]]
@@ -284,3 +273,176 @@ pattern = "G.deck:shuffle('nr'..G.GAME.round_resets.ante)"
 position = "after"
 match_indent = true
 payload = "G.deck.cards = Madcap.Funcs.shuffle_deck(G.deck.cards)"
+
+# Redirect
+[[patches]]
+[patches.pattern]
+target = "engine/ui.lua"
+pattern = '''if node.config and node.config.id == id then return node end'''
+position = "after"
+match_indent = true
+payload = '''
+	if G.HUD_blind and id == 'chip_UI_count' and G.HUD_blind ~= self then -- haha funny workaround
+		return G.HUD_blind:get_UIE_by_ID(id)
+	end'''
+
+# Replaces the UI if the card uses LUXURY POINTS
+[[patches]]
+[patches.pattern]
+target = "functions/UI_definitions.lua"
+pattern = '''local t1 = {
+              n=G.UIT.ROOT, config = {minw = 0.6, align = 'tm', colour = darken(G.C.BLACK, 0.2), shadow = true, r = 0.05, padding = 0.05, minh = 1}, nodes={
+                  {n=G.UIT.R, config={align = "cm", colour = lighten(G.C.BLACK, 0.1), r = 0.1, minw = 1, minh = 0.55, emboss = 0.05, padding = 0.03}, nodes={
+                    {n=G.UIT.O, config={object = DynaText({string = {{prefix = localize('$'), ref_table = card, ref_value = 'cost'}}, colours = {G.C.MONEY},shadow = true, silent = true, bump = true, pop_in = 0, scale = 0.5})}},
+                  }}
+              }}'''
+position = "after"
+match_indent = true
+payload = '''
+if Madcap.Funcs.uses_lp(card) then
+  t1 = {
+    n=G.UIT.ROOT, config = {minw = 0.6, align = 'tm', colour = darken(G.C.RGMC_LUXURY, 0.2), shadow = true, r = 0.05, padding = 0.05, minh = 1}, nodes={
+      {n=G.UIT.R, config={align = "cm", colour = lighten(G.C.BLACK, 0.1), r = 0.1, minw = 1, minh = 0.55, emboss = 0.05, padding = 0.03}, nodes={
+        {n=G.UIT.O, config={object = DynaText({string = localize('£')..number_format(card:calc_lp()), colours = { G.C.RGMC_LUXURY },shadow = true, silent = true, bump = true, pop_in = 0, scale = 0.5})}},
+      }}
+    }
+  }
+end'''
+
+# Luxury Points buy!
+[[patches]]
+[patches.pattern]
+target = "functions/UI_definitions.lua"
+pattern = '''}} or {
+            n=G.UIT.ROOT, config = {ref_table = card, minw = 1.1, maxw = 1.3, padding = 0.1, align = 'bm', colour = G.C.GOLD, shadow = true, r = 0.08, minh = 0.94, func = 'can_buy', one_press = true, button = 'buy_from_shop', hover = true}, nodes={
+                {n=G.UIT.T, config={text = localize('b_buy'),colour = G.C.WHITE, scale = 0.5}}
+            }}'''
+position = "before"
+match_indent = true
+payload = '''}} or Madcap.Funcs.uses_lp(card) and {
+            n=G.UIT.ROOT, config = {ref_table = card, minw = 1.1, maxw = 1.3, padding = 0.1, align = 'bm', colour = G.C.RGMC_LUXURY, shadow = true, r = 0.08, minh = 0.94, func = 'can_buy_luxury', one_press = true, button = 'buy_from_shop', hover = true}, nodes={
+                {n=G.UIT.T, config={text = localize('b_buy'),colour = G.C.WHITE, scale = 0.5}}'''
+
+
+
+# Ease luxury points - two patches, one if Paya is installed
+[[patches]]
+[patches.pattern]
+target = 'functions/button_callbacks.lua'
+pattern = '''if c1.config and c1.config.center and c1.config.center.pyroxenes then
+	ease_pyrox(-c1.config.center.pyroxenes)'''
+position = 'after'
+payload = '''
+elseif Madcap.Funcs.uses_lp(c1) then
+	ease_lp(c1:calc_lp() * -1)
+'''
+match_indent = true
+
+# Buy with LP
+[[patches]]
+[patches.pattern]
+target = 'functions/button_callbacks.lua'
+pattern = '''if c1.cost ~= 0 then'''
+position = 'at'
+payload = '''
+if Madcap.Funcs.uses_lp(c1) then
+	ease_lp(self:calc_lp() * -1)
+elseif c1.cost ~= 0 then
+'''
+match_indent = true
+
+# Checks whether it has LP or $
+[[patches]]
+[patches.pattern]
+target = 'card.lua'
+pattern = '''G.CONTROLLER:save_cardarea_focus(area == G.jokers and 'jokers' or 'consumeables')'''
+position = 'after'
+payload = '''local is_luxury = Madcap.Funcs.uses_lp(self)'''
+match_indent = true
+
+# Gain LP from selling
+[[patches]]
+[patches.pattern]
+target = 'card.lua'
+pattern = '''ease_dollars(self.sell_cost)'''
+position = 'at'
+payload = '''if is_luxury then
+  ease_lp(self:calc_lp())
+else
+  ease_dollars(self.sell_cost)
+end'''
+match_indent = true
+times = 2
+
+## Taken from Cryptid - used for creating "abstract suits"
+[[patches]]
+[patches.pattern]
+target = "functions/misc_functions.lua"
+pattern = "local suits = SMODS.Suit.obj_buffer"
+position = "at"
+payload = '''
+    local suits = {}
+    MadLib.loop_func(MadLib.AbstractSuits, function(v)
+        suits[#suits + 1] = v
+    end)
+
+    for i,v in pairs(SMODS.Suit.obj_buffer) do
+        suits[#suits + 1] = v
+    end
+'''
+match_indent = true
+
+## Artificially add abstracted 'rank' to X of a kind calculations
+[[patches]]
+[patches.pattern]
+target = "functions/misc_functions.lua"
+pattern = '''for i = 1, SMODS.Rank.max_id.value do
+      vals[i] = {}
+  end'''
+position = "after"
+payload = '''
+    vals[#vals + 1] = {}
+'''
+match_indent = true
+
+# Adds Luxury slot to the shop
+[[patches]]
+[patches.pattern]
+target = 'game.lua'
+match_indent = true
+pattern = '''for i = 1, #G.GAME.tags do
+    G.GAME.tags[i]:apply_to_run({type = 'voucher_add'})
+end'''
+position = 'after'
+payload = '''
+-- luxury stuff
+if G.GAME.rgmc_luxury_pts > 0 then
+  local luxury_slots = math.floor((G.GAME.rgmc_luxury_pts+5)/10)
+  for i=1, luxury_slots do
+    local card = SMODS.create_card {
+      set = "Joker",
+      rarity = "Rare",
+      area = G.shop_jokers,
+      key_append = "vremade_uta"
+    }
+    card.states.visible = false
+    card:set_cost()
+    card.ability.force_lp = true
+    G.shop_jokers:emplace(card)
+    create_shop_card_ui(card, 'Joker', G.shop_jokers)
+    MadLib.simple_event(function()
+      card:start_materialize()
+      return true
+    end, 2.5, 'after')
+    MadLib.simple_event(function()
+      play_sound('rgmc_luxury_slot')
+      card:juice_up(0.3,0.3)
+      return true
+    end, 2.5, 'after')
+  end
+end
+SMODS.calculate_context{ rgmc_luxury_check = G.GAME.rgmc_luxury_pts }
+for i = 1, #G.GAME.tags do
+  G.GAME.tags[i]:apply_to_run({type = 'luxury_add'})
+end
+'''

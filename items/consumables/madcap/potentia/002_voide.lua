@@ -15,6 +15,9 @@ return {
         loc_vars = function(self, info_queue, center)
             return Madcap.Funcs.get_potentia_vars(self.config.subhand, self.config.levels)
         end,
+        can_use = function(self, card)
+            return true
+        end,
         use = function(self, card, area, copier)
             Madcap.Funcs.use_potentia_card(card)
         end,

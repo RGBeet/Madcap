@@ -203,13 +203,15 @@ end
 function MadLib.get_subhands(_cards)
     local subhand_list = {}
     MadLib.loop_table(SubHands, function(k,v)
-        if not G.GAME.subhands[v.name] and (G.GAME.subhands[v.name].enabled or Madcap.Data.devmode) then return false end
+        if not (G.GAME.subhands[v.name] and G.GAME.subhands[v.name].enabled) then
+            return false
+        end
         local result = v.check_hand(_cards)
         if not result then return false end
         subhand_list[#subhand_list+1] = v.name
         return true
     end)
-    print(subhand_list)
+    --print(subhand_list)
     return subhand_list
 end
 
@@ -225,7 +227,6 @@ function MadLib.has_subhand(list,name)
 end
 
 function Madcap.Funcs.hand_display_mod(hand, text, disp_text, poker_hands, scoring_hand)
-	if not hand then return end
 
     local subhands = MadLib.get_subhands(scoring_hand)
     local return_true = nil
@@ -233,11 +234,8 @@ function Madcap.Funcs.hand_display_mod(hand, text, disp_text, poker_hands, scori
 
     -- Add subhands stuff first
 	if #subhands > 0 and (#scoring_hand > 0 or #hand > 0) then
-        tell('SUBHANDS ARE:')
-        print(subhands)
 		local pre_lvl_col	= G.hand_text_area.hand_level.config.colour or G.C.HAND_LEVELS[1]
-		suffix = ' (+'
-		prefix= ''
+		suffix, prefix = ' (+',''
 
 		MadLib.loop_func(subhands,function(v,i)
 			-- hand name prefix
@@ -274,7 +272,7 @@ function Madcap.Funcs.hand_display_mod(hand, text, disp_text, poker_hands, scori
 	disp_text = MadLib.normalize_spaces(disp_text)
 
 	if AKYRS then
-        return_true = AKYRS.hand_display_mod(hand, text, disp_text, poker_hands) ~= nil
+        return_true = return_true or AKYRS.hand_display_mod(hand, text, disp_text, poker_hands) ~= nil
     end
 
     return return_true

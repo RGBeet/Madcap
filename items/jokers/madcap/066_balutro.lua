@@ -22,9 +22,6 @@ return {
             extra = {  active = true, retriggers = 1 },
             immutable = { max_retriggers = 12 }
         },
-        loc_vars = function(self, info_queue, card)
-            return MadLib.collect_vars(card.ability.extra.mult)
-        end,
         calculate = function(self, card, context)
             if
                 (context.forcetrigger

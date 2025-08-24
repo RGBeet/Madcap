@@ -5,7 +5,7 @@ return {
         atlas   = 'jokers',
         pos     = MLIB.coords(4,3),
         rarity  = 3,
-        config  = { extra = { poker_hand = 'Straight' }},
+        config  = { extra = { target_hand = 'Straight' }},
         cost    = 7,
         loc_vars = function(self, info_queue, card)
             return MadLib.collect_vars(

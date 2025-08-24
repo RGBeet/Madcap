@@ -25,9 +25,6 @@ return {
         can_use = function(self, card)
             return true
         end,
-        can_use = function(self, card)
-            return true
-        end,
         use = function(self, card, area, copier)
             Madcap.Funcs.use_spatia_card(card, card.ability.subhands, card.ability.level_factor)
         end,

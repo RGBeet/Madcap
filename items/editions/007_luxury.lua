@@ -10,7 +10,7 @@ return {
 	config = {
 		extra = {
 			money_mod 	= 3,
-			extra = 1
+			luxury_pts 	= 1
 		},
 		trigger = nil,
 	},
@@ -23,25 +23,31 @@ return {
 		return G.GAME.edition_rate * self.weight
 	end,
 	loc_vars = function(self, info_queue)
-		return MadLib.collect_vars(self.config.extra.extra, self.config.extra.money_mod)
+		return MadLib.collect_vars(self.config.extra.luxury_pts, self.config.extra.money_mod)
 	end,
 	calculate = function(self, card, context)
 
 		-- adds luxury points
-		if Madcap.Funcs.edition_in_play(context,card) then
-			G.GAME.luxury_points = G.GAME.luxury_points + 1
-            return {
-				message = "!!",
-				colour	= G.C.PURPLE,
-				card 	= card
-			}
+		if context.post_joker or (context.main_scoring and context.cardarea == G.play) then
+			return { rgmc_luxury_pts = self.config.extra.luxury_pts or 1 }
 		end
 
-		if -- takes money at end of round
-            context.playing_card_end_of_round
-			and to_big(G.GAME.dollars) - to_big(self.config.extra.money_mod) >= to_big(0)
+		if
+            ((context.cardarea == G.hand and context.playing_card_end_of_round and card.area ~= G.deck )
+			or (context.cardarea == G.jokers and context.end_of_round))
+			and not context.repetition and not context.individual
         then
-            ease_dollars(-self.config.extra.money_mod)
+			-- Remove $2 at end of round
+            MadLib.event({
+                func = function()
+					ease_dollars(-self.config.extra.money_mod)
+                    SMODS.calculate_effect(
+                        { message = localize { type = 'variable', key = 'p_dollars', vars = { -self.config.extra.money_mod } } },
+                        context.blueprint_card or card)
+                    return true
+                end
+            })
+			return nil, true
         end
 	end,
     }

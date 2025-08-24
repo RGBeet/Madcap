@@ -26,8 +26,9 @@ local atlases = {
 	create('deck_lunacy', 	'decks/lunacy.png'),
 	-- misc stuff
 	create('seals', 		mis..'seals.png'),
-	crtsqr('tags', 			mis..'tags.png', 34),
-	crtsqr('antags', 		mis..'antags.png', 34),
+	create('tags', 			mis..'tags.png',34,34),
+	create('antags', 		mis..'antags.png',34,34),
+	create('seals', 		mis..'seals.png'),
 	create('enhancements', 	mis..'enhancements.png'),
 	create('stickers', 		mis..'stickers.png'),
 	create('boosters', 		mis..'boosters.png'),
@@ -78,6 +79,16 @@ end
 
 
 local unstable_enabled = next(SMODS.find_mod("UnStable"))
+
+if unstable_enabled then
+	add_atlases({
+		create('ns_unstb_ex_lc', 'cards/crossmod/ns_unstb_ex_lc.png'),
+		create('ns_unstb_ex_hc', 'cards/crossmod/ns_unstb_ex_lc.png'),
+		create('ns_unstb_ex2_lc', 'cards/crossmod/ns_unstb_ex2_lc.png'),
+		create('ns_unstb_ex2_hc', 'cards/crossmod/ns_unstb_ex2_lc.png'),
+	})
+end
+
 
 local load_crossmod_ranks = function(sprites,mp)
 	MadLib.loop_func(sprites, function(spr)

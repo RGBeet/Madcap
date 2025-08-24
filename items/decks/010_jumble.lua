@@ -31,15 +31,31 @@ return {
             G.GAME.modifiers.rgmc_deck      = true  -- music activated
             G.GAME.modifiers.rgmc_jumble    = true
 
-            G.GAME.JumbleVals = {}
-            Madcap.Funcs.jumble_ranks(self)
+            G.GAME.jumble_deck = {
+                jumbled = false,
+                ranks = {},
+                suits = {}
+            }
         end,
         calculate = function(self, card, context)
             if
                 context.seting_blind
-                and (#G.GAME.JumbleVals == 0)
-            then -- get the ranks
+                and G.GAME.jumble_deck.jumbled ~= true
+            then
+                local ranks = MadLib.get_ranks_from_cards(G.playing_cards)
+                local old_ranks = {}
+                MadLib.loop_table(ranks, function(k) table.insert(old_ranks, k) end)
+                ranks = MadLib.deep_copy_list(G.GAME.jumble_deck.ranks)
+                pseudoshuffle(ranks, pseudoseed('jumble'))
 
+                local suits = MadLib.get_suits_from_cards(G.playing_cards)
+                local old_suits = {}
+                MadLib.loop_table(suits, function(k) table.insert(old_suits, k) end)
+                suits = MadLib.deep_copy_list(G.GAME.jumble_deck.suits)
+                pseudoshuffle(suits, pseudoseed('jumble'))
+                MadLib.loop_func(ranks, function(v,i) G.GAME.jumble_deck.ranks[old_ranks[i]] = v end)
+                MadLib.loop_func(suits, function(v,i) G.GAME.jumble_deck.suits[old_suits[i]] = v end)
+                G.GAME.jumble_deck.jumbled = true
             end
         end,
         init = function(self)
@@ -47,27 +63,11 @@ return {
             local get_id_ref = Card.get_id
             function Card:get_id()
                 local old_id = get_id_ref(self)
-                if
-                    G.GAME.modifiers
-                    and G.GAME.modifiers.rgmc_jumble
-                    and G.GAME.JumbleVals
-                    and G.GAME.JumbleVals[old_id] ~= nil
-                then
-                    return G.GAME.JumbleVals[old_id]
+                if G.GAME.jumble_deck and G.GAME.jumble_deck.ranks[old_id] then
+                    return G.GAME.jumble_deck.ranks[old_id]
                 end
                 -- continue as usual...
                 return old_id
-            end
-
-            -- ease ante does the jumble
-            local ease_ante_ref = ease_ante
-            function ease_ante(mod)
-                if
-                    G.GAME.modifiers
-                    and G.GAME.modifiers.rgmc_jumble
-                then
-                    Madcap.Funcs.jumble_ranks(self)
-                end
             end
         end
     }

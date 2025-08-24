@@ -25,7 +25,7 @@ return {
             immutable = { mode = 1 }
         },
         loc_vars = function(self, info_queue, card)
-            local _numer, _denom = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'radioactive_chinese')
+            local _numer, _denom = SMODS.get_probability_vars(card, 1, (card.ability.extra.odds or 3), 'radioactive_chinese')
             local str = "null"
 
             if card.ability.immutable.mode > 0 and card.ability.immutable.mode < 8 then
@@ -37,13 +37,13 @@ return {
                 key = str,
                 vars = {
                     number_format(card.ability.extra.effects[card.ability.immutable.mode][1]), -- THE SUCCEED
-                    number_format(math.max(_denom - _numer, 1)), -- NOT X in Y
+                    number_format(_numer),
                     number_format(_denom),
                     number_format(card.ability.extra.effects[card.ability.immutable.mode][2]), -- THE FAIL
                 }
             }
 
-            return MadLib.collect_vars(card.ability.extra.rounds_remaining)
+            return MadLib.collect_vars(card.ability.extra.rounds_remaining, _numer, _denom)
         end,
         calculate = function(self, card, context)
 

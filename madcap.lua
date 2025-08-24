@@ -37,127 +37,113 @@ tell_list = function (text,list)
     print(list)
 end
 
-Madcap = { Funcs = { }, JokerLists = { } }
-mfuncs 	= Madcap.Funcs
-mjokers	= Madcap.JokerLists
-
--- enabled type stuff
-local mod_path = "" .. SMODS.current_mod.path       -- save the mod path for future usage!
-MadcapConfig = SMODS.current_mod.config          	-- loading configuration
-Madcap.enabled = copy_table(MadcapConfig)      		-- what is enabled?
-
-Madcap.Orders = {
-	Blind		= 0,
-	Booster		= 0,
-	Consumable	= 0,
-	Deck		= 0,
-	Edition		= 0,
-	Enhancement = 0,
-	Joker		= 0,
-	Seal		= 0,
-	Sleeve		= 0,
-	Tag			= 0,
-	Voucher		= 0,
-}
-
-Madcap.Lists = {
-	RoshamboKeys = {
-		'm_stone',
-		'm_lucky',
-		'm_steel'
+Madcap = {
+	Funcs 		= { },
+	JokerLists 	= { },
+	DeckFuncs 	= { }, -- deck functions
+	Orders = {
+		Blind		= 0,
+		Booster		= 0,
+		Consumable	= 0,
+		Deck		= 0,
+		Edition		= 0,
+		Enhancement = 0,
+		Joker		= 0,
+		Seal		= 0,
+		Sleeve		= 0,
+		Tag			= 0,
+		Voucher		= 0,
 	},
-	RoshamboValues = {
-		{ ['bonus'] = {50, 0} },
-		{ ['mult'] = {20, 0}, ['p_dollars'] = {20, 0} },
-		{ ['h_x_mult'] = {1.5, 1} }
+	Lists = {
+		AnTags = {},
+		RoshamboKeys = {
+			'm_stone',
+			'm_lucky',
+			'm_steel'
+		},
+		RoshamboValues = {
+			['bonus'] 		= { 50.0, 0.0 }, 	-- rock
+			['mult'] 		= { 20.0, 0.0 }, 	-- paper
+			['p_dollars'] 	= { 20.0, 0.0 }, 	-- paper
+			['h_x_mult'] 	= { 1.5, 1.0 },	-- scissors
+		},
+		Moons = {
+			Mult = {
+				'vulcanoid',
+				'zoozve',
+				'luna',
+				'phobos',
+				'europa',
+				'titan',
+				'umbriel',
+				'triton',
+				'nix',
+				'planet_nine',
+				'pallas',
+				'dysnomia',
+				'paper_weywot',
+				'paper_namaka',
+				'paper_ilmare',
+				'paper_salacia',
+			},
+			Chips = {
+				'phaethon',
+				'2013_nd15',
+				'kamooalewa',
+				'deimos',
+				'callisto',
+				'iapetus',
+				'oberon',
+				'proteus',
+				'charon',
+				'nibiru',
+				'2000_eu16',
+				'kuiper',
+				'paper_ixion',
+				'paper_hiiaka',
+				'paper_varda',
+				'paper_mk2',
+			}
+		},
+		Enhancements = {
+			Chips = {
+				'bonus',
+				'stone',
+				'rgmc_wolfram'
+			},
+			Mult = {
+				'mult',
+				'lucky',
+				'rgmc_wolfram'
+			},
+			XMult = {
+				'glass',
+				'steel',
+				'rgmc_lustrous'
+			},
+			Money = {
+				'gold',
+				'lucky'
+			},
+		},
 	},
-	Moons = {
-		Mult = {
-			'vulcanoid',
-			'zoozve',
-			'luna',
-			'phobos',
-			'europa',
-			'titan',
-			'umbriel',
-			'triton',
-			'nix',
-			'planet_nine',
-			'pallas',
-			'dysnomia',
-			'paper_weywot',
-			'paper_namaka',
-			'paper_ilmare',
-			'paper_salacia',
-		},
-		Chips = {
-			'phaethon',
-			'2013_nd15',
-			'kamooalewa',
-			'deimos',
-			'callisto',
-			'iapetus',
-			'oberon',
-			'proteus',
-			'charon',
-			'nibiru',
-			'2000_eu16',
-			'kuiper',
-			'paper_ixion',
-			'paper_hiiaka',
-			'paper_varda',
-			'paper_mk2',
-		}
-	}
-}
-Madcap.Data = {
-	seed		= 'rgmc', 	-- primary seed for random stuff
-	devmode 	= true, 	-- When true, enables all the debug text and unfinished content.
-	colors		= {
-		-- seal colors
-		PATINA			= HEX('49ab9a'),
-		BRONZE			= HEX('754d42'),
-		JADE			= HEX('226f4c'),
-		CREAM			= HEX('ebe8bd'),
-		UMBER			= HEX('b56622'),
-
-		STONE 			= HEX('7A8087'),
-		FERROUS 		= HEX('F5EAEA'),
-		WOLFRAM 		= HEX('5C5C73'),
-		LUSTROUS 		= HEX('7DD75A'),
-
-		-- other
-		HOT_PINK 		= HEX('FF0080'),		-- Madcap hot pink
-	},
-	enhancement_lists = {
-		bonus = {
-			'bonus',
-			'stone',
-			'rgmc_wolfram'
-		},
-		mult = {
-			'mult',
-			'lucky',
-			'rgmc_wolfram'
-		},
-		x_mult = {
-			'glass',
-			'steel',
-			'rgmc_lustrous'
-		},
-		money = {
-			'gold',
-			'lucky'
-		},
+	Data = {
+		seed		= 'rgmc', 	-- primary seed for random stuff
+		devmode 	= true, 	-- When true, enables all the debug text and unfinished content.
 	},
 }
 
+-- Quick fix for colors. TODO: Bring back working gradients!!!
+G.C.RGMC_UNUSUAL 	= HEX('FFC0CB')
+G.C.RGMC_CHAOTIC 	= HEX('003F34')
+G.C.RGMC_GIMMICK 	= HEX('F69600')
+G.C.RGMC_LUXURY 	= HEX('D34B08')
 
--- RARITIES
-
+-- Rarities
 SMODS.Rarity{ -- Unusual: not quite Epic Jokers, but not quite Legendary.
     key = "unusual",
     badge_colour = G.C.RGMC_UNUSUAL,
+	badge_text_colour = HEX('1E2729'),
     polls = { ["Joker"] = { rate = 0 } },
 }
 
@@ -173,10 +159,36 @@ SMODS.Rarity{ -- Gimmick: used for Jokers not normally obtainable in regular dec
     polls = { ["Joker"] = { rate = 0.5 } },
 }
 
+-- easier way of saying
+mfuncs 	= Madcap.Funcs
+mjokers	= Madcap.JokerLists
+
+-- enabled type stuff
+local mod_path = "" .. SMODS.current_mod.path       -- save the mod path for future usage!
+MadcapConfig = SMODS.current_mod.config          	-- loading configuration
+Madcap.enabled = copy_table(MadcapConfig)      		-- what is enabled?
+
+function SMODS.current_mod.process_loc_text()
+    G.localization.misc.v_text.ch_c_rgmc_rule_rio = {
+        "{C:attention}Aces{}, {C:attention}Kings{}, and {C:attention}Queens{} are {C:attention}3X{} more likely to appear{}"
+    }
+    G.localization.misc.v_text.ch_c_rgmc_rule_waveworx = {
+        "{C:attention}All{} hands (except {C:attention}Straight{}) are {C:rgmc_evil}downgraded{} to Level {C:attention}0{}"
+    }
+    G.localization.misc.v_text.ch_c_bankrupt_kill = {
+        "Going {C:attention}bankrupt{} results in an {C:rgmc_evil}automatic loss{}!"
+    }
+    G.localization.misc.v_text.ch_c_rgmc_rule_halved_interest = {
+        "Base {C:attention}interest{} and interest {C:attention}cap{} are {C:rgmc_evil}reduced{} by {C:rgmc_evil}X0.5{}"
+    }
+end
+
 -- Injected into start of run, regardless if Madcap is playing or not.
 function Madcap.Funcs.run_start()
     tell('Run Start')
+
     G.GAME.subhands = {}
+    G.GAME.subhand_minimum = (G.GAME.subhand_minimum or 5)
     G.GAME.temp = {}
 
     for _,v in pairs(SubHands) do
@@ -196,7 +208,7 @@ function Madcap.Funcs.run_start()
 		mayhem				= 0,
 		mayhem_state		= 0,
 		max_mayhem			= G.GAME.starting_params.add_max_mayhem or 10,
-		luxury_points		= 0,
+		rgmc_luxury_pts		= 0,
 		dead_jokers			= {},
 		missed_jokers		= {},
         blinds_skipped      = 0,        -- number of blinds skipped
@@ -209,7 +221,7 @@ function Madcap.Funcs.run_start()
         punisher_mode       = false,
         rank_dist           = nil,      -- used to see which
         force_poker_hand    = nil,      -- in case cryptid isnt here.
-        pick_5              = nil,
+        pick_5              = nil,		-- TODO: readd pick 5 shit
         best_hand           = {
             score   = 0,
             hand    = {},   -- held in hand
@@ -219,13 +231,32 @@ function Madcap.Funcs.run_start()
     }
 	MadLib.loop_table(madcap_vals, function(k,v) G.GAME[k] = v end)
 
+	-- Silently add mayhem if deck starts with more mayhem
 	if G.GAME.starting_params.add_mayhem then
 		Madcap.Funcs.ease_mayhem(G.GAME.starting_params.add_mayhem, true, false, true)
 		Madcap.Funcs.read_mayhem()
 	end
 
+	-- Borrowed from Bunco
     G.GAME.Exotic = G.GAME.Exotic or false -- Used for exotic suits and ranks?
 
+    -- Challenge rules.
+    if G.GAME.modifiers['rgmc_rule_waveworx'] then -- Reduce all hands but Straight to Level 0
+		MadLib.loop_table(G.GAME.hands, function(k,v)
+			if k ~= 'Straight' then
+				v.level = 0
+				v.chips = math.floor(v.chips/2)
+				v.mult 	= math.floor(v.mult/2)
+				v.hidden = true
+			else
+				v.level = 2
+				v.chips = v.chips + v.l_chips
+				v.mult 	= v.mult + v.l_mult
+			end
+		end)
+	elseif G.GAME.modifiers['rgmc_rule_halved_interest'] then
+		G.GAME.interest_amount = MadLib.round(G.GAME.interest_amount/2, 1)
+	end
 end
 
 -- Upon selecting the blind...
@@ -237,58 +268,6 @@ function Madcap.Funcs.blind_start()
 
     local patina_cards, bronze_cards, normal_cards = {}, {}, {}
     local new_deck = {}
-
-    -- Categorize the cards
-    for i, card in ipairs(G.deck.cards) do
-        if card.seal == 'rgmc_patina' then
-            table.insert(patina_cards, { card = card, index = i })
-        elseif card.seal == 'rgmc_bronze' then
-            table.insert(bronze_cards, { card = card, index = i })
-        else
-            table.insert(normal_cards, { card = card, index = i })
-        end
-    end
-
-    if #bronze_cards > 0 then
-        tell('Bronze seals in deck.')
-        -- Bias the movement of Bronze cards toward the back
-        for _, entry in ipairs(bronze_cards) do
-            local bias = math.max(0, (entry.index - 1) / #G.deck.cards) -- Higher bias if farther back
-            local chance = 0.7 + 0.3 * bias -- More likely to move if near the end
-            if math.random() < chance then
-                table.insert(new_deck, 1, entry.card) -- Push toward front
-            else
-                table.insert(new_deck, entry.card) -- Keep some dispersion
-            end
-        end
-    end
-
-    if (#patina_cards + #bronze_cards) > 0 then
-        tell('Bronze and/or Patina seals in deck.')
-        -- Insert Normal cards throughout
-        for _, entry in ipairs(normal_cards) do
-            local pos = math.random(1, #new_deck + 1)
-            table.insert(new_deck, pos, entry.card)
-        end
-    end
-
-    if #patina_cards > 0 then
-        tell('Patina seals in deck.')
-        -- Bias the movement of Patina cards toward the front
-        for _, entry in ipairs(patina_cards) do
-            local bias = math.max(0, (#G.deck.cards - entry.index) / #G.deck.cards) -- Higher bias if near front
-            local chance = 0.7 + 0.3 * bias -- More likely to move if near the front
-            if math.random() < chance then
-                table.insert(new_deck, entry.card) -- Push toward back
-            else
-                table.insert(new_deck, 1, entry.card) -- Keep some dispersion
-            end
-        end
-    end
-
-    if (#new_deck) > 0 then
-        G.deck.cards = new_deck
-    end
 end
 
 -- Upon winning the blind...
@@ -868,7 +847,7 @@ function Madcap.Funcs.ease_mayhem(_mod, _check, _silent, _instant)
 
         if round_UI then
             G.HUD:recalculate()
-            if not MadLib.is_animation_enabled() then
+            if MadLib.is_animation_enabled() then
                 attention_text({
                     text            = text .. tostring(math.abs(_mod)),
                     scale           = 1,
@@ -886,7 +865,7 @@ function Madcap.Funcs.ease_mayhem(_mod, _check, _silent, _instant)
 		local sound 			= 'rgmc_mayhem_t' .. tostring(math.max(1,math.min(3,mayhem_state)))
 
         --Play a SPOOKY noise sound
-        if (not MadLib.is_animation_enabled()) and (not _silent) then
+        if MadLib.is_animation_enabled() and not _silent then
             if lose_mayhem then
                 play_sound('rgmc_mayhem_down', 0.8)
                 play_sound('timpani')
@@ -923,18 +902,18 @@ end
 
 function Madcap.Funcs.set_mayhem(_mod, _check, _silent,_instant)
     local _diff = (_mod or G.GAME.mayhem) - G.GAME.mayhem
+	if _diff < -G.GAME.mayhem then _diff = -G.GAME.mayhem end
     return Madcap.Funcs.ease_mayhem(_diff, _check, _silent, _instant)
 end
 
 -- Add Remove Joker to contexts
 local sd = Card.start_dissolve
 function Card:start_dissolve(a,b,c,d)
-    if G.GAME.MADCAP then
+    --[[if G.GAME.MADCAP then
         SMODS.calculate_context({ remove_joker = self })
-    end
+    end]]
     return sd(self,a,b,c,d)
 end
-
 
 -- General function for setting temporary stickers (which Madcap incorporates a lot of!)
 function Card:set_temp_sticker(id,bool,tally)
@@ -1060,6 +1039,8 @@ function end_round()
 						ease_dollars(sin_table.money)
 					elseif sin_table.consumeable ~= nil then -- gain consumeable slots
 						G.consumeables.config.card_limit = lenient_bignum(G.consumeables.config.card_limit + (sin_table.consume_slots or 1))
+					elseif sin_table.h_size ~= nil then -- gain consumeable slots
+						G.hand.config.card_limit = lenient_bignum(G.hand.config.card_limit + (sin_table.consume_slots or 1))
 					end
 					G.GAME.rgmc_sinister[k] = nil
 				end
@@ -1299,18 +1280,18 @@ function Madcap.Funcs.calculate_mayhem_decay(max_mult)
 	--mayhem_mult = mayhem_mult * 0.9 * (1.01 ^ sc_deviation)
 
 	local exponentials = {
-		{n1 = 1.0050, n2 = voids },
-		{n1 = 0.9925, n2 = lanterns },
-		{n1 = 1.0025, n2 = modded_suits },
-		{n1 = 1.0020, n2 = base_suits },
-		{n1 = 1.0025, n2 = editions },
-		{n1 = 1.0015, n2 = enhancements },
-		{n1 = 1.0005, n2 = seals },
-		{n1 = 1.0005, n2 = sc_deviation },
+		{n1 = 1.050, n2 = voids },
+		{n1 = 0.925, n2 = lanterns },
+		{n1 = 1.025, n2 = modded_suits },
+		{n1 = 1.020, n2 = base_suits },
+		{n1 = 1.025, n2 = editions },
+		{n1 = 1.015, n2 = enhancements },
+		{n1 = 1.005, n2 = seals },
+		{n1 = 1.005, n2 = sc_deviation },
 	}
 
 	MadLib.loop_func(exponentials, function(v)
-		local result = mayhem_mult * (v.n1^v.n2)
+		local result = mayhem_mult * (v.n1 ^ v.n2)
 		tell(tostring(mayhem_mult) .. " * " .. "( " .. tostring(v.n1) .. " ^ " .. tostring(v.n2) .. " ) = " .. tostring(result))
 		mayhem_mult = result
 	end)
@@ -1318,7 +1299,7 @@ function Madcap.Funcs.calculate_mayhem_decay(max_mult)
 	local mayhem_product = MadLib.round(math.max(0.5, math.min(mayhem_mult, max_mayhem_mult)), 2)
 	tell('Final Mayhem product is ' .. tostring(mayhem_product) .. '.')
 
-	return mayhem - math.min(mayhem - (mayhem * mayhem_product), mayhem)
+	return MadLib.round(mayhem - math.min(mayhem - (mayhem * mayhem_product), mayhem), 2)
 end
 
 function Madcap.Funcs.blind_end_mayhem_check()
@@ -1328,22 +1309,16 @@ function Madcap.Funcs.blind_end_mayhem_check()
 	local mayhem_state = G.GAME.mayhem_state or 0
 	Madcap.Funcs.read_mayhem()
 
+	local args
+
 	-- state 1: randomize values
 	if mayhem_state > 0 then
 		MadLib.loop_func(G.playing_cards, function(v,i)
-			Madcap.Funcs.mayhemize(v)
+			Madcap.Funcs.mayhemize(v, args, true)
 		end)
 
-		MadLib.loop_func(G.jokers.cards, function(v)
-			MadLib.event({
-				trigger = 'after',
-				delay = '0.08',
-				func = function()
-					v:juice_up(0.2,0.2)
-					return true
-				end
-			})
-			Madcap.Funcs.mayhemize(v)
+		MadLib.loop_func(G.jokers.cards, function(v,i)
+			Madcap.Funcs.mayhemize(v, args)
 		end)
 	end
 end
@@ -1469,19 +1444,22 @@ function Game:init_game_object()
 	return G
 end
 
+table.insert(SMODS.calculation_keys, "rgmc_luxury_pts")
+if SMODS.other_calculation_keys then
+    table.insert(SMODS.other_calculation_keys, "rgmc_luxury_pts")
+end
+
 -- Calculate individual effect fixing
 if SMODS and SMODS.calculate_individual_effect then
 	local cie = SMODS.calculate_individual_effect
 	function SMODS.calculate_individual_effect(effect, scored_card, key, amount, from_edition)
 		local ret = cie(effect, scored_card, key, amount, from_edition)
 
-		if
+		if -- squeezy cheese detection
 			MadLib.list_matches_one({'x_mult', 'xmult', 'x_mult_mod', 'xmult_mod'}, function(v)
 				return v == string.lower(key)
 			end) and amount ~= 1
 		then
-			tell('Looking for Squeezy cheeze...')
-			-- Squeezy Cheeze
 			MadLib.loop_func(SMODS.find_card('j_rgmc_squeezy_cheeze'), function(v)
 				v.ability.extra.xmult_store = lenient_bignum(to_big(v.ability.extra.xmult_store) + to_big(amount))
 
@@ -1510,8 +1488,20 @@ if SMODS and SMODS.calculate_individual_effect then
 				end
 			end)
 		end
+		-- luxury points
+		if key == "rgmc_luxury_pts" then
+			amount = math.max(amount,0)
+			G.GAME.rgmc_luxury_pts = G.GAME.rgmc_luxury_pts + amount
+			text = "+£"..number_format(amount)
+			if from_edition then
+				card_eval_status_text(scored_card, 'jokers', nil, percent, nil, {message = text, colour = G.C.RGMC_LUXURY, sound = 'rgmc_kaching', edition = true})
+			else
+				card_eval_status_text(effect.message_card or effect.juice_card or scored_card or effect.card or effect.focus, 'extra', nil, percent, nil, {message = text, colour = { 0.8, 0.45, 0.85, 1 }, sound = 'rgmc_kaching', edition = true})
+			end
+			return true
+		end
 
-		if
+		if -- Squeezy (Partner)
 			MadLib.list_matches_one({'chips', 'chip_mod', 'chips_mod'}, function(v)
 				return key == string.lower(v)
 			end) and amount ~= 1
@@ -1777,25 +1767,21 @@ function Back.apply_to_run(self)
                 -- modify existing cards
                 for i = #G.playing_cards, 1, -1 do
                     if i > deck_size then
-                        G.playing_cards[i]:start_dissolve(nil, true)
+						G.playing_cards[i]:remove()
                     else
                         local m = math.ceil(i/ranks)
-                        --tell_stat('SUIT',suits[m])
                         G.playing_cards[i]:change_suit(suits[m])
                     end
                 end
 
                 if #G.playing_cards < deck_size then
                     local difference = (#G.playing_cards - deck_size)
-
                     for i = difference, 1, -1 do
                         local m = math.ceil(#G.playing_cards/ranks)
-
                         G.playing_card = (G.playing_card and G.playing_card + 1) or 1
                         local _card = copy_card(G.playing_cards[i])
                         --tell_stat('SUIT',suits[m])
                         G.playing_cards[i]:change_suit(suits[m])
-
                         _card:add_to_deck()
                     end
                 end
@@ -1825,14 +1811,17 @@ function Back.apply_to_run(self)
                 for i = 1,#G.playing_cards do
                     local _rank = rank_list[rank_index]
                     local _suit = suit_list[suit_index]
-                    assert(SMODS.change_base(G.playing_cards[i], _suit, _rank))
 
-					suit_index 	= suit_index + 1
-					total 		= total + 1
-
-					if suit_index > suit_size then
-						suit_index	= 1
-						rank_index	= rank_index + 1
+                    if i > deck_size then
+                        G.playing_cards[i]:remove()
+					else
+						assert(SMODS.change_base(G.playing_cards[i], _suit, _rank))
+						suit_index 	= suit_index + 1
+						total 		= total + 1
+						if suit_index > suit_size then
+							suit_index	= 1
+							rank_index	= rank_index + 1
+						end
 					end
 
 					if rank_index > rank_size then break end
@@ -1912,7 +1901,7 @@ function Madcap.Funcs.level_up_subhand(card, hand, instant, amount, context)
     	G.GAME.subhands[hand].chips = G.GAME.subhands[hand].chips 	+ G.GAME.subhands[hand].l_chips*amount
 	end
 
-    if not instant and not MadLib.is_animation_enabled() then
+    if not instant and MadLib.is_animation_enabled() then
         MadLib.event({trigger = 'after', delay = 0.2, func = function()
             play_sound('tarot1')
             if card and card.juice_up then card:juice_up(0.6, 0.35) end
@@ -1930,7 +1919,7 @@ function Madcap.Funcs.level_up_subhand(card, hand, instant, amount, context)
             G.TAROT_INTERRUPT_PULSE = nil
             return true end })
         update_hand_text({sound = 'rgmc_pop', volume = 0.7, pitch = 1.0, delay = 0}, {level = G.GAME.subhands[hand].level})
-        delay(1.3)
+        delay(2.0)
     end
 end
 
@@ -1970,16 +1959,16 @@ function Madcap.Funcs.evolve_subhand(card, hand, instant, amount, context)
             mult     = '...'
         })
 
-		if not MadLib.is_animation_enabled()  then
-		local nu_chips, nu_mult = mfuncs.calculate_empower_bonus(hand)
+		if MadLib.is_animation_enabled()  then
+			local nu_chips, nu_mult = mfuncs.calculate_empower_bonus(hand)
 
-		update_hand_text({ sound = 'rgmc_empower', volume = 0.7, pitch = 0.8, delay = 2.5 }, {
-			handname = localize(hand),
-			level    = lenient_bignum(evolve_level),
-            chips    = '+!',
-            mult     = '+!'
-		})
-		MadLib.simple_event(function()
+			update_hand_text({ sound = 'rgmc_empower', volume = 0.7, pitch = 0.8, delay = 2.5 }, {
+				handname = localize(hand),
+				level    = lenient_bignum(evolve_level),
+				chips    = number_format(nu_chips),
+				mult     = number_format(nu_mult)
+			})
+			MadLib.simple_event(function()
 				ease_colour(G.C.UI_CHIPS, copy_table(G.C.RGMC_EVIL), 0.1)
 				ease_colour(G.C.UI_MULT, copy_table(G.C.RGMC_EVIL), 0.1)
 				Madcap.Funcs.pulse_flame(0.01, evolve_level)
@@ -2024,16 +2013,15 @@ function Madcap.Funcs.empower_subhand(card, hand, instant, amount, context)
             mult     = G.GAME.subhands[hand].mult
         })
 
-		if not MadLib.is_animation_enabled()  then
-		local nu_chips, nu_mult = mfuncs.calculate_empower_bonus(hand)
-
-		update_hand_text({ sound = 'rgmc_empower', volume = 0.7, pitch = 0.8, delay = 2.0 }, {
-			handname = localize(hand),
-			level    = lenient_bignum(empower_level),
-			chips    = lenient_bignum(nu_chips),
-			mult     = lenient_bignum(nu_mult)
-		})
-		MadLib.simple_event(function()
+		if MadLib.is_animation_enabled()  then
+			local nu_chips, nu_mult = mfuncs.calculate_empower_bonus(hand)
+			update_hand_text({ sound = 'rgmc_empower', volume = 0.7, pitch = 0.8, delay = 2.0 }, {
+				handname = localize(hand),
+				level    = lenient_bignum(empower_level),
+				chips    = lenient_bignum(nu_chips),
+				mult     = lenient_bignum(nu_mult)
+			})
+			MadLib.simple_event(function()
 				ease_colour(G.C.UI_CHIPS, copy_table(G.C.RGMC_UNUSUAL), 0.1)
 				ease_colour(G.C.UI_MULT, copy_table(G.C.RGMC_UNUSUAL), 0.1)
 				Madcap.Funcs.pulse_flame(0.01, empower_level)
@@ -2052,7 +2040,6 @@ function Madcap.Funcs.empower_subhand(card, hand, instant, amount, context)
 			end, 2.5, 'after')
 		end
 	end
-
 	update_hand_text({ sound = "button", volume = 0.7, pitch = 0.9, delay = 2.0 }, { level = to_big(empower_level) })
 	delay(2.6)
     G.GAME.subhands[hand].empower = empower_level
@@ -2162,7 +2149,7 @@ function Madcap.Funcs.get_special_card_vars(set,xchips,xmult)
 			xmult or 0,
 			MadLib.get_consumeable_usage(set) * (xchips or 0) + 1,
 			MadLib.get_consumeable_usage(set) * (xmult or 0) + 1,
-			colours = { G.C.RGMC_UNUSUAL }
+			colours = { G.C.RGMC_MAYHEM }
         }
     }
 end
@@ -2652,43 +2639,34 @@ local upd = Game.update
 local enable_animations = true
 rgmc_spam_dt = 0
 
-G.C.RGMC_MAYHEM 			= {HEX('FF00FF'), 0, 0, 0}
-G.C.RGMC_UNUSUAL 			= {HEX('FF00FF'), 0, 0, 0}
-G.C.RGMC_GIMMICK 			= {HEX('FF00FF'), 0, 0, 0}
-G.C.RGMC_CHAOTIC 			= {HEX('FF00FF'), 0, 0, 0}
-G.C.RGMC_ANTISPECTRAL 		= {HEX('FF00FF'), 0, 0, 0}
+Madcap.Rainbow = {G.C.RED, G.C.ORANGE, G.C.GOLD, G.C.GREEN, G.C.BLUE, G.C.PURPLE}
 
 -- Animated Colors
 Madcap.C = {
-	MAYHEM			= {HEX('75188F'), HEX('3A188F')},
-	UNUSUAL 		= {HEX('9C87F6'), HEX('F6879B')},
-	CHAOTIC			= {HEX('F25B3A'), HEX('3Af2BF')},
-	--CHAOTIC			= {HEX('32CD32'), HEX('CD32CD')},
-	ECHIPS	 		= {HEX('000994'), HEX('9a00ff')}, 	-- i like this color :)
-	EMULT 			= {HEX('a41818'), HEX('9a00ff')},
-	ESCORE 			= {HEX('9a00ff'), HEX('00ff9a')},
-	GIMMICK 		= {HEX('FF8b60'), HEX('9494FF')},
-	EVIL 			= {HEX('D53600'), HEX('700E01')},
-	LIGHT			= {HEX('FF6361'), HEX('FFD380')}, 	-- HEX('FF8531')
-	DARK			= {HEX('BC5090'), HEX('00202E')},	-- HEX('2C4875')
-	ANTISPECTRAL	= {HEX('78322A'), HEX('677F93')},
+	MAYHEM    	= { colours = { HEX('75188F'), HEX('3A188F') } },
+	UNUSUAL   	= { colours = { HEX('9C87F6'), HEX('F6879B') } },
+	CHAOTIC   	= { colours = { HEX('F25B3A'), HEX('3AF2BF') } },
+	ECHIPS   	= { colours = { HEX('000994'), HEX('9A00FF') } },
+	EMULT     	= { colours = { HEX('A41818'), HEX('9A00FF') } },
+	XSCORE		= { colours = { HEX('8867A5'), HEX('9A00FF') } },
+	ESCORE    	= { colours = { HEX('9A00FF'), HEX('00FF9A') } },
+	GIMMICK   	= { colours = { HEX('FF8B60'), HEX('9494FF') } },
+	EVIL      	= { colours = { HEX('D53600'), HEX('700E01') } },
+	LUXURY    	= { colours = { HEX('D3AC2C'), HEX('B16C04') } },
+	LIGHT     	= { colours = { HEX('FF6361'), HEX('FFD380') } },
+	DARK      	= { colours = { HEX('BC5090'), HEX('00202E') } },
+	SINISTER  	= { colours = { HEX('78322A'), HEX('677F93') } },
+	BISMUTH  	= { colours = { G.C.RED, G.C.GOLD, G.C.GREEN, G.C.BLUE, G.C.PURPLE }, cycle = 0.5 },
 }
 MadLib.loop_table(Madcap.C, function(k,v)
-	G.C[k] = {0,0,0,0}
+	SMODS.Gradient{
+		key 			= k,
+		colours 		= v.colours,
+		cycle 			= v.cycle and (1 / v.cycle) or 1,
+		interpolation 	= v.interpolation or 'linear'
+	}
 end)
 
-G.C.RGMC_EVIL 		= HEX('FF0000')
-G.C.RGMC_UNUSUAL 	= HEX('FF0000')
-G.C.RGMC_GIMMICK 	= HEX('FF0000')
-G.C.RGMC_CHAOTIC 	= HEX('FF0000')
-G.C.RGMC_LIGHT 		= HEX('FF0000')
-G.C.RGMC_DARK 		= HEX('FF0000')
-G.C.RGMC_MAYHEM 	= HEX('FF0000')
-G.C.RGMC_HOT_PINK 	= HEX('F6879B')
-
-
-
-Madcap.NewRarities = { 'unusual', 'gimmick', 'chaotic' }
 function Game:update(dt)
 	upd(self, dt)
 
@@ -2697,21 +2675,19 @@ function Game:update(dt)
 			update_sprite_delta(k,dt)
 		end
 	end
-	--Gradients based on Balatrostuck code
-	local anim_timer = self.TIMERS.REAL * 1.5
-	local p = 0.5 * (math.sin(anim_timer) + 1)
+	--[[
+		local anim_timer = self.TIMERS.REAL * 1.5
+		local p = 0.5 * (math.sin(anim_timer) + 1)
 
-	MadLib.loop_table(Madcap.C, function(k,c)
-		if not G.C["RGMC_" .. k]
-			then G.C["RGMC_" .. k] = { 0, 0, 0, 0 }
-		end
-		for i = 1, 4 do
-			G.C["RGMC_" .. k][i] = c[1][i] * p + c[2][i] * (1 - p)
-		end
-	end,true)
-
-	G.C.RARITY["rgmc_gimmick"] = G.C.RGMC_GIMMICK
-	G.C.RARITY["rgmc_unusual"] = G.C.RGMC_UNUSUAL
+		MadLib.loop_table(Madcap.C, function(k,c)
+			if not G.C["RGMC_" .. k]
+				then G.C["RGMC_" .. k] = { 0, 0, 0, 0 }
+			end
+			for i = 1, 4 do
+				G.C["RGMC_" .. k][i] = c[1][i] * p + c[2][i] * (1 - p)
+			end
+		end,true)
+	]]
 end
 
 Madcap.EnterNoises = {
@@ -2767,209 +2743,6 @@ function Card:remove_from_deck(from_debuff)
 		end
     end
     remove_from_deckref(self, from_debuff)
-end
-
---[[
-local uibox_ref = create_UIBox_HUD
-function create_UIBox_HUD()
-	local orig = uibox_ref()
-		--if not Entropy.DeckOrSleeve("doc") then return orig end
-    local scale = 0.4
-    local stake_sprite = get_stake_sprite(G.GAME.stake or 1, 0.5)
-
-    local contents = {}
-
-    local spacing = 0.13
-    local temp_col = G.C.DYN_UI.BOSS_MAIN
-    local temp_col2 = G.C.DYN_UI.BOSS_DARK
-
-    contents.buttons = {
-		{
-			n = G.UIT.C,
-			config = {
-				align = "cm",
-				r = 0.1,
-				colour = G.C.CLEAR,
-				shadow = true,
-				id = 'button_area',
-				padding=0.33
-			},
-			nodes = {
-				--node[1]
-				{
-					n = G.UIT.R,
-					config = {
-						id = 'run_info_button',
-						align = "cm",
-						minh = 1,
-						minw = 1.5,
-						padding = 0.05,
-						r = 0.1,
-						hover = true,
-						colour = G.C.RED,
-						button = "run_info",
-						shadow = true
-					},
-					nodes = {
-						{
-							n = G.UIT.R,
-							config = {
-								align = "cm",
-								padding = 0,
-								maxw = 2
-							},
-							nodes = {
-								{
-									n = G.UIT.T,
-									config = {
-										text = localize('b_run_info_1'),
-										scale = 1.2 * scale,
-										colour = G.C.UI.TEXT_LIGHT,
-										shadow = true
-									}
-								}
-							}
-						},
-						{
-							n = G.UIT.R,
-							config = {
-								align = "cm",
-								padding = 0,
-								maxw = 2
-							},
-							nodes = {
-								{
-									n = G.UIT.T,
-									config = {
-										text = localize('b_run_info_2'),
-										scale = 1*scale,
-										colour = G.C.UI.TEXT_LIGHT,
-										shadow = true,
-										focus_args = {
-											button = G.F_GUIDE and 'guide' or 'back',
-											orientation = 'bm'
-										},
-										func = 'set_button_pip'
-									}
-								}
-							}
-						}
-					}
-				},
-				--node[2]
-				{
-					n = G.UIT.R,
-					config = {
-						align = "cm",
-						minh = 1,
-						minw = 2,
-						padding = 0.05,
-						r = 0.1,
-						hover = true,
-						colour = G.C.ORANGE,
-						button = "options",
-						shadow = true
-					},
-					nodes = {
-						{
-							n = G.UIT.C,
-							config = {
-								align = "cm",
-								maxw = 1.4,
-								focus_args = {
-									button = 'start',
-									orientation = 'bm'
-								},
-								func = 'set_button_pip'
-							},
-							nodes = {
-								{
-									n = G.UIT.T,
-									config = {
-										text = localize('b_options'),
-										scale = scale,
-										colour = G.C.UI.TEXT_LIGHT,
-										shadow = true
-									}
-								}
-							}
-						},
-					}
-				},
-				-- node[3]
-				{
-					n = G.UIT.R,
-					config = {
-						align = "cm",
-						minh = 1,
-						minw = 2,
-						padding = 0.05,
-						r = 0.1,
-						hover = true,
-						colour = G.C.DYN_UI.BOSS_MAIN,
-						emboss=0.05
-					},
-					nodes = {
-						{
-							n = G.UIT.R,
-							config = {
-								align = "cm",
-								maxw = 1.35
-							},
-							nodes = {
-								{
-									n = G.UIT.T,
-									config = {
-										text = localize('rgmc_mayhem'),
-										minh = 0.33,
-										scale = 0.85 * scale,
-										colour = G.C.UI.TEXT_LIGHT,
-										shadow = true
-									}
-								},
-							}
-						},
-						{
-							n = G.UIT.R,
-							config = {
-								align = "cm",
-								r = 0.1,
-								minw = 1.8,
-								colour = temp_col2,
-								id = 'row_mayhem_text'
-							},
-							nodes = {
-								{ n = G.UIT.O,
-									config = {
-										object = DynaText({
-											string = { { ref_table = G.GAME, ref_value = 'mayhem'} },
-											colours = {G.C.RGMC_UNUSUAL},
-											shadow = true,
-											scale = 2*scale
-										}),
-										id = 'mayhem_UI_count'
-									}
-								},
-							}
-						}
-					}
-				}
-			}
-		}
-    }
-
-	orig.nodes[1].nodes[1].nodes[5].nodes[1].nodes = contents.buttons
-    return orig
-end
-]]
--- fixing
-local eval_play_ref = G.FUNCS.evaluate_play
-function G.FUNCS.evaluate_play(e)
-	eval_play_ref(e)
-
-	--print(e)
-    --local text,disp_text,poker_hands,scoring_hand,non_loc_disp_text = G.FUNCS.get_poker_hand_info(G.play.cards)
-	--Madcap.Funcs.record_hand(scoring_hand,math.floor(hand_chips * mult),text)
 end
 
 local eval_card_ref = eval_card
@@ -3355,19 +3128,23 @@ Madcap.MayhemValues = {
 	['ExpMult'] 		= { factor = 0.5, level = 2, multiply = true },
 	['ExpChips'] 		= { factor = 0.5, level = 2, multiply = true },
 	['ExpScore'] 		= { factor = 0.5, level = 2, multiply = true },
-	['AddMoney'] 		= { factor = 1, round = true },
+	['AddMoney'] 		= { factor = 1.5, round = true },
 	['HandSize']		= { factor = 0.5, level = 1, round = true, type = 'hand_size'},
 	['PlayHands']		= { factor = 0.5, round = true },
 	['PlayDiscards'] 	= { factor = 0.5, round = true },
-	['Retriggers'] 		= { factor = 0.5, round = true },
+	['Retriggers'] 		= { factor = 0.25, round = true },
+	['AddLuxury'] 		= { factor = 0.8, round = true },
+	['AddCards'] 		= { factor = 0.8, level = 2, round = true },
 	['JokerSlots']		= { factor = 0.5, level = 1, round = true, type = 'joker_slots' },
 	['VoucherLimit']	= { factor = 0.5, level = 2, round = true, type = 'voucher_limit' },
 	['BoosterLimit']	= { factor = 0.5, level = 2, round = true, type = 'booster_limit' },
 	['MaxMayhem']		= { factor = 1, level = 1, round = true, type = 'max_mayhem' },
 	['Mayhem']			= { factor = 1, level = 1, type = 'add_mayhem' },
 	['Probability']		= { factor = 1, },
+	['Choose']			= { factor = 0.5, round = true },
 	['Misc']			= { factor = 1, }
 }
+
 local mlibmv = Madcap.MayhemValues
 
 Madcap.MayhemConversions = {
@@ -3395,20 +3172,25 @@ Madcap.MayhemConversions = {
 	['add_mayhem']		= mlibmv['Mayhem'],
 	['retriggers']		= mlibmv['Retriggers'],
 	['repetitions']		= mlibmv['Retriggers'],
+	['xmult']			= mlibmv['MultiMult'],
 	['x_mult']			= mlibmv['MultiMult'],
 	['h_x_mult']		= mlibmv['MultiMult'],
+	['xchips']			= mlibmv['MultiChips'],
 	['x_chips']			= mlibmv['MultiChips'],
 	['h_x_chips']		= mlibmv['MultiChips'],
 	['perma_x_mult']		= mlibmv['MultiMult'],
 	['perma_h_x_mult']		= mlibmv['MultiMult'],
 	['perma_x_chips']		= mlibmv['MultiChips'],
 	['perma_h_x_chips']		= mlibmv['MultiChips'],
+	['max_highlighted']	= mlibmv['Choose'],
+	['choose']			= mlibmv['Choose'],
 }
 
 --
 local function loop_keys_add(list, target, value)
 	MadLib.loop_func(list, function(k) target[k] = value end)
 end
+
 loop_keys_add({ 'mult', 'mult_mod', 'perma_mult', 'perma_h_mult', 's_mult', 't_mult', 'h_mult' },
 	Madcap.MayhemConversions,  mlibmv['AddMult'])
 loop_keys_add({ 'chips', 'chip_mod', 'perma_bonus', 'perma_h_chips', 't_chips', 'h_chips', 'bonus' },
@@ -3425,6 +3207,13 @@ loop_keys_add({ 'hands', 'hand_mod', 'hand' },
 	Madcap.MayhemConversions,  mlibmv['PlayHands'])
 loop_keys_add({ 'extra_value', 'hands_played_at_create' },
 	Madcap.MayhemConversions,  mlibmv['Misc'])
+
+if next(SMODS.find_mod("Pacdam")) or next(SMODS.find_mod("pacdam")) then
+	tell('Pacdam loaded!')
+	Madcap.MayhemValues['AddPow'] = { factor = 0.8, level = 2, multiply = true }
+	loop_keys_add({ 'pow', 'pow_mod', 'perma_pow' },
+		Madcap.MayhemConversions,  mlibmv['AddPow'])
+end
 
 if AKYRS then
 	loop_keys_add({ 'akyrs_perma_h_score', 'akyrs_perma_score',  },
@@ -3447,6 +3236,27 @@ Madcap.MayhemBlacklist = {
 	cry_prob				= false,
 	entr_times_played		= false
 }
+
+-- Blacklisted because there would be no effect
+Madcap.MayhemJokersBlacklist = {
+	'j_four_fingers',
+	'j_splash',
+	'j_pareidolia',
+	'j_riff_raff',
+	'j_diet_cola',
+	'j_luchador',
+	'j_shortcut',
+	'j_mr_bones',
+	'j_chicot',
+	'j_blueprint',
+	'j_brainstorm',
+	'j_smeared',
+	'j_midas_mask',
+	'j_ring_master'
+}
+
+
+
 
 function Madcap.Funcs.get_mayhem_multiplier(mayhem)
     local t = MadLib.clamp(mayhem / 10, 0, 1)
@@ -3653,21 +3463,27 @@ end
 
 function Madcap.Funcs.mayhemize_table(_card, _table, _args)
 	-- loop through the table
+	local success = false
 	MadLib.loop_table(_table, function(k,v)
 		-- is this a blacklisted term?
 		if Madcap.MayhemBlacklist[k] == nil then -- not blacklisted
 			if type(v) == 'table' then -- we must go deeper
 				Madcap.Funcs.mayhemize_table(_card, v, _args)
+
 			elseif type(v) == 'number' then -- do the number
 				local _prefix = string.sub(_card.config.center.key,1,2)
 				local _type = (_prefix == 'j_') and 'joker'
 					or (_card.config.center.key == 'c_base' or _prefix == 'm_') and 'card'
 				local _xval
+
 				local _key = k ~= 'extra' and k and string.lower(k)
-				local _data = Madcap.MayhemConversions[_key]
+				local _data
+
 				if Madcap.DefineExtras[_card.config.center.key] then
 					tell('Finding extra value...')
 					_data = Madcap.DefineExtras[_card.config.center.key][k]
+				else
+					_data = Madcap.MayhemConversions[_key]
 				end
 				_xval = (_data and _data.multiply)
 
@@ -3686,8 +3502,7 @@ function Madcap.Funcs.mayhemize_table(_card, _table, _args)
 				local center, half_range = (nu_min + nu_max) / 2, math.abs(nu_max - nu_min) / 2 * factor
 				nu_min, nu_max = center - half_range, center + half_range
 
-				local _mult = MadLib.random_between(nu_min,nu_max, 2)
-
+				local _mult = MadLib.random_between(nu_min, nu_max, 2)
 				--if _xval then tell('This is an multiplying value!') end
 
 				local _base = v - (_xval and 1 or 0)
@@ -3696,11 +3511,13 @@ function Madcap.Funcs.mayhemize_table(_card, _table, _args)
 				if _data and _data.type and mayhemize_funcs[_data.type] then
 					mayhemize_funcs[_data.type](v,_table[k])
 				end
+				success = true
 
 				--tell(tostring(k)..' is now '..tostring(_table[k])..' ('..tostring(v)..').')
 			end -- don't mess with bools and strings.
 		end
 	end)
+	return success
 end
 
 -- Messes up the values of the targeted cards based on
@@ -3711,24 +3528,17 @@ function Madcap.Funcs.mayhemize(_card, _args, _silent)
 	local arguments 	= { min	= low_mult, max	= high_mult }
 
 	if not (_args and _args.force_values) then
-		if mayhem_state < 1 then
-			low_mult	= low_mult * 1.5
-			high_mult	= high_mult / 1.5
-		elseif mayhem_state < 2 then
-			low_mult	= low_mult / 1.5
-			high_mult	= high_mult * 1.5
-		elseif mayhem_state < 3 then
-			low_mult	= low_mult / 2
-			high_mult	= high_mult * 2
-		else
-			low_mult	= low_mult / 3
-			high_mult	= high_mult * 3
-		end
+		local limits = (mayhem_state < 1 and 2)
+			or (mayhem_state < 2 and 4)
+			or (mayhem_state < 3 and 8)
+			or 12
+		--tell('Limit is ' .. tostring(limits))
+		low_mult	= low_mult * limits
+		high_mult	= high_mult / limits
 	end
 
-	Madcap.Funcs.mayhemize_table(_card, _card.ability, arguments)
+	local success = Madcap.Funcs.mayhemize_table(_card, _card.ability, arguments)
 	-- loop through each
-
 	-- max mayhem (10 has between x1/8 and x8 mult)
 	-- 0 mayhem is x1 mult
 	if not _silent then
@@ -3736,8 +3546,23 @@ function Madcap.Funcs.mayhemize(_card, _args, _silent)
         	_card:juice_up(0.3, 0.4)
         	play_sound("rgmc_mayhemize")
 			return true
-		end, 0.0, 'immediate')
+		end, 0.1, 'after')
 	end
+	return _card
+end
+
+
+local old_create_card = create_card
+function create_card(_type, area, legendary, _rarity, skip_materialize, soulable, forced_key, key_append)
+	local card = old_create_card(_type, area, legendary, _rarity, skip_materialize, soulable, forced_key, key_append)
+
+	if G.GAME.mayhem then
+		local mayhem_state	= mfuncs.get_mayhem_state()
+		if mayhem_state > 0 then
+			card = Madcap.Funcs.mayhemize(card)
+		end
+	end
+	return card
 end
 
 function Madcap.Funcs.set_edition_flipped(target)
@@ -4239,6 +4064,11 @@ Madcap.Directories = {
 			return true
 		end
 	},
+	['challenges']	= {
+		pass = function()
+			return true
+		end
+	},
 	['vouchers']	= {
 		['madcap'] = {
 			pass = function()
@@ -4255,6 +4085,11 @@ Madcap.Directories = {
 		['morefluff'] = {
 			pass = function()
 				return next(SMODS.find_mod("MoreFluff"))
+			end
+		},
+		['morefluff'] = {
+			pass = function()
+				return next(SMODS.find_mod("aikoyorisshenanigans"))
 			end
 		},
 	},
@@ -4288,6 +4123,9 @@ Madcap.Directories = {
 			['antags'] = {
 				pass = function()
 					return true
+				end,
+				func = function(d)
+					table.insert(Madcap.Lists.AnTags, d.key)
 				end
 			},
 			['special'] = {
@@ -4902,9 +4740,12 @@ function create_UIBox_HUD_blind()
 			}}
 
 	-- Replace the first part with the actual score
+	local _nodes
 	if G.akyrs_blind_icons then
-		orig.nodes[2].nodes[2].nodes[3].nodes[1] = score_text
-		orig.nodes[2].nodes[2].nodes[3].nodes[2] = blind_chips_text
+		table.insert(orig.nodes[2].nodes,{
+			n=G.UIT.C, config={align = "cm",r = 0.1, padding = 0.05, emboss = 0.05, minw = 2.9, colour = G.C.BLACK},
+			nodes={ score_text, blind_chips_text }
+		})
 	else
 		orig.nodes[2].nodes[2].nodes[2].nodes[1] = score_text
 		orig.nodes[2].nodes[2].nodes[2].nodes[2] = blind_chips_text
@@ -4971,7 +4812,7 @@ function create_UIBox_HUD()
 			{n=G.UIT.T, config={text = localize('rgmc_mayhem'), scale = 0.85*scale, colour = G.C.UI.TEXT_LIGHT, shadow = true}},
 		}},
 		{n=G.UIT.R, config={align = "cm", r = 0.1, minw = 1.2, colour = G.C.DYN_UI.BOSS_DARK }, nodes={
-			{n=G.UIT.O, config={object = DynaText({string = {{ref_table = G.GAME, ref_value = 'mayhem'}}, font = G.LANGUAGES['en-us'].font, colours = {G.C.RGMC_HOT_PINK}, shadow = true, rotate = true, scale = 2*scale}), id = 'mayhem_UI_count'}},
+			{n=G.UIT.O, config={object = DynaText({string = {{ref_table = G.GAME, ref_value = 'mayhem'}}, font = G.LANGUAGES['en-us'].font, colours = { G.C.RGMC_UNUSUAL }, shadow = true, rotate = true, scale = 2*scale}), id = 'mayhem_UI_count'}},
 		}}
 	}})
     return orig
@@ -5014,14 +4855,145 @@ function create_UIBox_blind_choice(type, run_info)
 end
 
 function Madcap.Funcs.mod_blind_box(blind_type, ax, original)
-
     return original
 end
 
 --[[
+	LUXURY POINT stuff
+]]
 
+function Madcap.Funcs.get_luxury_pts_ui()
+	if G.GAME.rgmc_luxury_pts == 0 then return nil end
+	local scale = 0.5
+	local pts_ui = {n = G.UIT.O, config = {
+		object = DynaText({
+			string = { { ref_table = G.GAME, ref_value = 'rgmc_luxury_pts', prefix = "£" } },
+			scale_function = function()
+				return scale_number(G.GAME.rgmc_luxury_pts, 1.3 * scale, 99999, 1000000)
+			end,
+			maxw = 1.3,
+			colours = { G.C.RGMC_LUXURY },
+			font = G.LANGUAGES['en-us'].font,
+			shadow = true,
+			spacing = 2,
+			bump = true,
+			scale = 1.3 * scale,
+		}),
+		id = 'luxury_pts_text_UI'
+		}
+	}
+	return {n=G.UIT.R, config={align = "cm", padding = 0.1, minw = 3.5, colour = G.C.DYN_UI.DARK, r = 0.1}, nodes={
+		{n=G.UIT.C, config = { align = "cm" }, nodes = {
+			{ n=G.UIT.O,
+				config = {
+					object = DynaText({
+						string = {{ string = localize('k_luxury_pts')..': ', colour = G.C.WHITE}},
+						colours = { G.C.RGMC_LUXURY },
+						scale = 1.0 * scale,
+						silent = true,
+						pop_delay = 4.5,
+						shadow = true,
+						maxw = 3,
+					})
+				}
+			},
+			pts_ui
+		}}
+	}}
+end
+
+-- convert cash to lp
+function cash_to_lp(m)
+	local lp = math.max(1, math.floor(m * 0.75))
+	--tell('Dollars: ' .. number_format(m))
+	--tell('Luxury Points: ' .. number_format(lp))
+	return lp
+end
+
+function Card:calc_lp()
+	return cash_to_lp(self.cost)
+end
+
+-- different one for luxury points
+G.FUNCS.can_buy_luxury = function(e)
+	local lp_cost = cash_to_lp(e.config.ref_table.cost)
+    if lp_cost > G.GAME.rgmc_luxury_pts and lp_cost > 0 then
+        e.config.colour = G.C.UI.BACKGROUND_INACTIVE
+        e.config.button = nil
+    else
+        e.config.colour = G.C.DARK_EDITION
+        e.config.button = 'buy_from_shop'
+    end
+    if e.config.ref_parent and e.config.rref_parent.children.buy_and_use then
+      if e.config.ref_parent.children.buy_and_use.states.visible then
+        e.UIBox.alignment.offset.y = -0.6
+      else
+        e.UIBox.alignment.offset.y = 0
+      end
+    end
+end
+
+function ease_lp(mod, instant)
+	if mod == 0 then return end
+	local function _mod(mod)
+		local dollar_UI = G.SHOP_SIGN and G.SHOP_SIGN:get_UIE_by_ID('luxury_pts_text_UI')
+			or nil
+		mod = mod or 0
+		local text = '+' .. localize('£')
+		local col = G.C.RGMC_LUXURY
+		if to_big(mod) < to_big(0) then
+			text = '-' .. localize('£')
+			col = G.C.RGMC_EVIL
+		end
+		--Ease from current chips to the new number of chips
+		G.GAME.rgmc_luxury_pts = math.max(0, G.GAME.rgmc_luxury_pts + mod)
+		if dollar_UI then
+			dollar_UI.config.object.string = '£' .. number_format(G.GAME.rgmc_luxury_pts or 0)
+			G.SHOP_SIGN:recalculate()
+			--Popup text next to the chips in UI showing number of chips gained/lost
+			attention_text({
+				text = text .. tostring(math.abs(mod)),
+				scale = 0.5,
+				hold = 0.7,
+				cover = dollar_UI.parent,
+				cover_colour = col,
+				align = 'cm',
+			})
+		end
+		--Play a chip sound
+		play_sound('rgmc_kaching')
+	end
+	if instant then
+		_mod(mod)
+	else
+		G.E_MANAGER:add_event(Event({
+			trigger = 'immediate',
+			func = function()
+				_mod(mod)
+				return true
+			end
+		}))
+	end
+end
+
+-- does it use LP?
+function Madcap.Funcs.uses_lp(card)
+	return (card.ability.force_lp or card.config.force_lp)
+		or card.config.center.rarity == 'rgmc_unusual'
+end
+
+-- luxury items get the L
+local currency_sell_ui_ref = MadLib.define_get_currency_sell_ui
+function MadLib.define_get_currency_sell_ui(card)
+	if Madcap.Funcs.uses_lp(card) then
+		return {n=G.UIT.T, config={text = localize('£'), colour = G.C.RGMC_LUXURY, scale = 0.4, shadow = true}}
+	end
+    return currency_sell_ui_ref(card)
+end
+
+
+--[[
 	CROSS MOD SHIT
-
 ]]
 
 Madcap.ExtraSuits = {}
@@ -5089,8 +5061,8 @@ local function inject_p_card_suit_compat(suit, rank)
 	end
 
     local full_atlas = 'rgmc_' .. s.id .. '_' .. r.id .. '_'
-    tell_stat('Full atlas is',full_atlas)
-    tell_stat('Full suit card ky thing is',suit.card_key .. '_' .. rank.card_key)
+    --tell_stat('Full atlas is',full_atlas)
+    --tell_stat('Full suit card ky thing is',suit.card_key .. '_' .. rank.card_key)
 
 	local card = {
 		name 	= rank.key .. ' of ' .. suit.key,
@@ -5127,6 +5099,80 @@ end
 
 inject_rank_atlas('rgmc_')
 inject_rank_atlas('unstb_')
+
+Madcap.SuitIds = { 'goblets', 'towers', 'blooms', 'daggers', 'voids', 'lanterns' }
+
+-- Temporary code until UnStableEX updates
+if next(SMODS.find_mod("UnStable")) then
+	local unstb_ranks = { '21', '???', '0.5', 'e', 'Pi', '1', '0', 'r2', '11', '12', '13', '25', '161' }
+
+	MadLib.loop_func(Madcap.SuitIds, function(v1,_y)
+		MadLib.loop_func(unstb_ranks, function(v2,_x)
+			local id = (_x < 9) and 'ex' or 'ex2'
+			local suit = SMODS.Suits['rgmc_'..v1]
+			local rank = SMODS.Ranks['unstb_'..v2]
+
+			G.P_CARDS[suit.card_key .. '_' .. rank.card_key] = {
+				name 	= rank.key .. ' of ' .. suit.key,
+				value 	= rank.key,
+				suit 	= suit.key,
+				pos 	= { x = _x, y = _y },
+				lc_atlas = 'ns_unstb_'..id..'lc',
+				hc_atlas = 'ns_unstb_'..id..'lc'
+			}
+		end)
+	end)
+end
+
+if AKYRS then
+	table.insert(AKYRS.tea_cards, 'm_rgmc_boba_tea_card')
+end
+
+-- Pure ranks and suits
+if AKYRS_CROSSMOD then
+
+	local pure_atlas = 'rgmc_akyrs_pure'
+	-- Madcap suits
+	MadLib.loop_func(Madcap.SuitIds, function(v,i)
+		AKYRS_CROSSMOD.suit_to_atlas_map['rgmc_'..v] = { pure_atlas, MLIB.coords(0,i-1) }
+	end)
+	-- Bunco suits
+	if next(SMODS.find_mod("Bunco")) then
+		MadLib.loop_func({ 'Fleurons', 'Halberds' }, function(v,i)
+			AKYRS_CROSSMOD.suit_to_atlas_map['bunc_'..v] = { pure_atlas, MLIB.coords(1,i-1) }
+		end)
+    end
+	-- Paperback suits
+    if next(SMODS.find_mod("Paperback")) or PB_UTIL then
+		MadLib.loop_func({ 'Stars', 'Crowns' }, function(v,i)
+			AKYRS_CROSSMOD.suit_to_atlas_map['paperback_'..v] = { pure_atlas, MLIB.coords(1,i+1) }
+		end)
+	end
+	-- UnStable/Madcap overlap ranks
+	local unstb = next(SMODS.find_mod("UnStable")) and 'unstb_' or 'rgmc_'
+	MadLib.loop_func({ '0', '0.5', '1', '11', '12', '13', '21', '25' }, function(v,i)
+		AKYRS_CROSSMOD.suit_to_atlas_map[unstb..v] = { pure_atlas, MLIB.coords(2,i-1) }
+	end)
+	-- large numbers above 10
+	MadLib.loop_func({ '10.5', '16', '24', '32', '34', '52', '55', '64', '128' }, function(v,i)
+		local n = i+24
+		AKYRS_CROSSMOD.suit_to_atlas_map['rgmc_'..v] = { pure_atlas, MLIB.coords(math.floor(n/8), (i%8)-1) }
+	end)
+	-- and the rest!
+	MadLib.loop_func({ 'Knight', 'Madcap', 'Phi', 'X', 'Sum', 'Infinity' }, function(v,i)
+		AKYRS_CROSSMOD.suit_to_atlas_map['rgmc_'..v] = { pure_atlas, MLIB.coords(4, i+1) }
+	end)
+	-- oh, and the UNO ranks too.
+	MadLib.loop_func({ 'Draw2', 'Skip', 'Reverse' }, function(v,i)
+		AKYRS_CROSSMOD.suit_to_atlas_map['rgmc_'..v] = { pure_atlas, MLIB.coords(5, i-1) }
+	end)
+	-- UnStable ranks
+	if next(SMODS.find_mod("UnStable")) then
+		MadLib.loop_func({ '161', '???', 'e', 'Pi', 'r2' }, function(v,i)
+			AKYRS_CROSSMOD.suit_to_atlas_map['unstb_'..v] = { pure_atlas, MLIB.coords(5,2+i) }
+		end)
+	end
+end
 
 ----------------------------------------------
 ------------MOD CODE END----------------------

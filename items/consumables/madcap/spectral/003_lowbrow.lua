@@ -7,7 +7,7 @@ return {
         set     = "Spectral",
         key     = "lowbrow",
         atlas   = "spectrals",
-        pos     = MLIB.coords(0,6),
+        pos     = MLIB.coords(0,2),
         cost    = 4,
         config  = {
             extra = { odds = 4 }

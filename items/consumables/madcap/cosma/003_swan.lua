@@ -33,7 +33,7 @@ return {
                     end, 0.2, 'after')
                 else -- give permanent bonus!
                     MadLib.simple_event(function()
-                        v.ability.perma_x_mult = (v.ability.perma_h_x_mult or 1) + card.ability.extra.x_mult_mod
+                        v.ability.perma_x_mult = (v.ability.perma_h_x_mult or 1) + card.ability.extra.xmult_mod
                         return true
                     end, 0.2, 'after')
                 end

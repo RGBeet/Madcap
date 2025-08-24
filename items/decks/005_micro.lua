@@ -1,3 +1,11 @@
+Madcap.MicroDeckList = { -- 4 cards or less!
+    'High Card',
+    'Pair',
+    'Three of a Kind',
+    'Two Pair',
+    'Four of a Kind'
+}
+
 return {
     categories = {
         'Decks',
@@ -18,7 +26,7 @@ return {
                 return true
             end, 0.7, 'after')
             MadLib.loop_func(G.handlist, function(h)
-                if MadLib.list_matches_one(micro_list, function(h2)
+                if not MadLib.list_matches_one(Madcap.MicroDeckList, function(h2)
                     return h == h2
                 end) then
                     G.GAME.hands[h].visible = false
@@ -28,6 +36,7 @@ return {
                 finishers       = { 'bl_rgmc_final_blindfold' }, -- force ???
                 target_logic    = true
             })
+            G.GAME.subhand_minimum = 4
         end,
     }
 }

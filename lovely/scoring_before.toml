@@ -22,3 +22,25 @@ else
 """
 overwrite = true
 match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = "functions/UI_definitions.lua"
+pattern = '''{n=G.UIT.R, config={align = "cm"}, nodes={
+              {n=G.UIT.O, config={object = DynaText({string = {localize('ph_improve_run')}, colours = {lighten(G.C.GOLD, 0.3)},shadow = true, rotate = true, float = true, bump = true, scale = 0.5, spacing = 1, pop_in = 1.5, maxw = 4.3})}}
+            }},'''
+position = "after"
+payload = '''Madcap.Funcs.get_luxury_pts_ui()'''
+match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = "functions/common_events.lua"
+pattern = '''if state == G.STATES.TAROT_PACK then
+        ease_background_colour{new_colour = G.C.PURPLE, special_colour = darken(G.C.BLACK, 0.2), contrast = 1.5}'''
+position = "before"
+payload = '''if G.GAME.rgmc_total_mayhem then
+  ease_background_colour{new_colour = G.C.DARK_EDITION, special_colour = darken(G.C.BLACK, 0.2), contrast = 1.5}
+  return
+end'''
+match_indent = true

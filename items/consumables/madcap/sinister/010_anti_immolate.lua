@@ -20,8 +20,9 @@ return {
             MadLib.simple_event(function()
                 local _first_dissolve = nil
                 local new_cards = {}
-                MadLib.number_func(nil, self.config.extra.add or 5, function(i)
-                    new_cards[i] = SMODS.add_card { set = "Base", enhancement = 'rgmc_vino' }
+                MadLib.number_func(self.config.extra.add or 5, function(i)
+                    new_cards[i] = create_playing_card(nil, G.deck)
+                    new_cards[i]:set_ability(G.P_CENTERS.m_rgmc_vino)
                 end)
                 SMODS.calculate_context({ playing_card_added = true, cards = new_cards })
                 ease_dollars(-self.config.extra.money, true)

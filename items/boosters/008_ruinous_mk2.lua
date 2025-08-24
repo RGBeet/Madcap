@@ -21,8 +21,8 @@ return {
             return MadLib.collect_vars(cfg.choose, cfg.extra)
         end,
 		update_pack		= function(self, dt)
-			ease_colour(G.C.DYN_UI.MAIN, G.C.RGMC_EVIL)
-			ease_background_colour({ new_colour = G.C.RGMC_EVIL, special_colour = G.C.BLACK, contrast = 2 })
+			ease_colour(G.C.DYN_UI.MAIN, G.C.SET.AntiSpectral)
+			ease_background_colour({ new_colour = G.C.SET.AntiSpectral, special_colour = G.C.BLACK, contrast = 2 })
 			SMODS.Booster.update_pack(self, dt)
 		end,
         particles = function(self)
@@ -41,7 +41,15 @@ return {
             G.booster_pack_sparkles:fade(1, 0)
         end,
         create_card = function(self, card, i)
-			return Madcap.Funcs.booster_create_card(self, card, 'AntiSpectral', 'ruinous')
+            _card = {
+                set = "AntiSpectral",
+                area = G.pack_cards,
+                skip_materialize = true,
+                soulable = true,
+                key_append =
+                "rgmc"
+            }
+            return _card
         end,
 		digital_hallucinations_compat = Madcap.Funcs.digital_hallucinations_compat('AntiSpectral', 'rgmc_plus_antispectral', G.C.SET.AntiSpectral),
         no_doe 	= true,

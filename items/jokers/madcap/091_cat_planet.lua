@@ -37,7 +37,7 @@ return {
                         play_sound('rgmc_meow3', 1, 0.5)
                         card_eval_status_text(context_blueprint_card or self, 'extra', nil, nil, nil, {
                             message = "+" .. number_format(mayhem),
-                            colour = G.C.RGMC_MAYHEM
+                            colour = G.C.RGMC_UNUSUAL
                         })
                         return true
                     end, 0.4, 'immediate')

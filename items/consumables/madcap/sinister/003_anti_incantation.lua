@@ -1,6 +1,10 @@
 function Madcap.Funcs.get_lowest_rank(group, allow_faces)
 	local min_value, lowest = 99, nil
 	local ranks = MadLib.get_ranks_from_cards(G.playing_cards, true)
+    print(ranks)
+    --[[
+    MadLib.
+
 	for k, _ in pairs(ranks) do
 		local pts = SMODS.Ranks[k].nominal
 		if SMODS.Ranks[k].face_nominal > 0 and not allow_faces then pts = min_value-1 end
@@ -8,8 +12,8 @@ function Madcap.Funcs.get_lowest_rank(group, allow_faces)
 			lowest 	= k
 			min_value 	= SMODS.Ranks[k].nominal + SMODS.Ranks[k].face_nominal
 		end
-	end
-	return lowest
+	end]]
+	return 'Ace'
 end
 
 return {

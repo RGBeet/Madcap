@@ -1,3 +1,17 @@
+Madcap.Metals = {
+    held = {
+        'm_gold',
+        'm_steel',
+        'm_rgmc_ferrous',
+        'm_rgmc_wolfram'
+    },
+    score = {
+        'm_rgmc_ferrous',
+        'm_rgmc_wolfram',
+        'm_rgmc_plumbum'
+    }
+}
+
 return {
     data = {
         object_type = "Joker",

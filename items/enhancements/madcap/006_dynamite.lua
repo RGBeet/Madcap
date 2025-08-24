@@ -1,12 +1,10 @@
 function Madcap.Funcs.get_aoe_cards(center,cards,range)
     local left, right  = math.max(index - range, 1), math.min(index + range, #cards)
     local list, index = {}, MadLib.get_item_index(center, cards)
-
     if index == -1 then return {} end
     for i=left, right do
         if i ~= index then table.insert(list, cards[i]) end
     end
-
     return list
 end
 
@@ -43,7 +41,7 @@ function Card:do_volatile_explode(bypass_reqs)
         end)
 
         MadLib.loop_func(temp_cards, function (v, i)
-            if not SMODS.has_enhancement(v, 'm_rgmc_volatile') then
+            if not SMODS.has_enhancement(v, 'm_rgmc_dynamite') then
                 MadLib.simple_event(function()
                     v:juice_up(0.5, 0.5)
                     v:start_dissolve()
@@ -84,10 +82,11 @@ return {
         atlas   = 'enhancements',
         pos     = MLIB.coords(1,1),
         config = { extra = { x_score = 1.4, x_mult = 2, odds = 5, active = false } },
-        always_scores       = true,
         disenhancement      = true,
         loc_vars = function(self, info_queue, card)
-            return MadLib.collect_vars(card.ability.extra.x_score)
+            local _numer, _denom = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'dynamite')
+            local x_score = math.max(0,card.ability.extra.x_score)
+            return MadLib.collect_vars(number_format(MadLib.round(x_score,2)), number_format(_numer), number_format(_denom))
         end,
         calculate = function(self, card, context)
             if context.cardarea == G.play and context.main_scoring then

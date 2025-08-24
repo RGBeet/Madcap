@@ -3,7 +3,7 @@ function Card:set_rgmc_painted(_painted,tally)
 end
 
 function Card:calculate_rgmc_painted()
-    handle_sticker_calculation(self, 'rgmc_painted')
+    Madcap.Funcs.handle_sticker_calculation(self, 'rgmc_painted')
     --self:set_ability(G.P_CENTERS.c_base)
 end
 

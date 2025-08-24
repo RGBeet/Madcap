@@ -12,7 +12,7 @@ return {
         cost    = 5,
         config = {  extra = { chips = 7 } },
         loc_vars = function(self, info_queue, card)
-            local unique_ranks = (G.GAME and G.GAME.ante.unique_ranks) or 0
+            local unique_ranks = (G.GAME and G.GAME.ante and G.GAME.ante.unique_ranks) or 0
             return MadLib.collect_vars(number_format(card.ability.extra.chips), number_format(get_unique_ranks() * card.ability.extra.chips))
         end,
         calculate = function(self, card, context)

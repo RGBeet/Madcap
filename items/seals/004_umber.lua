@@ -16,7 +16,7 @@ return {
         end,
         calculate = function(self, card, context)
             if context.discard and (context.other_card and context.other_card == card) then
-                G.FUNCS.draw_from_deck_to_hand(MadLib.clamp(self.config.extra.draw_cards, 2, 10))
+                G.FUNCS.draw_from_deck_to_hand(MadLib.clamp(self.config.extra.draw_cards, 2, 10) + 1)
                 --tell("Umber Seal activated!")
             end
         end,

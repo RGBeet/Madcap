@@ -15,7 +15,11 @@ return {
             return MadLib.collect_vars(number_format(_numer), number_format(_denom))
         end,
         calculate = function(self, card, context)
-            if context.pre_discard and context.other_card == card and SMODS.pseudorandom_probability(card, 'seafoam_seal', 1, card.ability.extra.odds) then
+            if
+                context.discard
+                and context.other_card == card
+                and SMODS.pseudorandom_probability(card, 'seafoam_seal', 1, card.ability.extra.odds)
+            then
                 local new_card = (not SMODS.pseudorandom_probability(card, 'seafoam', 1, card.ability.extra.odds))
                     and MadLib.get_random_card("CosmaTarot")
                     or MadLib.get_random_card("CosmaTarot")

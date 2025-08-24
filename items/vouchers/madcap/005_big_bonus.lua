@@ -16,7 +16,7 @@ return {
                 context.cardarea == G.play
                 and context.individual
                 and context.other_card
-                and MadLib.list_matches_one(Madcap.Data.enhancement_lists.bonus, function(v,k)
+                and MadLib.list_matches_one(Madcap.Lists.Enhancements.Chips, function(v,k)
                     return SMODS.has_enhancement(context.other_card, "m_"..v)
                 end)
             then

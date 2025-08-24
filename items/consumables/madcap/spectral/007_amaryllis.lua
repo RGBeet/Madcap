@@ -4,7 +4,7 @@ return {
         set     = "Spectral",
         key     = "amaryllis",
         atlas   = "spectrals",
-        pos     = MLIB.coords(1,0),
+        pos     = MLIB.coords(0,6),
         cost    = 4,
         config  = { extra = { add = 1 } },
         in_pool = function(self)
