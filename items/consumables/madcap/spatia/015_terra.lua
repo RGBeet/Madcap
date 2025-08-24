@@ -9,7 +9,7 @@ return {
         key     = "terra",
         atlas   = "spatia",
         pos     = MLIB.coords(1,7),
-        config  = { set = 'Tarot', xmult = 0.05, xchips = 0.02 },
+        config  = { set = 'Tarot', xmult = 0.1, xchips = 0.05 },
         cost    = 8,
         aurinko = true,
         loc_vars = function(self, info_queue, center)

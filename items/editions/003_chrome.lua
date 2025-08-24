@@ -28,7 +28,7 @@ return {
             end
 
             if context.after and card.ability.chromed then
-                card.ability.infernaled = nil -- not needed now
+                card.ability.chromed = nil -- not needed now
                 return MadLib.do_x_score(self.config.x_score)
             end
 

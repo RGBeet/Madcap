@@ -86,7 +86,7 @@ return {
                     "madness contained within",
                     "the {C:rgmc_bismuth}Deck of Lunacy{}",
 					"Combines most {C:attention}Vanilla{}",
-                    "and {C:rgmc_madcap}"
+                    "and {C:rgmc_madcap}Madcap{} mechanics{}",
 				},
 			},
 			b_rgmc_jumble = {
@@ -1198,10 +1198,12 @@ return {
             j_rgmc_legend_lollipop = {
                 name = "Retro Lollipop",
                 text = {
-                    { "Whenever a {C:attention}Food Joker{} gets a,",
-                    "stat decrease, this {C:attention}Joker{} gains",
-                    "the {C:green}inverse{} of its loss",
-                    "{C:inactive}Applies to most Food Jokers{}" },
+                    { 
+                        "When {C:blue}Common{} Jokers",
+                        "with no editions are destroyed,",
+                        "create a {C:rgmc_mayhem}Mayhemized{} copy",
+                        "with a {C:dark_edition}random edition{}"
+                    },
                 },
             },
             j_rgmc_twinkle_of_contagion = {
@@ -2053,7 +2055,8 @@ return {
 				text = {
                     { "{X:rgmc_xscore,C:white}X#1#{} Score, no {C:attention}rank{} or {C:attention}suit{}",
                         "Always scores" },
-                    { "When {C:orange}held{} in hand, {C:green}#3# in #4#{} chance",
+                    { "When {C:orange}held{} in hand,",
+                        "{C:green}#3# in #4#{} chance",
                         "to give {X:rgmc_xscore,C:white}X#2#{}" },
                     { "When {C:blue}played{} in {C:attention}winning{} hand,",
                         "convert to {C:rgmc_bismuth}Bismuth{} " },
@@ -2331,8 +2334,8 @@ return {
                     "{C:inactive}(Currently {X:chips,C:white}X#4#{C:inactive} and {X:mult,C:white}X#5#{C:inactive})"
                 },
             },
-            c_rgmc_sol_3 = {
-                name = "Sol III",
+            c_rgmc_helios = {
+                name = "Helios",
                 text = {
                     "{S:0.8}({S:0.8,V:1}lvl.#1#{S:0.8}){} Level up",
                     "{C:attention}#2#",
@@ -2581,7 +2584,7 @@ return {
                     "{S:0.8}({S:0.8,V:2}lvl.#1#{S:0.8}){} Level up",
                     "{C:attention}#2# {C:inactive}Sub-Hand{}",
                     "{X:mult,C:white}X#3#{} Mult and",
-                    "{X:chips,C:white}X#4#{} chips",
+                    "{X:chips,C:white}X#4#{} Chips",
                 },
             },
             c_rgmc_blood_moon = {
@@ -2590,7 +2593,7 @@ return {
                     "{S:0.8}({S:0.8,V:2}lvl.#1#{S:0.8}){} Level up",
                     "{C:attention}#2# {C:inactive}Sub-Hand{}",
                     "{X:mult,C:white}X#3#{} Mult and",
-                    "{X:chips,C:white}X#4#{} chips",
+                    "{X:chips,C:white}X#4#{} Chips",
                 },
             },
             c_rgmc_harvest_moon = {
@@ -2599,7 +2602,7 @@ return {
                     "{S:0.8}({S:0.8,V:2}lvl.#1#{S:0.8}){} Level up",
                     "{C:attention}#2# {C:inactive}Sub-Hand{}",
                     "{X:mult,C:white}X#3#{} Mult and",
-                    "{X:chips,C:white}X#4#{} chips",
+                    "{X:chips,C:white}X#4#{} Chips",
                 },
             },
             c_rgmc_crescent_moon = {
@@ -2608,7 +2611,7 @@ return {
                     "{S:0.8}({S:0.8,V:2}lvl.#1#{S:0.8}){} Level up",
                     "{C:attention}#2# {C:inactive}Sub-Hand{}",
                     "{X:mult,C:white}X#3#{} Mult and",
-                    "{X:chips,C:white}X#4#{} chips",
+                    "{X:chips,C:white}X#4#{} Chips",
                 },
             },
             c_rgmc_gibbous_moon = {
@@ -2617,7 +2620,16 @@ return {
                     "{S:0.8}({S:0.8,V:2}lvl.#1#{S:0.8}){} Level up",
                     "{C:attention}#2# {C:inactive}Sub-Hand{}",
                     "{X:mult,C:white}X#3#{} Mult and",
-                    "{X:chips,C:white}X#4#{} chips",
+                    "{X:chips,C:white}X#4#{} Chips",
+                },
+            },
+            c_rgmc_new_moon = {
+                name = "Gibbous",
+                text = {
+                    "{S:0.8}({S:0.8,V:2}lvl.#1#{S:0.8}){} Level up",
+                    "{C:attention}#2# {C:inactive}Sub-Hand{}",
+                    "{X:mult,C:white}X#3#{} Mult and",
+                    "{X:chips,C:white}X#4#{} Chips",
                 },
             },
             c_rgmc_terra = {
@@ -2838,46 +2850,56 @@ return {
             c_rgmc_demise = {
                 name = 'Demise',
                 text = {
-                    "Spawns a random {C:rgmc_cosmatarot}Cosma Tarot{}",
-                    "{C:green}#1# in #2#{} chance to instead",
-                    "copy last {C:rgmc_cosmatarot}Cosma Tarot",
-                    "{C:inactive}(Currently{C:attention}#3#{C:inactive})",
+                    "Spawns a random",
+                    "{C:rgmc_cosmatarot}Cosma Tarot{}",
+                    "{C:green}#1# in #2#{} chance",
+                    "to instead copy",
+                    "last used {C:rgmc_cosmatarot}Cosma Tarot",
+                    "{C:inactive}(Currently {C:attention}#3#{C:inactive})",
                     "{s:0.8,C:rgmc_cosmatarot}Demise{s:0.8} excluded"
                 }
             },
             c_rgmc_crow = {
                 name = 'The Crow',
                 text = {
-                    "Randomly select {C:attention}#1#{} card(s) and",
-                    "{C:attention}convert{} them to {V:1}#2#",
-                    "If converted card is already {V:1}#3#{},",
+                    "Randomly select {C:attention}#1#{} cards",
+                    "and {C:attention}convert{} them",
+                    "to {V:1}#2#",
+                    "If converted card is",
+                    "already {V:1}#3#{},",
                     "add {C:mult}+#4#{} permanent Mult"
                 }
             },
             c_rgmc_swan = {
                 name = 'The Swan',
                 text = {
-                    "Randomly select {C:attention}#1#{} card(s) and",
-                    "{C:attention}convert{} them to {V:1}#2#",
-                    "If converted card is already {V:1}#3#{},",
+                    "Randomly select {C:attention}#1#{} cards",
+                    "and {C:attention}convert{} them",
+                    "to {V:1}#2#",
+                    "If converted card is",
+                    "already {V:1}#3#{},",
                     "add {X:mult,C:white}X#4#{} permanent Mult"
                 }
             },
             c_rgmc_peacock = {
                 name = 'The Peacock',
                 text = {
-                    "Randomly select {C:attention}#1#{} card(s) and",
-                    "{C:attention}convert{} them to {V:1}#2#",
-                    "If converted card is already {V:1}#3#{},",
+                    "Randomly select {C:attention}#1#{} cards",
+                    "and {C:attention}convert{} them",
+                    "to {V:1}#2#",
+                    "If converted card is",
+                    "already {V:1}#3#{},",
                     "add {C:money}X#4#{} cash bonus"
                 }
             },
             c_rgmc_pelican = {
                 name = 'The Pelican',
                 text = {
-                    "Randomly select {C:attention}#1#{} card(s) and",
-                    "{C:attention}convert{} them to {V:1}#2#",
-                    "If converted card is already {V:1}#3#{},",
+                    "Randomly select {C:attention}#1#{} cards",
+                    "and {C:attention}convert{} them",
+                    "to {V:1}#2#",
+                    "If converted card is",
+                    "already {V:1}#3#{},",
                     "add {C:chips}+#4#{} permanent Chips"
                 }
             },
@@ -2885,39 +2907,43 @@ return {
                 name = 'The Phoenix',
                 text = {
                     "Randomly select {C:attention}#1#{} card(s) and",
-                    "{C:attention}halves{} their {C:chips}chips{}",
+                    "{C:attention}halves{} their {C:chips}Chips{}",
                     "Converted card gains {C:attention}X#2#{}",
-                    "their {C:chips}chip{} value as {C:mult}Mult{}"
+                    "their {C:chips}Chip{} value as {C:mult}Mult{}"
                 }
             },
             c_rgmc_soulmates = {
                 name = 'The Soulmates',
                 text = {
-                    "Randomly select {C:attention}#1#{} card(s) and",
-                    "{C:attention}convert{} them to a",
-                    "random {C:attention}suit{} played this {C:attention}Blind",
+                    "Randomly select {C:attention}#1#{} cards",
+                    "and {C:attention}convert{} them",
+                    "to a random {C:attention}suit{}",
+                    "played this {C:attention}Blind",
                 }
             },
             c_rgmc_spirit_plane = {
                 name = 'The Spirit Plane',
                 text = {
-                    "Randomly select {C:attention}#1#{} card(s) and",
-                    "{C:attention}convert{} apply",
-                    "random {C:attention}enhancements{} from {C:attention}deck",
-                    "If {C:red}no{} enhancements exist in {C:attention}deck{},",
-                    "convert cards to any random {C:attention}enhancements{}"
+                    "Randomly select {C:attention}#1#{} cards",
+                    "and {C:attention}apply{} random {C:attention}enhancements{}",
+                    "from {C:attention}deck",
+                    "If {C:red}no{} enhancements",
+                    "exist in {C:attention}deck{},",
+                    "convert cards to any",
+                    "random {C:attention}enhancements{}"
                 }
             },
             c_rgmc_orbs = {
                 name = 'The Orbs',
                 text = {
-                    "Randomly select {C:attention}#1#{} card(s)",
+                    {"Randomly select {C:attention}#1#{} cards",
                     "If card has no {C:attention}enhancement{},",
                     "apply a {C:attention}random{} enhancement",
-                    "If card has an enhancement with {C:rgmc_unusual}counterpart{},",
-                    "convert card into counterpart",
-                    "{C:green}#2# in #3#{} chance to instead",
-                    "{C:attention}destroy{} selected card"
+                    "If card has an enhancement",
+                    "with supported {C:rgmc_unusual}counterpart{},",
+                    "convert card into counterpart",},
+                    {"{C:green}#2# in #3#{} chance to instead",
+                    "{C:attention}destroy{} selected card"}
                 }
             },
             c_rgmc_cosmic_tree = {
@@ -2976,7 +3002,7 @@ return {
                 name = 'The Vessel',
                 text = {
                     "Randomly select {C:attention}#1#{} card(s)",
-                    "and {C:rgmc_unusual,E:1}multiply",
+                    "and {C:rgmc_mayhem,E:1}Mayhemize",
                     "their values by {X:dark_edition,C:white}X#2#",
                 }
             },
@@ -2992,16 +3018,20 @@ return {
                 name = 'The Veil',
                 text = {
                     "Randomly select {C:attention}#1#{}",
-                    "{C:rgmc_spatiaplanet}Light{} card(s), then {C:rgmc_cosmatarot,S:1}Invert{} them",
-                    "into their {C:rgmc_spatiaplanet}Dark{} counterparts"
+                    "{C:rgmc_light}Light{} cards,",
+                    "then {C:rgmc_cosmatarot,S:1}Invert{} them",
+                    "into their {C:rgmc_dark}Dark{}",
+                    "counterparts"
                 }
             },
             c_rgmc_bridge = {
                 name = 'The Bridge',
                 text = {
                     "Randomly select {C:attention}#1#{}",
-                    "{C:rgmc_spatiaplanet}Dark{} card(s), then {C:rgmc_cosmatarot,S:1}Invert{} them",
-                    "into their {C:rgmc_spatiaplanet}Light{} counterparts"
+                    "{C:rgmc_dark}Dark{} cards,",
+                    "then {C:rgmc_cosmatarot,S:1}Invert{} them",
+                    "into their {C:rgmc_light}Light{}",
+                    "counterparts"
                 }
             },
             c_rgmc_pathways = {
@@ -3019,14 +3049,15 @@ return {
                     "Creates a random {C:dark_edition}Negative",
                     "consumable, Joker, or card and",
                     "{C:rgmc_mayhem,E:1}Mayhemize{} its values",
-                    "{C:inactive}({C:attention}Values{C:inactive}are randomized",
-                    "{C:inactive}between {C:attention}X#1#{C:inactive} and{C:attention}X#2#{C:inactive})",
+                    "{C:inactive}({C:attention}Values {C:inactive}are randomized",
+                    "{C:inactive}between {C:attention}X#1#{C:inactive} and {C:attention}X#2#{C:inactive})",
                 }
             },
             c_rgmc_life_on_earth  = {
                 name = 'Life on Earth',
                 text = {
-                    "Randomly select {C:attention}#1#{} card(s), then {C:rgmc_unusual,S:1}convert{} them",
+                    "Randomly select {C:attention}#1#{} cards,",
+                    "then {C:rgmc_unusual,S:1}convert{} them",
                     "into {V:1}#2#{} or {V:2}#3#{}"
                 }
             },
@@ -3214,8 +3245,10 @@ return {
 			c_rgmc_providence = { -- random edition to cards
 				name = "Providence",
                 text = {
-                    "#1# in #2# chance to apply {X:edition}edition{}",
-					"to #3# {C:attention}random{} cards"
+                    "#1# in #2# chance to",
+                    "apply random {X:dark_edition}edition{}",
+					"to #3# {C:attention}random{} cards",
+                    "in hand"
                 }
 			},
 			c_rgmc_fractal = { -- bismuth
@@ -4012,26 +4045,26 @@ return {
 			},
             -- Light/Dark
 			v_rgmc_day_and_night = {
-				name = "Day and Night",
+				name = "{C:rgmc_light}Day{} and {C:rgmc_dark}Night{}",
 				text = {
                     "Hands can now gain",
                     "additional chips and mult",
-                    "from {C:attention}Light{} and {C:attention}Dark{}",
+                    "from {C:rgmc_light}Light{} and {C:rgmc_dark}Dark{}",
                     "sub-hands"
 				},
 			},
 			v_rgmc_midday = {
-				name = "Midday",
+				name = "{C:rgmc_light}Midday",
 				text = {
                     "Boosts the power of",
-                    "{C:attention}Light{} sub-hands"
+                    "{C:rgmc_light}Light{} sub-hands"
 				},
 			},
 			v_rgmc_midnight = {
-				name = "Midnight",
+				name = "{C:rgmc_dark}Midnight",
 				text = {
                     "Boosts the power of",
-                    "{C:attention}Dark{} sub-hands"
+                    "{C:rgmc_dark}Dark{} sub-hands"
 				},
 			},
 			v_rgmc_twilight = {
@@ -4066,7 +4099,7 @@ return {
                     "{C:attention}High{} sub-hands"
 				},
 			},
-			v_rgmc_the_median = {
+			v_rgmc_median = {
 				name = "The Median",
 				text = {
                     "Further empowers",
@@ -4080,7 +4113,7 @@ return {
 				text = {
                     "Hands can now gain",
                     "additional chips and mult",
-                    "from {C:attention}Dazzling{}",
+                    "from {C:rgmc_bismuth}Dazzling{}",
                     "sub-hands"
 				},
 			},
@@ -4088,7 +4121,7 @@ return {
 				name = "Brilliance",
 				text = {
                     "Boosts the power of",
-                    "{C:attention}Dazzling{} sub-hands"
+                    "{C:rgmc_bismuth}Dazzling{} sub-hands"
 				},
 			},
             -- AnTags
@@ -4174,7 +4207,7 @@ return {
 			},
         },
         Other = {
-			p_rgmc_cosma = {
+			p_rgmc_cosma_normal = {
 				name = "Cosma Pack",
 				text = {
 					"Choose {C:attention}#1#{} of up to",
@@ -4195,7 +4228,7 @@ return {
 					"{C:attention}#2#{C:rgmc_cosmatarot} Cosma Tarot{} cards",
 				},
 			},
-			p_rgmc_spatia = {
+			p_rgmc_spatia_normal = {
 				name = "Spatia Pack",
 				text = {
 					"Choose {C:attention}#1#{} of up to",
@@ -4255,16 +4288,17 @@ return {
 				},
 			},
 			p_rgmc_chipmult = {
-				name = "Variety Pack: Red Pill, Blue Pill",
+				name = "Red Pill, Blue Pill",
 				text = {
 					"There are two Jokers:",
                     "One boosts {C:chips}Chips{}",
-                    "the other boosts {c:mult}Mult{}.",
-                    "({C:attention}Unskippable{}!)",
+                    "the other boosts {C:mult}Mult{}",
+                    "{C:red}Which {C:blue}pill{} do you take?",
+                    "{C:inactive}(Must have room!)",
 				},
 			},
 			p_rgmc_revival = {
-				name = "Variety Pack: Back From the Dead",
+				name = "Back From the Dead",
 				text = {
 					"Choose {C:attention}#1#{} of up to",
 					"{C:attention}#2#{} {C:red}destroyed{}",
@@ -4273,44 +4307,46 @@ return {
 				},
 			},
 			p_rgmc_food = {
-				name = "Variety Pack: Just a Quick Bite...",
+				name = "Just a Quick Bite",
 				text = {
 					"Choose {C:attention}#1#{} of up to {C:attention}#2#{}",
 					"delicious {C:dark_edition}Food {C:attention}Jokers",
-                    "{C:inactive}(must have room)",
+                    "{C:inactive}(Must have room!)",
 				},
 			},
 			p_rgmc_riff_raff = {
-				name = "Variety Pack: Riff-Raff",
+				name = "Riff-Raff",
 				text = {
 					"Choose {C:attention}#1#{} of up to {C:attention}#2#{}",
 					"{C:blue}Common {C:attention}Jokers",
-                    "{C:inactive}(must have room)",
+                    "{C:inactive}(Must have room!)",
 				},
 			},
 			p_rgmc_factory_error = {
-				name = "Variety Pack: Factory Error",
+				name = "Factory Error",
 				text = {
 					"Choose {C:attention}#1#{} of up to {C:attention}#2#{}",
-					"{C:rgmc_mayhem}factory error {C:attention}Jokers",
-                    "{C:inactive}(must have room)",
+					"{C:rgmc_mayhem, E:1}Factory Error {C:attention}Jokers",
+                    "{C:inactive}(Must have room!)",
 				},
 			},
-			p_rgmc_spam = {
-				name = "Variety Pack: Oops! All SPAM",
+			p_rgmc_oops_all_spam = {
+				name = "Oops! All SPAM",
 				text = {
 					"Choose {C:attention}#1#{} of up to {C:attention}#2#{}...",
 					"{C:rgmc_gimmick}SPAM! Jokers? ... What.",
                     "Who approved this.",
-                    "{C:inactive}(must have room)",
+                    "{C:inactive}(Must have room!)",
 				},
 			},
 			p_rgmc_madcap_select = {
-				name = "Variety Pack: Madcap Select",
+				name = "Madcap Select",
 				text = {
 					"Choose {C:attention}#1#{} of up to {C:attention}#2#{}",
-					"{C:rgmc_mayhem}Madcap{} mod exclusives!",
-                    "{C:inactive}(must have room)",
+					"{C:rgmc_bismuth}Madcap{} mod exclusives",
+                    "May contain some rather",
+                    "{C:rgmc_unusual}Unusual{} surprises...",
+                    "{C:inactive}(Must have room!)",
 				},
 			},
             rgmc_suit_info_light = {
@@ -4558,9 +4594,9 @@ return {
 				text = {
 					"This card is placed closer",
                     "to {C:attention}front{} of deck",
-                    "{C:inactive}(Rolls #3# times",
-                    "{C:inactive}with a #1# in #2# chance to",
-                    "{C:inactive}advance one position)",
+                    "{C:inactive,s:0.7}(Rolls #3# times",
+                    "{C:inactive,s:0.7}with a #1# in #2# chance to",
+                    "{C:inactive,s:0.7}advance one position)",
 				},
 			},
             rgmc_bronze_seal = {
@@ -4568,9 +4604,9 @@ return {
 				text = {
 					"This card is placed closer",
                     "to {C:attention}rear{} of deck",
-                    "{C:inactive}(Rolls #3# times",
-                    "{C:inactive}with a #1# in #2# chance to",
-                    "{C:inactive}move back one position)",
+                    "{C:inactive,s:0.7}(Rolls #3# times",
+                    "{C:inactive,s:0.7}with a #1# in #2# chance to",
+                    "{C:inactive,s:0.7}move back one position)",
 				},
 			},
             rgmc_jade_seal = {
@@ -4619,7 +4655,8 @@ return {
 				name = "Anaglyphic Seal",
 				text = {
                     "If {C:attention}held{} in hand at end of round",
-                    "create a {C:attention}#1#{}",
+                    "{C:green}#1# in #2#{} chance to",
+                    "spawn a {C:red}Double {C:blue}Tag{}"
                 }
 			},
             rgmc_sunrise_seal = {

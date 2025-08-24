@@ -9,7 +9,7 @@ return {
         set     = "Planet",
         key     = "wormhole",
         atlas   = "planets",
-        pos     = MLIB.coords(1,6),
+        pos     = MLIB.coords(0,6),
         cost    = 8,
         aurinko = true,
         config  = { hand_type = 'rgmc_infoak', softlock = true },

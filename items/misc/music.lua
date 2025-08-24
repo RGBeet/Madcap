@@ -2,35 +2,37 @@ local list = {
     Madcap.Funcs.GetMusic('music_madcap_play',function()
 	return G.GAME
 		and G.GAME.modifiers.rgmc_deck
-		and Madcap.Funcs.is_playing_blind()
-		and not G.GAME.blind.boss
 		and 2
 	end, 0.8, true),
+
     Madcap.Funcs.GetMusic('music_madcap_shop',function()
 	return G.GAME
 		and G.GAME.modifiers.rgmc_deck
-		and G.STATE == G.STATES.SHOP
+		and G.shop
 		and 2
 	end, 0.8, true),
+
     Madcap.Funcs.GetMusic('music_madcap_booster',function()
 	return G.GAME
 		and G.GAME.modifiers.rgmc_deck
 		and Madcap.Funcs.is_choosing_card()
 		and 2
 	end, 0.8, true),
+
     Madcap.Funcs.GetMusic('music_madcap_celestial',function()
 	return G.GAME
 		and G.GAME.modifiers.rgmc_deck
 		and Madcap.Funcs.is_choosing_celestial()
 		and 2
 	end, 0.8, true),
+
     Madcap.Funcs.GetMusic('music_madcap_boss',function()
 	return G.GAME
 		and G.GAME.modifiers.rgmc_deck
-		and Madcap.Funcs.is_playing_blind()
 		and Madcap.Funcs.get_boss_status() > 0 -- regular boss blind
 		and 6
 	end, 0.8, true),
+
     Madcap.Funcs.GetMusic('music_madcap_unusual',function()
 		if G.jokers then
 			for i = 1, #G.jokers.cards do
@@ -53,12 +55,19 @@ local list = {
 		and Madcap.Funcs.is_finisher_ante(ante)
 		and 18
 	end, 0.8, true),
+
     Madcap.Funcs.GetMusic('music_madcap_farocar',function()
-	return G.GAME
-		and G.GAME.modifiers.rgmc_deck
-		and G.GAME.modifiers.rgmc_deck_farocar
+	return G.pack_cards
+        and G.pack_cards.cards
+        and G.pack_cards.cards[1]
+        and G.pack_cards.cards[1].ability.set == "p_rgmc_oops_all_spam"
 		and 4
 	end, 0.8, true),
+
+    Madcap.Funcs.GetMusic('music_madcap_lunacy',function()
+	return G.GAME and G.GAME.rgmc_total_mayhem
+		and 20
+	end, 0.8, false, 1.0),
 }
 
 return {

@@ -21,13 +21,8 @@ return {
         apply = function(self, tag, context)
             if context.type == self.config.type then
                 tag:yep('+'..tostring(self.config.extra.blind_increase), G.C.RED, function() return true end)
-                show_tag_effect_text("Blind Increased!")
-
-                if not self.config.extra.blind_increase then -- no blind increase? add one
-                    self.config.extra.blind_increase = 1 -- that's all you get, 1. now buzz off!
-                end
-
-                G.GAME.blind:add_chips(G.GAME.blind.chips * self.config.extra.blind_increase)
+                Madcap.Funcs.show_tag_effect_text("Blind Increased!")
+                G.GAME.blind:multiply_chips(1 + (self.config.blind_increase or 0.5))
                 tag.triggered = true
                 return true
             end

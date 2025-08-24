@@ -9,7 +9,7 @@ return {
         set     = "Planet",
         key     = "nowhere",
         atlas   = "planets",
-        pos     = MLIB.coords(1,5),
+        pos     = MLIB.coords(0,5),
         cost    = 6,
         aurinko = true,
         config  = { hand_type = 'rgmc_noak', softlock = true },

@@ -19,8 +19,8 @@ return {
         apply = function(self, tag, context)
             if context.type == self.config.type then
                 tag:yep('+', G.C.MONEY, function() return true end) -- Money
-                show_tag_effect_text("Blind Increased!")
-                G.GAME.blind:multiply_chips(self.config.blind_increase)
+                Madcap.Funcs.show_tag_effect_text("Blind Increased!")
+                G.GAME.blind:multiply_chips(1 + (self.config.blind_increase or 0.5))
                 ease_dollars(self.config.dollars) -- Add money
                 tag.triggered = true
                 return true

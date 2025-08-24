@@ -9,7 +9,7 @@ return {
         set     = "Planet",
         key     = "everywhere",
         atlas   = "planets",
-        pos     = MLIB.coords(1,7),
+        pos     = MLIB.coords(0,7),
         cost    = 8,
         aurinko = true,
         config  = { hand_type = 'rgmc_infoak_flush', softlock = true },

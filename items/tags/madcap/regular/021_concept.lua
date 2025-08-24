@@ -13,8 +13,8 @@ return {
             return G.jokers and #G.jokers.cards > 0
         end,
         apply = function(self, tag, context)
-            if target == nil and context.type == "tag_add" and context.tag.key ~= self.config.key then
-                target = context.tag -- mark the tag used
+            if self.config.target == nil and context.type == "tag_add" and context.tag.key ~= self.config.key then
+                self.config.target = context.tag -- mark the tag used
             end
             -- if the target tag is removed, then get the next tag above it
             if context.type == "tag_remove" and context.tag == self.config.target then
@@ -26,8 +26,13 @@ return {
                 end
             end
             -- copy
-            if target ~= nil and context.type == G.GAME.tags[self.config.target].config.type then
-                add_tag(Tag(self.config.key))
+            if 
+                self.config.target
+                and G.GAME.tags[self.config.target]
+                and context.type
+                and context.type == G.GAME.tags[self.config.target].config.type 
+            then
+                add_tag(Tag(G.GAME.tags[self.config.target].key)) -- add the key
             end
         end,
     }

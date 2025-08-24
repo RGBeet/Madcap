@@ -8,7 +8,7 @@ return {
         set     = "Planet",
         key     = "lobster",
         atlas   = "planets",
-        pos     = MLIB.coords(1,4),
+        pos     = MLIB.coords(0,4),
         cost    = 6,
         aurinko = true,
         config  = { hand_type = 'rgmc_kaleidoscope', softlock = true },

@@ -7,7 +7,7 @@ return {
         set     = "Planet",
         key     = "helios",
         atlas   = "planets",
-        pos     = MLIB.coords(1,3),
+        pos     = MLIB.coords(0,3),
         cost    = 5,
         aurinko = true,
         config  = { hand_type = 'rgmc_blazer', softlock = true },

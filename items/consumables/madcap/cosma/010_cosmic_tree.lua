@@ -25,18 +25,24 @@ return {
         atlas   = "cosma",
         pos 	= MLIB.coords(0,9),
         cost 	= 7,
-        config	= { extra = { money_a = 2, money_b = 2} },
+        config	= { extra = { dollars = 2} },
         loc_vars = function(self, info_queue, card)
-            return MadLib.collect_vars(math.ceil(card.ability.extra.money_a or 2), math.ceil(card.ability.extra.money_b or 2))
+            local total_money = 0
+            if G.playing_cards then
+                local suits, ranks 	= Madcap.Funcs.get_num_suits_and_ranks(G.playing_cards)
+                local rank_cash 	= math.floor(#ranks/3) * card.ability.extra.dollars
+                local suit_cash 	= math.floor(#suits/2) * card.ability.extra.dollars
+                total_money         = rank_cash + suit_cash
+            end
+            return MadLib.collect_vars(number_format(math.ceil(card.ability.extra.dollars)), number_format(math.ceil(card.ability.extra.dollars)), number_format(total_money))
         end,
         can_use = function(self, card)
             return G.deck and G.deck.cards
         end,
         use = function(self, card, area, copier)
             local suits, ranks 	= Madcap.Funcs.get_num_suits_and_ranks(G.playing_cards)
-            local rank_cash 	= math.floor(#ranks/3) * card.ability.extra.money_a
-            local suit_cash 	= math.floor(#suits/2) * card.ability.extra.money_b
-            local base 			= card.ability.extra.money or 2
+            local rank_cash 	= math.floor(#ranks/3) * card.ability.extra.dollars
+            local suit_cash 	= math.floor(#suits/2) * card.ability.extra.dollars
             ease_dollars(rank_cash + suit_cash)
         end
     }

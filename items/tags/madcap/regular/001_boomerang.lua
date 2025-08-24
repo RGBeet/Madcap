@@ -17,7 +17,7 @@ return {
         apply = function(self, tag, context)
             if context.type == self.config.type then
                 tag:yep('-'..tostring(self.config.x_blind), G.C.GREEN, function() return true end)
-                show_tag_effect_text("Blind Decreased!")
+                Madcap.Funcs.show_tag_effect_text("Blind Decreased!")
                 G.GAME.blind:multiply_chips(self.config.x_blind)
                 Madcap.Funcs.add_anti_tag('boomerang').config.x_blind = self.config.blind_increase
                 tag.triggered = true

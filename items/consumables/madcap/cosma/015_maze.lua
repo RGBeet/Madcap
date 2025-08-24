@@ -9,9 +9,12 @@ return {
         atlas   = "cosma",
         pos 	= MLIB.coords(1,4),
         cost 	= 6,
-        config	= { select = 2, extra = 2 },
+        config	= { select = 3, extra = 2 },
+        loc_vars = function(self, info_queue, card)
+            return MadLib.collect_vars(number_format(card.ability.select), number_format(card.ability.extra))
+        end,
         can_use = function(self, card)
-            return G.hand and #G.hand.cards > 0
+            return G.hand and #G.hand.cards > card.ability.select
         end,
         use = function(self, card, area, copier)
             local shuffled_deck = MadLib.shuffle_sort_list(G.hand.cards, nil, function(v)

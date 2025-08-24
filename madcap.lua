@@ -56,6 +56,9 @@ Madcap = {
 	},
 	Lists = {
 		AnTags = {},
+		AnTagConversions = {
+			['boomerang'] = 'anti_boomerang',
+		},
 		RoshamboKeys = {
 			'm_stone',
 			'm_lucky',
@@ -304,7 +307,7 @@ function Madcap.Funcs.blind_end()
         and G.GAME.blind.boss
     then
         G.GAME.boss_blinds = G.GAME.boss_blinds + 1
-        if G.GAME.blind.showdown then G.GAME.showdown_blinds = G.GAME.showdown_blinds + 1 end
+        if G.GAME.blind.boss and Madcap.Funcs.is_finisher_ante() then G.GAME.showdown_blinds = G.GAME.showdown_blinds + 1 end
     end
 
     if G.GAME.punisher_mode then
@@ -506,8 +509,9 @@ function Madcap.Funcs.record_hand_after(_chips, _mult, _pow)
     return true
 end
 
-
-
+function Madcap.Funcs.show_tag_effect_text(text)
+	attention_text({ scale = 1.25, text = text, hold = 2, align = 'cm', offset = {x = 0,y = -2.7}, major = G.play })
+end
 
 -- Checks if it's time for EXOTICS (Goblets and Towers) - like in Bunco
 function Madcap.Funcs.exotic_in_pool(suit)
@@ -676,44 +680,31 @@ end
 
 -- Used for new deck music.
 function Madcap.Funcs.is_playing_blind()
-    return G.STATE == G.STATES.SELECTING_HAND
-    or G.STATE == G.STATES.DRAW_TO_HAND
-    or G.STATE == G.STATES.HAND_PLAYED
-    or G.STATE == G.STATES.PLAY_TAROT
-    or G.STATE == G.STATES.GAME_OVER
-    or G.STATE == G.STATES.BLIND_SELECT
-    or G.STATE == G.STATES.ROUND_EVAL
-    or G.STATE == G.STATES.MENU
-    or G.STATE ==  G.STATES.NEW_ROUND
+    return G.GAME
 end
 
 -- Is choosing a card. (Used for music!)
 function Madcap.Funcs.is_choosing_card()
-    return G.STATE == G.STATES.TAROT_PACK
-        or G.STATE == G.STATES.PLANET_PACK
-        or G.STATE == G.STATES.SPECTRAL_PACK
-        or G.STATE == G.STATES.STANDARD_PACK
-        or G.STATE == G.STATES.BUFFOON_PACK
-        or G.STATE == G.STATES.SMODS_BOOSTER_OPENED
+    return G.booster_pack
 end
 
 -- Is choosing a Celestial / Spectral pack. (Used for music!)
 function Madcap.Funcs.is_choosing_celestial()
-    return G.STATE == G.STATES.PLANET_PACK
-        or G.STATE == G.STATES.SPECTRAL_PACK
+    return G.booster_pack_meteors
 end
 
 function Madcap.Funcs.get_boss_status()
-    return
-        not (G.GAME.blind
-        and G.GAME.blind.boss)
-    and 0 or
-        Madcap.Funcs.is_finisher_ante()
-    and 2 or 1
+	if not (G.GAME and G.GAME.blind and G.GAME.blind.boss and not G.GAME.blind.defeated) then
+		return 0
+	elseif not Madcap.Funcs.is_finisher_ante() then
+		return 1
+	else
+		return 2
+	end
 end
 
 function Madcap.Funcs.is_finisher_ante()
-	return G.GAME.round_resets.ante % G.GAME.win_ante == 0
+	return G.GAME.round_resets.ante > 0 and G.GAME.round_resets.ante % G.GAME.win_ante == 0
 end
 
 -- From Cryptid
@@ -1133,10 +1124,10 @@ end
 
 local ease_dollars_ref = ease_dollars
 function ease_dollars(mod, instant)
-	tell('Easing moment')
+	--tell('Easing moment')
 	if
 		G.GAME.modifiers.bankrupt_kill
-        and (G.GAME.dollars + mod) <= G.GAME.bankrupt_at
+        and (to_big(G.GAME.dollars) + to_big(mod)) <= to_big(G.GAME.bankrupt_at)
 	then
 		MadLib.event({
 			func = function()
@@ -1145,7 +1136,7 @@ function ease_dollars(mod, instant)
 			return true
 			end,
 			delay 	= 5.0,
-			trigger = 'immediate',
+			trigger = 'after',
 		})
 		MadLib.event({
 			func = function()
@@ -2833,14 +2824,15 @@ SMODS.load_file('lib/scoring.lua')()     	-- changes to the scoring system
 
 ]]
 
-function Madcap.Funcs.GetMusic(_k, _select, _vol, _sync)
+function Madcap.Funcs.GetMusic(_k, _select, _vol, _sync, _pitch)
     return {
 		object_type = "Sound",
 		key = _k,
 		path = _k..'.ogg',
 		volume = _vol or 0.8,
 		select_music_track = _select,
-		sync = _sync or true
+		sync = _sync or true,
+		pitch = _pitch,
 	}
 end
 

@@ -9,7 +9,7 @@ return {
         key     = "pagoon",
         atlas   = "spatia",
         pos     = MLIB.coords(2,1),
-        config  = { set = 'CosmaTarot', xmult = 0.10, xchips = 0.05 },
+        config  = { set = 'CosmaTarot', xmult = 0.05, xchips = 0.15 },
         cost    = 8,
         aurinko = true,
         loc_vars = function(self, info_queue, center)

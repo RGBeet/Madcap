@@ -9,7 +9,7 @@ return {
         key     = "luna",
         atlas   = "spatia",
         pos     = MLIB.coords(2,0),
-        config  = { set = 'Spectral', xmult = 0.15, xchips = 0.15 },
+        config  = { set = 'Spectral', xmult = 0.1, xchips = 0.1 },
         cost    = 8,
         aurinko = true,
         loc_vars = function(self, info_queue, center)

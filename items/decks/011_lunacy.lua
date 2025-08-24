@@ -82,11 +82,11 @@ return {
             end
 
             -- Plasma Deck
-            if (context.main_eval or context.final_scoring_step) then
+            if (context.final_scoring_step) then
                 return { balance = true }
             end
 
-            Madcap.DeckFuncs['pale'].calculate(self, card, context)
+            --Madcap.DeckFuncs['pale'].calculate(self, card, context)
             Madcap.DeckFuncs['cross'].calculate(self, card, context)
         end
     }
