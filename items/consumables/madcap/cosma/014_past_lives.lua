@@ -14,7 +14,7 @@ return {
             return MadLib.collect_vars(number_format(card.ability.extra))
         end,
         can_use = function(self, card)
-            return true
+            return G.GAME.dead_jokers and #G.GAME.dead_jokers > 0 -- at least one dead joker
         end,
         use = function(self, card, area, copier)
             local selection = MadLib.shuffle_sort_list(G.GAME.dead_jokers, self.config.jokers or 1, function(v)

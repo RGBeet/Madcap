@@ -16,7 +16,11 @@ function Madcap.Funcs.get_weighted_choice(choices)
         end
     end
 end
-
+Madcap.LifeMapOdds = {
+    [1] = 3,
+    [2] = 5,
+    [3] = 7,
+}
 Madcap.RarityUpgrades = {
 	[1] = {
         { value = 2, weight = 10 },
@@ -57,38 +61,41 @@ return {
         atlas   = "cosma",
         pos 	= MLIB.coords(1,0),
         cost 	= 6,
-        config	= { select = 1, extra = { odds = 3 } },
         loc_vars = function(self, info_queue, card)
-            local _numer, _denom = SMODS.get_probability_vars(self, 1, card.ability.extra.odds, 'life_map')
-            return MadLib.collect_vars(number_format(card.ability.select), number_format(_numer), number_format(_denom))
+            local rightmost_rarity = Madcap.LifeMapOdds[1]
+            if G.jokers and #G.jokers.cards > 0 then
+                rightmost_rarity = Madcap.LifeMapOdds[G.jokers.cards[#G.jokers.cards].config.center.rarity]
+            end
+            local _numer, _denom = SMODS.get_probability_vars(self, 1, rightmost_rarity or 0, 'life_map')
+            return MadLib.collect_vars(number_format(_numer), number_format(_denom))
         end,
         can_use = function(self, card)
-            return (G.jokers and #G.jokers.cards > 0)
+            local rightmost_rarity = nil
+            if G.jokers and #G.jokers.cards > 0 then
+                rightmost_rarity = Madcap.LifeMapOdds[G.jokers.cards[#G.jokers.cards].config.center.rarity]
+            end
+            return rightmost_rarity
         end,
         use = function(self, card, area, copier)
             local changed = {}
-            MadLib.number_func(self.config.select, function(i)
-                if
-                    SMODS.pseudorandom_probability(card, 'life_map', 1, card.ability.extra.odds)
-                    and G.jokers and (#G.jokers.cards - i + 1) > 0
-                then
-                    local joker = G.jokers.cards[#G.jokers.cards - i + 1]
-                    local center = joker.config.center
-                    if Madcap.RarityUpgrades[center.rarity] then
-                        local new_rarity = Madcap.Funcs.get_weighted_choice(Madcap.RarityUpgrades[center.rarity])
-						local nj = SMODS.add_card {
-                            set = "Joker",
-                            rarity = new_rarity
-                        }
-                        nj:set_edition(joker.edition or nil)
-						if not SMODS.is_eternal(joker) then joker:start_dissolve() end
-                    else
-                        card_eval_status_text(copier or card, 'extra', nil, nil, nil, { message = localize('k_nope_ex'), instant = true, sound = 'tarot2' });
-                    end
+            local rightmost_rarity = Madcap.LifeMapOdds[G.jokers.cards[#G.jokers.cards].config.center.rarity]
+            if SMODS.pseudorandom_probability(card, 'life_map', 1, rightmost_rarity) then
+                local joker = G.jokers.cards[#G.jokers.cards]
+                local center = joker.config.center
+                if Madcap.RarityUpgrades[center.rarity] then
+                    local new_rarity = Madcap.Funcs.get_weighted_choice(Madcap.RarityUpgrades[center.rarity])
+                    local nj = SMODS.add_card {
+                        set = "Joker",
+                        rarity = new_rarity
+                    }
+                    nj:set_edition(joker.edition or nil)
+                    if not SMODS.is_eternal(joker) then joker:start_dissolve() end
                 else
                     card_eval_status_text(copier or card, 'extra', nil, nil, nil, { message = localize('k_nope_ex'), instant = true, sound = 'tarot2' });
                 end
-            end)
+            else
+                card_eval_status_text(copier or card, 'extra', nil, nil, nil, { message = localize('k_nope_ex'), instant = true, sound = 'tarot2' });
+            end
         end
     }
 }

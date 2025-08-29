@@ -446,3 +446,65 @@ for i = 1, #G.GAME.tags do
   G.GAME.tags[i]:apply_to_run({type = 'luxury_add'})
 end
 '''
+
+# Add Void and Lantern info to compatible cards
+[[patches]]
+[patches.pattern]
+target = '''=[SMODS _ "src/game_object.lua"]'''
+pattern = '''desc_nodes.background_colour = res.background_colour'''
+position = 'before'
+payload = '''
+if card and card.config and card.config.center == G.P_CENTERS.c_base then
+  if card.base.suit == 'rgmc_voids' then
+    info_queue[#info_queue+1] = {
+        set = "Other",
+        key = 'rgmc_info_voids',
+        vars = { number_format(Madcap.Funcs.get_void_mayhem()) }
+    }
+  end
+  if card.base.suit == 'rgmc_lanterns' then
+    info_queue[#info_queue+1] = {
+        set = "Other",
+        key = 'rgmc_info_lanterns',
+        vars = { number_format(Madcap.Funcs.get_lantern_mayhem()) }
+    }
+  end
+end
+'''
+match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = 'functions/common_events.lua'
+pattern = '''if first_pass and not (_c.set == 'Edition') and badges then'''
+position = 'before'
+payload = '''
+if card and card.config and card.config.center == G.P_CENTERS.c_base then
+  if card.base.suit == 'rgmc_voids' then
+    info_queue[#info_queue+1] = {
+        set = "Other",
+        key = 'rgmc_info_voids',
+        vars = { number_format(Madcap.Funcs.get_void_mayhem()) }
+    }
+  end
+  if card.base.suit == 'rgmc_lanterns' then
+    info_queue[#info_queue+1] = {
+        set = "Other",
+        key = 'rgmc_info_lanterns',
+        vars = { number_format(Madcap.Funcs.get_lantern_mayhem()) }
+    }
+  end
+end
+'''
+match_indent = true
+
+# Add Madcap Jokers
+[[patches]]
+[patches.pattern]
+target = 'functions/UI_definitions.lua'
+pattern = "for _, v in ipairs(SMODS.ConsumableType.ctype_buffer) do"
+match_indent = true
+position = 'before'
+payload = '''
+table.insert(rates, { type = "MadcapJoker", val = G.GAME['madcap_content_rate'] })
+'''

@@ -1,3 +1,24 @@
+Madcap.Lists.MadcapUpgrades = {
+    ['m_bonus']     = {'m_rgmc_ferrous'},
+    ['m_mult']      = {'m_rgmc_wolfram'},
+    ['m_steel']     = {'m_rgmc_lustrous'},
+    ['m_wild']      = {'m_rgmc_bismuth'},
+    ['m_gold']      = {'m_rgmc_luxury'},
+}
+
+Madcap.Funcs.orb_compatible = function(card)
+    local enhancement = card.config.center.key
+    print(enhancement)
+    return enhancement == 'c_base'
+        or Madcap.Lists.MadcapUpgrades[enhancement] ~= nil
+end
+
+if next(SMODS.find_mod("MoreFluff")) then
+    Madcap.Lists.MadcapUpgrades['m_mf_monus']    = {'m_rgmc_magnet'}
+    Madcap.Lists.MadcapUpgrades['m_mf_cult']     = {'m_rgmc_signal'}
+    Madcap.Lists.MadcapUpgrades['m_mf_teal']     = {'m_rgmc_crystaltine'}
+end
+
 return {
     categories = {
         'Cosma Tarots'
@@ -15,36 +36,34 @@ return {
             return MadLib.collect_vars(number_format(card.ability.select), number_format(_numer), number_format(_denom))
         end,
         can_use = function(self, card)
-            return (G.hand and G.hand.cards and #G.hand.cards > 1)
+            local compatible = MadLib.get_list_matches(G.playing_cards,function(v)
+                return Madcap.Funcs.orb_compatible(v)
+            end)
+            return (G.hand and G.hand.cards and #compatible > 0)
         end,
         use = function (self, card, area, copier)
             Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 2, function(v)
-                return true -- must have suit
-            end, function(v, card)
-
+                return Madcap.Funcs.orb_compatible(v)
+            end, function(v)
                 if not SMODS.pseudorandom_probability(card, 'orbs', 1, card.ability.extra.odds) then -- add random enhancement
-                --print("this passes")
-                    local _enhancement = MadLib.get_weighted_enhancement()
-                    print(_enhancement)
-                    MadLib.event({
-                        func = function()
-                            v:juice_up(0.5,0.5)
-                            v:set_ability(G.P_CENTERS[_enhancement.center.key])
-                            return true
-                        end,
-                        delay 	= 0.5,
-                        trigger = 'immediate'
-                    })
-                else -- fucking blow up
-                --print("this does not pass")
+                    local selection = nil
+                    if v.config.center.key == 'c_base' then
+                        local pool = {}
+                        MadLib.loop_table(Madcap.Lists.MadcapUpgrades, function(k) table.insert(pool,k) end)
+                        selection = pseudorandom_element(pool, pseudoseed('orbs'))
+                    else
+                        selection = pseudorandom_element(Madcap.Lists.MadcapUpgrades[v.config.center.key])
+                    end
+                    v:set_ability(selection)
+                else
+                    tell('KABOOM!')
                     local _first_dissolve = nil
                     MadLib.simple_event(function()
-                        _card:start_dissolve(nil, _first_dissolve)
+                        v:start_dissolve(nil, _first_dissolve)
                         _first_dissolve = true
                         return true
                     end, 0.08, 'after')
                 end
-                -- juice
                 MadLib.simple_event(function()
                     v:juice_up()
                     return true

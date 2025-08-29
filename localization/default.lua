@@ -12,10 +12,8 @@ return {
 			b_rgmc_pale = {
 				name = "Pale Deck",
 				text = {
-					"{C:attention}#1#{} hand size, {C:blue{#2#{} hand(s)",
-					"At start of {C:attention}Blind{},",
-					"apply {C:attention}Negative{} and {C:attention}Twinkling{}",
-					"to #3# cards"
+                    "Start run with {C:attention}Echoes{} and {C:attention}Projection{}",
+                    "{C:attention}-#1#{} hand size",
 				},
 			},
 			b_rgmc_hexing = {
@@ -64,9 +62,34 @@ return {
 			b_rgmc_giga = {
 				name = "Giga Deck",
 				text = {
-					"{C:attention+#1#{} hand size",
-					"{C:attention}#2#{} play limit",
-					"{C:attention}X#3#{} blind size"
+					"{C:attention}+1#{} hand size",
+					"{C:attention}+1#{} play limit",
+					"{C:attention}X#3#{} blind size",
+                    "Must play at least {C:attention}2{} cards"
+				},
+			},
+			b_rgmc_cosmic = {
+				name = "Cosmic Deck",
+				text = {
+					"???"
+				},
+			},
+			b_rgmc_spatial = {
+				name = "Cosmic Deck",
+				text = {
+					"???"
+				},
+			},
+			b_rgmc_beetroot = {
+				name = "Beetroot Deck",
+				text = {
+					"???"
+				},
+			},
+			b_rgmc_argentum = {
+				name = "Argentum Deck",
+				text = {
+					"???"
 				},
 			},
 			b_rgmc_mayhem = {
@@ -2027,7 +2050,7 @@ return {
 				name = "Ferrous Card",
 				text = {
                     "{C:chips}+#1#{} bonus chips",
-                    "Gains {C:chips}+#2#{} chips",
+                    "Gains {C:chips}+#2#{} Chips",
                     "if held in hand at",
                     "end of {C:attention}round{}",
 				},
@@ -2036,7 +2059,7 @@ return {
 				name = "Wolfram Card",
 				text = {
                     "{C:mult}+#1#{} bonus mult",
-                    "Gains {C:mult}+#2#{} mult",
+                    "Gains {C:mult}+#2#{} Mult",
                     "if held in hand at",
                     "end of {C:attention}round{}",
 				},
@@ -2079,8 +2102,8 @@ return {
                     { "No {C:attention}rank{} or {C:attention}suit{}",
                     "Gains a {C:rgmc_bismuth}random power{}",
                     "upon entering hand" },
-                    { "Comes in {C:red}red{}, {C:gold}gold{}, {C:green}green{},",
-                    "{C:blue}blue{}, and {C:purple}purple{}" }
+                    { "Comes in {C:red}Red{}, {C:gold}Gold{}, {C:green}Green{},",
+                    "{C:blue}Blue{}, and {C:purple}Purple{}" }
 				},
 			},
 			m_rgmc_lazurite = {
@@ -2104,7 +2127,7 @@ return {
 			m_rgmc_plumbum = {
 				name = "Plumbum Card",
 				text = {
-                    { "{X:mult,C:white}X#1#{} Mult when scored" },
+                    { "{X:mult,C:white}X#1#{} Mult" },
                     { "Always shuffled to {C:attention}back{} of deck",
                         "{C:inactive}The heaviest card..." },
 				},
@@ -2120,9 +2143,9 @@ return {
                     },
                     {
                         "When included in {C:attention}scoring{} hand,",
-                        "this card {C:attention}reduces{}",
-                        "the minimum card requirement",
-                        "for {C:rgmc_bismuth}all subhands{} by {C:attention}1{}",
+                        "this card {C:attention}reduces{} the",
+                        "minimum card requirement for",
+                        "{C:rgmc_bismuth}all subhands{} by {C:attention}1{}",
                     }
 				},
 			},
@@ -2660,7 +2683,7 @@ return {
                     "Gives {C:attention}most played{} hand",
                     "{C:inactive}(Currently {C:attention,E:1}#1#{}{C:inactive})",
                     "{X:mult,C:white}X#2#{} Mult and {X:chips,C:white}X#3#{} Chips",
-                    "per {C:rgmc_cosmatarot}Cosma{} Tarot used{}",
+                    "per {C:cosmatarot}Cosma{} Tarot used{}",
                     "this Ante",
                     "{C:inactive}(Currently {X:chips,C:white}X#4#{C:inactive} and {X:mult,C:white}X#5#{C:inactive})"
                 },
@@ -2851,12 +2874,12 @@ return {
                 name = 'Demise',
                 text = {
                     "Spawns a random",
-                    "{C:rgmc_cosmatarot}Cosma Tarot{}",
+                    "{C:cosmatarot}Cosma Tarot{}",
                     "{C:green}#1# in #2#{} chance",
                     "to instead copy",
-                    "last used {C:rgmc_cosmatarot}Cosma Tarot",
+                    "last used {C:cosmatarot}Cosma Tarot",
                     "{C:inactive}(Currently {C:attention}#3#{C:inactive})",
-                    "{s:0.8,C:rgmc_cosmatarot}Demise{s:0.8} excluded"
+                    "{s:0.8,C:cosmatarot}Demise{s:0.8} excluded"
                 }
             },
             c_rgmc_crow = {
@@ -3019,7 +3042,7 @@ return {
                 text = {
                     "Randomly select {C:attention}#1#{}",
                     "{C:rgmc_light}Light{} cards,",
-                    "then {C:rgmc_cosmatarot,S:1}Invert{} them",
+                    "then {C:cosmatarot,S:1}Invert{} them",
                     "into their {C:rgmc_dark}Dark{}",
                     "counterparts"
                 }
@@ -3029,7 +3052,7 @@ return {
                 text = {
                     "Randomly select {C:attention}#1#{}",
                     "{C:rgmc_dark}Dark{} cards,",
-                    "then {C:rgmc_cosmatarot,S:1}Invert{} them",
+                    "then {C:cosmatarot,S:1}Invert{} them",
                     "into their {C:rgmc_light}Light{}",
                     "counterparts"
                 }
@@ -3525,7 +3548,7 @@ return {
                 name = 'Aspire',
                 text = {
                     "If held {C:tarot}Tarot{} has a",
-                    "{E:1,C:rgmc_cosmatarot}Cosma{} equivalent,",
+                    "{E:1,C:cosmatarot}Cosma{} equivalent,",
                     "convert it into equivalent",
                 }
             },
@@ -3643,13 +3666,13 @@ return {
 				name = "Jackpot Tag",
 				text = {
 					"{C:green}#1# in #2#{} chance to",
-                    "create a {C:rgmc_cosmatarot}Cogito Tag{}",
+                    "create a {C:cosmatarot}Cogito Tag{}",
                 },
 			},
 			tag_rgmc_cogito = {
 				name = "Cogito Tag",
 				text = {
-					"Gives a free {C:rgmc_cosmatarot}Cosma Pack",
+					"Gives a free {C:cosmatarot}Cosma Pack",
 					"with {C:rgmc_unusual,E:1}Sleeping Ships",
                     "{C:green}#1# in #2#{} chance to also",
                     "contain {C:rgmc_chaotic,E:1}Aversion",
@@ -3886,6 +3909,21 @@ return {
                     "random poker hands"
 				},
 			},
+            tag_promotion = {
+                name = "Promotion Tag",
+                text = {
+                    "After defeating",
+                    "the Boss Blind,",
+                    "gain {C:rgmc_luxury}£#1#"
+                }
+            },
+            tag_twofer = {
+                name = "Twofer Tag",
+                text = {
+                    "Adds {C:attention}#1#{} {C:voucher}Vouchers",
+                    "to the next shop"
+                }
+            },
         },
         Voucher = {
             -- Overkill
@@ -3901,8 +3939,8 @@ return {
 				name = "Supersize",
 				text = {
 					"Spawns an extra {C:attention}Reward{}",
-					"for every {C:dark_edition}^#1#{} score",
-					"above blind requirement",
+					"for every {X:dark_edition,C:white}^#1#{} Score",
+					"above blind requirements",
                     "{C:inactive}(up to {C:attention}9{C:inactive} Rewards)"
 				},
 			},
@@ -3910,15 +3948,15 @@ return {
 			v_rgmc_everyman = {
 				name = "Everyman",
 				text = {
-					"{C:blue}Common{} Jokers give...",
-					"{X:rgmc_xscore,C:white}X#1#{} Score?"
+					"Each {C:blue}Common{} Joker give",
+					"{X:rgmc_xscore,C:white}X#1#{} Score"
 				},
 			},
 			v_rgmc_exceptional = {
 				name = "Exceptional",
 				text = {
-					"{C:blue}Common{} Jokers give...",
-					"{X:rgmc_purple,C:white}^#1#{} Score?!"
+					"Each {C:blue}Common{} Joker give",
+					"{X:rgmc_purple,C:white}^#1#{} Score"
 				},
 			},
             -- Bonus/mult enhancements
@@ -3943,7 +3981,8 @@ return {
 				name = "High Rise",
 				text = {
 					"Playing {C:attention}High Card",
-					"retriggers all {C:attention}scoring{} cards",
+					"retriggers all",
+                    "{C:attention}scoring{} cards",
 					"{C:attention}#1# time(s){}"
 				},
 			},
@@ -3960,17 +3999,23 @@ return {
 			v_rgmc_manifest = {
 				name = "Manifest",
 				text = {
-					"The game gets {C:rgmc_mayhem}madder{}...",
-                    "({C:rgmc_mayhem}+#1#{} Mayhem)",
+                    "{C:rgmc_mayhem}+#1#{} Mayhem",
                     "{C:attention}+#2#{} Ante",
+					"{C:inactive}The game gets madder...",
 				},
 			},
 			v_rgmc_mindmelt = {
 				name = "Mindmelt",
 				text = {
-					"Your mind begins to {C:rgmc_mayhem}melt{}...",
-                    "({C:rgmc_mayhem}+#1#{} Mayhem)",
+                    "{C:rgmc_mayhem}+#1#{} Mayhem",
 					"{C:attention}+#2#{} Ante",
+					"{C:inactive}Your mind begins to melt...",
+				},
+			},
+			v_rgmc_joker = {
+				name = "Joker",
+				text = {
+                    "{C:mult}+#1#{} Mult{C:inactive}...?"
 				},
 			},
             -- Void/Lantern suits
@@ -3995,15 +4040,32 @@ return {
 				name = "Cosmic Merchant",
 				text = {
                     "{C:cosmatarot}Cosma Tarot{} cards",
-                    "may appear in the {C:attention}Shop",
+                    "appear #1#X more frequently",
+                    "in the shop"
 				},
 			},
 			v_rgmc_cosma_tycoon = {
 				name = "Cosmic Tycoon",
 				text = {
-                    "After clearing a Boss Blind,",
-                    "Add a {C:rgmc_cosmatarot}Cosma Pack{} to",
-                    "the next {C:attention}Shop{}"
+                    "{C:cosmatarot}Cosma Tarot{} cards",
+                    "appear #1#X more frequently",
+                    "in the shop"
+				},
+			},
+            -- Spatia/Potentia
+			v_rgmc_spatia_traveller = {
+				name = "Spatial Traveller",
+				text = {
+                    "{C:spatiaplanet}Spatia Planet{} cards",
+                    "may appear in the shop",
+				},
+			},
+			v_rgmc_true_potential = {
+				name = "True Potential",
+				text = {
+                    "{C:spatiaplanet}Spatia Planet{} cards",
+                    "are #1#X more likely",
+                    "to contain {C:potentiacrystal}Potentia Crystals{}"
 				},
 			},
             -- Planet Leveling
@@ -4047,64 +4109,79 @@ return {
 			v_rgmc_day_and_night = {
 				name = "{C:rgmc_light}Day{} and {C:rgmc_dark}Night{}",
 				text = {
-                    "Hands can now gain",
-                    "additional chips and mult",
-                    "from {C:rgmc_light}Light{} and {C:rgmc_dark}Dark{}",
-                    "sub-hands"
+                    "Hands can now gain additional",
+                    "{C:chips}Chips{} and {C:mult}Mult{} from",
+                    "{C:rgmc_light}Light{} and {C:rgmc_dark}Dark{} subhands",
+                    "{C:inactive}(At least {C:attention}#1#{C:inactive} cards",
+                    "{C:inactive}containing {C:rgmc_light}Light{C:inactive}/{C:rgmc_dark}Dark{C:inactive} suits)"
 				},
 			},
 			v_rgmc_midday = {
 				name = "{C:rgmc_light}Midday",
 				text = {
                     "Boosts the power of",
-                    "{C:rgmc_light}Light{} sub-hands"
+                    "{C:rgmc_light}Light{} subhands",
+                    "{C:inactive}(At least {C:attention}#1#{C:inactive} cards",
+                    "{C:inactive}containing {C:rgmc_light}Light{C:inactive} suits)"
 				},
 			},
 			v_rgmc_midnight = {
 				name = "{C:rgmc_dark}Midnight",
 				text = {
                     "Boosts the power of",
-                    "{C:rgmc_dark}Dark{} sub-hands"
+                    "{C:rgmc_dark}Dark{} subhands",
+                    "{C:inactive}(At least {C:attention}#1#{C:inactive} cards",
+                    "{C:inactive}containing {C:rgmc_dark}Dark{C:inactive} suits)"
 				},
 			},
 			v_rgmc_twilight = {
-				name = "Twilight",
+				name = "{C:rgmc_light}Twil{C:rgmc_dark}ight",
 				text = {
                     "Further empowers",
-                    "{C:attention}Light{} and {C:attention}Dark{}",
-                    "sub-hands"
+                    "{C:attention}Light{} and {C:attention}Dark{} sub-hands",
+                    "{C:inactive}(At least {C:attention}#1#{C:inactive} cards",
+                    "{C:inactive}containing {C:rgmc_light}Light{C:inactive}/{C:rgmc_dark}Dark{C:inactive} suits)"
 				},
 			},
             -- High/Low
 			v_rgmc_ebb_and_flow = {
 				name = "Ebb and Flow",
 				text = {
-                    "Hands can now gain",
-                    "additional chips and mult",
-                    "from {C:attention}High{} and {C:attention}Low{}",
-                    "sub-hands"
+                    "Hands can now gain additional",
+                    "{C:chips}Chips{} and {C:mult}Mult{} from",
+                    "{C:attention}High{} and {C:attention}Low{} subhands",
+                    "{C:inactive}(At least {C:attention}#1#{C:inactive} cards",
+                    "{C:inactive}containing ranks",
+                    "{C:attention}above #2#{C:inactive}/{C:attention}below #3#{C:inactive})"
 				},
 			},
 			v_rgmc_eensy_weensy = {
 				name = "Eensy Weensy",
 				text = {
                     "Boosts the power of",
-                    "{C:attention}Low{} sub-hands"
+                    "{C:attention}Low{} subhands",
+                    "{C:inactive}(At least {C:attention}#1#{C:inactive} cards",
+                    "{C:inactive}containing ranks",
+                    "{C:attention}below #2#{C:inactive})"
 				},
 			},
 			v_rgmc_extra_large = {
 				name = "Extra Large",
 				text = {
                     "Boosts the power of",
-                    "{C:attention}High{} sub-hands"
+                    "{C:attention}High{} subhands",
+                    "{C:inactive}(At least {C:attention}#1#{C:inactive} cards",
+                    "{C:inactive}containing ranks {C:attention}above #2#{C:inactive})"
 				},
 			},
 			v_rgmc_median = {
 				name = "The Median",
 				text = {
                     "Further empowers",
-                    "{C:attention}High{} and {C:attention}Low{}",
-                    "sub-hands"
+                    "{C:attention}High{} and {C:attention}Low{} subhands",
+                    "{C:inactive}(At least {C:attention}#1#{C:inactive} cards",
+                    "{C:inactive}containing ranks",
+                    "{C:attention}above #2#{C:inactive}/{C:attention}below #3#{C:inactive})"
 				},
 			},
             -- Dazzling
@@ -4112,16 +4189,21 @@ return {
 				name = "Radiance",
 				text = {
                     "Hands can now gain",
-                    "additional chips and mult",
-                    "from {C:rgmc_bismuth}Dazzling{}",
-                    "sub-hands"
+                    "additional {C:chips}Chips{} and {C:mult}Mult",
+                    "from {C:rgmc_bismuth}Dazzling{} subhands",
+                    "{C:inactive}(At least {C:attention}#1#{C:inactive} cards",
+                    "{C:inactive}containing {C:rgmc_bismuth}unique",
+                    "{C:inactive} enhancements"
 				},
 			},
 			v_rgmc_brilliance = {
 				name = "Brilliance",
 				text = {
                     "Boosts the power of",
-                    "{C:rgmc_bismuth}Dazzling{} sub-hands"
+                    "from {C:rgmc_bismuth}Dazzling{} subhands",
+                    "{C:inactive}(At least {C:attention}#1#{C:inactive} cards",
+                    "{C:inactive}containing {C:rgmc_bismuth}unique",
+                    "{C:inactive} enhancements"
 				},
 			},
             -- AnTags
@@ -4211,42 +4293,42 @@ return {
 				name = "Cosma Pack",
 				text = {
 					"Choose {C:attention}#1#{} of up to",
-					"{C:attention}#2#{C:rgmc_cosmatarot} Cosma Tarot{} cards",
+					"{C:attention}#2#{C:cosmatarot} Cosma Tarot{} cards",
 				},
 			},
 			p_rgmc_cosma_jumbo = {
 				name = "Jumbo Cosma Pack",
 				text = {
 					"Choose {C:attention}#1#{} of up to",
-					"{C:attention}#2#{C:rgmc_cosmatarot} Cosma Tarot{} cards",
+					"{C:attention}#2#{C:cosmatarot} Cosma Tarot{} cards",
 				},
 			},
 			p_rgmc_cosma_mega = {
 				name = "Mega Cosma Pack",
 				text = {
 					"Choose {C:attention}#1#{} of up to",
-					"{C:attention}#2#{C:rgmc_cosmatarot} Cosma Tarot{} cards",
+					"{C:attention}#2#{C:cosmatarot} Cosma Tarot{} cards",
 				},
 			},
 			p_rgmc_spatia_normal = {
 				name = "Spatia Pack",
 				text = {
 					"Choose {C:attention}#1#{} of up to",
-					"{C:attention}#2#{C:rgmc_spatiaplanet} Spatia Planet{} cards",
+					"{C:attention}#2#{C:spatiaplanet} Spatia Planet{} cards",
 				},
 			},
 			p_rgmc_spatia_jumbo = {
 				name = "Jumbo Spatia Pack",
 				text = {
 					"Choose {C:attention}#1#{} of up to",
-					"{C:attention}#2#{C:rgmc_spatiaplanet} Spatia Planet{} cards",
+					"{C:attention}#2#{C:spatiaplanet} Spatia Planet{} cards",
 				},
 			},
 			p_rgmc_spatia_mega = {
 				name = "Mega Spatia Pack",
 				text = {
 					"Choose {C:attention}#1#{} of up to",
-					"{C:attention}#2#{C:rgmc_spatiaplanet} Spatia Planet{} cards",
+					"{C:attention}#2#{C:spatiaplanet} Spatia Planet{} cards",
 				},
 			},
 			p_rgmc_cogito = {
@@ -4334,8 +4416,9 @@ return {
 				name = "Oops! All SPAM",
 				text = {
 					"Choose {C:attention}#1#{} of up to {C:attention}#2#{}...",
-					"{C:rgmc_gimmick}SPAM! Jokers? ... What.",
+					"{C:rgmc_gimmick}SPAM! Jokers?{}... What.",
                     "Who approved this.",
+                    "What a stupid booster pack.",
                     "{C:inactive}(Must have room!)",
 				},
 			},
@@ -4363,18 +4446,25 @@ return {
 					"{C:rgmc_towers}Towers{}, and {C:rgmc_daggers}Daggers{}"
 				},
             },
-            rgmc_suit_info_void = {
+            rgmc_info_voids = {
 				name = "Void Suit",
 				text = {
 					"{C:rgmc_mayhem}+#1#{} Mayhem",
 					"when scored"
 				},
             },
-            rgmc_suit_info_lantern = {
+            rgmc_info_lanterns = {
 				name = "Lantern Suit",
 				text = {
 					"{C:rgmc_mayhem}-#1#{} Mayhem",
 					"when scored"
+				},
+            },
+            rgmc_info_jumble = {
+				name = "{C:red}Jumbled{}",
+				text = {
+					"This {C:attention}#1#{} of {C:attention}#2#{}",
+                    "counts as a {C:green}#3#{} of {C:green}#4#{}"
 				},
             },
             -- Chinese Takeout descriptions - yum!
@@ -4498,8 +4588,56 @@ return {
 					"{C:attention}Destroys{} all scored cards"
 				},
             },
-
-            -- Lollipop accumulate
+            rgmc_chinese_effect9 = {
+				name = "General Tsao's Chicken...?!",
+				text = {
+					"{X:rgmc_xscore,C:white}X#1#{} Score"
+				},
+            },
+            -- subhand descriptions
+            rgmc_subhand_high = {
+				name = "Low Subhand",
+				text = {
+					"Contains at least {C:attention}#1#{} cards",
+                    "with ranks of {C:attention}#2#{} or higher"
+				},
+            },
+            rgmc_subhand_low = {
+				name = "Low Subhand",
+				text = {
+					"Contains at least {C:attention}#1#{} cards",
+                    "with ranks of {C:attention}#2#{} or higher"
+				},
+            },
+            rgmc_subhand_light = {
+				name = "Light Subhand",
+				text = {
+					"Contains at least {C:attention}#1#{} cards",
+                    "with {C:rgmc_light}Light{} Suits",
+				},
+            },
+            rgmc_subhand_dark = {
+				name = "Dark Subhand",
+				text = {
+					"Contains at least {C:attention}#1#{} cards",
+                    "with {C:rgmc_dark}Dark{} Suits",
+				},
+            },
+            rgmc_subhand_neutral = {
+				name = "Neutral Subhand",
+				text = {
+					"Contains at least {C:attention}#1#{} cards",
+                    "with an equal number",
+                    "of {C:rgmc_light}Light{} and {C:rgmc_dark}Dark{} Suits",
+				},
+            },
+            rgmc_subhand_dazzling = {
+				name = "Dazzling Subhand",
+				text = {
+					"Contains at least {C:attention}#1#{} cards",
+                    "with {C:rgmc_bismuth}unique{} enhancements",
+				},
+            },
 
             rgmc_accum_mult     = { name = "+Mult", text = { "{C:mult}+#1#{} Mult" } },
             rgmc_accum_chips    = { name = "+Chips", text = { "{C:mult}+#1#{} Chips" } },

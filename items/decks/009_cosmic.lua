@@ -1,0 +1,23 @@
+return {
+    categories = {
+        'Decks',
+        'Cosma Tarots',
+    },
+    data = {
+        object_type = "Back",
+        key     = "cosmic",
+        atlas   = 'decks',
+        pos     = MLIB.coords(2,1),
+        config = { 
+            vouchers = { 'v_cosma_merchant' }, 
+            consumables = { 'c_rgmc_demise' } 
+        },
+        loc_vars = function(self, info_queue, back)
+            return {
+                vars = { localize { type = 'name_text', key = self.config.vouchers[1], set = 'Voucher' },
+                localize { type = 'name_text', key = self.config.consumables[1], set = 'CosmaTarot' }
+                }
+            }
+        end,
+    }
+}

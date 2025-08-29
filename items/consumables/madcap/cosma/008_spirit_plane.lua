@@ -1,3 +1,10 @@
+function Madcap.Funcs.get_enhancements_from_cards(cards)
+    local enhancement_table = {}
+    MadLib.loop_func(cards, function(v) enhancement_table[v.config.center] = true end)
+    return enhancement_table
+end
+
+--function Madcap.Funcs.use_cosma(self, card, area, copier, num_cards, check, func)
 return {
     categories = {
         'Cosma Tarots'
@@ -15,21 +22,15 @@ return {
         end,
         can_use = function(self, card)
             return (G.hand and G.hand.cards and #G.hand.cards > 1)
-                and (G.GAME.blind_info and G.GAME.blind_info.suits_played)
         end,
         use = function (self, card, area, copier)
-            -- targets cards with no enhancement
-            local sorted_hand = MadLib.shuffle_sort_list(G.hand.cards, self.config.select or 2, nil, function(a,b)
-                return (a:has_enhancement() and 0 or 1) > (b:has_enhancement() and 0 or 1)
-            end)
-            Madcap.Funcs.use_cosma(self, card, area, copier, 3, function(v)
-                return true -- must have suit
-            end, function(v, card)
-                local _enhancement = pseudorandom_element(_enhancement, pseudoseed('spirit_plane')) -- pick a suit
-                MadLib.simple_event(function()
-                    v:set_ability(G.P_CENTERS[_enhancement.center.key])
-                    return true
-                end, 0.2, 'after')
+            local enhancements = Madcap.Funcs.get_enhancements_from_cards(G.hand.cards)
+
+            Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 2, function(v) return true end, function(v)
+                local random_enhancement = #enhancements > 0
+                    and pseudorandom_element(enhancements, pseudoseed('spirit_plane'))
+                    or SMODS.poll_enhancement { key = 'spirit_plane', guaranteed = true }
+                v:set_ability(random_enhancement)
             end)
         end
     }

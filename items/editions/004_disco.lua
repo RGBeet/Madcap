@@ -88,7 +88,7 @@ return {
                     }
                 elseif choice == 'x_score' then
                     MadLib.simple_event(function()
-                        G.GAME.chips = to_big(G.GAME.chips) * to_big(amt)
+                        G.GAME.chips = to_big(G.GAME.chips) * to_big(self.config[choice])
                         G.HUD:get_UIE_by_ID('chip_UI_count'):juice_up(0.3, 0.3)
                         play_sound('holo1')
                         return true

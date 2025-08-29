@@ -25,7 +25,7 @@ return {
         atlas   = "cosma",
         pos 	= MLIB.coords(0,9),
         cost 	= 7,
-        config	= { extra = { dollars = 2} },
+        config	= { extra = { dollars = 1 } },
         loc_vars = function(self, info_queue, card)
             local total_money = 0
             if G.playing_cards then

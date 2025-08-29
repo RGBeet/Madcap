@@ -14,22 +14,36 @@ return {
         apply = function(self, tag, context)
             if context.type == self.config.type then
                 -- Pseudo-sorted
-                local joker_list = MadLib.get_sorted_list(MadLib.get_list_matches(G.jokers.cards, function(v)
-                    return not v:is_invulnerable()
-                end), function(a,b)
+                local jokers = MadLib.get_list_matches(G.jokers.cards, function(v)
+                    return not SMODS.is_eternal(v)
+                end)
+
+                table.sort(jokers, function(a,b)
                     return MadLib.get_rarity_value(a.config.center.rarity) + math.random()*2 < MadLib.get_rarity_value(b.config.center.rarity)
                 end)
+
                 -- Destroy old jokers, make new jokers
-                for i=1, #math.min(self.config.extra,joker_list) do
-                    local target 		= joker_list[i]
-                    local new_rarity 	= MadLib.get_higher_rarity(target.config.center.rarity)
-                    target:start_dissolve({ G.C.RED }, nil, 1.6)
-                    card = create_card("Joker", context.area, nil, "cry_epic", nil, nil, nil, "cry_eta")
-                    local hittable = {
-                        set = "Joker",
-                        rarity = new_rarity
-                    }
-                    SMODS.add_card(hittable)
+                for i=1, math.min(#G.jokers.cards, self.config.extra) do
+                    local target = G.jokers.cards[i]
+                    local new_rarity = MadLib.get_higher_rarity(target.config.center.rarity)
+
+                    MadLib.simple_event(function()
+                        target:start_dissolve({ G.C.RED }, nil, 1.6)
+                        return true
+                    end, 1.0, 'after')
+
+                    MadLib.simple_event(function()
+                        play_sound("timpani")
+                        local card = create_card("Joker", G.jokers, nil, new_rarity, nil, nil, nil, "rgmc_exchange")
+                        card:add_to_deck()
+                        G.jokers:emplace(card)
+                        card:juice_up(0.3, 0.5)
+                        return true
+                    end, 2.0, 'after')
+
+                    tag:yep('~', G.C.DARK_EDITION, function() return true end)
+                    tag.triggered = true
+                    return true
                 end
             end
         end,

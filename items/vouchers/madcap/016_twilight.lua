@@ -8,6 +8,9 @@ return {
         atlas   = 'vouchers',
         key 	= "twilight",
         cost 	= 11,
+        loc_vars = function(self, info_queue)
+            return { vars = { G.GAME.subhand_minimum or 5 } }
+        end,
         requires = MadLib.get_voucher_reqs('rgmc_day_and_night','rgmc_midday','rgmc_midnight'),
         redeem 	= function(self)
             MadLib.simple_event(function()

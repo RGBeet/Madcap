@@ -14,37 +14,39 @@ return {
             return MadLib.collect_vars(number_format(card.ability.select), number_format(card.ability.extra))
         end,
         can_use = function(self, card)
-            return G.hand and #G.hand.cards > card.ability.select
+            return G.hand and
+                #G.hand.cards > card.ability.select
+                and #MadLib.get_list_matches(G.hand.cards, function(v)
+                    return not SMODS.has_no_rank(v)
+                    and not SMODS.has_no_suit(v)
+                end) > self.config.select
         end,
         use = function(self, card, area, copier)
-            local shuffled_deck = MadLib.shuffle_sort_list(G.hand.cards, nil, function(v)
-                return not SMODS.has_no_rank(self) and not SMODS.has_no_suit(self)
-            end, function(a,b)
-                if math.random() < 0.5 then
-                    return true
-                else
-                    return false
-                end
-            end)
 
+            -- Get list matches
+            local seed = pseudoseed('maze')
+            local valid = copy_table(G.hand.cards)
+            pseudoshuffle(valid, seed)
+
+            -- Get suits and ranks
             local shuffle_suits, shuffle_ranks = {}, {}
             local save_n = math.min(self.config.select, #G.hand.cards)
-            for i = save_n+1, #G.hand.cards do -- for the first
-                table.insert(shuffle_suits, shuffled_deck[i].base.suit)
-                table.insert(shuffle_ranks, shuffled_deck[i].base.value)
+            MadLib.loop_func(valid, function(v,i)
+                if not i > save_n then return end
+                table.insert(shuffle_ranks, v.base.value)
+                table.insert(shuffle_suits, v.base.suit)
+            end)
+            pseudoshuffle(shuffle_ranks, seed)
+            pseudoshuffle(shuffle_suits, seed)
+
+            local change_suits, change_ranks = 0, 0
+            for i=save_n, #G.hand.cards do
+                if G.hand.cards[i].base.value ~= shuffle_ranks[i-save_n+1] then change_ranks = change_ranks + 1 end
+                if G.hand.cards[i].base.suit ~= shuffle_suits[i-save_n+1] then change_suits = change_suits + 1 end
             end
 
-            -- shuffle everything
-            pseudoshuffle(shuffle_ranks, pseudoseed('rgmc_maze'))
-            pseudoshuffle(shuffle_suits, pseudoseed('rgmc_maze'))
-
-            local change_cards = {}
-
-            for i = save_n+1, #G.hand.cards do -- for the first
-                table.insert(change_cards, G.hand.cards[i - save_n])
-            end
-
-            Madcap.Funcs.use_cosma(self, card, area, copier, #change_cards, function(v,card,i)
+            --function Madcap.Funcs.use_cosma(self, card, area, copier, num_cards, check, func)
+            Madcap.Funcs.use_cosma(self, card, area, copier, #change_cards, function(v,c,i)
                 return (v.base.value ~= shuffle_ranks[i]) or (v.base.suit ~= shuffle_suits[i])
             end, function(v)
                 assert(SMODS.change_base(v, shuffle_suits[i], shuffle_ranks[i]))

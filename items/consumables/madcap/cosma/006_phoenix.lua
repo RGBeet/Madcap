@@ -19,14 +19,10 @@ return {
         use = function (self, card, area, copier)
             Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 2, function(v)
                 return true -- must have suit
-            end, function(v, card)
-                MadLib.simple_event(function()
-                    local _value = card.base.nominal/2
-                    v.ability.perma_chips   = (v.ability.perma_chips or 0) - card.base.nominal/2
-                    v.ability.perma_mult 	= (v.ability.perma_mult or 0) + _value * (card.ability.extra or 0.2)
-                    v:juice_up()
-                    return true
-                end, 0.5, 'after')
+            end, function(v)
+                local _value = v.base.nominal/2
+                v.ability.perma_chips   = (v.ability.perma_chips or 0) - _value
+                v.ability.perma_mult 	= (v.ability.perma_mult or 0) + _value * (card.ability.extra or 0.2)
             end)
         end
     }

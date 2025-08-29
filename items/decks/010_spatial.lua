@@ -1,0 +1,27 @@
+return {
+    categories = {
+        'Decks',
+        'Subhands',
+        'Spatia Planets'
+    },
+    data = {
+        object_type = "Back",
+        key     = "spatial",
+        atlas   = 'decks',
+        pos     = MLIB.coords(2,2),
+        config = {
+            vouchers = { 
+                'v_rgmc_day_and_night',
+                'v_rgmc_ebb_and_flow'
+            }, 
+        },
+        loc_vars = function(self, info_queue, back)
+            return {
+                vars = { 
+                    localize { type = 'name_text', key = self.config.vouchers[1], set = 'Voucher' },
+                    localize { type = 'name_text', key = self.config.vouchers[2], set = 'Voucher' },
+                }
+            }
+        end,
+    }
+}

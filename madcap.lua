@@ -192,6 +192,7 @@ function Madcap.Funcs.run_start()
 
     G.GAME.subhands = {}
     G.GAME.subhand_minimum = (G.GAME.subhand_minimum or 5)
+	G.GAME.dead_jokers = {}
     G.GAME.temp = {}
 
     for _,v in pairs(SubHands) do
@@ -211,7 +212,7 @@ function Madcap.Funcs.run_start()
 		mayhem				= 0,
 		mayhem_state		= 0,
 		max_mayhem			= G.GAME.starting_params.add_max_mayhem or 10,
-		rgmc_luxury_pts		= 0,
+		rgmc_luxury_pts		= G.GAME.starting_params.rgmc_luxury_pts or 0,
 		dead_jokers			= {},
 		missed_jokers		= {},
         blinds_skipped      = 0,        -- number of blinds skipped
@@ -268,6 +269,11 @@ function Madcap.Funcs.blind_start()
     tell('Blind Start')
 
 	G.GAME.rank_dist = MadLib.get_ranks_from_cards(G.playing_cards)
+
+	G.GAME.blind_stats = {
+		suits = {},
+		ranks = {}
+	}
 
     local patina_cards, bronze_cards, normal_cards = {}, {}, {}
     local new_deck = {}
@@ -1191,9 +1197,34 @@ function table_loopy(table)
 	end
 end
 
+function Madcap.Funcs.is_void(card)
+	return card.base.suit == 'rgmc_voids'
+end
+
+function Madcap.Funcs.is_lantern(card)
+	return card.base.suit == 'rgmc_lanterns'
+end
+
+function Madcap.Funcs.get_void_mayhem()
+	return 0.1
+end
+
+function Madcap.Funcs.get_lantern_mayhem()
+	return -0.1
+end
+
+
 function Madcap.Funcs.check_eval_card(card,i)
+	--G.GAME.blind_stats = G.GAME.blind_stats or {}
+	if not SMODS.has_no_suit(card) then -- has a suit
+		table.insert(G.GAME.blind_stats.suits, card.base.suit)
+	end
+	if not SMODS.has_no_rank(card) then -- has a rank
+		table.insert(G.GAME.blind_stats.ranks, card.base.value)
+	end
+
 	-- handle mayhem stuff
-	if card:is_suit('rgmc_voids') or card.base.value == 'rgmc_voids' then
+	if Madcap.Funcs.is_void(card) then
 		table_loopy(card.ability)
 		local mayhem_gain = 0.1
 		local eval = {
@@ -1204,7 +1235,7 @@ function Madcap.Funcs.check_eval_card(card,i)
 			end
 		}
 		card_eval_status_text(card, "extra", nil, nil, nil, eval)
-	elseif card:is_suit('rgmc_lanterns') or card.base.value == 'rgmc_lanterns' then
+	elseif Madcap.Funcs.is_lantern(card) then
 		local mayhem_loss = -0.1
 		local eval = {
 			message = tostring(mayhem_loss) .. ' M!',
@@ -3657,11 +3688,11 @@ function Madcap.Funcs.use_cosma(self, card, area, copier, num_cards, check, func
 			v:highlight(true)
 			play_sound('card3', math.random()*0.2 + 0.9, 0.35)
 			return true
-		end, 0.08, 'after')
+		end, 0.15, 'after')
 		MadLib.simple_event(function()
 			v:highlight(false)
 			return true
-		end, 0.08, 'after')
+		end, 0.15, 'after')
 	end)
 	-- up
 	MadLib.loop_func(G.hand.cards,function(v, i)
@@ -3670,7 +3701,7 @@ function Madcap.Funcs.use_cosma(self, card, area, copier, num_cards, check, func
 			v:highlight(true)
         	v:flip()
 			return true
-		end, 0.1, 'after')
+		end, 0.5, 'after')
 	end)
 	-- change
 	MadLib.loop_func(valid,function(v, i)
@@ -3678,6 +3709,10 @@ function Madcap.Funcs.use_cosma(self, card, area, copier, num_cards, check, func
 			func(v,card,i)
 			return true
 		end, 0.05, 'after')
+		MadLib.simple_event(function()
+			v:juice_up(0.3, 0.5)
+			return true
+		end, 0.50, 'after')
 	end)
 	-- down
 	MadLib.loop_func(G.hand.cards,function(v, i)
@@ -3685,7 +3720,7 @@ function Madcap.Funcs.use_cosma(self, card, area, copier, num_cards, check, func
 			v:highlight(false)
         	v:flip()
 			return true
-		end, 0.1, 'after')
+		end, 0.25, 'after')
 	end)
 	if used_tarot then used_tarot:juice_up(0.3, 0.5) end
 	return true
@@ -4027,11 +4062,6 @@ Madcap.Directories = {
 					return true
 				end
 			},
-			['sinister'] = {
-				pass = function()
-					return true
-				end
-			},
 			['planets'] = {
 				pass = function()
 					return true
@@ -4079,7 +4109,7 @@ Madcap.Directories = {
 				return next(SMODS.find_mod("MoreFluff"))
 			end
 		},
-		['morefluff'] = {
+		['akyrs'] = {
 			pass = function()
 				return next(SMODS.find_mod("aikoyorisshenanigans"))
 			end
