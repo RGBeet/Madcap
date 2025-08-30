@@ -26,6 +26,8 @@ return {
                 --local shore_choice = pseudorandom_element(shore_list, pseudoseed('shore'..G.GAME.round_resets.ante))
                 SMODS.Stickers['rgmc_shielded']:apply(v, true)
             end)
+            
+            Madcap.Funcs.set_last_cosma(self)
         end
     }
 }

@@ -6,10 +6,10 @@ return {
         object_type = "PokerHand",
         key     = "rgmc_pyramid_flush",
         visible = false,
-        chips   = 100,
+        chips   = 110,
         mult    = 10,
-        l_chips = 50,
-        l_mult  = 1,
+        l_chips = 45,
+        l_mult  = 4,
         example = {
             { 'S_K',    true },
             { 'S_8', 	true },

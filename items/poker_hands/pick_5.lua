@@ -7,10 +7,10 @@ return {
         object_type = "PokerHand",
         key = "rgmc_pick_five",
         visible = false,
-        chips = 1000,
+        chips = 100,
         mult = 10,
-        l_chips = 50,
-        l_mult = 1,
+        l_chips = 40,
+        l_mult = 4,
         example = {
             { "C_2", true },
             { "H_4", true },

@@ -1,3 +1,8 @@
+function Madcap.Funcs.set_last_cosma(self)
+    G.GAME.last_cosma_tarot = self.key
+    print(self.key)
+end
+
 return {
     categories = {
         'Cosma Tarots'
@@ -9,30 +14,36 @@ return {
         atlas   = "cosma",
         pos 	= MLIB.coords(0,0),
         cost 	= 6,
-        config	= { odds = 4 },
+        config	= { odds = 3 },
         loc_vars = function(self, info_queue, card)
             local _numer, _denom = SMODS.get_probability_vars(self, 1, card.ability.odds, 'demise')
-            return MadLib.collect_vars(number_format(_numer), number_format(_denom))
+            return MadLib.collect_vars(number_format(_numer), number_format(_denom), localize{ type = 'name_text', key = G.GAME.last_cosma_tarot or 'c_rgmc_demise', set = 'CosmaTarot' })
         end,
         can_use = function(self, card)
-            return (#G.consumeables.cards < G.consumeables.config.card_limit or card.area == G.consumeables)
+            return #G.consumeables.cards < G.consumeables.config.card_limit
         end,
-        use 	= function(self, card, area, copier)
+        use = function(self, card, area, copier)
             local used_tarot = copier or card
             local card = nil
             --select a random cosma tarot from 1-21. Has a 1 in 200 chance to give Sleeping Ships instead.
-            if G.GAME.last_cosma_tarot and G.GAME.last_cosma_tarot ~= 'c_rgmc_demise' then -- copy the thing
-                local gen_sleeping_ships = SMODS.pseudorandom_probability(card, 'demise', 1, 100)
-                card = not gen_sleeping_ships
-                    and create_card('CosmaTarot', G.consumeables, nil, nil, nil, nil, G.GAME.last_cosma_tarot, 'fool')
-                    or create_card("CosmaTarot", G.consumeables, nil, nil, true, true, "c_rgmc_sleeping_ships")
+
+            
+            if SMODS.pseudorandom_probability(card, 'demise', 1, 100) then
+                card = create_card("CosmaTarot", G.consumeables, nil, nil, true, true, "c_rgmc_sleeping_ships")
+            elseif SMODS.pseudorandom_probability(card, 'demise', 1, card.ability.extra.odds) and G.GAME.last_cosma_tarot then
+                card = create_card('CosmaTarot', G.consumeables, nil, nil, nil, nil, G.GAME.last_cosma_tarot, 'demise')
+            else
+                card = create_card("CosmaTarot", G.consumeables)
             end
+
             if card then
                 play_sound('timpani')
                 card:add_to_deck()
                 G.consumeables:emplace(card)
             end
+            
             used_tarot:juice_up(0.3, 0.5)
+            Madcap.Funcs.set_last_cosma(self)
         end
     }
 }

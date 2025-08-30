@@ -26,6 +26,7 @@ return {
                 local _joker = MadLib.create_joker(_key)
                 return true
             end, 0.2, 'after')
+            Madcap.Funcs.set_last_cosma(self)
         end
     }
 }

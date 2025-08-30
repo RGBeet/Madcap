@@ -12,7 +12,7 @@ return {
             return { vars = { tag.config.luxury_points } }
         end,
         apply = function(self, tag, context)
-            if context.type == 'eval' then
+            if context.type == 'eval_luxury' then
                 if G.GAME.last_blind and G.GAME.last_blind.boss then
                     tag:yep('+', G.C.GOLD, function()
                         return true

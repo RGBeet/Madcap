@@ -3014,19 +3014,17 @@ return {
             c_rgmc_maze = {
                 name = 'The Maze',
                 text = {
-                    "Randomly select {C:attention}#1#{} card(s)",
-                    "all other cards have their",
-                    "{C:attention}rank{} and {C:attention}suit {C:attention,E:1}shuffled",
-                    "Gain {C:money}$#2#{} per",
-                    "changed {C:attention}rank{} or {C:attention}suit"
+                    "{C:attention}Shuffles{} the ranks and suits of",
+                    "all cards {C:attention}in hand{}",
                 }
             },
             c_rgmc_vessel = {
                 name = 'The Vessel',
                 text = {
-                    "Randomly select {C:attention}#1#{} card(s)",
-                    "and {C:rgmc_mayhem,E:1}Mayhemize",
-                    "their values by {X:dark_edition,C:white}X#2#",
+                    "Randomly select {C:attention}#1#{} Joker(s)",
+                    "{C:rgmc_mayhem,E:1}Mayhemize all values",
+                    "by {X:dark_edition,C:white}X#2#{} and",
+                    "apply {C:rgmc_evil}Giant{} sticker"
                 }
             },
             c_rgmc_shore = {
@@ -4686,6 +4684,12 @@ return {
                     "Cannot change {C:attention}rank{}"
 				},
 			},
+			rgmc_positive = {
+				name = "Positive",
+				text = {
+                    "{C:attention}-1{} hand size"
+				},
+			},
 			rgmc_bismuth_red = {
 				name = "{C:red}Red{} Frame",
 				text = {
@@ -5067,6 +5071,10 @@ return {
 			k_rgmc_gimmick   = "Gimmick",
 			k_rgmc_chaotic   = "Chaotic",
 			k_rgmc_felinus   = "Felinus",
+
+            
+			k_rgmc_luxury_bonus      = "Luxury Bonus",
+
 			k_cosmatarot             = "Cosma Tarot",
 			b_cosmatarot_cards       = "Cosma Tarots",
 			k_spatiaplanet           = "Spatia Planet",

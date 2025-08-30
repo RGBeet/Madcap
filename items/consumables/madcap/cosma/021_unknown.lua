@@ -17,29 +17,28 @@ return {
             return true
         end,
         use = function(self, card, area, copier)
-            local roll = math.ceil(math.random() * 6)
-            local _card
+            local roll2 = math.floor(math.random() * 100)
+            local _rarity
+            if roll2 > 99 then
+                _rarity = 'Legendary'
+            elseif roll2 > 80 then
+                _rarity = 'Rare'
+            elseif roll2 > 50 then
+                _rarity = 'Uncommon'
+            else
+                _rarity = 'Common'
+            end
 
-                local roll2 = math.floor(math.random() * 100)
-                local _rarity
-                if roll2 > 99 then
-                    _rarity = 'Legendary'
-                elseif roll2 > 80 then
-                    _rarity = 'Rare'
-                elseif roll2 > 50 then
-                    _rarity = 'Uncommon'
-                else
-                    _rarity = 'Common'
-                end
-
-                _card = SMODS.add_card {
-                    set = 'Joker',
-                    edition = 'e_negative',
-                    rarity = _rarity,
-                    key_append = 'rgmc'
-                }
-                G.GAME.joker_buffer = 0
-                return { message = "+1", colour = G.C.RGMC_MAYHEM}
+            local _card = SMODS.add_card {
+                set = 'Joker',
+                edition = 'e_negative',
+                rarity = _rarity,
+                key_append = 'rgmc'
+            }
+            
+            G.GAME.joker_buffer = 0
+            Madcap.Funcs.set_last_cosma(self)
+            return { message = "+1", colour = G.C.RGMC_MAYHEM}
         end
     }
 }

@@ -25,13 +25,13 @@ return {
         end,
         use = function (self, card, area, copier)
             local enhancements = Madcap.Funcs.get_enhancements_from_cards(G.hand.cards)
-
             Madcap.Funcs.use_cosma(self, card, area, copier, self.config.select or 2, function(v) return true end, function(v)
                 local random_enhancement = #enhancements > 0
                     and pseudorandom_element(enhancements, pseudoseed('spirit_plane'))
                     or SMODS.poll_enhancement { key = 'spirit_plane', guaranteed = true }
                 v:set_ability(random_enhancement)
             end)
+            Madcap.Funcs.set_last_cosma(self)
         end
     }
 }

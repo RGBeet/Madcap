@@ -595,42 +595,6 @@ function Madcap.Funcs.get_rio_rank()
     return selection --tell("Rio's really feeling like a "..selection)
 end
 
-local card_get_id_ref = Card.get_id
-function Card:get_id()
-	if not get_id_use then
-		get_id_use = true
-
-		local id = card_get_id_ref(self) or self.base.id
-
-		if id == "rgmc_X" then -- x cards equal
-            id = SMODS.Ranks[G.GAME.x_value].id
-		end
-
-		if -- Rio (legendary)
-            next(SMODS.find_card('j_rgmc_legend_rio'))
-            and id == 14
-        then
-            -- counts as either queen, king, or ace depending on which has fewest cards
-            -- at start of blind (using G.GAME.rank_dist)
-            id = SMODS.Ranks[Madcap.Funcs.get_rio_rank()].id
-        end
-
-        -- Sigma Joker
-        if id == "rgmc_sum" then -- equals number cards in playing hand
-            local _, _2, _3, scoring = G.FUNCS.get_poker_hand_info(G.play.cards)
-            if next(SMODS.find_card('j_splash')) then scoring  = G.play.cards end
-            id = Madcap.Funcs.get_hand_sigma(scoring)
-		end
-
-		get_id_use = false
-		return id
-	else
-		get_id_use = false
-		return card_get_id_ref(self)
-	end
-
-end
-
 -- Simple way to get a random element from list.
 function Madcap.Funcs.get_random_from_list(list, seed)
     return pseudorandom_element(list, pseudoseed(seed or Madcap.seed))
@@ -1450,21 +1414,6 @@ function Madcap.Funcs.init_deck(id,params)
 end
 
 --SMODS.load_file('lib/overrides.lua')()     	-- overrides
-
-
---Init stuff at the start of the game
-local gigo = Game.init_game_object
-function Game:init_game_object()
-	local G = gigo(self)
-	-- Add initial dropshot and number blocks card
-	G.current_round.rgmc_barbershop = { suit = "Spades" }
-	G.current_round.rgmc_edwin_card = { rank = "5", suit = "Hearts" }
-
-	-- Create G.GAME.events when starting a run, so there's no errors
-	G.events = {}
-	G.jokers_sold = {}
-	return G
-end
 
 table.insert(SMODS.calculation_keys, "rgmc_luxury_pts")
 if SMODS.other_calculation_keys then
@@ -2840,6 +2789,7 @@ end
 
 SMODS.load_file('lib/subhands.lua')()     	-- changes to the scoring system
 SMODS.load_file('lib/scoring.lua')()     	-- changes to the scoring system
+SMODS.load_file('lib/hooks.lua')()     	-- changes to the scoring system
 
 
 --[[

@@ -19,10 +19,10 @@ return {
         object_type = "PokerHand",
         key = "rgmc_pyramid_spectrum",
         visible = false,
-        chips = 100,
-        mult = 10,
+        chips = 170,
+        mult = 16,
         l_chips = 50,
-        l_mult = 1,
+        l_mult = 4,
         example = {
             { 'D_K',    true },
             { 'H_8',    true },

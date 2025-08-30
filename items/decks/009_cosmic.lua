@@ -9,7 +9,7 @@ return {
         atlas   = 'decks',
         pos     = MLIB.coords(2,1),
         config = { 
-            vouchers = { 'v_cosma_merchant' }, 
+            vouchers = { 'v_rgmc_cosma_merchant' }, 
             consumables = { 'c_rgmc_demise' } 
         },
         loc_vars = function(self, info_queue, back)

@@ -96,6 +96,7 @@ return {
             else
                 card_eval_status_text(copier or card, 'extra', nil, nil, nil, { message = localize('k_nope_ex'), instant = true, sound = 'tarot2' });
             end
+            Madcap.Funcs.set_last_cosma(self)
         end
     }
 }

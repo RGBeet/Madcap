@@ -63,6 +63,7 @@ return {
                 end
                 return true
             end, 0.3, 'after')
+            Madcap.Funcs.set_last_cosma(self)
         end
     }
 }

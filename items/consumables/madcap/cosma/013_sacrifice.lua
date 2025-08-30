@@ -27,6 +27,7 @@ return {
                 v:start_dissolve(v, _first_dissolve)
                 _first_dissolve = true
             end)
+            Madcap.Funcs.set_last_cosma(self)
         end
     }
 }

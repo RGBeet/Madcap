@@ -8,7 +8,7 @@ Madcap.Lists.MadcapUpgrades = {
 
 Madcap.Funcs.orb_compatible = function(card)
     local enhancement = card.config.center.key
-    print(enhancement)
+    --print(enhancement)
     return enhancement == 'c_base'
         or Madcap.Lists.MadcapUpgrades[enhancement] ~= nil
 end
@@ -36,7 +36,7 @@ return {
             return MadLib.collect_vars(number_format(card.ability.select), number_format(_numer), number_format(_denom))
         end,
         can_use = function(self, card)
-            local compatible = MadLib.get_list_matches(G.playing_cards,function(v)
+            local compatible = MadLib.get_list_matches(G.hand.cards,function(v)
                 return Madcap.Funcs.orb_compatible(v)
             end)
             return (G.hand and G.hand.cards and #compatible > 0)
@@ -69,6 +69,7 @@ return {
                     return true
                 end, 0.08, 'immediate')
             end)
+            Madcap.Funcs.set_last_cosma(self)
         end,
     }
 }

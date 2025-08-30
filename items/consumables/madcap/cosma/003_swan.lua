@@ -44,6 +44,7 @@ return {
                     return true
                 end, 0.08, 'immediate')
             end)
+            Madcap.Funcs.set_last_cosma(self)
         end
     }
 }

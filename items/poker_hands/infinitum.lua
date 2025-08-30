@@ -7,10 +7,10 @@ return {
         object_type = "PokerHand",
         key = "rgmc_infoak",
         visible = false,
-        chips = 100,
-        mult = 10,
+        chips = 150,
+        mult = 15,
         l_chips = 50,
-        l_mult = 1,
+        l_mult = 5,
         example = {
             { "H_IN", 	true },
             { "S_IN", 	true },

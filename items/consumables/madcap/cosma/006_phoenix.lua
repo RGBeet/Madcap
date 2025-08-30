@@ -24,6 +24,7 @@ return {
                 v.ability.perma_chips   = (v.ability.perma_chips or 0) - _value
                 v.ability.perma_mult 	= (v.ability.perma_mult or 0) + _value * (card.ability.extra or 0.2)
             end)
+            Madcap.Funcs.set_last_cosma(self)
         end
     }
 }

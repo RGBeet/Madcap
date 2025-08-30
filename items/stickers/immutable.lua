@@ -9,6 +9,9 @@ return {
         atlas   = 'stickers',
         pos     = MLIB.coords(3,0),
         badge_colour = HEX('4666DC'),
+        loc_vars = function(self, info_queue, card)
+            return MadLib.collect_vars()
+        end,
         should_apply = false,
         apply = function(self, card, val)
             card.ability.rgmc_immutable = true
