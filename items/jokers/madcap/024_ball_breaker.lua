@@ -1,15 +1,3 @@
--- thorium joker conversions
-Madcap.ThoriumJokerConversions = {
-    ['2'] = '5',
-    ['3'] = '8',
-    ['4'] = '7',
-    ['5'] = '2',
-    ['6'] = '9',
-    ['7'] = '4',
-    ['8'] = '3',
-    ['9'] = '6'
-}
-
 return {
     data = {
         object_type = "Joker",
@@ -28,15 +16,9 @@ return {
                 and context.before
                 and context.scoring_hand
             then
-                local fibonacci = true
-                for k, v in ipairs(G.play.cards) do -- check for all fibonacci
-                    local rank = SMODS.Ranks[v.base.value].key
-                    if not (rank == "Ace" or rank == "2" or rank == "3" or rank == "5" or rank == "8") then
-                        fibonacci = false
-                        break
-                    end
-                end
-                if fibonacci then -- WOW U GOT THE FIBONACCI!!
+                if MadLib.list_matches_all(G.play.cards, function(v)
+                    return MadLib.has_fib_rank(v)
+                end) then -- WOW U GOT THE FIBONACCI!!
                     card.ability.extra.chips = card.ability.extra.chips + card.ability.extra.chip_mod
                     return {
                         message = localize("k_upgrade_ex"),

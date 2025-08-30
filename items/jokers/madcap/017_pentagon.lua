@@ -1,3 +1,5 @@
+Madcap.Lists.PentagonalNumbers = { 'Ace', MadLib.RankIds['1'], '5', MadLib.RankIds['12'], 'Queen' }
+
 return {
     data = {
         object_type = "Joker",
@@ -14,15 +16,13 @@ return {
         end,
         calculate = function(self, card, context)
             if
-                context.cardarea == G.play
-                and context.individual
+                (context.cardarea == G.play and context.other_card)
+                or context.forcetrigger
             then
-                local rank = context.other_card:get_id()
-                if MadLib.is_pentagonal(tonumber(rank))
-                    or rank == 'Queen'
-                then
-                    return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips, card, card.ability.extra.chips)
-                end
+                local matches = MadLib.list_matches_one(Madcap.Lists.PentagonalNumbers, function(c)
+                    return MadLib.is_rank(context.other_card, SMODS.Ranks[c].id) 
+                end)
+                if matches then return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips, card, card.ability.extra.chips) end
             end
         end,
         demicoloncompat = true,

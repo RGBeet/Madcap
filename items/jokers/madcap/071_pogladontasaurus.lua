@@ -16,7 +16,7 @@ return {
         calculate = function(self, card, context)
             -- do held hand shit
             if context.individual and context.cardarea == G.hand and context.other_card and not context.end_of_round then
-                if MadLib.get_card_value(context.other_card) == card.ability.extra.rank then
+                if MadLib.is_rank(context.other_card, SMODS.Ranks[card.ability.extra.rank].id) then
                     card.ability.immutable.active = true
                     return {
                         message = localize('k_again_ex'),
@@ -29,7 +29,7 @@ return {
             if  (context.after and card.ability.immutable.active) or (context.end_of_round and context.cardarea == G.jokers) or context.forcetrigger then
                 local pick = MadLib.shuffle_sort_list(G.playing_cards, 1, function(v)  return true end)
                 card.ability.immutable.active = false
-                if pick then card.ability.extra.rank = pick[1]:get_id() end
+                if pick then card.ability.extra.rank = pick[1].base.id end
                 return { -- new rank
                     message = "!",
                     card    = card,

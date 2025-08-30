@@ -25,8 +25,8 @@ return {
                 local _id = context.other_card:get_id()
                 if
                     context.forcetrigger
-                    or _id == SMODS.Ranks[card.ability.extra.ranks[1]].id
-                    or _id == SMODS.Ranks[card.ability.extra.ranks[2]].id
+                    or MadLib.is_rank(context.other_card, SMODS.Ranks[card.ability.extra.ranks[1]].id)
+                    or MadLib.is_rank(context.other_card, SMODS.Ranks[card.ability.extra.ranks[2]].id)
                 then
                     return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips, card, card.ability.extra.chips)
                 end

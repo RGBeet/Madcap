@@ -2787,9 +2787,10 @@ function evaluate_poker_hand(hand)
     return results
 end
 
-SMODS.load_file('lib/subhands.lua')()     	-- changes to the scoring system
-SMODS.load_file('lib/scoring.lua')()     	-- changes to the scoring system
-SMODS.load_file('lib/hooks.lua')()     	-- changes to the scoring system
+SMODS.load_file('lib/subhands.lua')()
+SMODS.load_file('lib/scoring.lua')()
+SMODS.load_file('lib/hooks.lua')()
+SMODS.load_file('lib/vanilla_override.lua')()
 
 
 --[[

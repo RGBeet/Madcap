@@ -212,7 +212,7 @@ if 4 then -- UNO Ranks
             return (not grangriss) or (G.GAME and G.GAME.rank_unlocks and G.GAME.rank_unlocks[self.config.key])
         end,
     }
-    MadLib.merge_lists(list, { uno_draw2, uno_skip, uno_reverse })
+    MadLib.merge_lists(list, { uno_draw_2, uno_skip, uno_reverse })
 end
 
 
@@ -267,6 +267,47 @@ if true or MadcapConfigs['High Ranks'] then -- High Cards are enables
 end
 
 if not unstable_enabled then
+    
+    local zero = {
+        object_type = "Rank",
+        lc_atlas = 'bs_ur_lc',
+        hc_atlas = 'bs_ur_lc',
+        hidden = grangriss,
+        key = '0',
+        card_key = '0',
+        pos = { x = 0 },
+        nominal = 0,
+        face = false,
+        shorthand = '10.5',
+        straight_edge = false,
+        in_pool = function(self, args)
+            if args and args.initial_deck then
+                return false
+            end
+            return (not grangriss) or (G.GAME and G.GAME.rank_unlocks and G.GAME.rank_unlocks[self.config.key])
+        end,
+    }
+    
+    local one_half = {
+        object_type = "Rank",
+        lc_atlas = 'bs_ur_lc',
+        hc_atlas = 'bs_ur_lc',
+        hidden = grangriss,
+        key = '0.5',
+        card_key = '0.5',
+        pos = { x = 1 },
+        nominal = 0.5,
+        face = false,
+        shorthand = '10.5',
+        straight_edge = false,
+        in_pool = function(self, args)
+            if args and args.initial_deck then
+                return false
+            end
+            return (not grangriss) or (G.GAME and G.GAME.rank_unlocks and G.GAME.rank_unlocks[self.config.key])
+        end,
+    }
+
     tell('UnStable not installed - adding some ranks from UnStable')
     -- Cards normally added by UnStable, but can be added by Madcap if UnStable is not installed.
     local unst_cards = { zero, one_half }
@@ -278,7 +319,7 @@ if not unstable_enabled then
             hidden = grangriss,
             key         = tostring(v),
             card_key    = tostring(v),
-            pos         = { x = i-1 },
+            pos         = { x = i+1 },
             nominal     = v,
             face        = false,
             shorthand   = tostring(v),

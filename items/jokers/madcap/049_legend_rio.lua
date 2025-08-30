@@ -7,7 +7,7 @@ return {
         soul_pos   = MLIB.legend(1,true),
         rarity     = 4,
         cost       = 15,
-        config =  { },
+        config =  { extra = { rank = 'Ace' } },
         loc_vars = function(self, info_queue, card)
             return MadLib.collect_vars(localize(Madcap.Funcs.get_rio_rank(), 'ranks') .. "s")
         end,
@@ -15,7 +15,7 @@ return {
             if
                 context.cardarea == G.play
                 and context.other_card -- must be another card
-                and context.other_card:get_id() == "Ace" -- base value must be an ace
+                and MadLib.is_rank(context.other_card, SMODS.Ranks[card.ability.extra.rank].id)
             then
                 -- just a visual gag
                 return {

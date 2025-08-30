@@ -7,7 +7,7 @@ return {
         rarity  = 2,
         cost    = 6,
         config =  {
-            extra = { odds = 6, chips = 0, chip_mod = 30, rank = '6' }
+            extra = { rank = '6', odds = 6, chips = 0, chip_mod = 30, }
         },
         loc_vars = function(self, info_queue, card)
             local _numer, _denom = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'six_shooter')
@@ -26,7 +26,7 @@ return {
                 and not context.forcetrigger
             then
                 if
-                    context.other_card:get_id() == 6
+                    MadLib.is_rank(context.other_card, SMODS.Ranks[card.ability.extra.rank].id)
                     and SMODS.pseudorandom_probability(card, 'six_shooter', 1, card.ability.extra.odds)
                 then
                     local target = context.other_card

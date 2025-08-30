@@ -35,7 +35,7 @@ return {
                 and not context.end_of_round
                 and context.cardarea == G.hand
                 and context.other_card
-                and Madcap.Funcs.get_card_key(context.other_card, "rgmc_Sum")
+                and MadLib.is_rank(context.other_card, SMODS.Ranks[card.ability.extra.rank].id)
             then
                 return not context.other_card.debuff
                     and do_sigma_joker(self,card,context)

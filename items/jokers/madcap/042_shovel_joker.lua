@@ -9,7 +9,7 @@ return {
         rarity  = 3,
         cost    = 7,
         config =  {
-            extra = { x_mult = 2 }
+            extra = { rank = 'rgmc_Knight', x_mult = 2 }
         },
         loc_vars = function(self, info_queue, card)
             return MadLib.collect_vars(number_format(card.ability.extra.x_mult))
@@ -19,7 +19,7 @@ return {
             (context.cardarea == G.play
                 and context.individual
                 and context.other_card
-                and Madcap.Funcs.get_card_key(context.other_card, "rgmc_Knight")
+                and MadLib.is_rank(context.other_card, SMODS.Ranks[card.ability.extra.rank].id)
                 and MadLib.has_suit_in_list(context.other_card, MadLib.SuitTypes.Dark))
                 or context.forcetrigger -- demicolon
             then

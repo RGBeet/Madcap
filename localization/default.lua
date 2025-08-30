@@ -4465,6 +4465,56 @@ return {
                     "counts as a {C:green}#3#{} of {C:green}#4#{}"
 				},
             },
+            -- info for cool ass cards
+            rgmc_info_infinity = {
+                text = {
+                    "Count as {C:rgmc_bismuth}every rank{}",
+                    "{C:inactive,s:0.7}Only works with",
+                    "{C:inactive,s:0.7}Madcap-supported mods!"
+                }
+            },
+            rgmc_info_x = {
+                text = {
+                    "Count as a {C:rgmc_bismuth}random rank{}",
+                    "This rank changes every {C:attention}Ante{}",
+                    "{C:inactive,s:0.7}Only works with",
+                    "{C:inactive,s:0.7}Madcap-supported mods!"
+                }
+            },
+            rgmc_info_sum = {
+                text = {
+                    "{C:chips}+(SUM){} chips",
+                    "{C:inactive,s:0.7}Equals the sum of",
+                    "{C:inactive,s:0.7}all played {C:attention,S:0.7}number {C:inactive,S:0.7}ranks"
+                }
+            },
+            rgmc_info_draw_2 = {
+                text = {
+                    "When scored,",
+                    "draw {C:attention}2{} cards",
+                    "{C:attention}before{} scoring",
+                    "{C:inactive,s:0.7}Also counts as",
+                    "{C:inactive,s:0.7}a {C:attention,S:0.7}2"
+                }
+            },
+            rgmc_info_reverse = {
+                text = {
+                    "When scored, {C:attention}reverse",
+                    "the scoring order",
+                    "of played cards"
+                }
+            },
+            rgmc_info_skip = {
+                text = {
+                    "When scored,",
+                    "{C:attention}skip{} the next card",
+                }
+            },
+            rgmc_info_0 = {
+                text = {
+                    "{C:blue}No{} chips",
+                }
+            },
             -- Chinese Takeout descriptions - yum!
             rgmc_chinese_null = {
 				name = "Empty Box",

@@ -21,7 +21,7 @@
                 (context.cardarea == G.hand and context.other_card and not context.end_of_round) -- held cards
                 or context.forcetrigger
             then
-                if Madcap.Funcs.get_card_key(context.other_card, card.ability.extra.rank) then
+                if MadLib.is_rank(context.other_card, card.ability.extra.rank) then
                     return notcontext.other_card.debuff
                         and MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiChips, card, card.ability.extra.x_chips)
                         or MadLib.get_debuff_data(card)

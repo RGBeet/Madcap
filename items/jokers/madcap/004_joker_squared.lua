@@ -16,7 +16,7 @@ return {
                 or context.forcetrigger
             then
                 local matches = MadLib.list_matches_one(MadLib.RankTypes['Square'], function(c)
-                    return c == tostring(context.other_card:get_id())
+                    return MadLib.is_rank(context.other_card, SMODS.Ranks[c].id) 
                 end)
                 if matches then return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddMult,card,card.ability.extra.mult) end
             end

@@ -23,7 +23,11 @@ return {
                 card.ability.extra.rank_new)
         end,
         calculate = function(self, card, context)
-            if context.cardarea == G.play and context.other_card and MadLib.get_card_value(context.other_card) == card.ability.extra.rank_old and SMODS.pseudorandom_probability(card, 'jestrogen', 1, card.ability.extra.odds) then
+            if 
+                context.cardarea == G.play
+                and MadLib.is_rank(context.other_card, SMODS.Ranks[card.ability.extra.rank_old].id)
+                and SMODS.pseudorandom_probability(card, 'jestrogen', 1, card.ability.extra.odds)
+            then
                 local target = context.other_card
                 MadLib.simple_event(function()
                     play_sound('rgmc_flourish', 1, 0.4)
@@ -36,7 +40,7 @@ return {
             end
             if context.forcetrigger then
                 local targets = MadLib.get_card_from_shuffled_deck(G.hand.cards, 1, function(c)
-                    return MadLib.get_card_value(c) == card.ability.extra.rank_old
+                    return MadLib.is_rank(c, SMODS.Ranks[card.ability.extra.rank_old].id)
                 end)
                 MadLib.loop_func(targets, function(v)
                     MadLib.simple_event(function()

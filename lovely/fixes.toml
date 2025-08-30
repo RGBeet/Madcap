@@ -508,3 +508,12 @@ position = 'before'
 payload = '''
 table.insert(rates, { type = "MadcapJoker", val = G.GAME['madcap_content_rate'] })
 '''
+
+# Add Infinity loc_var
+[[patches]]
+[patches.pattern]
+target = 'functions/common_events.lua'
+pattern = "SMODS.localize_perma_bonuses(specific_vars, desc_nodes)"
+position = "before"
+payload = '''MadLib.set_pcard_ui(card, specific_vars, desc_nodes)'''
+match_indent = true
