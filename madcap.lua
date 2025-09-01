@@ -2791,6 +2791,7 @@ SMODS.load_file('lib/subhands.lua')()
 SMODS.load_file('lib/scoring.lua')()
 SMODS.load_file('lib/hooks.lua')()
 SMODS.load_file('lib/vanilla_override.lua')()
+SMODS.load_file('lib/modded_override.lua')()
 
 
 --[[
@@ -2805,6 +2806,11 @@ SMODS.load_file('lib/vanilla_override.lua')()
  }
 
 ]]
+
+-- returns numerators and denominator, numerator cannot be greater than denominator
+function Madcap.Funcs.fix_probabilities(numer, denom)
+	return math.min(numer, denom), math.max(0.01,denom)
+end
 
 function Madcap.Funcs.GetMusic(_k, _select, _vol, _sync, _pitch)
     return {
