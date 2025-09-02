@@ -5,21 +5,10 @@ if next(SMODS.find_mod("TOGAPack")) then
         return card and card.edition and not card.edition[ed]
     end
 
-    MadLib.RankManipulation['j_toga_megasxlr'] = {
-        from_rank = '8', to_rank = 'King'
-    }
-
-    MadLib.RankManipulation['j_toga_hexadecimaljkr'] = {
-        from_rank = 'Ace', to_rank = '10'
-    }
-
-    MadLib.RankManipulation['j_toga_binaryjkr'] = {
-        from_rank = '10', to_rank = '2'
-    }
-
-    MadLib.FaceManipulation['j_toga_y2ksticker'] = { 
-        rank = '2', type = 'add'
-    }
+    MadLib.RankManipulation['j_toga_megasxlr'] = { from_rank = '8', to_rank = 'King' }
+    MadLib.RankManipulation['j_toga_hexadecimaljkr'] = { from_rank = 'Ace', to_rank = '10' }
+    MadLib.RankManipulation['j_toga_binaryjkr'] = { from_rank = '10', to_rank = '2' }
+    MadLib.FaceManipulation['j_toga_y2ksticker'] = { rank = '2', type = 'add' }
 
     -- Windows Vista - modular rank and edition
     SMODS.Joker:take_ownership('toga_winvista', {
@@ -200,17 +189,33 @@ if next(SMODS.find_mod("TOGAPack")) then
     
     SMODS.Joker:take_ownership('toga_solitairejoker', {
         config = {
-            extra = { poker_hand = 'Straight', draw_cards = 3 }
+            extra = { rank = "Ace", poker_hand = 'Straight', draw_cards = 3 }
         },
         loc_vars = function(self, info_queue, card)
 		    local togasolitaire = G.GAME.current_round.togabalatro and G.GAME.current_round.togabalatro.solitaire or {}
             return MadLib.collect_vars(localize(card.ability.extra.poker_hand, 'poker_hands'),
                 math.floor(card.ability.extra.draw_cards),
-                localize(togasolitaire.rank or 'Ace', 'ranks'))
+                localize(card.ability.extra.rank or 'Ace', 'ranks'))
         end,
     }, true)
 
-    -- Entirely revis e this since idk how to just revise the Solitaire Joker stuff
+    -- Solitaire Jokers now have individual rank.
+    togabalatro.reset_solitaire = function(run_start)
+        if run_start then G.GAME.current_round.togabalatro.solitaire = {} end
+        if G.jokers then
+            MadLib.loop_func(G.jokers.cards, function(j)
+                if j.config.center.key == 'j_toga_solitairejoker' then
+                    local valid_solitaire_cards = MadLib.get_list_matches(function(v)
+                        return SMODS.has_no_rank(v)
+                    end)
+                    local pick = pseudorandom_element(valid_solitaire_cards, pseudoseed('solitaire'..G.GAME.round_resets.ante))
+                    j.ability.extra.rank = pick.base.value or 'Ace'
+                end
+            end)
+        end
+    end
+
+    -- SMS/Redstone enhancements and Solitaire Joker.
     togabalatro.playextracards = function()
         -- SMS enhancement.
         local sms_deck = {}
@@ -241,7 +246,7 @@ if next(SMODS.find_mod("TOGAPack")) then
                     if next(poker_hands[j.ability.extra.poker_hand or 'Straight']) then
                         local cur_cards = {}
                         MadLib.loop_func(G.deck.cards, function(c)
-                            if MadLib.is_rank(c, G.GAME.current_round.togabalatro.solitaire.id) then cur_cards[#cur_cards+1] = c end
+                            if MadLib.is_rank(c, j.ability.extra.rank or 'Ace') then cur_cards[#cur_cards+1] = c end
                         end)
                         MadLib.loop_func(cur_cards, function(c,i)
                             draw_card(G.deck, G.hand, i*100/#cur_cards, 'up', true, c)
@@ -286,7 +291,7 @@ if next(SMODS.find_mod("paperback")) then
         loc_vars = function(self, info_queue, card)
             local scored = (card.ability.extra.scored == true) and "Active!" or "Inactive"
             return MadLib.collect_vars(number_format(card.ability.extra.mult_mod),
-                localize(card.ability.extra.rank, 'ranks'),
+                localize(card.ability.extra.rank or '8', 'ranks'),
                 number_format(card.ability.extra.mult), scored)
         end,
         calculate = function(self, card, context)

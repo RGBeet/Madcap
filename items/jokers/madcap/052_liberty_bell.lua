@@ -11,7 +11,7 @@ return {
             immutable = { max_seals = 10 }
         },
         loc_vars = function(self, info_queue, card)
-            info_queue[#info_queue + 1] = { set = "Other", key = "rgmc_bronze_seal" }
+            info_queue[#info_queue + 1] = { set = "Other", key = "rgmc_cuprum_seal" }
             return MadLib.collect_vars(math.floor(math.min(card.ability.extra.seals, card.ability.immutable.max_seals)))
         end,
         calculate = function(self, card, context)
@@ -25,7 +25,7 @@ return {
                     return not v.seal
                 end, function(v)
                     MadLib.simple_event(function()
-                        v:set_seal('rgmc_bronze', true)
+                        v:set_seal('rgmc_cuprum', true)
                         v:juice_up(0.3,0.3)
                         play_sound('tarot2', 1.2, 0.4)
                         return true

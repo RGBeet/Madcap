@@ -87,8 +87,6 @@ function Card:get_id()
 		return card_get_id_ref(self)
 	end
 end
-
-
 local score_card_ref = SMODS.score_card
 function SMODS.score_card(card, context)
 	if card.base.value == 'rgmc_infinity' and not infinity_scoring then
@@ -106,4 +104,70 @@ function SMODS.score_card(card, context)
 		return 
 	end
 	score_card_ref(card, context)
+end
+
+local card_shuffle_ref = CardArea.shuffle
+function CardArea:shuffle(_seed)
+	card_shuffle_ref(self,_seed)
+	local pos = 1
+	while pos < #self.cards do
+		local card = self.cards[pos]
+		if not card.sort_marked then
+			card.sort_marked = true
+			local rolls = 0
+			if card.seal and card.seal == 'rgmc_patina' then
+				tell('Patina Seal')
+				MadLib.number_func(12, function()
+					if not SMODS.pseudorandom_probability(card, 'patina', 1, 3) then return end
+					MadLib.number_func(2, function()
+						self.cards[pos], self.cards[pos+1] = self.cards[pos+1], self.cards[pos]
+						pos = pos + 1
+					end)
+					rolls = rolls + 1
+				end)
+				tell('Position for Patina is now' .. tostring(pos) .. '/' .. tostring(#self.cards) .. '.')
+				print(self.cards[pos].seal)
+				tell(tostring(rolls) .. ' rolls.')
+			elseif card.seal and card.seal == 'rgmc_cuprum' then
+				tell('Cuprum Seal')
+				MadLib.number_func(10, function()
+					if not SMODS.pseudorandom_probability(card, 'cuprum', 1, 2) then return end
+					MadLib.number_func(2, function()
+						self.cards[pos], self.cards[pos-1] = self.cards[pos-1], self.cards[pos]
+						pos = pos - 1
+					end)
+					rolls = rolls + 1
+				end)
+				tell('Position for Cuprum is now' .. tostring(pos) .. '/' .. tostring(#self.cards) .. '.')
+				print(self.cards[pos].seal)
+				tell(tostring(rolls) .. ' rolls.')
+			elseif SMODS.has_enhancement(card, 'm_rgmc_plumbum') then
+				tell('Plumbum enhancement')
+				while pos > 1 do
+					if SMODS.has_enhancement(self.cards[pos-1], 'm_rgmc_plumbum') then
+						break
+					end
+					self.cards[pos], self.cards[pos-1] = self.cards[pos-1], self.cards[pos]
+					pos = pos - 1
+				end
+				print(self.cards[pos].config.center.key)
+				tell('Position for Plumbum is now' .. tostring(pos) .. '/' .. tostring(#self.cards) .. '.')
+			end
+		end
+		pos = pos + 1
+	end
+	MadLib.loop_func(self.cards, function(v) v.sort_marked = nil end)
+end
+
+-- Upon selecting the blind...
+function Madcap.Funcs.blind_start()
+    -- start of blind
+    tell('Blind Start')
+
+	G.GAME.rank_dist = MadLib.get_ranks_from_cards(G.playing_cards)
+
+	G.GAME.blind_stats = {
+		suits = {},
+		ranks = {}
+	}
 end

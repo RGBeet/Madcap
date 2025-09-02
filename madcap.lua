@@ -263,22 +263,6 @@ function Madcap.Funcs.run_start()
 	end
 end
 
--- Upon selecting the blind...
-function Madcap.Funcs.blind_start()
-    -- start of blind
-    tell('Blind Start')
-
-	G.GAME.rank_dist = MadLib.get_ranks_from_cards(G.playing_cards)
-
-	G.GAME.blind_stats = {
-		suits = {},
-		ranks = {}
-	}
-
-    local patina_cards, bronze_cards, normal_cards = {}, {}, {}
-    local new_deck = {}
-end
-
 -- Upon winning the blind...
 function Madcap.Funcs.blind_end()
 

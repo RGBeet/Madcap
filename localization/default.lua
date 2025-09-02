@@ -1679,7 +1679,7 @@ return {
                 name = "Liberty Bell",
                 text = {
                     "Upon playing first {C:red}Discard{},",
-                    "apply a {C:rgmc_bronze}Bronze Seal{} to",
+                    "apply a {C:rgmc_cuprum}Cuprum Seal{} to",
                     "{C:attention}first discarded card{}",
                 },
             },
@@ -2150,7 +2150,7 @@ return {
                 name = "Jestrica",
                 text = {
                     "This Joker gains {C:mult}+#1#{} Mult",
-                    "when an {C:attention}#2{} is scored",
+                    "when a {C:attention}#2{} is scored",
                     "Resets if no {C:attention}#2#s{} are",
                     "scored in a round",
                     "(#4#)",
@@ -3721,7 +3721,7 @@ return {
             c_rgmc_reduct = {
                 name = 'Reduct',
                 text = {
-					"Add a {C:rgmc_bronze}Bronze Seal{}",
+					"Add a {C:rgmc_cuprum}Cuprum Seal{}",
 					"to {C:attention}#1#{} selected",
 					"card(s) in your hand",
                 }
@@ -4705,7 +4705,7 @@ return {
             rgmc_info_lanterns = {
 				name = "Lantern Suit",
 				text = {
-					"{C:rgmc_mayhem}-#1#{} Mayhem",
+					"{C:rgmc_mayhem}#1#{} Mayhem",
 					"when scored"
 				},
             },
@@ -5042,7 +5042,7 @@ return {
                     "{C:inactive,s:0.7}advance one position)",
 				},
 			},
-            rgmc_bronze_seal = {
+            rgmc_cuprum_seal = {
 				name = "Cuprum Seal",
 				text = {
 					"This card is placed closer",
@@ -5280,7 +5280,7 @@ return {
         },
 		dictionary = {
             rgmc_patina_seal         = "Patina Seal",
-            rgmc_bronze_seal         = "Cuprum Seal",
+            rgmc_cuprum_seal         = "Cuprum Seal",
             rgmc_ether_seal          = "Ether Seal",
             rgmc_umber_seal          = "Umber Seal",
             rgmc_jade_seal           = "Jade Seal",
@@ -5505,12 +5505,12 @@ return {
 			rgmc_flipped             = "Flipped",
 
 			rgmc_patina_seal    = "Patina Seal",
-			rgmc_bronze_seal    = "Bronze Seal",
+			rgmc_cuprum_seal    = "Cuprum Seal",
 			rgmc_jade_seal      = "Jade Seal",
 			rgmc_umber_seal     = "Umber Seal",
 			rgmc_ether_seal     = "Ether Seal",
 			rgmc_cherry_seal    = "Cherry Seal",
-			rgmc_seafoam_seal   = "Bronze Seal",
+			rgmc_seafoam_seal   = "Seafoam Seal",
 			rgmc_sunrise_seal   = "Sunrise Seal",
 			rgmc_midnight_seal  = "Midnight Seal",
 			rgmc_anaglyph_seal  = "Anaglyphic Seal",

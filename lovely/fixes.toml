@@ -517,3 +517,19 @@ pattern = "SMODS.localize_perma_bonuses(specific_vars, desc_nodes)"
 position = "before"
 payload = '''MadLib.set_pcard_ui(card, specific_vars, desc_nodes)'''
 match_indent = true
+
+# If Bunco is installed, add suit symbols for other suits...
+[[patches]]
+[patches.pattern]
+target = 'functions/misc_functions.lua'
+pattern = "paperback_Stars = '★',"
+position = "after"
+payload = '''rgmc_Goblets = '⚀',
+rgmc_towers = '⚁',
+rgmc_blooms = '⚂',
+rgmc_daggers = '⚃',
+rgmc_voids = '⚄',
+rgmc_lanterns = '⚅',
+'''
+match_indent = true
+
