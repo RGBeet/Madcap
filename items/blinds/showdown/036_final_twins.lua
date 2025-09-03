@@ -8,6 +8,7 @@ return {
         in_pool = function(self)
             return true
         end,
+        boss_colour = HEX('88A5D9'),
         calculate = function (self, blind, context)
             if
                 not G.GAME.blind.disabled

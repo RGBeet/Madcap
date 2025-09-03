@@ -7,22 +7,21 @@ return {
         boss_colour = HEX('F4EFF6'),
         min_ante = 2,
         mult    = 2.5,
-        config = { extra = -5 },
         loc_vars = function(self, info_queue, blind)
-            return MadLib.collect_vars(
-                number_format(2 * get_blind_amount(G.GAME and G.GAME.round_resets.ante or 1)),
-                number_format(blind and blind.ability.extra or -5)
-            )
-        end,
-        in_pool = function(self)
-            return Madcap.Data.devmode or to_big(G.GAME.dollars - self.config.extra*3) > to_big(G.GAME.bankrupt_at)
+            if not G.GAME.MADCAP then return MadLib.collect_vars(1, 2) end
+            local numer, denom = Madcap.Funcs.fix_probabilities(SMODS.get_probability_vars(self, 1, 2, 'coil'))
+            return MadLib.collect_vars(numer, denom)
         end,
         calculate = function(self, blind, context)
-            if not G.GAME.blind.disabled and context.scoring_hand and context.final_scoring_step then
-                local coilys = MadLib.get_list_matches(context.scoring_hand, function(v)
-                    return SMODS.pseudorandom_probability(self, 'coil', 1, 4)
+            if 
+                not G.GAME.blind.disabled 
+                and context.scoring_hand 
+                and context.final_scoring_step 
+            then
+                MadLib.flip_cards(context.scoring_hand, function(v)
+                    SMODS.pseudorandom_probability(self, 'elevator', 1, 2)
+                    v.rgmc_coil = true 
                 end)
-                MadLib.flip_cards(coilys, function(v) v.ability.rgmc_coil = true end)
             end
         end,
     }

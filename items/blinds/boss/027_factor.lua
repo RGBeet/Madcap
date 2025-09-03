@@ -10,12 +10,15 @@ return {
             return Madcap.Data.devmode
         end,
         recalc_debuff = function(self, card, from_blind)
-            if not G.GAME.blind.disabled and card.area ~= G.jokers and MadLib.check_pattern_rank(MadLib.is_prime, card) then
+            if 
+                (not G.GAME.blind.disabled and card.area ~= G.jokers)
+                and not SMODS.has_no_rank(card) 
+                and MadLib.is_prime(math.floor(SMODS.Ranks[MadLib.get_value(card) or '8'].nominal))
+            then
                 card:set_debuff(true)
                 return true
-            else
-                return false
             end
+            return false
         end,
     }
 }

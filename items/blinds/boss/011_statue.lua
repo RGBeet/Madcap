@@ -6,41 +6,32 @@ return {
         pos     = MLIB.coords(10),
         mult = 2,
         dollars = 5,
-        config = {
-            extra = { odds = 6 }
-        },
+        boss_colour = HEX('454E4D'),
         in_pool = function(self)
             return true
         end,
-        loc_vars = function(self, info_queue, card)
-            return { vars = { G.GAME and G.GAME.probabilities.normal or 1, self.config.extra.odds or 6 } }
+        loc_vars = function(self, info_queue, blind)
+            if not G.GAME.MADCAP then return MadLib.collect_vars(1, 4) end
+            local numer, denom = Madcap.Funcs.fix_probabilities(SMODS.get_probability_vars(blind, 1, 4, 'statue'))
+            return MadLib.collect_vars(numer, denom)
         end,
         calculate = function(self, blind, context)
-
-            if
-                context.final_scoring_step
-                and not G.GAME.blind.disabled
-            then
+            if context.final_scoring_step and not G.GAME.blind.disabled then
                 local stoned = false
-                for k,v in pairs(context.scoring_hand) do
-                    if -- fixed  1 in 6
-                        (pseudorandom(pseudoseed("rgmc_statue")) < ((G.GAME.probabilities.normal) / self.config.extra.odds))
-                    then
-                        tell('STONED!')
-                        -- turn to stone
+                MadLib.loop_func(context.scoring_hand, function(v)
+                    if SMODS.pseudorandom_probability(card, 'statue', 1, 4) then
                         stoned = true
-                        G.E_MANAGER:add_event(Event({
-                            func = function()
-                                v:set_ability(G.P_CENTERS.m_stone)
-                                v:juice_up()
-                                return true
-                            end
-                        }))
+                        MadLib.simple_event(function()
+                            v:set_ability(G.P_CENTERS.m_stone)
+                            v:juice_up()
+                            return true
+                        end, 0.1, 'after')
                     end
-                end
+                end)
                 if stoned then
-                    -- make concrete noise for the laughs
-                    print("H!!!")
+                    MadLib.simple_event(function()
+                        play_sound('rgmc_concrete_scrape')
+                    end, 0.9, 'after')
                 end
             end
         end,

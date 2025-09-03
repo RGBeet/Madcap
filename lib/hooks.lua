@@ -106,6 +106,16 @@ function SMODS.score_card(card, context)
 	score_card_ref(card, context)
 end
 
+local move_forwards = function(pos, list)
+	list[pos], list[pos+1] = list[pos+1], list[pos]
+	return pos + 1
+end
+
+local move_backwards = function(pos, list)
+	list[pos], list[pos-1] = list[pos-1], list[pos]
+	return pos - 1
+end
+
 local card_shuffle_ref = CardArea.shuffle
 function CardArea:shuffle(_seed)
 	card_shuffle_ref(self,_seed)
@@ -116,42 +126,37 @@ function CardArea:shuffle(_seed)
 			card.sort_marked = true
 			local rolls = 0
 			if card.seal and card.seal == 'rgmc_patina' then
-				tell('Patina Seal')
-				MadLib.number_func(12, function()
+				--tell('Patina Seal')
+				while pos < math.min(#self.cards / 2,#self.cards) do pos = move_forwards(pos, self.cards) end
+				MadLib.number_func(10, function()
 					if not SMODS.pseudorandom_probability(card, 'patina', 1, 3) then return end
-					MadLib.number_func(2, function()
-						self.cards[pos], self.cards[pos+1] = self.cards[pos+1], self.cards[pos]
-						pos = pos + 1
-					end)
+					pos = move_forwards(pos, self.cards)
 					rolls = rolls + 1
 				end)
-				tell('Position for Patina is now' .. tostring(pos) .. '/' .. tostring(#self.cards) .. '.')
-				print(self.cards[pos].seal)
-				tell(tostring(rolls) .. ' rolls.')
+				--tell('Position for Patina is now' .. tostring(pos) .. '/' .. tostring(#self.cards) .. '.')
+				--print(self.cards[pos].seal)
+				--tell(tostring(rolls) .. ' rolls.')
 			elseif card.seal and card.seal == 'rgmc_cuprum' then
-				tell('Cuprum Seal')
+				--tell('Cuprum Seal')
+				while pos > math.max(#self.cards / 2,1) do pos = move_backwards(pos, self.cards) end
 				MadLib.number_func(10, function()
 					if not SMODS.pseudorandom_probability(card, 'cuprum', 1, 2) then return end
-					MadLib.number_func(2, function()
-						self.cards[pos], self.cards[pos-1] = self.cards[pos-1], self.cards[pos]
-						pos = pos - 1
-					end)
+					pos = move_backwards(pos, self.cards)
 					rolls = rolls + 1
 				end)
-				tell('Position for Cuprum is now' .. tostring(pos) .. '/' .. tostring(#self.cards) .. '.')
-				print(self.cards[pos].seal)
-				tell(tostring(rolls) .. ' rolls.')
+				--tell('Position for Cuprum is now' .. tostring(pos) .. '/' .. tostring(#self.cards) .. '.')
+				--print(self.cards[pos].seal)
+				--tell(tostring(rolls) .. ' rolls.')
 			elseif SMODS.has_enhancement(card, 'm_rgmc_plumbum') then
 				tell('Plumbum enhancement')
 				while pos > 1 do
 					if SMODS.has_enhancement(self.cards[pos-1], 'm_rgmc_plumbum') then
 						break
 					end
-					self.cards[pos], self.cards[pos-1] = self.cards[pos-1], self.cards[pos]
-					pos = pos - 1
+					pos = move_backwards(pos, self.cards)
 				end
 				print(self.cards[pos].config.center.key)
-				tell('Position for Plumbum is now' .. tostring(pos) .. '/' .. tostring(#self.cards) .. '.')
+				--tell('Position for Plumbum is now' .. tostring(pos) .. '/' .. tostring(#self.cards) .. '.')
 			end
 		end
 		pos = pos + 1

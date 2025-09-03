@@ -3,10 +3,10 @@ return {
         object_type = 'Blind',
         key     = 'din',
         atlas   = "blinds",
-        pos     = MLIB.coords(32),
+        pos     = MLIB.coords(35),
         min_ante = 3,
         config = { extra = 1 },
-        boss_colour = HEX('454E4D'),
+        boss_colour = HEX('2E3231'),
         in_pool = function(self)
             return Madcap.Data.devmode
         end,

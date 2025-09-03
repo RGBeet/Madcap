@@ -3713,6 +3713,16 @@ function Madcap.Funcs.select_cards(self, card, copier, targets, func)
 	return true
 end
 
+local edit_card_destination_ref = MadLib.edit_card_destination
+function MadLib.edit_card_destination(card,from,to)
+	if not card then return false end
+	if card.rgmc_coil and to == G.discard then
+		card.rgmc_coil = nil
+		return G.hand
+	end
+	return edit_card_destination_ref(card,from,to)
+end
+
 Madcap.GoldenHouseFuncs = {
     ['c_black_hole'] = function(t)
         local chips, mult = 0, 0
@@ -3836,7 +3846,6 @@ if G.AIJ then -- All in Jest
 end
 
 function Madcap.Funcs.do_gimmick_generator(card,context,success_func)
-
     local pass = nil
 
     if context.forcetrigger then
@@ -4102,11 +4111,19 @@ Madcap.Directories = {
 		['boss'] = {
 			pass = function()
 				return true
+			end,
+			func = function(d)
+				d.pools = { ['MadcapJoker'] = true }
+				if not d.boss then d.boss	= { min = 1 } end
 			end
 		},
 		['showdown'] = {
 			pass = function()
 				return true
+			end,
+			func = function(d)
+				d.pools = { ['MadcapJoker'] = true }
+				if not d.boss then d.boss	= { showdown = true, min = 8 } end
 			end
 		},
 		--TODO: add DX blinds?

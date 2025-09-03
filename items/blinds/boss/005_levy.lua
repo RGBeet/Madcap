@@ -6,7 +6,7 @@ return {
         pos     = MLIB.coords(4),
         mult    = 1.5,
         dollars = 8,
-        boss_colour = HEX('7C5949'),
+        boss_colour = HEX('3F8451'),
         config = { extra = 1 },
         in_pool = function(self)
             -- cannot be bankrupt

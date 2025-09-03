@@ -264,8 +264,7 @@ return {
             bl_rgmc_force = {
                 name = "The Force",
                 text = {
-                    "Negative cards are",
-                    "always drawn face down",
+                    "Must not play #1#s",
                 },
             },
             bl_rgmc_elevator = {

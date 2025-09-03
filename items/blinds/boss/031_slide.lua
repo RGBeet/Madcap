@@ -1,4 +1,4 @@
-function Madcap.Funcs.pendulum_end(self, silent)
+function Madcap.Funcs.slide_end(self, silent)
     MadLib.loop_func({ G.jokers, G.hand }, function(v,_)
         if v and (#v.cards > 0) then
             MadLib.flip_cards(v.cards, function(c)
@@ -18,7 +18,7 @@ return {
         atlas   = "blinds",
         pos     = MLIB.coords(30),
         min_ante = 3,
-        boss_colour = HEX('427B85'),
+        boss_colour = HEX('2E3E5C'),
         in_pool = function(self)
             return Madcap.Data.devmode
         end,

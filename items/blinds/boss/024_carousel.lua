@@ -5,7 +5,7 @@ return {
         atlas   = "blinds",
         pos     = MLIB.coords(23),
         min_ante = 3,
-        boss_colour = HEX('5F579D'),
+        boss_colour = HEX('953D63'),
         in_pool = function(self)
             return Madcap.Data.devmode or (G.jokers and #G.jokers.cards > 3)
         end,
