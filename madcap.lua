@@ -3715,7 +3715,7 @@ end
 
 local edit_card_destination_ref = MadLib.edit_card_destination
 function MadLib.edit_card_destination(card,from,to)
-	if not card then return false end
+	if not card then return to end
 	if card.rgmc_coil and to == G.discard then
 		card.rgmc_coil = nil
 		return G.hand

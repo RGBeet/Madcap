@@ -15,8 +15,12 @@ return {
                 or Madcap.Data.devmode
         end,
         loc_vars = function(self, info_queue, blind)
-            return MadLib.collect_vars(number_format(blind and blind.ability.extra.mult_increase or 1),
-                localize(string.lower("k_" .. SMODS.Rarities[blind and blind.ability.immutable.min_rarity or 'Rare'].key)))
+            if G.jokers then 
+                return MadLib.collect_vars(number_format(blind and blind.ability.extra.mult_increase or 1),
+                    localize(string.lower("k_" .. SMODS.Rarities[blind and blind.ability.immutable.min_rarity or 'Rare'].key)))
+            else
+                return MadLib.collect_vars(0.75, localize("k_rare"))
+            end
         end,
         set_blind = function(self, reset, silent)
             if not G.GAME.blind.disabled then

@@ -18,9 +18,14 @@ return {
                 and context.scoring_hand 
                 and context.final_scoring_step 
             then
-                MadLib.flip_cards(context.scoring_hand, function(v)
-                    SMODS.pseudorandom_probability(self, 'elevator', 1, 2)
-                    v.rgmc_coil = true 
+                MadLib.loop_func(context.scoring_hand, function(v)
+                    if SMODS.pseudorandom_probability(self, 'coil', 1, 2) then return end
+                    v.rgmc_coil = true
+                    -- do the thing
+                    MadLib.simple_event(function()
+                        v:juice_up(0.3,0.3)
+                        return true
+                    end, 0.1, 'after')
                 end)
             end
         end,

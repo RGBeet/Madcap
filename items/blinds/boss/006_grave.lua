@@ -10,8 +10,39 @@ return {
             return true 
         end,
         calculate = function(self, blind, context)
-            if context.discard and not G.GAME.blind.disabled and not context.repetition then
-                MadLib.loop_func(G.hand.highlighted, function(v) SMODS.Stickers["rgmc_engraved"]:apply(v,true) end)
+
+            if context.pre_discard and not G.GAME.blind.disabled then
+                MadLib.loop_func(G.hand.highlighted, function(v) 
+                    MadLib.simple_event(function()
+                        v:flip()
+                        return true
+                    end,0.15,'after')
+                end)
+                MadLib.loop_func(G.hand.highlighted, function(v) 
+                    MadLib.simple_event(function()
+                        SMODS.Stickers["rgmc_engraved"]:apply(v,true)
+                        return true
+                    end,0.00,'after')
+                end)
+                MadLib.loop_func(G.hand.highlighted, function(v) 
+                    MadLib.simple_event(function()
+                        v:flip()
+                        return true
+                    end,0.15,'after')
+                end)
+                delay(0.25)
+                MadLib.loop_func(G.hand.highlighted, function(v) 
+                    MadLib.simple_event(function()
+                        v:juice_up()
+                        return true
+                    end,0.15,'after')
+                end)
+            end
+
+            if context.discard and not G.GAME.blind.disabled then
+                MadLib.loop_func(G.hand.highlighted, function(v) 
+                    SMODS.Stickers["rgmc_engraved"]:apply(v,true) 
+                end)
             end
         end,
     }

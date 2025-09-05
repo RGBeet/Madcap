@@ -36,9 +36,6 @@ return {
         in_pool = function(self)
             return Madcap.Data.devmode
         end,
-        set_blind = function(self, reset, silent)
-            print(MadLib.RankTypes['Triangular'])
-        end,
         calculate = function (self, blind, context)
             if
                 (not G.GAME.blind.disabled) 

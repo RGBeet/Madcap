@@ -11,39 +11,35 @@ return {
         end,
         calculate = function(self, blind, context)
             if context.setting_blind and not G.GAME.blind.disabled then
-                Madcap.CheckJokerOrder = true
+                
+                MadLib.loop_func(G.jokers.cards, function(v)
+                    v.pinned = true
+                end)
+
                 MadLib.simple_event(function()
                     MadLib.number_func(4, function(i)
                         MadLib.simple_event(function()
                             G.jokers:shuffle('rgmc_carousel')
                             play_sound('cardSlide1', 0.85 + i*0.15)
                             return true
-                        end)
-                        delay(0.25*i)
+                        end, 0.8, 'after')
                     end, true)
                     return true
                 end, 0.25, 'after')
             end
-            if context.break_positions and not G.GAME.blind.disabled then
-                MadLib.simple_event(function()
-                    G.hand:change_size(-1)
-                    blind.ability.penalty = (blind.ability.penalty or 0) + 1
-                    G.GAME.blind:wiggle()
-                    G.GAME.blind.triggered = true
-                    return true
-                end)
-                delay(1.0)
+
+            if 
+                (context.setting_blind or context.before) 
+                and not G.GAME.blind.disabled 
+            then
+
             end
         end,
         defeat = function(self, silent)
-            Madcap.CheckJokerOrder = true
-            G.hand:change_size(blind.ability.penalty)
-            self.config.penalty = 0
+            
         end,
         disable = function(self, silent)
-            Madcap.CheckJokerOrder = false
-            G.hand:change_size(blind.ability.penalty)
-            self.config.penalty = 0
+            
         end,
     }
 }
