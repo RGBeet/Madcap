@@ -16,6 +16,13 @@ return {
                 return true
             end
         end,
+        loc_vars = function(self, info_queue, blind)
+            if G.GAME.blind then
+                return MadLib.collect_vars(number_format(1))
+            else
+                return MadLib.collect_vars(number_format(self.config.extra))
+            end
+        end,
         disable = function(self)
             Madcap.Funcs.ease_mayhem(-self.config.extra)
         end,

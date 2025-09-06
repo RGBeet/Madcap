@@ -1,3 +1,4 @@
+-- Played cards have a 1 in 2 chance to return to hand
 return {
     data = {
         object_type = 'Blind',
@@ -25,7 +26,7 @@ return {
                     MadLib.simple_event(function()
                         v:juice_up(0.3,0.3)
                         return true
-                    end, 0.1, 'after')
+                    end, 0.5, 'after')
                 end)
             end
         end,

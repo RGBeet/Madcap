@@ -1,3 +1,4 @@
+-- If Blind score surpasses 2X Blind Requirements, skip an ante.
 return {
     data = {
         object_type = 'Blind',
@@ -7,7 +8,7 @@ return {
         mult    = 1.5,
         boss_colour = HEX('97CD69'),
         config  = { blind_mult = 2, add_antes = 1 },
-        in_pool = function(self)
+        in_pool = function(self) -- Prevents the boss effect from skipping final antes.
             return math.floor(G.GAME.round_resets.ante/G.GAME.win_ante) == math.floor(((G.GAME.round_resets.ante or 1) + self.config.add_antes) / G.GAME.win_ante)
         end,
         loc_vars = function(self, info_queue, blind)
@@ -21,7 +22,7 @@ return {
                 and not context.individual 
                 and (to_big(G.GAME.chips) > to_big(G.GAME.blind.chips) * blind.config.blind_mult) 
             then
-                ease_ante(blind.debuff.add_antes) 
+                ease_ante(self.config.add_antes) 
             end
         end
     }

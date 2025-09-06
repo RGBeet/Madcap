@@ -1,3 +1,4 @@
+-- At end of blind, give Rebound AnTag (activates at start of next Blind)
 return {
     data = {
         object_type = 'Blind',
@@ -8,7 +9,14 @@ return {
         min_ante = 2,
         in_pool = function(self) return true end,
         defeat = function(self, silent)
-            return blind_add_tag('rgmc_anti_boomerang') -- change to tag_rgmc_anti_investment
+            MadLib.event({
+                func = function()
+                    add_tag(Tag('tag_rgmc_anti_boomerang'))
+                    play_sound('generic1', 0.9 + math.random() * 0.1, 0.8)
+                    play_sound('holo1', 1.2 + math.random() * 0.1, 0.4)
+                    return true
+                end
+            })
         end,
     }
 }

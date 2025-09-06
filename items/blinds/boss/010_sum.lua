@@ -9,6 +9,7 @@ function Madcap.Funcs.get_sum_chips(self)
     return chippies
 end
 
+-- Blind Requirement equals the sum of the previous Blind scores
 return {
     data = {
         object_type = 'Blind',

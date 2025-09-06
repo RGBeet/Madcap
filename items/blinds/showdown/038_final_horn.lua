@@ -14,10 +14,13 @@ return {
         pos     = MLIB.coords(45),
         boss_colour = HEX('DA9100'),
         in_pool = function(self)
-            return (G.playing_cards and Madcap.Funcs.has_nonstandard_cards(G.playing_cards, 0.5)) or Madcap.Data.devmode
+            return (G.playing_cards 
+                and Madcap.Funcs.has_nonstandard_cards(G.playing_cards, 0.5)) 
+                or Madcap.Data.devmode
         end,
         debuff_hand = function(self, cards, hand, handname, check)
-            return G.GAME.blind.disabled and not Madcap.Funcs.has_nonstandard_cards(G.hand.cards, 1)
+            return G.GAME.blind.disabled 
+                and not Madcap.Funcs.has_nonstandard_cards(G.hand.cards, 1)
         end,
     }
 }

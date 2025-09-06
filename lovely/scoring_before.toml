@@ -45,7 +45,16 @@ payload = '''if G.GAME.rgmc_total_mayhem then
 end'''
 match_indent = true
 
-
+# Extra Credit before but not as much; diff. ctx though becuase clashes AUGH
+[[patches]]
+[patches.pattern]
+target = 'functions/state_events.lua'
+match_indent = true
+pattern = '''if modded then update_hand_text({sound = 'chips2', modded = modded}, {chips = hand_chips, mult = mult}) end'''
+position = 'after'
+payload = '''
+SMODS.calculate_context{cardarea = G.jokers, rgmc_before_cards = true, main_eval = true}
+'''
 
 [[patches]]
 [patches.pattern]

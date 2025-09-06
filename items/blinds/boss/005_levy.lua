@@ -1,3 +1,4 @@
+-- Removes $1 per held card at end of blind
 return {
     data = {
         object_type = 'Blind',

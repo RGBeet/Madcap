@@ -17,16 +17,11 @@ return {
         end,
         debuff_hand = function(self, cards, hand, handname, check)
             if not G.GAME.blind.disabled then
-                local _, _2, _3, scoring = G.FUNCS.get_poker_hand_info(cards)
-                -- Splash scores all cards.
+                local _, _, _, scoring = G.FUNCS.get_poker_hand_info(cards)
                 if next(find_joker('Splash')) then scoring = cards end
-                local key = SMODS.Ranks[tostring(G.GAME.x_value)].key
-                for i = 1, #scoring do
-                    if scoring[i].base.value == key then return false end
-                end
-                G.GAME.blind:wiggle() -- nuh uh!
-                G.GAME.blind.triggered = true
-                return true
+                return not MadLib.list_matches_one(scoring, function(v)
+                    return MadLib.is_rank(v,SMODS.Ranks[G.GAME.x_value].id)
+                end)
             end
         end
     }

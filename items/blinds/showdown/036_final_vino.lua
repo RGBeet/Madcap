@@ -22,46 +22,78 @@ return {
                 not G.GAME.blind.disabled
                 and (context.pre_discard or context.after)
             then
-                local vino_converts = MadLib.get_loop_func(context.pre_discard and G.hand.highlighted or G.hand.cards, function(v)
+                local vino_converts = MadLib.get_loop_func(context.pre_discard and G.hand.highlighted, function(v)
                     return not SMODS.has_enhancement(v, 'm_rgmc_vino')
                         and SMODS.pseudorandom_probability(self, 'final_vino', 1, 4)
                 end)
-                MadLib.flip_cards(anim, function(v)
-                    v.ability.vino_boss = true -- marked by this blind
-                    v:set_ability(G.P_CENTERS['m_rgmc_vino'])
-                end, nil, function(v)
+                MadLib.loop_func(vino_converts, function(v) 
+                    MadLib.simple_event(function()
+                        v:flip()
+                        return true
+                    end,0.15,'after')
+                end)
+                MadLib.loop_func(vino_converts, function(v) 
+                    MadLib.simple_event(function()
+                        -- Mark as converted by the blind (in case blind is disabled later?)
+                        v.ability.vino_boss = true
+                        v:set_ability(G.P_CENTERS['m_rgmc_vino'])
+                        return true
+                    end,0.00,'after')
+                end)
+                MadLib.loop_func(vino_converts, function(v) 
+                    MadLib.simple_event(function()
+                        v:flip()
+                        return true
+                    end,0.15,'after')
+                end)
+                delay(0.25)
+                MadLib.loop_func(vino_converts, function(v) 
                     MadLib.simple_event(function()
                         v:juice_up()
                         return true
-                    end)
+                    end,0.15,'after')
                 end)
             end
         end,
         defeat = function(self, silent)
-            MadLib.loop_func(G.playing_cards, function(v)
-                v.ability.vino_boss = nil
-            end)
+            MadLib.loop_func(G.playing_cards, function(v) v.ability.vino_boss = nil end)
         end,
         disable = function(self, silent)
             -- revert vino cards converted this round
+            local vino_revert = {}
             MadLib.loop_func(G.playing_cards, function(v)
-                if SMODS.has_enhancement(v, 'm_rgmc_vino') and v.ability.vino_boss then
-                    if v.area ~= G.hand then
-                        v:set_ability(G.P_CENTERS.c_base)
-                    else
-                        table.insert(anim, v)
-                    end
-                    v.ability.vino_boss = nil
+                if not (SMODS.has_enhancement(v, 'm_rgmc_vino') and v.ability.vino_boss) then return end
+                if v.area ~= G.hand then
+                    v:set_ability(G.P_CENTERS.c_base)
+                else
+                    table.insert(anim, v)
                 end
+                v.ability.vino_boss = nil
             end)
-            -- do animation for hand cards
-            MadLib.flip_cards(anim, function(v)
-                v:set_ability(G.P_CENTERS.c_base)
-            end, nil, function(v)
+            MadLib.loop_func(vino_revert, function(v) 
+                MadLib.simple_event(function()
+                    v:flip()
+                    return true
+                end,0.15,'after')
+            end)
+            MadLib.loop_func(vino_revert, function(v) 
+                MadLib.simple_event(function()
+                    v:set_ability(G.P_CENTERS.c_base)
+                    return true
+                end,0.00,'after')
+            end)
+            MadLib.loop_func(vino_revert, function(v) 
+                MadLib.simple_event(function()
+                    v:flip()
+                    return true
+                end,0.15,'after')
+            end)
+            delay(0.25)
+            MadLib.loop_func(vino_revert, function(v) 
                 MadLib.simple_event(function()
                     v:juice_up()
                     return true
-                end)
+                end,0.15,'after')
             end)
         end,
     }

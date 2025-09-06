@@ -1,3 +1,4 @@
+-- 1.5X Blind Requirements per Rare+ Joker held at start of blind.
 return {
     data = {
         object_type = 'Blind',
@@ -22,11 +23,7 @@ return {
             if not G.GAME.blind.disabled then
                 local matches = #MadLib.get_jokers_matching_min_rarity(G.jokers.cards,self.config.immutable.min_rarity)
                 local multiplier = 1
-                tell_stat("Matches",matches)
-                if matches and matches > 1 then
-                    tell("Ooh, now you've done it! You've increased the blind by X" .. tostring(multiplier) .. "!!")
-                    G.GAME.blind.triggered = true
-                end
+                G.GAME.blind.triggered = (matches > 1) or nil
 
                 local old_amount = G.GAME.blind.chips
                 multiplier = multiplier + (matches * self.config.extra.mult_increase)

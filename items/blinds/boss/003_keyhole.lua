@@ -1,3 +1,4 @@
+-- All nonstandard poker hands are forbidden.
 Madcap.KeyholeWhitelist = {
     'High Card',
     'Pair',

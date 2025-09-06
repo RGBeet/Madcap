@@ -1,3 +1,4 @@
+-- Hand must contain at least three different suits.
 return {
     data = {
         object_type = 'Blind',
@@ -15,10 +16,6 @@ return {
         end,
         debuff_hand = function(self, cards, hand, handname, check)
             local trigger = not G.GAME.blind.disabled and (MadLib.get_num_suits(cards) < self.config.extra.min_suits) or false
-            if trigger then
-                G.GAME.blind:wiggle() -- nuh uh!
-                G.GAME.blind.triggered = true
-            end
             return trigger
         end,
     }

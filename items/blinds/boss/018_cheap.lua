@@ -1,3 +1,4 @@
+-- At end of blind, give Deficit AnTag (activates at end of next Boss Blind)
 return {
     data = {
         object_type = 'Blind',
@@ -12,7 +13,14 @@ return {
                 and (to_big(G.GAME.dollars) < to_big(20)))
         end,
         defeat = function(self, silent)
-            return blind_add_tag('rgmc_anti_boomerang') -- change to tag_rgmc_anti_investment
+            MadLib.event({
+                func = function()
+                    add_tag(Tag('tag_rgmc_anti_investment'))
+                    play_sound('generic1', 0.9 + math.random() * 0.1, 0.8)
+                    play_sound('holo1', 1.2 + math.random() * 0.1, 0.4)
+                    return true
+                end
+            })
         end,
     }
 }

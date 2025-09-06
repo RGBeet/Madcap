@@ -1,3 +1,4 @@
+-- Must not play the most played poker hand (selected at start of blind)
 return {
     data = {
         object_type = 'Blind',

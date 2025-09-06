@@ -1,3 +1,4 @@
+-- Discarded cards gain the Engraved sticker for 3 blinds.
 return {
     data = {
         object_type = 'Blind',
@@ -10,7 +11,7 @@ return {
             return true 
         end,
         calculate = function(self, blind, context)
-
+            -- Does an animation and applies an Engraved sticker.
             if context.pre_discard and not G.GAME.blind.disabled then
                 MadLib.loop_func(G.hand.highlighted, function(v) 
                     MadLib.simple_event(function()
@@ -36,12 +37,6 @@ return {
                         v:juice_up()
                         return true
                     end,0.15,'after')
-                end)
-            end
-
-            if context.discard and not G.GAME.blind.disabled then
-                MadLib.loop_func(G.hand.highlighted, function(v) 
-                    SMODS.Stickers["rgmc_engraved"]:apply(v,true) 
                 end)
             end
         end,

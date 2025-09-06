@@ -1,3 +1,4 @@
+-- If score exceeds 4/3 Blind requirements, cut blind by 1/2 and lose $5
 return {
     data = {
         object_type = 'Blind',
@@ -10,20 +11,24 @@ return {
         loc_vars = function(self, info_queue, blind)
             if G.GAME.blind then
                 return MadLib.collect_vars(
-                    number_format(2 * get_blind_amount(G.GAME and G.GAME.round_resets.ante or 1)),
+                    number_format(1.25 * get_blind_amount(G.GAME and G.GAME.round_resets.ante or 1)),
                     number_format(blind and blind.ability.extra or -5)
                 )
             else
-                return MadLib.collect_vars("2X Blind", number_format(-5))
+                return MadLib.collect_vars("4/3X Blind", number_format(-5))
             end
         end,
         in_pool = function(self)
             return Madcap.Data.devmode or to_big(G.GAME.dollars - self.config.extra*3) > to_big(G.GAME.bankrupt_at)
         end,
         calculate = function(self, blind, context)
-            if not G.GAME.blind.disabled and context.rgmc_total_score then
+            if 
+                not G.GAME.blind.disabled 
+                and context.rgmc_total_score 
+            then
                 local new_total = G.GAME.chips + context.rgmc_total_score
-                if to_big(new_total) > to_big(self.mult * get_blind_amount(G.GAME.round_resets.ante)) then
+                local max_chips = self.mult * get_blind_amount(G.GAME.round_resets.ante) * 1.25
+                if to_big(new_total) > to_big(max_chips) then
                     G.GAME.chips = math.floor(new_total / 2)
                     MadLib.manipulate_chips_mult(0,0)
                     MadLib.simple_event(function()

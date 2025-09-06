@@ -1,3 +1,4 @@
+-- Scored cards have a 1 in 4 chance to advance rank
 return {
     data = {
         object_type = 'Blind',
@@ -18,9 +19,39 @@ return {
             return MadLib.collect_vars(numer, denom)
         end,
         calculate = function(self, blind, context)
-            if context.final_scoring_step and not G.GAME.blind.disabled and SMODS.pseudorandom_probability(self, 'elevator', 1, 4) then
-                MadLib.flip_cards(context.scoring_hand, function(v) 
-                    assert(SMODS.modify_rank(v, 1)) 
+            if 
+                context.final_scoring_step 
+                and not G.GAME.blind.disabled
+            then
+                local targets = {}
+                MadLib.loop_func(context.scoring_hand, function(v)
+                    if not SMODS.pseudorandom_probability(self, 'elevator', 1, 4) then return end
+                    table.insert(targets,v)
+                end)
+                MadLib.loop_func(targets, function(v) 
+                    MadLib.simple_event(function()
+                        v:flip()
+                        return true
+                    end, 0.15, 'after')
+                end)
+                MadLib.loop_func(targets, function(v) 
+                    MadLib.simple_event(function()
+                        assert(SMODS.modify_rank(v, 1))
+                        return true
+                    end, 0.00, 'after')
+                end)
+                MadLib.loop_func(targets, function(v) 
+                    MadLib.simple_event(function()
+                        v:flip()
+                        return true
+                    end, 0.15, 'after')
+                end)
+                delay(0.25)
+                MadLib.loop_func(targets, function(v) 
+                    MadLib.simple_event(function()
+                        v:juice_up()
+                        return true
+                    end, 0.15, 'after')
                 end)
             end
         end
