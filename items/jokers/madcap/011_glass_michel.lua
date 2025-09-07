@@ -15,7 +15,6 @@ return {
             return MadLib.collect_vars(number_format(_numer), number_format(_denom))
         end,
         calculate = function(self, card, context) -- also keeps glass cards safe
-
             if
                 context.repetition
                 and context.cardarea == G.play
@@ -37,6 +36,11 @@ return {
                     and MadLib.banana_remove(card)
                     or MadLib.get_safe_data(card)
             end
+        end,
+        in_pool = function(self, args) -- at least one glass card
+            return MadLib.list_matches_one(G.playing_cards or {}, function(v)
+                return SMODS.has_enhancement(v, 'm_glass')
+            end)
         end,
         perishable_compat   = false,
         demicoloncompat     = true,

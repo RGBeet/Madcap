@@ -18,7 +18,7 @@ return {
                         or localize("rgmc_inactive"))
         end,
         calculate = function(self, card, context)
-
+            
             -- start blind: activate if big blind show it's active
             if context.setting_blind then
                 local is_big_blind = G.GAME.blind:get_type() == 'Big'

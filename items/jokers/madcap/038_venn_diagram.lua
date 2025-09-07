@@ -26,6 +26,9 @@ return {
                 return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddMult,card,card.ability.extra.mult)
             end
         end,
+        in_pool = function(self, args) -- Exotic suits/ranks enabled
+            return G.GAME.Exotic
+        end,
         demicoloncompat = true,
     },
 }

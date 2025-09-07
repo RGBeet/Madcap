@@ -26,4 +26,9 @@ return {
         end,
         demicoloncompat = true,
     },
+    in_pool = function(self, args) -- At least one Lustrous Card
+        return MadLib.list_matches_one(G.playing_cards or {}, function(v)
+            return SMODS.has_enhancement(v, 'm_rgmc_lustrous')
+        end)
+    end
 }

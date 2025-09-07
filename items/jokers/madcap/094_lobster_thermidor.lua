@@ -30,6 +30,9 @@ return {
                     card.ability.extra.e_mult)
             end
         end,
+        in_pool = function(self, args)
+            return G.GAME.spams_eaten and G.GAME.spams_eaten > 8
+        end,
         demicoloncompat = true,
     }
 }

@@ -30,6 +30,9 @@ return {
             -- reset at end of ante
             if not context.individual and context.end_of_round and G.GAME.blind.boss and not (context.blueprint or context.repetition) then return MadLib.get_simple_reset_data(MadLib.ScoreKeys.MultiMult, card, 'x_mult', 1) end
         end,
+        in_pool = function(self, args)
+            return G.GAME.Exotic
+        end,
         perishable_compat = false,
         demicoloncompat = true,
     }

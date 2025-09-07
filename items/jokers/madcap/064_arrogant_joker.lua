@@ -27,6 +27,9 @@ return {
                 return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddMult, card, card.ability.extra.mult)
             end
         end,
+        in_pool = function(self, args)
+            return G.GAME.Exotic
+        end,
         demicoloncompat = true,
     }
 }

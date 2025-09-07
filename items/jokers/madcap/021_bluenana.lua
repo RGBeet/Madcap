@@ -13,7 +13,7 @@ return {
             extra = { x_chips = 2, odds = 200 },
             immutable = { numer_factor = 0.05 }
         },
-        yes_pool_flag = "gros_michel_extinct",
+        yes_pool_flag = "gros_michel_extinct", -- Gros Michel has been removed
         loc_vars = function(self, info_queue, card)
             local _numer, _denom = SMODS.get_probability_vars(card, 1, card.ability.extra.odds)
             return MadLib.collect_vars(

@@ -53,4 +53,7 @@ return {
         perishable_compat = false,
         demicoloncompat = true,
     },
+    in_pool = function(self, args) -- "Exotic suits" enabled
+        return G.GAME.Exotic
+    end
 }

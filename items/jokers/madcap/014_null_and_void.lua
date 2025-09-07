@@ -48,6 +48,9 @@ return {
                 MadLib.loop_func(G.jokers.cards, function(v) v.rgmc_nullified = nil end)
             end
         end,
+        in_pool = function(self, args) -- at least one Joker
+            return G.jokers and #G.jokers.cards > 0
+        end,
         perishable_compat   = false,
         blueprint_compat    = false,
         demicoloncompat     = false,

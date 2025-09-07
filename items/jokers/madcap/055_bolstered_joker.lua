@@ -25,6 +25,9 @@ return {
                 return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddMult, card, card.ability.extra.mult)
             end
         end,
+        in_pool = function(self, args) -- can play at least 6 cards
+            return G.hand and G.hand.config.highlighted_limit > 5
+        end,
         demicoloncompat = true,
     }
 }

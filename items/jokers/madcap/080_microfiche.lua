@@ -1,3 +1,11 @@
+function Madcap.Funcs.microfiche_check(card)
+    if not card then return false end
+    local rank      = card:get_id()
+    local nominal   = rank and rank.nominal or 3
+    local irregular = MadLib.has_rank_in_list(MadLib.RankTypes.Irregular)
+    return (not MadLib.has_rank_in_list(MadLib.RankTypes.Irregular)) and nominal < 2
+end
+
 return {
     categories = {
         'Small Ranks'
@@ -18,15 +26,16 @@ return {
         calculate = function(self, card, context)
             if context.cardarea == G.play and context.individual and context.other_card
             then
-                local rank      = context.other_card:get_id()
-                local nominal   = rank and rank.nominal or 3
-                local irregular = MadLib.has_rank_in_list(MadLib.RankTypes.Irregular)
-                -- Gain xmult
-                if not irregular and nominal < 2 then 
+                if Madcap.Funcs.microfiche_check(context.other_card) then 
                     return MadLib.get_simple_upgrade_data(MadLib.ScoreKeys.MultiMult, context.other_card, card.ability.extra.xmult_mod)
                 end
             end
             if (context.joker_main or context.forcetrigger) and card.ability.extra.x_mult > 1 then return MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiMult, card, card.ability.extra.x_mult) end
+        end,
+        in_pool = function(self, args) -- At least one owned card has a nominal of less than 2
+            return MadLib.list_matches_one(G.playing_cards, function(v)
+                return Madcap.Funcs.microfiche_check(v)
+            end)
         end,
         perishable_compat = false,
         demicoloncompat = true,

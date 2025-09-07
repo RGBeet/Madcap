@@ -52,6 +52,9 @@ return {
                 }
             end
         end,
+        in_pool = function(self, args) -- at least two different suits
+            return MadLib.get_num_suits(G.playing_cards or {}) > 1
+        end,
         demicoloncompat = true,
     },
 }

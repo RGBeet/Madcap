@@ -28,6 +28,9 @@ return {
                 if pass then return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips, card, card.ability.extra.chips) end
             end
         end,
+        in_pool = function(self, args)
+            return G.GAME.Exotic
+        end,
         demicoloncompat = true,
     }
 }

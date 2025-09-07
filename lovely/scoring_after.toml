@@ -22,7 +22,6 @@ position = "at"
 payload = ''
 match_indent = true
 
-
 [[patches]]
 [patches.pattern]
 target = "functions/state_events.lua"

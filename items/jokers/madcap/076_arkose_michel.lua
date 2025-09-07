@@ -14,8 +14,20 @@ return {
             return MadLib.collect_vars(card.ability.extra.mult, number_format(_numer), number_format(_denom))
         end,
         calculate = function(self, card, context)
-            if (context.cardarea == G.play and context.other_card and SMODS.has_enhancement(context.other_card, 'm_stone')) or context.forcetrigger then return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddMult, card, card.ability.extra.mult) end
-            if Madcap.Funcs.banana_context(context) then return MadLib.banana_logic(card, 'arkose_michel') end
+            if 
+                (context.cardarea == G.play and context.other_card and SMODS.has_enhancement(context.other_card, 'm_stone')) 
+                or context.forcetrigger 
+            then
+                return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddMult, card, card.ability.extra.mult)
+            end
+            if Madcap.Funcs.banana_context(context) then 
+                return MadLib.banana_logic(card, 'arkose_michel') 
+            end
+        end,
+        in_pool = function(self, args) -- at least one stone card
+            return MadLib.list_matches_one(G.playing_cards or {}, function(v)
+                return SMODS.has_enhancement(v, 'm_stone')
+            end)
         end,
         eternal_compat = false,
         demicoloncompat = true,

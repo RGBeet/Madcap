@@ -28,6 +28,11 @@
                 end
             end
         end,
+        in_pool = function(self, args) -- at least one Knight rank
+            return MadLib.list_matches_one(G.playing_cards or {}, function(v)
+                return v.base.value == 'rgmc_Knight'
+            end)
+        end,
         demicoloncompat = true,
     },
 }

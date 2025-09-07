@@ -30,7 +30,7 @@ return {
             end, function(v)
                 local _suit = v:has_light_suit() and self.config.extra.suits[2]
                     or v:has_dark_suit() and self.config.extra.suits[1]
-                    or pseudorandom_element(self.config.suits,psuedoseed('life_on_earth'))
+                    or pseudorandom_element(self.config.suits,pseudoseed('life_on_earth'))
                 MadLib.simple_event(function()
                     assert(SMODS.change_base(v, _suit, nil))
                     MadLib.simple_event(function()

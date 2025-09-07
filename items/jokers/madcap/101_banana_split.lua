@@ -1,5 +1,6 @@
 return {
     categories = {
+        'Unfinished Content',
         'OP Jokers'
     },
     data = {
@@ -11,12 +12,12 @@ return {
         cost    = 6,
         config = { 
             extra = { 
-                odds = 1000,
-                x_mult = 5
+                odds = 100,
+                x_mult = 3
             } 
         },
         loc_vars = function(self, info_queue, card)
-            local numerator, denominator = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'vremade_cavendish')
+            local numerator, denominator = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'banana_split')
             return { vars = { card.ability.extra.Xmult, numerator, denominator } }
         end,
         calculate = function(self, card, context)
@@ -27,19 +28,14 @@ return {
             then
                 if SMODS.pseudorandom_probability(card, 'banana_split', 1, card.ability.extra.odds) then
                     SMODS.destroy_cards(card, nil, nil, true)
-                    return { message = localize('k_extinct_ex') }
+                    return { message = localize('k_eaten_ex') }
                 else
                     return { message = localize('k_safe_ex') }
                 end
             end
-            if context.joker_main then
-                return {
-                    xmult = card.ability.extra.Xmult
-                }
+            if context.rgmc_before_cards then
+                return { xmult = card.ability.extra.x_mult }
             end
         end,
-        in_pool = function(self, args)
-            return G.GAME.pool_flags.gros_michel_extinct
-        end
     }
 }

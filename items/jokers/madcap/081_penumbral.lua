@@ -18,6 +18,9 @@ return {
         calculate = function(self, card, context)
             if (context.joker_main and MadLib.spectrum_played(context) and MadLib.context_has_subhand(context,'ml_sh_dark')) or context.forcetrigger then return MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiMult, card, card.ability.extra.x_mult) end
         end,
+        in_pool = function(self, args) -- can play Dark subhands
+            return G.GAME.subhands and G.GAME.subhands['ml_sh_dark']
+        end,
         demicoloncompat = true,
     }
 }

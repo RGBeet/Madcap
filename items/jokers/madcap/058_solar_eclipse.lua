@@ -23,6 +23,9 @@ return {
                 return MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiChips, card, card.ability.extra.x_chips)
             end
         end,
+        in_pool = function(self, args) -- can play Light subhands
+            return G.GAME.subhands and G.GAME.subhands['ml_sh_light']
+        end,
         demicoloncompat = true,
     }
 }

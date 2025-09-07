@@ -28,7 +28,6 @@ return {
                 "~"..number_format(final_xchips))
         end,
         calculate = function(self, card, context)
-
             -- held in hand stuff
             if
                 context.individual
@@ -45,6 +44,11 @@ return {
             if context.forcetrigger then
                 return do_sigma_joker(self,card,context)
             end
+        end,
+        in_pool = function(self, args) -- at least one Knight rank
+            return MadLib.list_matches_one(G.playing_cards or {}, function(v)
+                return v.base.value == 'rgmc_Sum'
+            end)
         end,
         demicoloncompat = true,
     },

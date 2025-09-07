@@ -23,6 +23,9 @@ return {
                 return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddMult, card, card.ability.extra.mult)
             end
         end,
+        in_pool = function(self, args) -- can play Dazzling subhands
+            return G.GAME.subhands and G.GAME.subhands['ml_sh_enhanced']
+        end,
         demicoloncompat = true,
     }
 }
