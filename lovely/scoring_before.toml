@@ -66,7 +66,7 @@ local rgmc_luxury_pts = 0
 
 for _, area in ipairs(SMODS.get_card_areas('jokers')) do
     for _, _card in ipairs(area.cards) do
-        local ret = _card:calculate_lp_bonus()
+        local ret = _card.calculate_lp_bonus and _card:calculate_lp_bonus() or nil
     
         -- TARGET: calc_dollar_bonus per card
         if ret then

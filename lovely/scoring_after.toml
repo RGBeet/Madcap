@@ -101,3 +101,68 @@ pattern = "for i=1, #G.play.cards do"
 position = "after"
 match_indent = true
 payload = " local rank = not SMODS.has_no_rank(G.play.cards[i]) and G.play.cards[i]:get_id()"
+
+# Modify what's count as scoring (e.g. Cont2nuum) - adapted from JenLib
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = "SMODS.calculate_main_scoring({cardarea = v, full_hand = G.play.cards, scoring_hand = scoring_hand, scoring_name = text, poker_hands = poker_hands}, v == G.play and scoring_hand or nil)"
+position = "at"
+payload = "SMODS.calculate_main_scoring({cardarea = v, full_hand = G.play.cards, scoring_hand = scoring_hand, scoring_name = text, poker_hands = poker_hands}, Madcap.Funcs.is_scoring_area(v) and scoring_hand or nil)"
+match_indent = true
+
+# From TOGAPack - used for Outside the Box.
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = "for _, area in ipairs(SMODS.get_card_areas('jokers')) do for _, _card in ipairs(area.cards) do"
+position = "at"
+payload = "local areas = Madcap.Funcs.process_area(SMODS.get_card_areas('jokers')); for _, area in ipairs(areas) do local cur_cards = Madcap.Funcs.process_area(area.cards); for _, _card in ipairs(cur_cards) do"
+overwrite = true
+match_indent = true
+
+# Ditto.
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = "for _, v in ipairs(SMODS.get_card_areas('playing_cards')) do"
+position = "at"
+payload = "local pcard_areas = Madcap.Funcs.process_area_order(SMODS.get_card_areas('playing_cards')); for _, v in ipairs(pcard_areas) do"
+overwrite = true
+match_indent = true
+
+# Action replay - removing repetitions and stockpiling them?
+#SMODS.calculate_context({ repeating_card = card, other_context = context, num_repetitions = #reps or 0 })
+
+[[patches]]
+[patches.pattern]
+target = '=[SMODS _ "src/utils.lua"]'
+pattern = '''eval.repetitions = eval.repetitions or 0'''
+position = "after"
+payload = '''print(tostring(eval.repetitions) .. ' repetitions!')'''
+overwrite = true
+match_indent = true
+
+# Remove retriggers if Aww! No Retriggers is present
+# ALL of them
+[[patches]]
+[patches.pattern]
+target = '''=[SMODS _ "src/utils.lua"]'''
+pattern = '''for k,v in pairs(eval) do
+            if k ~= 'extra' then effect[k] = v end
+        end'''
+position = "after"
+payload = '''
+if G.GAME.Jokers.ActionReplay then
+    local action_replays = SMODS.find_card("j_rgmc_action_replay")
+	local stop_retriggers = MadLib.list_matches_all(action_replays, function(v)
+        return not v.ability.extra.triggered
+    end) and MadLib.list_matches_one(action_replays, function(v)
+        return Madcap.Funcs.action_replay_check(v, eval.repetitions)
+    end)
+    print("STOP RETRIGGERS = " .. (stop_retriggers == true and "TRUE" or "FALSE"))
+    if stop_retriggers then return end
+end
+'''
+match_indent = true
+times = 1

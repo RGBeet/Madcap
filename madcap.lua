@@ -1839,7 +1839,7 @@ function Madcap.Funcs.level_up_subhand(card, hand, instant, amount, context)
     G.GAME.subhands[hand].level = math.max(0, G.GAME.subhands[hand].level + amount)
 
 	-- CRYPTID: Universum also applies to sub-hands?!
-    if next(find_joker('cry-Universum')) then
+    if next(SMODS.find_card('j_cry-Universum')) then
         universum_mod = 1
         local effects = {}
         SMODS.calculate_context({cry_universum = true}, effects)
@@ -2489,7 +2489,7 @@ end
 local set_debuff_ref = Card.set_debuff
 function Card:set_debuff(should_debuff)
     if
-		(self.edition and self.edition.rgmc_flipped and next(find_joker("rgmc_streemerz"))) -- Streemerz
+		(self.edition and self.edition.rgmc_flipped and next(SMODS.find_card('j_rgmc_streemerz'))) -- Streemerz
 		and not self.ability.shielded 		-- shielded cannot be debuffed
 		and not self.ability.engraved       -- this would be too easy
 		and not self.ability.painted 		-- painted cannot be debuffed because paint is cool
@@ -2499,12 +2499,11 @@ function Card:set_debuff(should_debuff)
 	set_debuff_ref(self, should_debuff)
 end
 
-
 -- Some stickers prevent death
 local start_dissolve_ref = Card.start_dissolve
 function Card:start_dissolve(...)
     if
-		(self.edition and self.edition.rgmc_flipped and next(find_joker("rgmc_streemerz"))) -- Streemerz
+		(self.edition and self.edition.rgmc_flipped and next(SMODS.find_card('j_rgmc_streemerz'))) -- Streemerz
 	 	or (self.ability.shielded 			-- shielded cannot be killed
 		or self.ability.twinkling) 		-- twinkling cannot be killed, because plot armor
 	then
@@ -3309,6 +3308,11 @@ Madcap.DefineExtras = {
 
 -- Adds Cherry Seals to hand
 function Madcap.Funcs.modify_scoring_hand(scoring_hand)
+	if next(SMODS.find_card('j_rgmc_cont2nuum')) then -- Has Cont2nuum - add all cards in hand to scoring cards
+		MadLib.loop_func(G.hand.cards, function(v)
+			table.insert(scoring_hand, v)
+		end)
+	end
 	return scoring_hand
 end
 
@@ -3344,12 +3348,6 @@ function Madcap.Funcs.shuffle_deck(cards)
 	end)
 	return cards
 end
-
--- Used for managing the future Toy Piano Joker
-Madcap.ToyPiano = {
-	Positions = { '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace' },
-	BigSteps = { 12, 9, 7, 4, 6, 7, 5, 9, 6, 4, 1, 3, 4, 2, 6, 7, 5, 9, 10, 8, 12, 13, 11, 14, 12, 12 }
-}
 
 function Madcap.Funcs.change_hand_size(_old,_new)
 	if _new == _old then return false end
@@ -3513,20 +3511,6 @@ function Madcap.Funcs.mayhemize(_card, _args, _silent)
 		end, 0.1, 'after')
 	end
 	return _card
-end
-
-
-local old_create_card = create_card
-function create_card(_type, area, legendary, _rarity, skip_materialize, soulable, forced_key, key_append)
-	local card = old_create_card(_type, area, legendary, _rarity, skip_materialize, soulable, forced_key, key_append)
-
-	if G.GAME.mayhem then
-		local mayhem_state	= mfuncs.get_mayhem_state()
-		if mayhem_state > 0 then
-			card = Madcap.Funcs.mayhemize(card)
-		end
-	end
-	return card
 end
 
 function Madcap.Funcs.set_edition_flipped(target)

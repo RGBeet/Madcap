@@ -30,17 +30,42 @@ function Game:init_game_object()
     G.cosma_rate        = 0
     G.potentia_boost    = 0
     
+	Madcap.Funcs.update_global_joker_counts()
     return G
+end
+
+-- fuck it im copying paya
+function Madcap.Funcs.update_global_joker_counts()
+	if not G.GAME then return end
+	G.GAME.Jokers = {} 
+	G.GAME.Jokers.ActionReplay 		= nil
+	G.GAME.Jokers.HappyStickJoker 	= nil
+
+	MadLib.loop_func(SMODS.get_card_areas('jokers'), function(area)
+		if not area.cards then return end
+		MadLib.loop_func(area.cards, function(v)
+			if not (v and type(v) == 'table' and not v.debuff) then return end
+			local key = v.config.center_key
+			if key == 'j_rgmc_action_replay' then -- Action Replay
+				G.GAME.Jokers.ActionReplay = v
+			end
+			if key == 'j_rgmc_happy_stick_joker' then -- Happy Stick Joker
+				G.GAME.Jokers.HappyStickJoker = v
+			end
+		end)
+	end)
 end
 
 local add_to_deck_ref = Card.add_to_deck
 function Card:add_to_deck(from_debuff)
+	print("ADD TO DECK!")
 	if (not self.added_to_deck) and not from_debuff then
 		if self.added_to_deck and self.ability and self.ability.rgmc_positive and G.hand then
 			G.hand.config.card_limit = G.hand.config.card_limit - 1
 		end
 	end
 	add_to_deck_ref(self, from_debuff)
+	Madcap.Funcs.update_global_joker_counts()
 end
 
 local remove_from_deck_ref = Card.remove_from_deck
@@ -51,6 +76,7 @@ function Card:remove_from_deck(from_debuff)
 		end
 	end
 	remove_from_deck_ref(self, from_debuff)
+	Madcap.Funcs.update_global_joker_counts()
 end
 
 local card_get_id_ref = Card.get_id
@@ -175,4 +201,54 @@ function Madcap.Funcs.blind_start()
 		suits = {},
 		ranks = {}
 	}
+end
+
+
+Madcap.RandomPoolBlacklist = {
+	Voucher 	= true,
+	Booster 	= true,
+	Enhanced 	= true,
+	Edition 	= true,
+	Stake 		= true,
+	Seal 		= true,
+	Demo 		= true,
+	Back 		= true,
+	Sleeve 		= true,
+	Default 	= true,
+}
+
+function Madcap.Funcs.get_random_set(seed, blacklist)
+    local pool = pseudorandom_element(G.P_CENTER_POOLS, pseudoseed(seed))
+    local set = pool and pool[1] and pool[1].set
+
+    while not set or blacklist[set] do
+        pool = pseudorandom_element(G.P_CENTER_POOLS, pseudoseed(seed))
+        set = pool and pool[1] and pool[1].set
+    end
+
+	return set
+end
+
+local old_create_card = create_card
+function create_card(_type, area, legendary, _rarity, skip_materialize, soulable, forced_key, key_append)
+
+	if 
+		next(SMODS.find_card("j_rgmc_happy_stick_joker")) 
+		and MadLib.list_matches_one(SMODS.find_card("j_rgmc_happy_stick_joker"), function(v)
+		return SMODS.pseudorandom_probability(v, 'happy_stick_joker', 1, v.ability.extra.odds)
+	end) then
+		_type = Madcap.Funcs.get_random_set('happy_stick_joker',Madcap.RandomPoolBlacklist)
+	end
+
+	local card = old_create_card(_type, area, legendary, _rarity, skip_materialize, soulable, forced_key, key_append)
+	-- Mayhemize.
+	if G.GAME.mayhem then
+		local mayhem_state	= mfuncs.get_mayhem_state()
+		if mayhem_state > 0 then
+			card = Madcap.Funcs.mayhemize(card)
+		end
+	end
+
+
+	return card
 end

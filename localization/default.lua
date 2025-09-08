@@ -1766,9 +1766,16 @@ return {
             j_rgmc_toy_piano = {
                 name = "Toy Piano",
                 text = {
-                    "Such {C:attention}giant steps{}",
-                    "for a small piano {C:inactive}(#1#/#2# notes)",
-                    "{C:inactive}(Currently {C:mult}+#3#{C:inactive} Mult)",  
+                    {
+                        "Such {C:attention}giant steps{}",
+                        "for a small piano {C:inactive}(#4#/#5# notes)",
+                        "{C:inactive}(Currently {C:chips}+#3#{C:inactive} Chips)",
+                    },
+                    {
+                        "Gains {C:chips}+#1#{} Chips per correct {C:attention}note{}",
+                        "and {C:chips}+#2#{} Chips per {C:attention}completed{} set",
+                        "{C:inactive}(Next Rank: {C:attention}#6#{C:inactive})"
+                    }
                 },
             },
             j_rgmc_dino_cursor = {
@@ -1827,15 +1834,6 @@ return {
                     "{C:money}+$#3#{}, and {X:mult,C:white}X#4#{} Mult",
                     "Next hand will have {V:1}#6#",
                     "{C:inactive}({C:attention}#5#{C:inactive} tastes left)"
-                },
-            },
-            j_rgmc_whoopsie_doodles = {
-                name = "Whoopsie Doodles!",
-                text = {
-                    "There was a mixup at the",
-                    "{C:blue}Mult{} & {C:red}Chips{} Factory!",
-                    "{X:chips,C:white}X#1#{} Mult",
-                    "{X:mult,C:white}X#2#{} Chips"
                 },
             },
             j_rgmc_magical_die_of_judgement = {
@@ -2042,6 +2040,90 @@ return {
                     "{C:attention}+#2#{} hand size",
                     "{C:blue}-#1#{} hand",
                     "{C:red}-#1#{} discard",
+                },
+            },
+            j_rgmc_cont2nuum = {
+                name = "Cont2nuum",
+                text = {
+                    "Held cards are",
+                    "{C:rgmc_bismuth,E:2}counted as scoring{}"
+                },
+            },
+            j_rgmc_outside_the_box = {
+                name = "Thinking Outside The Box",
+                text = {
+                    "Jokers are triggered",
+                    "with {C:attention}this Joker{} as the {C:rgmc_bismuth,E:1}first",
+                    "and the Joker to its {C:attention}left{}",
+                    "as the {C:attention}last",
+                    "{C:inactive}(It wraps over!)"
+                },
+            },
+            j_rgmc_big_fish = {
+                name = "The Big Fish",
+                text = {
+                    "Rerolling {C:rgmc_bismuth,E:1}replenishes{} boosters",
+                    "Shops always have at least one {C:attention}Voucher{}",
+                    "{C:rgmc_evil}+$#1#{} reroll cost"
+                },
+            },
+            j_rgmc_action_replay = {
+                name = "Action Replay",
+                text = {
+                    "When a card {C:attention}retriggers{}, this Joker",
+                    "has a {C:green}#1# in #2#{} chance to",
+                    "{C:attention}block{} and {C:attention}stockpile",
+                    "said retrigger",
+                    "{C:green}#1# in #3#{} chance to retrigger",
+                    "{C:attention}rightmost{} scored card",
+                    "{C:rgmc_bismuth,E:1}#4#{} times and {C:attention}reset{}"
+                },
+            },
+            j_rgmc_happy_stick_joker = {
+                name = "Happy Stick Joker",
+                text = {
+                    "{C:rgmc_mayhem}+#1#{} Mayhem",
+                    "Shop items have a {C:green}#2# in #3#{} chance",
+                    "to reroll into a {C:rgmc_bismuth,E:1}random item{}"
+                },
+            },
+            j_rgmc_red_button = {
+                name = "Red Button",
+                text = {
+                    "{C:inactive}I wonder what's this",
+                    "{C:red}red{C:inactive} button do?",
+                    "Sell this card to win {C:money}$#3#{}!",
+                    "This is {C:red}NOT{} A {C:attention}JOKE{}!!",
+                    "{C:green}#1# in #2#{} chance to",
+                    "{C:rgmc_evil}nuke Norway{} instead..."
+                },
+            },
+            j_rgmc_spam_and_sausage = {
+                name = "SPAM! and Sausage",
+                text = {
+                    "{X:mult,C:white}+#1#{} Mult",
+                    "{C:green}#1# in #6#{} chance to",
+                    "{C:rgmc_gimmick}1337{} the {C:attention}sausage{}",
+                    "{C:inactive}Daddy, would you like",
+                    "{C:inactive}some {C:attention}sausage{C:inactive}?"
+                },
+            },
+            j_rgmc_empty_can = {
+                name = "Already Eaten SPAM!",
+                text = {
+                    "{C:mult}+#1#{} Mult for each",
+                    "empty {C:attention}Joker{} slot",
+                    "{s:0.8}Empty Can included",
+                    "{C:inactive}(Currently {C:mult}+#1#{C:inactive} Mult)"
+                },
+            },
+            j_rgmc_jim_co_supply_crate = {
+                name = "Jimm Co. Supply Crate",
+                text = {
+                    "Does absolutely {C:attention}nothing{}",
+                    "When {C:attention}sold{},",
+                    "{C:green}#1# in #2#{} chance to",
+                    "...actually {C:rgmc_bismuth,E:1}do something{}?"
                 },
             },
             -- Finity compat

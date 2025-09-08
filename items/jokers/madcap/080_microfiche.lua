@@ -1,6 +1,6 @@
 function Madcap.Funcs.microfiche_check(card)
     if not card then return false end
-    local rank      = card:get_id()
+    local rank      = SMODS.Ranks[card.base.value]
     local nominal   = rank and rank.nominal or 3
     local irregular = MadLib.has_rank_in_list(MadLib.RankTypes.Irregular)
     return (not MadLib.has_rank_in_list(MadLib.RankTypes.Irregular)) and nominal < 2
