@@ -16,10 +16,10 @@ return {
         },
         loc_vars = function(self, info_queue, card)
             return MadLib.collect_vars_colours(
-                number_format(card.ability.extra.rounds_remaining),
                 number_format(card.ability.extra.chips),
                 number_format(card.ability.extra.chips * #(card.ability.immutable.combos or {})),
-                { MadLib.get_warning_colour(card.ability.extra.rounds_remaining / card.ability.immutable.max_rounds) })
+                number_format(card.ability.extra.rounds_remaining),
+                { MadLib.get_warning_colour(card.ability.extra.rounds_remaining / 5) })
         end,
         calculate = function(self, card, context)
             if context.individual and context.cardarea == G.play and not context.blueprint then

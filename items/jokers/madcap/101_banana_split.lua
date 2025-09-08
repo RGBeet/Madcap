@@ -18,7 +18,7 @@ return {
         },
         loc_vars = function(self, info_queue, card)
             local numerator, denominator = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'banana_split')
-            return { vars = { card.ability.extra.Xmult, numerator, denominator } }
+            return { vars = { card.ability.extra.x_mult, numerator, denominator } }
         end,
         calculate = function(self, card, context)
             if 

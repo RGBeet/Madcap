@@ -15,7 +15,7 @@ return {
         },
         loc_vars = function(self, info_queue, card)
             local amt1 = card.ability.extra[(card.ability.immutable.mode == 1) and 'chips' or 'mult']
-            local amt2 = (card.ability.immutable.mode == 1) and 'chips' or 'mult'
+            local amt2 = (card.ability.immutable.mode == 1) and 'Chips' or 'Mult'
             return MadLib.collect_vars(card.ability.immutable.position, amt1, amt2)
         end,
         add_to_deck = function(self, card, from_debuff)

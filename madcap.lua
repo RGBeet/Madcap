@@ -4958,8 +4958,7 @@ end
 
 -- does it use LP?
 function Madcap.Funcs.uses_lp(card)
-	return (card.ability.force_lp or card.config.force_lp)
-		or card.config.center.rarity == 'rgmc_unusual'
+	return card.force_lp or card.config.center.rarity == 'rgmc_unusual'
 end
 
 -- luxury items get the L

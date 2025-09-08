@@ -13,7 +13,7 @@ return {
             extra = { chips = 10 }
         },
         loc_vars = function(self, info_queue, card)
-            return MadLib.collect_vars(card.ability.extra.chip_mod, card.ability.immutable.cards)
+            return MadLib.collect_vars(card.ability.extra.chips)
         end,
         calculate = function(self, card, context)
             if 

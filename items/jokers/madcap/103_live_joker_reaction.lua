@@ -50,5 +50,6 @@ return {
                 return lenient_bignum(card.ability.extra.money)
             end
         end,
+        demicoloncompat = false
     }
 }

@@ -1,11 +1,12 @@
 return {
     categories = {
+        'Unfinished Content',
         'New Suits',
         'Voids and Lanterns'
     },
     data = {
         object_type = "Joker",
-        key     = 'voracious_joker',
+        key     = 'voidic_joker',
         atlas   = 'placeholder',
         pos     = MLIB.coords(0,0),
         rarity  = 2,
@@ -16,7 +17,7 @@ return {
         loc_vars = function(self, info_queue, card)
             return MadLib.collect_vars_colours(
                 number_format(card.ability.extra.mult),
-                localize(card.ability.extra.suit, 'suits_singular'),
+                localize(card.ability.extra.suit, 'suits_plural'),
                 { G.C.SUITS[card.ability.extra.suit] })
         end,
         calculate = function(self, card, context)

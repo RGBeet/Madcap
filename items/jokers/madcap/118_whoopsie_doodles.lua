@@ -4,7 +4,7 @@ return {
     },
     data = {
         object_type = "Joker",
-        key     = 'magical_die_of_judgement',
+        key     = 'whoopsie_doodles',
         atlas   = 'placeholder',
         pos     = MLIB.coords(0,0),
         rarity  = 1,

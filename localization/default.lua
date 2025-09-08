@@ -1706,6 +1706,344 @@ return {
                     "{C:inactive}A rather annoying pest."
                 },
             },
+            j_rgmc_banana_split = {
+                name = "Banana Split",
+                text = {
+                    "{X:red,C:white}X#1#{} Mult",
+                    "{C:attention}before scoring",
+                    "{C:green}#2# in #3#{} chance",
+                    "this card is {C:attention}eaten",
+                    "at end of {C:attention}round{C:inactive} (Yum!)",
+                },
+            },
+            j_rgmc_double_rainbow = {
+                name = "Double Rainbow",
+                text = {
+                    "On {C:attention}first poker hand,",
+                    "scored {C:rgmc_bismuth}Bismuth{} cards",
+                    "{C:attention}return{} to hand",
+                    "with {C:rgmc_bismuth}new frame"
+                },
+            },
+            j_rgmc_live_joker_reaction = {
+                name = "Live Joker Reaction",
+                text = {
+                    "Earn {C:money}$#1#{} at",
+                    "end of {C:attention}Boss Blind",
+                    "If rank of {C:attention}scored cards{}",
+                    "exceeds {C:attention}#2#{},",
+                    "reduce payout by {C:money}$#3#"
+                },
+            },
+            j_rgmc_mustard_joker = {
+                name = "Mustard Joker",
+                text = {
+                    "Every {C:attention}4th{}",
+                    "scoring card",
+                    "permanently gains",
+                    "{C:chips}+#1#{} chips",
+                    "{C:inactive}(MUSTAAAAAARD!)"
+                },
+            },
+            j_rgmc_cuica = {
+                name = "Cuica",
+                text = {
+                    "This Joker Gains {C:chips}+#1#{} Chips",
+                    "per scored {C:attention}#2#",
+                    "Resets iff hand does {C:attention}not{}",
+                    "contain a scoring {C:attention}#2#",
+                    "{C:inactive}(Currently {C:chips}+#3#{C:inactive})",
+                },
+            },
+            j_rgmc_triangle = {
+                name = "Triangle",
+                text = {
+                    "Every {C:attention}3rd{} scored {C:attention}#1#",
+                    "{C:attention}retriggers{} the",
+                    "next scoring card {C:inactive}(#3#/3)"
+                },
+            },
+            j_rgmc_toy_piano = {
+                name = "Toy Piano",
+                text = {
+                    "Such {C:attention}giant steps{}",
+                    "for a small piano {C:inactive}(#1#/#2# notes)",
+                    "{C:inactive}(Currently {C:mult}+#3#{C:inactive} Mult)",  
+                },
+            },
+            j_rgmc_dino_cursor = {
+                name = "Dinosaur Cursor",
+                text = {
+                    "{C:blue}+#1#{} play limit",
+                    "{C:red}#2#{} discard limit"
+                },
+            },
+            j_rgmc_hang_ten = {
+                name = "Hang Ten",
+                text = {
+                    "Held {C:attention}#2#s{} give {C:mult}+#1#{} Mult",
+                    "Held {C:attention}#4#s{} give {X:mult,C:white}X#3#{} Mult",
+                },
+            },
+            j_rgmc_tune_task = {
+                name = "Tune Task",
+                text = {
+                    "If placed in Joker Slot {C:attention}No.#1#{},",
+                    "this Joker gives {C:purple}+#2#{} #3#",
+                    "{C:inactive}(Slot and reward change",
+                    "{C:inactive}upon trigger or new blind){}"
+                },
+            },
+            j_rgmc_gutterball = {
+                name = "Gutterball",
+                text = {
+                    "If played hand contains",
+                    "{C:attention}#1#{} or more unscoring cards",
+                    "gain {C:money}$#2#",
+                    "{C:inactive}Watch that Gutterball!"
+                },
+            },
+            j_rgmc_everything_bagel = {
+                name = "Everything Bagel",
+                text = {
+                    "{C:chips}+#1#{} Chips per {C:attention}unique",
+                    "suit/rank combination {C:attention}scored",
+                    "{C:inactive}(Currently {C:chips}+#2#{C:inactive} - {V:1}#3#{C:inactive} bites left)"
+                },
+            },
+            j_rgmc_squashy_grapes = {
+                name = "Squashy Grapes",
+                text = {
+                    "{X:mult,C:white}X#1#{} Mult",
+                    "Lose {X:mult,C:white}X#2#{} Mult",
+                    "per played hand"
+                },
+            },
+            j_rgmc_rainbow_sherbert = {
+                name = "Rainbow Sherbert",
+                text = {
+                    "This Joker cycles between",
+                    "{C:chips}+#1#{} Chips, {C:mult}+#2#{} Mult,",
+                    "{C:money}+$#3#{}, and {X:mult,C:white}X#4#{} Mult",
+                    "Next hand will have {V:1}#6#",
+                    "{C:inactive}({C:attention}#5#{C:inactive} tastes left)"
+                },
+            },
+            j_rgmc_whoopsie_doodles = {
+                name = "Whoopsie Doodles!",
+                text = {
+                    "There was a mixup at the",
+                    "{C:blue}Mult{} & {C:red}Chips{} Factory!",
+                    "{X:chips,C:white}X#1#{} Mult",
+                    "{X:mult,C:white}X#2#{} Chips"
+                },
+            },
+            j_rgmc_magical_die_of_judgement = {
+                name = "Magical Die of Judgement",
+                text = {
+                    "Rolls a {C:attention}D6{}",
+                    "with values from",
+                    "{C:attention}#1#{} through {C:attention}#2#",
+                    "{C:mult}+(#3#×[D6]){} Mult"
+                },
+            },
+            j_rgmc_whoopsie_doodles = {
+                name = "Whoopsie Doodles!",
+                text = {
+                    "There was a mixup at the",
+                    "{C:blue}Mult{} & {C:red}Chips{} Factory!",
+                    "{X:chips,C:white}X#1#{} Mult",
+                    "{X:mult,C:white}X#2#{} Chips"
+                },
+            },
+            j_rgmc_bank_shot = {
+                name = "Bank Shot",
+                text = {
+                    "If first hand of round is",
+                    "a single {C:attention}rankless{} card,",
+                    "{C:attention}retrigger{} next {C:attention}#1#{} cards",
+                    "{C:inactive}(Currently has {V:1}#2#",
+                    "{C:inactive}retriggers left)"
+                },
+            },
+            j_rgmc_sveerz = {
+                name = "Sveerz!",
+                text = {
+                    {
+                        "Complete the suit pattern",
+                        "without interruption and",
+                        "this Joker gains {C:mult}+#1#{} Mult",
+                        "{C:inactive}(Currently {C:mult}+#2#{C:inactive} Mult)"
+                    }, {
+                        "{V:1}#3#",
+                        "{V:2}#4#",
+                        "{V:3}#5#",
+                        "{V:4}#6#",
+                    }
+                }
+            },
+            j_rgmc_prog_rock = {
+                name = "Prog Rock",
+                text = {
+                    "If scoring hand contains",
+                    "a {C:attention}#1#{} followed by a {C:attention}#2#{},",
+                    "retrigger the {C:attention}#2 {C:green}#3#{} times"
+                },
+            },
+            j_rgmc_money_for_nothing = {
+                name = "Money for Nothing",
+                text = {
+                    "If scoring hand contains",
+                    "a {C:attention}#1#{} followed by a {C:attention}#2#{},",
+                    "gain {C:money}$#3#",
+                    "{C:inactive}(We gotta move these color TVs!)"
+                },
+            },
+            j_rgmc_lazy_joker = {
+                name = "Lazy Joker",
+                text = {
+                    "{C:attention}Subhands{} require",
+                    "{C:attention}one less{} card",
+                    "to complete"
+                },
+            },
+            j_rgmc_seven_years_bad_luck = {
+                name = "Seven Years Bad Luck",
+                text = {
+                    "This Joker gains",
+                    "{C:green}+#1#{} Denominator",
+                    "per {C:attention}shattered{} card",
+                    "Shattered {C:attention}#2#s{} and {C:attention}#3#s{}",
+                    "give {X:green,C:white}X2{} Denominator",
+                    "{C:inactive}(Currently {C:green}+#4#{C:inactive} Denominator)"
+                },
+            },
+            j_rgmc_heartbreaker = {
+                name = "Heartbreaker",
+                text = {
+                    "This Joker gains {C:mult}+#1#{} Mult",
+                    "per held {V:1}#2#{} card",
+                    "If a {V:1}#2#{} card is played,",
+                    "scored {V:1}#3#{} give",
+                    "{X:mult,C:white}#4#{} Mult",
+                    "and reset {C:mult}Mult{}",
+                    "{C:inactive}(Currently {C:mult}+#5#{C:inactive} Mult)"
+                },
+            },
+            j_rgmc_sarcophagus = {
+                name = "Sarcophagus",
+                text = {
+                    "{C:attention}Pyramids{} can be made with",
+                    "{C:attention}5{} or {C:attention}fewer cards"
+                },
+            },
+            j_rgmc_raining_sevens = {
+                name = "Raining Sevens",
+                text = {
+                    "Gain {C:green}+#1#{} Numerator",
+                    "for every {C:attention}#2#{} scored {C:attention}#3#s{}",
+                    "{C:green}-#4#{} Numerator when a",
+                    "probability {C:attention}succeeds{}",
+                    "{C:inactive}(Currently {C:green}+#5#{C:inactive} Numerator)"
+                },
+            },
+            j_rgmc_jackpot = {
+                name = "The Jackpot",
+                text = {
+                    "Held {C:attention}#1#s{} have a",
+                    "{C:green}#2# in #3#{} chance to",
+                    "give {C:rgmc_luxury}£#4#",
+                    "Increase jackpot by {C:rgmc_luxury}£#5#",
+                    "for every {C:attention}#6#{} failed rolls",
+                    "{C:inactive}(#7#/#6# failed rolls)"
+                },
+            },
+            j_rgmc_voidic_joker = {
+                name = "Voidic Joker",
+                text = {
+                    'Played {V:1}#2#{} give',
+                    '{C:mult}+#1#{} Mult when scored',
+                },
+            },
+            j_rgmc_pure_joker = {
+                name = "Purified Joker",
+                text = {
+                    'Played {V:1}#2#{} give',
+                    '{C:mult}+#1#{} Mult when scored',
+                },
+            },
+            j_rgmc_sterling_joker = {
+                name = "Sterling Joker",
+                text = {
+                    "At end of {C:attention}Blind,",
+                    "gain {C:rgmc_luxury}£#1#{} per",
+                    "remaining {C:blue}hand"
+                },
+            },
+            j_rgmc_faberge_egg = {
+                name = "Fabergé Egg",
+                text = {
+                    "Gain {C:rgmc_luxury}£#1#{} of sell value",
+                    "at end of {C:attention}Blind"
+                },
+            },
+            j_rgmc_eddie_galaxy = {
+                name = "Eddie Galaxy",
+                text = {
+                    "If played hand contains",
+                    "any {C:attention}subhands{},",
+                    "{C:green}upgrade{} level",
+                    "of all subhands"
+                },
+            },
+            j_rgmc_melvin_melvin = {
+                name = "Melvin, Melvin!",
+                text = {
+                    "{C:green}Retrigger{} all scored, held,",
+                    "and discarded {C:attention}#1#s{}",
+                    "{C:attention}#2#{} time{C:inactive}(s)",
+                },
+            },
+            j_rgmc_holystone = {
+                name = "Holystone",
+                text = {
+                    "Held {V:1}#1#{} have a",
+                    "{C:green}#2# in #3#{} chance",
+                    "of {C:attention}removing{} a random",
+                    "enhancement, edition, or seal",
+                    "Upon removal, gain {X:mult,C:white}#4#{} Mult",
+                    "and {C:rgmc_mayhem}#6# Mayhem",
+                    "{C:inactive}(Currently {X:mult,C:white}X#5#{C:inactive} Mult)"
+                },
+            },
+            j_rgmc_voidstone = {
+                name = "Voidstone",
+                text = {
+                    "Held {V:1}#1#{} have a",
+                    "{C:green}#2# in #3#{} chance",
+                    "of {C:attention}adding{} a random",
+                    "enhancement, edition, or seal",
+                    "Upon removal, gain {C:rgmc_mayhem}+#4# Mayhem"
+                },
+            },
+            j_rgmc_variegated = {
+                name = "The Variegated",
+                text = {
+                    "{X:mult,C:white}X#1#{} Mult{}",
+                    "per scored {C:rgmc_bismuth}Bismuth{} card",
+                    "if hand contains at least",
+                    "one {C:attention}other enhancement"
+                },
+            },
+            j_rgmc_hammer_keychain = {
+                name = "Hammer Keychain",
+                text = {
+                    "{C:attention}+#1#{} selection size",
+                    "{C:attention}+#2#{} hand size",
+                    "{C:blue}-#1#{} hand",
+                    "{C:red}-#1#{} discard",
+                },
+            },
             -- Finity compat
             j_rgmc_finity_blindfold = {
                 name = "Beige Blindfold",

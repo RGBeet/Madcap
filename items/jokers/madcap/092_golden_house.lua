@@ -56,8 +56,8 @@ return {
                 end
             end
             if
-                ((context.cardarea == G.jokers and context.joker_main) or context.forcetrigger)
-                and (card.ability.extra.mult ~= 0 or card.ability.extra.chips ~= 0)
+                (context.joker_main or context.forcetrigger)
+                and (card.ability.extra.mult > 0 or card.ability.extra.chips > 0)
             then
                 return {
                     chip_mod = lenient_bignum(card.ability.extra.chips),

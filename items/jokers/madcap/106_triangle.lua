@@ -14,7 +14,9 @@ return {
             immutable = { cards = 0 }
         },
         loc_vars = function(self, info_queue, card)
-            return MadLib.collect_vars(card.ability.extra.repetitions, card.ability.immutable.cards)
+            return MadLib.collect_vars(localize(card.ability.extra.rank or '2', 'ranks'),
+                card.ability.extra.repetitions, 
+                card.ability.immutable.cards)
         end,
         calculate = function(self, card, context)
             if 
@@ -26,6 +28,7 @@ return {
                         card.ability.immutable.cards = card.ability.immutable.cards + 1
                         return { message = tostring(card.ability.immutable.cards) .. '/3' }
                     end
+                    if context.forcetrigger then card.ability.immutable.cards = 3 end
                     if card.ability.immutable.cards == 3 then
                         local eval = function(card) return card.ability.immutable.card == 0 and (not G.RESET_JIGGLES) end
                         juice_card_until(card, eval, true)
