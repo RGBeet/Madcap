@@ -11,7 +11,7 @@ return {
         rarity  = 1,
         cost    = 8,
         config = {
-            extra = { e_mult = 1.4, odds = 200 },
+            extra = { e_mult = 1.2, odds = 200 },
             immutable = { numer_factor = 0.1 }
         },
         yes_pool_flag = "gros_michel_extinct", -- Gros Michel has been removed
@@ -24,7 +24,7 @@ return {
             )
         end,
         calculate = function(self, card, context)
-            -- ^1.4 Mult
+            -- ^1.2 Mult
             if
                 context.forcetrigger or
                 (context.cardarea == G.jokers and context.joker_main)

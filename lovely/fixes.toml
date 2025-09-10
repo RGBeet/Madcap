@@ -127,22 +127,6 @@ position = "after"
 payload = '''for i = 1, #G.GAME.tags do G.GAME.tags[i]:apply_to_run({type = 'tag_remove', tag = _tag}) end'''
 match_indent = true
 
-# Adds custom cashouts
-[[patches]]
-[patches.pattern]
-target = 'functions/state_events.lua'
-pattern = '''add_round_eval_row({name = 'bottom', pitch = pitch, dollars = dollars})'''
-position = 'before'
-payload = '''for k,v in pairs(Madcap.CustomCashouts) do
-	if v.check() then
-		local cash_money = (v.get_money and v.get_money() or v.money or 0)
-		add_round_eval_row({name = k, dollars = cash_money})
-		pitch = pitch + (v.pitch_up or 0.06)
-		dollars = dollars + cash_money
-	end
-end'''
-match_indent = true
-
 # Missed jokers list
 [[patches]]
 [patches.pattern]

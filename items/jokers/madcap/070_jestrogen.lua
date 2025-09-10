@@ -11,48 +11,24 @@ return {
         cost    = 7,
         config = {
             extra = {
-                odds = 5, rank_old = "King", rank_new = "Queen", chip_mod = 20
+                poker_hands = { 'Flush', MadLib.SpectrumId },
+                rank = "Queen",
+                repetitions = 1
             }
         },
         loc_vars = function(self, info_queue, card)
-            local _numer, _denom = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'jestrogen')
-            return MadLib.collect_vars(_numer,
-                _denom,
-                card.ability.extra.rank_old,
-                card.ability.extra.chip_mod,
-                card.ability.extra.rank_new)
+            return MadLib.collect_vars(localize(card.ability.extra.poker_hands[1], 'poker_hands'),
+                localize(card.ability.extra.poker_hands[2], 'poker_hands'),
+                localize(card.ability.extra.ranks, 'ranks'),
+                number_format(card.ability.extra.repetitions))
         end,
         calculate = function(self, card, context)
             if 
                 context.cardarea == G.play
-                and MadLib.is_rank(context.other_card, SMODS.Ranks[card.ability.extra.rank_old].id)
-                and SMODS.pseudorandom_probability(card, 'jestrogen', 1, card.ability.extra.odds)
+                and MadLib.is_rank(context.other_card, SMODS.Ranks[card.ability.extra.rank].id)
             then
-                local target = context.other_card
-                MadLib.simple_event(function()
-                    play_sound('rgmc_flourish', 1, 0.4)
-                    target:set_rgmc_immutable(true)
-                    target:juice_up()
-                    target.ability.perma_bonus = (target.ability.perma_bonus or 0) + card.ability.extra.chip_mod
-                    SMODS.change_base(target, _, card.ability.extra.rank_new)
-                return true
-                end, 0.2, 'immediate')
-            end
-            if context.forcetrigger then
-                local targets = MadLib.get_card_from_shuffled_deck(G.hand.cards, 1, function(c)
-                    return MadLib.is_rank(c, SMODS.Ranks[card.ability.extra.rank_old].id)
-                end)
-                MadLib.loop_func(targets, function(v)
-                    MadLib.simple_event(function()
-                        play_sound('rgmc_flourish', 0.76, 0.4)
-                        target:juice_up()
-                        target.ability.perma_bonus = (target.ability.perma_bonus or 0) + card.ability.extra.chip_mod
-                        SMODS.change_base(target, _, card.ability.extra.rank_new)
-                    return true
-                    end, 0.2, 'immediate')
-                end)
             end
         end,
-        demicoloncompat = true,
+        demicoloncompat = false,
     }
 }

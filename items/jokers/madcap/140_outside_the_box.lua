@@ -43,7 +43,7 @@ else
     end
 
     Madcap.Funcs.process_area_order = function(t)
-        return togabalatro.Madcap.Funcs.process_area(t)
+        return Madcap.Funcs.process_area(t)
     end
 end
 

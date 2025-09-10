@@ -15,7 +15,9 @@ return {
             extra = { chips = 32, ranks = { MadLib.RankIds['0'], MadLib.RankIds['1'] } }
         },
         loc_vars = function(self, info_queue, card)
-            return MadLib.collect_vars(localize(card.ability.extra.ranks[1],'ranks'), localize(card.ability.extra.ranks[2],'ranks'), number_format(card.ability.extra.chips))
+            return MadLib.collect_vars(localize(card.ability.extra.ranks[1], 'ranks'), 
+                localize(card.ability.extra.ranks[2], 'ranks'),
+                number_format(card.ability.extra.chips))
         end,
         calculate = function(self, card, context)
             if

@@ -35,34 +35,37 @@ return {
                 or context.forcetrigger -- sneaky sneaky!
             then
                 Madcap.Funcs.force_save()
-                if SMODS.pseudorandom_probability(card, 'red_button', 1, card.ability.extra.odds) then
-
+                if not SMODS.pseudorandom_probability(card, 'red_button', 1, card.ability.extra.odds) then
+                    ease_dollars(card.ability.extra.dollars)
                 else -- game over man!
-            
                     -- remove chips
                     MadLib.simple_event(function()
+                        G.HUD:get_UIE_by_ID('chip_UI_count'):juice_up(0.3, 0.3)
                         G.GAME.chips = 0
                         G.GAME.blind.chips = 0
+                        play_sound('card1', 1)
                         return true
                     end, 2.0, 'after')
                     
-                    -- remove hand cards
-                    if G.hand.cards and #G.hand.cards > 0 then
-                        MadLib.loop_func(G.hand.cards, function(v)
-                            MadLib.simple_event(function()
-                                v:remove()
-                                return true
-                            end, 0.08, 'after')
-                        end)
-                    end
+                    local time = 0.5
                     
                     -- remove deck cards
                     if G.deck.cards and #G.deck.cards > 0 then
                         MadLib.loop_func(G.deck.cards, function(v)
                             MadLib.simple_event(function()
-                                v:remove()
+                                v:start_dissolve({ HEX("FF0000") }, nil, time)
                                 return true
-                            end, 0.06, 'after')
+                            end, time, 'after')
+                        end)
+                    end
+
+                    -- remove hand cards
+                    if G.hand.cards and #G.hand.cards > 0 then
+                        MadLib.loop_func(G.hand.cards, function(v)
+                            MadLib.simple_event(function()
+                                v:start_dissolve({ HEX("FF0000") }, nil, time)
+                                return true
+                            end, time, 'after')
                         end)
                     end
                     

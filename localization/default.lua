@@ -1496,10 +1496,10 @@ return {
             j_rgmc_jestrogen = {
                 name = "Jestrogen",
                 text = {
-                    "{C:green}#1# in #2# chance for",
-                    "each scored {C:attention}#3#{} to",
-                    "gain {C:chips}+#4#{} bonus chips",
-                    "and become an {C:attention}Immutable{} #5#",
+                    "If played hand contains a",
+                    "{C:attention}#1#{} or {C:attention}#2#{}",
+                    "{C:attention}retrigger{} all",
+                    "scored {C:attention}#3#s"
                 },
             },
             j_rgmc_radioactive_chinese = {
@@ -2124,6 +2124,24 @@ return {
                     "When {C:attention}sold{},",
                     "{C:green}#1# in #2#{} chance to",
                     "...actually {C:rgmc_bismuth,E:1}do something{}?"
+                },
+            },
+            j_rgmc_id = {
+                name = "The Id",
+                text = {
+                    { 
+                        "{X:dark_edition,C:white}^#1#{} Mult" 
+                    },
+                    { 
+                        "Destroy a {C:attention}random{} card in",
+                        "each {C:attention}played{} hand"
+                    },
+                    { 
+                        "At end of {C:attention}Boss Blind{},",
+                        "{C:rgmc_evil}destroy{} Joker to the left",
+                        "If {C:red}no{} Joker is destroyed,",
+                        "lose {C:dark_edition}-1{} Joker slot " 
+                    },
                 },
             },
             -- Finity compat
