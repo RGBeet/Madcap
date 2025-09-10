@@ -4,7 +4,7 @@ return {
     },
     data = {
         object_type = "Sticker",
-        key     = "rgmc_bismuth_green",
+        key     = "rgmc_bismuth_yellow",
         atlas   = 'stickers',
         pos     = MLIB.coords(2,2),
         badge_colour = HEX("3867DD"),

@@ -1,3 +1,4 @@
+Madcap.BismuthValues.Repetitions = 1
 return {
     categories = {
         'Enhancements'
@@ -8,7 +9,6 @@ return {
         atlas   = 'stickers',
         pos     = MLIB.coords(2,1),
         badge_colour = HEX("3867DD"),
-        config  = { retriggers = 1 },
         loc_vars = function(self, info_queue, card)
             return MadLib.collect_vars(number_format(card.ability.retriggers) or '??')
         end,

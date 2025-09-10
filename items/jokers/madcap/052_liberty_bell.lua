@@ -11,7 +11,7 @@ return {
             immutable = { max_seals = 10 }
         },
         loc_vars = function(self, info_queue, card)
-            info_queue[#info_queue + 1] = { set = "Other", key = "rgmc_cuprum_seal" }
+            --info_queue[#info_queue + 1] = { set = "Other", key = "rgmc_cuprum_seal" }
             return MadLib.collect_vars(math.floor(math.min(card.ability.extra.seals, card.ability.immutable.max_seals)))
         end,
         calculate = function(self, card, context)

@@ -1,3 +1,4 @@
+Madcap.BismuthValues.Chips = 50
 return {
     categories = {
         'Enhancements'
@@ -10,7 +11,7 @@ return {
         badge_colour = HEX("3867DD"),
         config  = { chips = 50 },
         loc_vars = function(self, info_queue, card)
-            return MadLib.collect_vars(number_format(card.ability.chips) or '??')
+            return MadLib.collect_vars(number_format(Madcap.BismuthValues.Chips * (card.ability.extra and card.ability.extra.edit_factor or 1)))
         end,
         should_apply = false,
         apply = function(self, card, val)
@@ -19,19 +20,13 @@ return {
         calculate = function(self, card, context)
             if
                 not context.repetition
-                and (
-                    (context.joker_main and context.cardarea == G.jokers)
-                    or (context.main_scoring and context.cardarea == G.play)
-                )
+                and ((context.joker_main and context.cardarea == G.jokers) or (context.main_scoring and context.cardarea == G.play))
             then
-                return {
-                    message = localize{
-                        type = 'variable',
-                        key = 'a_chips',
-                        vars = { card.ability.chips or 1 }
-                    },
-                    chips = card.ability.chips or 1,
-                    colour = G.C.CHIPS,
+                local _chips = Madcap.BismuthValues.Chips * (card.ability.extra and card.ability.extra.edit_factor or 1)
+                return { 
+                    message = localize{ type = 'variable', key = 'a_chips', vars = { _chips } },
+                    chips   = _chips,
+                    colour  = G.C.CHIPS,
                 }
             end
         end,

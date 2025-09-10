@@ -59,6 +59,13 @@ Madcap = {
 		AnTagConversions = {
 			['boomerang'] = 'anti_boomerang',
 		},
+		BismuthValues = {
+			Red 	= 1.5,
+			Blue 	= 50,
+			Green	= 1,
+			
+
+		}
 		RoshamboKeys = {
 			'm_stone',
 			'm_lucky',

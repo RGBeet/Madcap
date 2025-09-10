@@ -21,7 +21,7 @@ return {
             if (context.before and MadLib.get_hand_sum(context.scoring_hand) > card.ability.immutable.max_sum) then
                 card.ability.extra.dollars = card.ability.extra.dollars - card.ability.extra.dollar_mod
                 return {
-                    message = localize { type = 'variable', key = 'a_money', vars = { card.ability.extra.dollar_mod } },
+                    message = localize { type = 'variable', key = 'a_dollars', vars = { card.ability.extra.dollar_mod } },
                     colour  = G.C.RED
                 }
             end

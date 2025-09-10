@@ -40,7 +40,7 @@ return {
                     colours = { G.C.FILTER, G.C.FILTER, G.C.FILTER, G.C.FILTER }
                 }}
             end
-            local total_vars    = { card.ability.extra_mult_mod, card.ability.extra.mult }
+            local total_vars    = { card.ability.extra_mult_mod, card.ability.extra.mult, colours = {} }
             local total_colours = {}
             MadLib.loop_func(card.ability.immutable.suit_pattern, function(v)
                 table.insert(total_vars, localize(v, 'suits_plural'))

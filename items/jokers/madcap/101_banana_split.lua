@@ -13,7 +13,7 @@ return {
         config = { 
             extra = { 
                 odds = 100,
-                x_mult = 3
+                x_mult = 3.5
             } 
         },
         loc_vars = function(self, info_queue, card)
@@ -21,6 +21,7 @@ return {
             return { vars = { card.ability.extra.x_mult, numerator, denominator } }
         end,
         calculate = function(self, card, context)
+            
             if 
                 (context.end_of_round and context.game_over == false)
                 and context.main_eval 
@@ -33,7 +34,8 @@ return {
                     return { message = localize('k_safe_ex') }
                 end
             end
-            if context.rgmc_before_cards then
+
+            if context.initial_scoring_step then
                 return { xmult = card.ability.extra.x_mult }
             end
         end,
