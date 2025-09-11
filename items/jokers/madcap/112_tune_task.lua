@@ -5,8 +5,8 @@ return {
     data = {
         object_type = "Joker",
         key     = 'tune_task',
-        atlas   = 'placeholder',
-        pos     = MLIB.coords(0,0),
+        atlas   = 'jokers',
+        pos     = MLIB.coords(11,1),
         rarity  = 1,
         cost    = 6,
         config = {

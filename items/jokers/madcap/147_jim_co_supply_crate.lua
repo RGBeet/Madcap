@@ -6,8 +6,8 @@ return {
     data = {
         object_type = "Joker",
         key     = 'jim_co_supply_crate',
-        atlas   = 'placeholder',
-        pos     = MLIB.coords(0,0),
+        atlas   = 'jokers',
+        pos     = MLIB.coords(14,6),
         rarity  = 'rgmc_gimmick',
         cost    = 1,
         config  = {

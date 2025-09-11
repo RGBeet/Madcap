@@ -10,9 +10,9 @@ return {
     },
     data = {
         object_type = "Joker",
-        key     = 'cont2unuum',
-        atlas   = 'placeholder',
-        pos     = MLIB.coords(0,0),
+        key     = 'cont2nuum',
+        atlas   = 'jokers',
+        pos     = MLIB.coords(13,8),
         rarity  = 'rgmc_unusual',
         cost    = 15,
         demicoloncompat = false,

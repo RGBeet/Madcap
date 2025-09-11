@@ -7,8 +7,8 @@ return {
     data = {
         object_type = "Joker",
         key     = 'voidic_joker',
-        atlas   = 'placeholder',
-        pos     = MLIB.coords(0,0),
+        atlas   = 'jokers',
+        pos     = MLIB.coords(12,8),
         rarity  = 2,
         cost    = 6,
         config = {

@@ -1,4 +1,4 @@
-Madcap.BismuthValues.Repetitions = 1
+local fix_value = function(card) return math.max(1, (card.ability.extra.edit_factor or 1) * Madcap.Lists.BismuthValues.Green) end
 return {
     categories = {
         'Enhancements'
@@ -10,11 +10,9 @@ return {
         pos     = MLIB.coords(2,1),
         badge_colour = HEX("3867DD"),
         loc_vars = function(self, info_queue, card)
-            return MadLib.collect_vars(number_format(card.ability.retriggers) or '??')
+            return MadLib.collect_vars(number_format(fix_value(card)))
         end,
         should_apply = false,
-        apply = function(self, card, val)
-        end,
         bismuth = true,
         calculate = function(self, card, context)
             if
@@ -26,7 +24,7 @@ return {
             then
                 return {
                     message = localize("k_again_ex"),
-                    repetitions = card.ability.retriggers,
+                    repetitions = fix_value(card),
                     card = card,
                 }
             end

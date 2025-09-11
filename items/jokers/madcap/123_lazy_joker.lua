@@ -17,8 +17,8 @@ return {
     data = {
         object_type = "Joker",
         key     = 'lazy_joker',
-        atlas   = 'placeholder',
-        pos     = MLIB.coords(0,0),
+        atlas   = 'jokers',
+        pos     = MLIB.coords(12,2),
         rarity  = 2,
         cost    = 5,
         add_to_deck = function(self, card, from_debuff)

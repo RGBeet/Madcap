@@ -1499,7 +1499,8 @@ return {
                     "If played hand contains a",
                     "{C:attention}#1#{} or {C:attention}#2#{}",
                     "{C:attention}retrigger{} all",
-                    "scored {C:attention}#3#s"
+                    "scored {C:attention}#3#s",
+                    "{C:attention}#4#{} time(s)"
                 },
             },
             j_rgmc_radioactive_chinese = {
@@ -1742,7 +1743,7 @@ return {
                     "scoring card",
                     "permanently gains",
                     "{C:chips}+#1#{} chips",
-                    "{C:inactive}(MUSTAAAAAARD!)"
+                    "{C:inactive,s:0.8}(MUSTAAAAAARD!)"
                 },
             },
             j_rgmc_cuica = {
@@ -1752,7 +1753,7 @@ return {
                     "per scored {C:attention}#2#",
                     "Resets iff hand does {C:attention}not{}",
                     "contain a scoring {C:attention}#2#",
-                    "{C:inactive}(Currently {C:chips}+#3#{C:inactive})",
+                    "{C:inactive}(Currently {C:chips}+#3#{C:inactive} Chips)",
                 },
             },
             j_rgmc_triangle = {
@@ -1807,7 +1808,7 @@ return {
                     "If played hand contains",
                     "{C:attention}#1#{} or more unscoring cards",
                     "gain {C:money}$#2#",
-                    "{C:inactive}Watch that Gutterball!"
+                    "{C:inactive,s:0.8}(Watch that Gutterball!)"
                 },
             },
             j_rgmc_everything_bagel = {
@@ -1842,16 +1843,16 @@ return {
                     "Rolls a {C:attention}D6{}",
                     "with values from",
                     "{C:attention}#1#{} through {C:attention}#2#",
-                    "{C:mult}+(#3#×[D6]){} Mult"
+                    "{C:mult}+(#3# × [D6]){} Mult"
                 },
             },
             j_rgmc_whoopsie_doodles = {
                 name = "Whoopsie Doodles!",
                 text = {
-                    "There was a mixup at the",
-                    "{C:blue}Mult{} & {C:red}Chips{} Factory!",
-                    "{X:chips,C:white}X#1#{} Mult",
-                    "{X:mult,C:white}X#2#{} Chips"
+                    "{s:0.8}There was a mixup at the",
+                    "{C:blue,s:0.8}Mult{s:0.8} & {C:red,s:0.8}Chips{s:0.8} Factory!",
+                    "{X:chips,C:white}X#1#{} Mult, {X:mult,C:white}X#2#{} Chips",
+                    "{C:inactive({V:1}#3#{C:inactive} bites left)"
                 },
             },
             j_rgmc_bank_shot = {
@@ -1894,7 +1895,8 @@ return {
                     "If scoring hand contains",
                     "a {C:attention}#1#{} followed by a {C:attention}#2#{},",
                     "gain {C:money}$#3#",
-                    "{C:inactive}(We gotta move these color TVs!)"
+                    "{C:inactive,s:0.8}(We gotta move",
+                    "{C:inactive,s:0.8}these {C:rgmc_bismuth,s:0.8}color{C:inactive,s:0.8} TVs!)"
                 },
             },
             j_rgmc_lazy_joker = {
@@ -1923,7 +1925,7 @@ return {
                     "per held {V:1}#2#{} card",
                     "If a {V:1}#2#{} card is played,",
                     "scored {V:1}#3#{} give",
-                    "{X:mult,C:white}#4#{} Mult",
+                    "{X:mult,C:white}X#4#{} Mult",
                     "and reset {C:mult}Mult{}",
                     "{C:inactive}(Currently {C:mult}+#5#{C:inactive} Mult)"
                 },
@@ -2008,8 +2010,10 @@ return {
                     "Held {V:1}#1#{} have a",
                     "{C:green}#2# in #3#{} chance",
                     "of {C:attention}removing{} a random",
-                    "enhancement, edition, or seal",
-                    "Upon removal, gain {X:mult,C:white}#4#{} Mult",
+                    "enhancement, edition,",
+                    "or seal",
+                    "Upon removal,",
+                    "gain {X:mult,C:white}#4#{} Mult",
                     "and {C:rgmc_mayhem}#6# Mayhem",
                     "{C:inactive}(Currently {X:mult,C:white}X#5#{C:inactive} Mult)"
                 },
@@ -2020,8 +2024,10 @@ return {
                     "Held {V:1}#1#{} have a",
                     "{C:green}#2# in #3#{} chance",
                     "of {C:attention}adding{} a random",
-                    "enhancement, edition, or seal",
-                    "Upon removal, gain {C:rgmc_mayhem}+#4# Mayhem"
+                    "enhancement, edition,",
+                    "or seal",
+                    "Upon addition,",
+                    "gain {C:rgmc_mayhem}+#4# Mayhem"
                 },
             },
             j_rgmc_variegated = {
@@ -2114,7 +2120,7 @@ return {
                     "{C:mult}+#1#{} Mult for each",
                     "empty {C:attention}Joker{} slot",
                     "{s:0.8}Empty Can included",
-                    "{C:inactive}(Currently {C:mult}+#1#{C:inactive} Mult)"
+                    "{C:inactive}(Currently {C:mult}+#2#{C:inactive} Mult)"
                 },
             },
             j_rgmc_jim_co_supply_crate = {

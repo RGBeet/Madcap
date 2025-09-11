@@ -6,7 +6,7 @@ return {
         object_type = "Joker",
         key     = 'sanguine',
         atlas   = 'jokers',
-        pos     = MLIB.coords(7,2),
+        pos     = MLIB.coords(7,1),
         rarity  = 2,
         cost    = 8,
         config = {

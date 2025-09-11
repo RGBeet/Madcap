@@ -60,12 +60,12 @@ Madcap = {
 			['boomerang'] = 'anti_boomerang',
 		},
 		BismuthValues = {
-			Red 	= 1.5,
-			Blue 	= 50,
-			Green	= 1,
-			
-
-		}
+			Red 	= 1.7, 	-- XMult
+			Blue 	= 50, 	-- Chips
+			Green	= 1,	-- Repetitions
+			Purple 	= 1.4,	-- XScore
+			Yellow 	= 5		-- Money
+		},
 		RoshamboKeys = {
 			'm_stone',
 			'm_lucky',

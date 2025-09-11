@@ -5,8 +5,8 @@ return {
     data = {
         object_type = "Joker",
         key     = 'whoopsie_doodles',
-        atlas   = 'placeholder',
-        pos     = MLIB.coords(0,0),
+        atlas   = 'jokers',
+        pos     = MLIB.coords(11,7),
         rarity  = 1,
         cost    = 5,
         config = {
@@ -15,9 +15,9 @@ return {
         },
         loc_vars = function(self, info_queue, card)
             return MadLib.collect_vars_colours(
-                number_format(card.ability.extra.rounds_remaining),
                 number_format(card.ability.extra.x_mult),
                 number_format(card.ability.extra.x_chips),
+                number_format(card.ability.extra.rounds_remaining),
                 { MadLib.get_warning_colour(card.ability.extra.rounds_remaining / card.ability.immutable.max_rounds) })
         end,
         calculate = function(self, card, context)

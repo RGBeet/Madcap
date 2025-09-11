@@ -1,4 +1,4 @@
-Madcap.BismuthValues.Chips = 50
+local fix_value = function(card) return math.max(1, (card.ability.extra.edit_factor or 1) * Madcap.Lists.BismuthValues.Blue) end
 return {
     categories = {
         'Enhancements'
@@ -9,20 +9,17 @@ return {
         atlas   = 'stickers',
         pos     = MLIB.coords(2,4),
         badge_colour = HEX("3867DD"),
-        config  = { chips = 50 },
         loc_vars = function(self, info_queue, card)
-            return MadLib.collect_vars(number_format(Madcap.BismuthValues.Chips * (card.ability.extra and card.ability.extra.edit_factor or 1)))
+            return MadLib.collect_vars(number_format(fix_value(card)))
         end,
         should_apply = false,
-        apply = function(self, card, val)
-        end,
         bismuth = true,
         calculate = function(self, card, context)
             if
                 not context.repetition
                 and ((context.joker_main and context.cardarea == G.jokers) or (context.main_scoring and context.cardarea == G.play))
             then
-                local _chips = Madcap.BismuthValues.Chips * (card.ability.extra and card.ability.extra.edit_factor or 1)
+                local _chips = fix_value(card)
                 return { 
                     message = localize{ type = 'variable', key = 'a_chips', vars = { _chips } },
                     chips   = _chips,

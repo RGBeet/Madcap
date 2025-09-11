@@ -7,7 +7,7 @@ return {
         rarity  = 1,
         cost    = 5,
         config =  {
-            extra = { retriggers = 3, },
+            extra = { repetitions = 3, },
             immutable = { position = 1, changing = true }
         },
         loc_vars = function(self, info_queue, card)
@@ -23,7 +23,7 @@ return {
                 card.ability.immutable.changing = true
                 return {
                     message = localize('k_again_ex'),
-                    repetitions = lenient_bignum(card.ability.extra.retriggers),
+                    repetitions = lenient_bignum(card.ability.extra.repetitions),
                     card = context.other_card
                 }
             end

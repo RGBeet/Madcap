@@ -15,8 +15,8 @@ return {
     data = {
         object_type = "Joker",
         key     = 'red_button',
-        atlas   = 'placeholder',
-        pos     = MLIB.coords(0,0),
+        atlas   = 'jokers',
+        pos     = MLIB.coords(14,3),
         rarity  = 'rgmc_gimmick',
         cost    = 1,
         config  = {

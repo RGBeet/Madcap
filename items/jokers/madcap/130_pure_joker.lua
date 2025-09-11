@@ -7,8 +7,8 @@ return {
     data = {
         object_type = "Joker",
         key     = 'pure_joker',
-        atlas   = 'placeholder',
-        pos     = MLIB.coords(0,0),
+        atlas   = 'jokers',
+        pos     = MLIB.coords(12,9),
         rarity  = 2,
         cost    = 6,
         config = {

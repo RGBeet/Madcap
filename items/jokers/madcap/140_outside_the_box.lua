@@ -55,8 +55,8 @@ return {
     data = {
         object_type = "Joker",
         key     = 'outside_the_box',
-        atlas   = 'placeholder',
-        pos     = MLIB.coords(0,0),
+        atlas   = 'jokers',
+        pos     = MLIB.coords(13,9),
         rarity  = 'rgmc_unusual',
         cost    = 12,
         calculate = function(self, card, context)

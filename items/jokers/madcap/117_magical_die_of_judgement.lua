@@ -5,8 +5,8 @@ return {
     data = {
         object_type = "Joker",
         key     = 'magical_die_of_judgement',
-        atlas   = 'placeholder',
-        pos     = MLIB.coords(0,0),
+        atlas   = 'jokers',
+        pos     = MLIB.coords(11,7),
         rarity  = 1,
         cost    = 3,
         config = {

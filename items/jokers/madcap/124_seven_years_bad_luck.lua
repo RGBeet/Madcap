@@ -17,8 +17,8 @@ return {
     data = {
         object_type = "Joker",
         key     = 'seven_years_bad_luck',
-        atlas   = 'placeholder',
-        pos     = MLIB.coords(0,0),
+        atlas   = 'jokers',
+        pos     = MLIB.coords(12,3),
         rarity  = 2,
         cost    = 6,
         config = {

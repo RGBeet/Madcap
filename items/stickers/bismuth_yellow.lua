@@ -1,3 +1,4 @@
+local fix_value = function(card) return math.max(1, (card.ability.extra.edit_factor or 1) * Madcap.Lists.BismuthValues.Yellow) end
 return {
     categories = {
         'Enhancements'
@@ -10,7 +11,7 @@ return {
         badge_colour = HEX("3867DD"),
         config  = { draw = 1 },
         loc_vars = function(self, info_queue, card)
-            return MadLib.collect_vars(number_format(card.ability.draw) or '??')
+            return MadLib.collect_vars(fix_value(card))
         end,
         should_apply = false,
         apply = function(self, card, val)
@@ -25,9 +26,16 @@ return {
                 )
             then
                 return {
-                    message = localize("k_again_ex"),
-                    repetitions = card.ability.retriggers,
+                    dollars = to_big(fix_value(card)),
                     card = card,
+                    func = function() -- This is for timing purposes, this goes after the dollar modification
+                        MadLib.event({
+                            func = function()
+                                G.GAME.dollar_buffer = 0
+                                return true
+                            end
+                        })
+                    end
                 }
             end
         end,

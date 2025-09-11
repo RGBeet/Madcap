@@ -17,8 +17,8 @@ return {
     data = {
         object_type = "Joker",
         key     = 'sveerz',
-        atlas   = 'placeholder',
-        pos     = MLIB.coords(0,0),
+        atlas   = 'jokers',
+        pos     = MLIB.coords(11,9),
         rarity  = 2,
         cost    = 7,
         config = {
@@ -40,13 +40,17 @@ return {
                     colours = { G.C.FILTER, G.C.FILTER, G.C.FILTER, G.C.FILTER }
                 }}
             end
-            local total_vars    = { card.ability.extra_mult_mod, card.ability.extra.mult, colours = {} }
-            local total_colours = {}
+            local total_vars    = { 
+                ['1']       = card.ability.extra_mult_mod, 
+                ['2']       = card.ability.extra.mult, 
+                ['colours'] = {}
+            }
+            local i = 3
             MadLib.loop_func(card.ability.immutable.suit_pattern, function(v)
-                table.insert(total_vars, localize(v, 'suits_plural'))
-                table.insert(total_colours, G.C.SUITS[v])
+                total_vars[i] = localize(v, 'suits_plural')
+                total_vars['colours'][i-2] = G.C.SUITS[v]
+                i = i+1
             end)
-            total_vars[colours] = total_colours
             return { vars = total_vars }
         end,
         add_to_deck = function(self, card, from_debuff)
