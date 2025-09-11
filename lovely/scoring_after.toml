@@ -91,6 +91,14 @@ position = "at"
 payload = "SMODS.calculate_main_scoring({cardarea = v, full_hand = G.play.cards, scoring_hand = scoring_hand, scoring_name = text, poker_hands = poker_hands}, Madcap.Funcs.is_scoring_area(v) and scoring_hand or nil)"
 match_indent = true
 
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = "SMODS.displaying_scoring = nil"
+position = "after"
+payload = "Madcap.Funcs.do_after_scoring_stuff()"
+match_indent = true
+
 # From TOGAPack - used for Outside the Box.
 [[patches]]
 [patches.pattern]
