@@ -2134,7 +2134,45 @@ function Madcap.Funcs.get_potentia_vars(sh,lvl)
 end
 
 function Madcap.Funcs.use_consumable_specific_special_card(card)
+	local set, xchips, xmult = card.ability.set, 1 + (card.ability.xchips or 0), 1 + (card.ability.xmult or 0)
+	local select_hand = Madcap.get_most_played_hand()
+	local nset = G.GAME.consumeable_usage_total and G.GAME.consumeable_usage_total[set] or 0
+    
+	if not select_hand then return end
 
+    update_hand_text({ sound = 'button', volume = 0.7, pitch = 0.8, delay = 0.5}, {
+        handname 	= select_hand,
+        chips	 	= G.GAME.hands[select_hand].chips,
+        mult 		= G.GAME.hands[select_hand].mult,
+        level 		= ""
+	})
+    update_hand_text({ sound = 'button', volume = 0.7, pitch = 0.9, delay = 0.5}, {
+        handname 	= select_hand,
+        chips	 	= "+(" .. number_format(xchips) .. " × " .. number_format(nset) .. ")",
+        mult	 	= "+(" .. number_format(xmult) .. " × " .. number_format(nset) .. ")",
+        level 		= ""
+	})
+    update_hand_text({ sound = 'button', volume = 0.7, pitch = 1.0, delay = 0.5}, {
+        handname 	= select_hand,
+        chips	 	= "+" .. number_format(xchips * nset),
+        mult	 	= "+" .. number_format(xmult * nset),
+        level 		= ""
+	})
+	
+	local new_chips = G.GAME.hands[select_hand].chips + (xchips * nset)
+	local neW_mult  = G.GAME.hands[select_hand].mult + (xmult * nset)
+
+    update_hand_text({ sound = 'button', volume = 0.7, pitch = 1.0, delay = 1.5}, {
+        handname 	= select_hand,
+        chips	 	= number_format(new_chips),
+        mult	 	= number_format(new_mult),
+        level 		= ""
+	})
+
+	G.GAME.hands[select_hand].chips = new_chips
+	G.GAME.hands[select_hand].mult 	= new_mult
+                
+	update_hand_text({sound = 'button', volume = 0.7, pitch = 1.1, delay = 0}, {mult = 0, chips = 0, handname = '', level = ''})
 end
 
 function Madcap.Funcs.add_anti_tag(t)
@@ -2257,41 +2295,6 @@ function Madcap.Funcs.open_booster_quick(key)
 	card:start_materialize()
 	G.CONTROLLER.locks[lock] = nil
 	return true
-end
-
-function Madcap.Funcs.do_rarity_tag(self, tag, context, params)
-	if not context then
-		return false
-	elseif context.type == "store_joker_create" then
-		local posession = { 0 }
-		for k, v in ipairs(G.jokers.cards) do
-			if
-				v.config.center.rarity == self.config.extra
-				and not posession[v.config.center.key]
-			then
-				posession[1] = rares_in_posession[1] + 1
-				posession[v.config.center.key] = true
-			end
-		end
-
-		local card = nil
-		if #G.P_JOKER_RARITY_POOLS[self.config.extra] > posession[1] then
-			card = create_card("Joker", context.area, nil, tag.abillity.extra, nil, nil, nil, "rgmc")
-			create_shop_card_ui(card, "Joker", context.area)
-			card.states.visible = false
-			tag:yep("+", G.C.RARITY[self.config.extra], function()
-				card:start_materialize()
-				card.misprint_cost_fac = (params and params.cost_fac) or 0
-				card:set_cost()
-				return true
-			end)
-		else
-			tag:nope()
-		end
-
-		tag.triggered = true
-		return card
-	end
 end
 
 Madcap.BlankVar = { vars = {} }

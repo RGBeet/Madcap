@@ -154,3 +154,33 @@ end
 '''
 match_indent = true
 times = 1
+
+# Add Cosma Tarots to tracked consumables
+[[patches]]
+[patches.pattern]
+target = "functions/misc_functions.lua"
+pattern = "      G.GAME.consumeable_usage_total = G.GAME.consumeable_usage_total or {tarot = 0, planet = 0, spectral = 0, tarot_planet = 0, all = 0}"
+position = "after"
+payload = """G.GAME.consumeable_usage_total.rgmc_cosma = G.GAME.consumeable_usage_total.rgmc_cosma or 0
+if card.config.center.set == 'CosmaTarot' then 
+
+G.GAME.consumeable_usage_total = G.GAME.consumeable_usage_total or {}
+G.GAME.consumeable_usage_total.akyrs_umbral = (G.GAME.consumeable_usage_total.rgmc_cosma or 0) + 1
+
+G.E_MANAGER:add_event(Event({
+        trigger = 'immediate',
+        func = function()
+        G.E_MANAGER:add_event(Event({
+        trigger = 'immediate',
+        func = function()
+        G.GAME.rgmc_last_cosma = card.config.center_key
+                return true
+        end
+        }))
+        return true
+        end
+}))
+end
+"""
+overwrite = true
+match_indent = true

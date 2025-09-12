@@ -4169,10 +4169,10 @@ return {
 					"card(s) in your hand",
                 }
             },
-            c_rgmc_encore = {
-                name = 'Encore',
+            c_rgmc_misery = {
+                name = 'Misery',
                 text = {
-					"Add a {C:rgmc_jade}Jade Seal{}",
+					"Add an {C:rgmc_umber}Umber Seal{}",
 					"to {C:attention}#1#{} selected",
 					"card(s) in your hand",
                 }
@@ -4180,7 +4180,7 @@ return {
             c_rgmc_reverb = {
                 name = 'Reverb',
                 text = {
-					"Add an {C:rgmc_umber}Umber Seal{}",
+					"Add a {C:rgmc_jade}Jade Seal{}",
 					"to {C:attention}#1#{} selected",
 					"card(s) in your hand",
                 }
@@ -4189,6 +4189,46 @@ return {
                 name = 'Ember',
                 text = {
 					"Add a {C:rgmc_ether}Ether Seal{}",
+					"to {C:attention}#1#{} selected",
+					"card(s) in your hand",
+                }
+            },
+            c_rgmc_reprise = {
+                name = 'Reprise',
+                text = {
+					"Add a {C:rgmc_cherry}Cherry Seal{}",
+					"to {C:attention}#1#{} selected",
+					"card(s) in your hand",
+                }
+            },
+            c_rgmc_dichromacy = {
+                name = 'Dichromacy',
+                text = {
+					"Add a {C:red}Anag{C:blue}lyph {C:red}Se{C:blue}al{}",
+					"to {C:attention}#1#{} selected",
+					"card(s) in your hand",
+                }
+            },
+            c_rgmc_duality = {
+                name = 'Duality',
+                text = {
+					"Add a {C:rgmc_sunrise}Sunrise Seal{}",
+					"to {C:attention}#1#{} selected",
+					"card(s) in your hand",
+                }
+            },
+            c_rgmc_classicality = {
+                name = 'Classicality',
+                text = {
+					"Add a {C:rgmc_midnight}Midnight Seal{}",
+					"to {C:attention}#1#{} selected",
+					"card(s) in your hand",
+                }
+            },
+            c_rgmc_conundrum = {
+                name = 'Conundrum',
+                text = {
+					"Apply {C:dark_edition}Flipped{} edition",
 					"to {C:attention}#1#{} selected",
 					"card(s) in your hand",
                 }
@@ -4239,9 +4279,58 @@ return {
             c_rgmc_aspire = {
                 name = 'Aspire',
                 text = {
-                    "If held {C:tarot}Tarot{} has a",
-                    "{E:1,C:cosmatarot}Cosma{} equivalent,",
-                    "convert it into equivalent",
+                    "Converts all {C:tarot}Tarots{}",
+                    "with a {E:1,C:cosmatarot}Cosma{} variant,",
+                    "into said variant",
+                }
+            },
+            c_rgmc_exchange = {
+                name = 'Exchange',
+                text = {
+                    "Convert all your {C:money}money{}",
+                    "to {C:rgmc_luxury}Luxury Points{}",
+                    "{C:money}$#1#{} => {C:rgmc_luxury}£#2#{}"
+                }
+            },
+            c_rgmc_magnify = {
+                name = 'Magnify',
+                text = {
+                    "Multiply {E:1,C:rgmc_bismuth}all values{}",
+                    "of a random {C:attention}Joker",
+                    "by {C:purple}X#1#{}",
+                    "{C:dark_edition}-#2#{} Joker slot{C:inactive}(s)"
+                }
+            },
+            c_rgmc_shadow = {
+                name = 'Shadow',
+                text = {
+                    "Summon a random",
+                    "{C:eternal}Eternal{} Joker",
+                    "{C:dark_edition}+#2#{} Joker slot{C:inactive}(s)"
+                }
+            },
+            c_rgmc_triplicate = {
+                name = 'Triplicate',
+                text = {
+                    "Replaces up to {C:attention}#1#",
+                    "held {C:attention}Double Tags{}",
+                    "with {C:attention}Triple Tags{}"
+                }
+            },
+            c_rgmc_elevate = {
+                name = 'Elevate',
+                text = {
+                    "{C:potentiacrystal}Empower every",
+                    "{C:rgmc_unusual,E:1}Sub-Hand",
+                    "by {C:attention}#1#{} level(s)"
+                }
+            },
+            c_rgmc_voyage = {
+                name = 'Voyage',
+                text = {
+                    "Adds a {C:attention}discounted",
+                    "{C:spatiaplanet}Subhand{} voucher",
+                    "to the next shop"
                 }
             },
         },

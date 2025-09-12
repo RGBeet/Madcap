@@ -22,7 +22,7 @@ return {
             then
                 local text, disp_text, poker_hands, scoring_hand, non_loc_disp_text = G.FUNCS.get_poker_hand_info(G.play.cards)
                 local _chips = card.ability.extra * to_number(G.GAME.hands[text].level)
-                return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips, context.other_card, chips)
+                return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips, context.other_card, _chips)
             end
         end
     }

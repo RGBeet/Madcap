@@ -7,9 +7,24 @@ return {
         key     = "legendary",
         atlas   = "tags",
         pos     = MLIB.coords(1,4),
-        config = { type = "store_joker_create", extra = 'Legendary' },
         apply = function(self, tag, context)
-            Madcap.Funcs.do_rarity_tag(self, tag, context, { cost_fac = 0.25 })
+            if context.type == 'store_joker_create' then
+                local card = SMODS.create_card {
+                    set = "Joker",
+                    rarity = "Legendary",
+                    area = context.area,
+                    key_append = "Legendary"
+                }
+                create_shop_card_ui(card, 'Joker', context.area)
+                card.states.visible = false
+                tag:yep('+', G.C.GREEN, function()
+                    card:start_materialize()
+                    card:set_cost()
+                    return true
+                end)
+                tag.triggered = true
+                return card
+            end
         end
     }
 }

@@ -15,8 +15,9 @@ return {
                 number_format(MadLib.clamp(card.ability.extra.antes, 1, card.ability.immutable.max_antes))
             )
         end,
-        redeem 		= function(self)
+        redeem = function(self)
             Madcap.Funcs.ease_mayhem(Madcap.Funcs.clamp_mayhem(self.config.extra.mayhem or 1))
+            ease_ante(self.config.extra.antes or 1) 
         end,
     }
 }
