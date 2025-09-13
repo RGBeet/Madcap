@@ -14,9 +14,9 @@ return {
         },
         loc_vars = function(self, info_queue, card)
             local numer, denom = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'happy_stick_joker')
-            return MadLib.collect_vars(number_format(numer), 
-                number_format(denom),
-                number_format(card.ability.extra.mayhem))
+            return MadLib.collect_vars(number_format(card.ability.extra.mayhem),
+                number_format(numer), 
+                number_format(denom))
         end,
         add_to_deck = function(self, card, from_debuff)
             G.GAME.max_mayhem = G.GAME.max_mayhem + card.ability.extra.mayhem

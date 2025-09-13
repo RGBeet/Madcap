@@ -2069,15 +2069,17 @@ return {
                 name = "The Big Fish",
                 text = {
                     "Rerolling {C:rgmc_bismuth,E:1}replenishes{} boosters",
-                    "Shops always have at least one {C:attention}Voucher{}",
+                    "Shops always have",
+                    "at least one {C:attention}Voucher{}",
                     "{C:rgmc_evil}+$#1#{} reroll cost"
                 },
             },
             j_rgmc_action_replay = {
                 name = "Action Replay",
                 text = {
-                    "When a card {C:attention}retriggers{}, this Joker",
-                    "has a {C:green}#1# in #2#{} chance to",
+                    "When a card {C:attention}retriggers{},",
+                    "this Joker has a",
+                    "{C:green}#1# in #2#{} chance to",
                     "{C:attention}block{} and {C:attention}stockpile",
                     "said retrigger",
                     "{C:green}#1# in #3#{} chance to retrigger",
@@ -2107,11 +2109,11 @@ return {
             j_rgmc_spam_and_sausage = {
                 name = "SPAM! and Sausage",
                 text = {
-                    "{X:mult,C:white}+#1#{} Mult",
-                    "{C:green}#1# in #6#{} chance to",
+                    "{X:mult,C:white}X#1#{} Mult",
+                    "{C:green}#2# in #3#{} chance to",
                     "{C:rgmc_gimmick}1337{} the {C:attention}sausage{}",
-                    "{C:inactive}Daddy, would you like",
-                    "{C:inactive}some {C:attention}sausage{C:inactive}?"
+                    "{C:inactive}\"Daddy, would you like",
+                    "{C:inactive}some sausage?\""
                 },
             },
             j_rgmc_empty_can = {
@@ -2144,7 +2146,7 @@ return {
                     },
                     { 
                         "At end of {C:attention}Boss Blind{},",
-                        "{C:rgmc_evil}destroy{} Joker to the left",
+                        "{C:rgmc_evil}destroy{} Joker to the #2#",
                         "If {C:red}no{} Joker is destroyed,",
                         "lose {C:dark_edition}-1{} Joker slot " 
                     },
@@ -5933,6 +5935,9 @@ return {
             k_plus_variety   = "+1 Item",
             k_rounds         = "Rounds",
             k_plus_antispectral     = "+1 Anti-Spectral",
+
+            k_left_lc       = "left",
+            k_right_lc      = "right",
 
             -- idk
             rgmc_lobster_sub        = {

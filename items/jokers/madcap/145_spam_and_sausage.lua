@@ -15,9 +15,9 @@ return {
         },
         loc_vars = function(self, info_queue, card)
             local numer, denom = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'spam_and_sausage')
-            return MadLib.collect_vars(number_format(numer), 
-                number_format(denom),
-                number_format(card.ability.extra.x_mult))
+            return MadLib.collect_vars(number_format(card.ability.extra.x_mult),
+                number_format(numer), 
+                number_format(denom))
         end,
         calculate = function(self, card, context)
             -- Main stuff

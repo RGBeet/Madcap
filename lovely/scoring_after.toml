@@ -184,3 +184,21 @@ end
 """
 overwrite = true
 match_indent = true
+
+# Fix this
+[[patches]]
+[patches.pattern]
+target = "cardarea.lua"
+pattern = '''else
+                update_hand_text({immediate = true, nopulse = nil, delay = 0}, {handname=disp_text, level=G.GAME.hands[text].level, mult = G.GAME.hands[text].mult, chips = G.GAME.hands[text].chips})
+            end
+            end'''
+position = "at"
+payload = '''
+                update_hand_text({immediate = true, nopulse = nil, delay = 0}, {handname=disp_text, level=G.GAME.hands[text].level, mult = G.GAME.hands[text].mult, chips = G.GAME.hands[text].chips})
+            end'''
+overwrite = true
+match_indent = true
+
+
+

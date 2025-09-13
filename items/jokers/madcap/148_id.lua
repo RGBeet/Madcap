@@ -1,3 +1,14 @@
+function MadLib.get_card_position(card,min,max)
+    if not (card and card.area) then return nil end
+    local right = #card.area.cards
+    min = min or 1
+    max = max or right
+    for i=math.max(1, min), math.min(max, right) do
+        if G.jokers.cards[i] == card then return i; end
+    end
+    return nil
+end
+
 return {
     categories = {
         'Unfinished Content',
@@ -15,9 +26,8 @@ return {
             immutable = { penalty = 0 }
         },
         loc_vars = function(self, info_queue, card)
-            return {
-                vars = { card.ability.extra.powmult }
-            }
+            local position = (MadLib.get_card_position(card,2) or not MadLib.get_card_position(card)) and 'k_left_lc' or 'k_right_lc'
+            return MadLib.collect_vars(number_format(card.ability.extra.powmult), localize(position))
         end,
         calculate = function(self, card, context)
             -- Playing a hand
@@ -32,22 +42,16 @@ return {
                 end
             end
             
-            --At end of Boss Blind, destroy Joker to its left
+            --At end of Boss Blind, destroy Joker to its left (or right, if no Jokers on the left)
 		    if 
                 context.end_of_round 
                 and G.GAME.blind_on_deck == 'Boss' 
                 and context.main_eval
                 and G.jokers 
             then
-                local position = 0
-                for i=2, G.jokers.cards do
-                    if G.jokers.cards[i] == card then 
-                        position = i
-                        break
-                    end
-                end
+                local position = MadLib.get_card_position(card,2) or MadLib.get_card_position(card) or 0
                 if position ~= 0 then -- not leftmost joker, let's destroy the joker to the left
-                    local sliced_card = G.jokers.cards[position-1]
+                    local sliced_card = G.jokers.cards[position > 1 and (position - 1) or (position + 1)]
                     sliced_card.getting_sliced = true -- Make sure to do this on destruction effects
                     G.GAME.joker_buffer = G.GAME.joker_buffer - 1
                     MadLib.event({
@@ -77,15 +81,7 @@ return {
             
             -- The main part
             if context.joker_main or context.forcetrigger then
-                if Talisman then
-                    return MadLib.get_simple_score_data(MadLib.ScoreKeys.ExpMult, card, card.ability.extra.e_mult)
-                else
-                    return {
-                        xmult = mult ^ (card.ability.extra.powmult - 1),
-                        message = "^"..card.ability.extra.powmult.." Mult",
-                        colour = G.C.DARK_EDITION
-                    }
-                end
+                return MadLib.get_simple_score_data(MadLib.ScoreKeys.ExpMult, card, card.ability.extra.powmult)
             end
         end,       
         remove_from_deck = function(self, card, from_debuff)
