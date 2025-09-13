@@ -13,10 +13,11 @@ return {
         cost    = 8,
         aurinko = true,
         loc_vars = function(self, info_queue, center)
-             return Madcap.Funcs.get_special_card_vars(self.config.set, self.config.xchips, self.config.xmult)
+            local amt = (Madcap.Lists.ConsumableSpatias[card.ability.set] or 0)
+            return Madcap.Funcs.get_special_card_vars(self.config.set, (amt * self.config.xchips) + 1, (amt * self.config.xmult) + 1)
         end,
         can_use = function(self, card)
-            return true
+            return (Madcap.Lists.ConsumableSpatias[card.ability.set] or 0) > 0
         end,
         use = function(self, card, area, copier)
             Madcap.Funcs.use_consumable_specific_special_card(card)
