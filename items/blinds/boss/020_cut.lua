@@ -11,7 +11,7 @@ return {
         loc_vars = function(self, info_queue, blind)
             if G.GAME.blind then
                 return MadLib.collect_vars(
-                    number_format(1.25 * get_blind_amount(G.GAME and G.GAME.round_resets.ante or 1)),
+                    number_format(self.mult * 1.25 * get_blind_amount(G.GAME and G.GAME.round_resets.ante or 1)),
                     number_format(blind and blind.ability.extra or -5)
                 )
             else
@@ -27,7 +27,7 @@ return {
                 and context.rgmc_total_score 
             then
                 local new_total = G.GAME.chips + context.rgmc_total_score
-                local max_chips = self.mult * get_blind_amount(G.GAME.round_resets.ante) * 1.25
+                local max_chips = self.mult * 1.25 * get_blind_amount(G.GAME.round_resets.ante)
                 if to_big(new_total) > to_big(max_chips) then
                     G.GAME.chips = math.floor(new_total / 2)
                     MadLib.manipulate_chips_mult(0,0)

@@ -1852,7 +1852,7 @@ return {
                     "{s:0.8}There was a mixup at the",
                     "{C:blue,s:0.8}Mult{s:0.8} & {C:red,s:0.8}Chips{s:0.8} Factory!",
                     "{X:chips,C:white}X#1#{} Mult, {X:mult,C:white}X#2#{} Chips",
-                    "{C:inactive({V:1}#3#{C:inactive} bites left)"
+                    "{C:inactive}({V:1}#3#{C:inactive} bites left)"
                 },
             },
             j_rgmc_bank_shot = {

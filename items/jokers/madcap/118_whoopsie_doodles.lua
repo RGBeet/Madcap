@@ -21,8 +21,11 @@ return {
                 { MadLib.get_warning_colour(card.ability.extra.rounds_remaining / card.ability.immutable.max_rounds) })
         end,
         calculate = function(self, card, context)
-            if context.joker_main and G.GAME.current_round.hands_played == 0 then
-                return MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiMult, card, card.ability.extra.x_mult)
+            if context.joker_main then  
+                return {
+                    xchip = card.ability.extra.x_chips,
+                    xmult = card.ability.extra.x_mult
+                }
             end
             Madcap.Funcs.food_joker_round_end(card)
         end,
