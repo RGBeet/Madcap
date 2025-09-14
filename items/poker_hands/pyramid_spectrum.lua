@@ -1,14 +1,4 @@
-local Bunco     = next(SMODS.find_mod('Bunco'))
-local Paperback = next(SMODS.find_mod('Paperback'))
-local RGMadcap  = next(SMODS.find_mod('RGMadcap'))
-local Framework = next(SMODS.find_mod('SpectrumFramework'))
-
-local spectrum_part = (Bunco and 'bunc_spectrum')
-    or (Paperback and 'paperback_spectrum')
-    or (Framework and 'spectrum_spectrum') -- would really reccomend at least installing this
-    or nil
-
-if not spectrum_part then return {} end -- don't even try
+if MadLib.SpectrumId == 'na' then return {} end
 
 return {
     categories = {

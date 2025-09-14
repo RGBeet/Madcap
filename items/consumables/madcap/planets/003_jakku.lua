@@ -1,3 +1,5 @@
+if MadLib.SpectrumId == 'na' then return {} end
+
 return {
     categories = {
         'Poker Hands'

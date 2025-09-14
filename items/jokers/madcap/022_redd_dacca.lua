@@ -29,15 +29,7 @@ return {
                 context.forcetrigger or
                 (context.cardarea == G.jokers and context.joker_main)
             then
-                if Talisman then
-                    return MadLib.get_simple_score_data(MadLib.ScoreKeys.ExpMult, card, card.ability.extra.e_mult)
-                else
-                    return {
-                        Xmult_mod = mult ^ (card.ability.extra.powmult - 1),
-                        message = "^"..card.ability.extra.powmult.." Mult",
-                        colour = G.C.RGMC_EMULT
-                    }
-                end
+                return MadLib.get_simple_score_data(MadLib.ScoreKeys.ExpMult, card, card.ability.extra.e_mult)
             end
 
             -- End of round

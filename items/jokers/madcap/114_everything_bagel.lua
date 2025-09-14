@@ -17,7 +17,7 @@ return {
         loc_vars = function(self, info_queue, card)
             return MadLib.collect_vars_colours(
                 number_format(card.ability.extra.chips),
-                number_format(card.ability.extra.chips * #(card.ability.immutable.combos or {})),
+                number_format(card.ability.extra.chips * #card.ability.immutable.combos),
                 number_format(card.ability.extra.rounds_remaining),
                 { MadLib.get_warning_colour(card.ability.extra.rounds_remaining / 5) })
         end,
@@ -30,7 +30,7 @@ return {
                 if not MadLib.list_matches_one(card.ability.immutable.combos, function(v)
                     return combination == v
                 end) then
-                    table.insert(card.ability.immutable.combos, v)
+                    table.insert(card.ability.immutable.combos, combination)
                     return {
                         message = localize('k_upgrade_ex'),
                         colour = G.C.CHIPS
@@ -38,11 +38,11 @@ return {
                 end
             end
             if
-                (context.forcetrigger or
-                (context.cardarea == G.jokers and context.joker_main))
-                and #(card.ability.immutable.combos or {}) > 0
+                (context.forcetrigger or context.joker_main)
+                and #card.ability.immutable.combos > 0
             then
-                return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips, card, card.ability.extra.chips * #(card.ability.immutable.combos or {}))
+                return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips, 
+                    card, card.ability.extra.chips * #card.ability.immutable.combos)
             end
             -- Food Joker end logic
             Madcap.Funcs.food_joker_round_end(card)
