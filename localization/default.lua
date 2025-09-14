@@ -1886,7 +1886,8 @@ return {
                 text = {
                     "If scoring hand contains",
                     "a {C:attention}#1#{} followed by a {C:attention}#2#{},",
-                    "retrigger the {C:attention}#2 {C:green}#3#{} times"
+                    "retrigger the {C:attention}#2# {C:green}#3#{} times",
+                    "{C:inactive,s:0.8}(Get it?)"
                 },
             },
             j_rgmc_money_for_nothing = {
@@ -3794,6 +3795,33 @@ return {
                     "{C:inactive}play my little game?{}"
                 }
             },
+            -- Bonus Cosmas?!
+            c_rgmc_conundrum = { -- Eclipse
+                name = 'Conundrum',
+                text = {
+					"Apply {C:dark_edition}Flipped{} edition",
+					"to {C:attention}#1#{} selected",
+					"card(s) in your hand",
+                }
+            },
+			c_rgmc_patience = { -- Blessing
+				name = "Patience",
+                text = {
+                    'Upon using {C:attention}Tarot{},',
+                    '{C:green}#1# in #2# chance{} to',
+                    'create #3# {C:dark_edition}Negative{} copies',
+                    'and {C:red}self-destruct{}',
+                    "{s:0.8,C:cosmatarot}Patience{s:0.8} excluded"
+                }
+			},
+			c_rgmc_sleight_of_hand = { -- Seraph
+				name = "Sleight of Hand",
+                text = {
+					"Apply random",
+                    "{C:attention}Hand{} seal on",
+					"{C:attention}#1#{} selected card(s)",
+                }
+			},
         },
         AntiSpectral = {
             c_rgmc_anti_familiar= {
@@ -3968,18 +3996,20 @@ return {
                     "in hand"
                 }
 			},
-			c_rgmc_fractal = { -- bismuth
+			c_rgmc_fractal = {
 				name = "Fractal",
                 text = {
-                    "#1# in #2# chance to apply {X:edition}edition{}",
-					"to #3# {C:attention}random{} cards"
+                    'Enhances up to {C:attention}#1#{}',
+                    'selected cards to',
+                    '{C:attention}#2#s'
                 }
 			},
-			c_rgmc_heaven = { -- heaven
-				name = "Heaven",
+			c_rgmc_resonate = {
+				name = "Resonate",
                 text = {
-                    "#1# in #2# chance to apply {X:edition}edition{}",
-					"to #3# {C:attention}random{} cards"
+                    'Enhances up to {C:attention}#1#{}',
+                    'selected cards to',
+                    '{C:attention}#2#s'
                 }
 			},
         },
@@ -4227,11 +4257,11 @@ return {
 					"card(s) in your hand",
                 }
             },
-            c_rgmc_conundrum = {
-                name = 'Conundrum',
+            c_rgmc_vici = {
+                name = 'Vici',
                 text = {
 					"Apply {C:dark_edition}Flipped{} edition",
-					"to {C:attention}#1#{} selected",
+					"to {C:attention}#1#{} random",
 					"card(s) in your hand",
                 }
             },
@@ -4334,6 +4364,14 @@ return {
                     "{C:spatiaplanet}Subhand{} voucher",
                     "to the next shop"
                 }
+            },
+            c_rgmc_magic_hat = {
+                name = "Magic Hat",
+                text = {
+                    "Level up {C:planet}#2#{}",
+                    "by {C:attention}#3#{} levels",
+                    "{C:attention}+#1#{} Ante"
+                },
             },
         },
         Tag = {
