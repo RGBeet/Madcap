@@ -28,7 +28,10 @@ return {
 	calculate = function(self, card, context)
 
 		-- adds luxury points
-		if context.post_joker or (context.main_scoring and context.cardarea == G.play) then
+		if 
+			context.post_joker 
+			or (context.main_scoring and context.cardarea == G.play)
+		then
 			return { rgmc_luxury_pts = self.config.extra.luxury_pts or 1 }
 		end
 

@@ -34,7 +34,10 @@ return {
             return MadLib.collect_vars(poker_hand, number_format(hand_chips), number_format(hand_level), number_format(total))
         end,
         calculate = function(self, card, context)
-            if context.post_joker or (context.main_scoring and context.cardarea == G.play) then
+            if 
+                context.post_joker or
+                (context.main_scoring and context.cardarea == G.play) 
+            then
                 -- get the data for the last played poker hand
                 return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips, card, total)
             end

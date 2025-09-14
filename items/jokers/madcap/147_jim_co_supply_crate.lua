@@ -15,16 +15,16 @@ return {
         },
         loc_vars = function(self, info_queue, card)
             local _numer, _denom = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'jim_co_supply_crate')
-            return MadLib.collect_vars(math.max(0,number_format(_denom - _numer)), number_format(_denom))
+            return MadLib.collect_vars(number_format(numer), number_format(_denom))
         end,
         calculate = function(self, card, context)
             if 
                 (context.selling_self and not context.blueprint)
             then
-                Madcap.Funcs.force_save()
                 MadLib.simple_event(function()
                     play_sound("rgmc_open_crate")
-                end, 3.75, 'after')
+                    return true
+                end, 0, 'after')
                 if SMODS.pseudorandom_probability(card, 'jim_co_supply_crate', 1, card.ability.extra.odds) then
                     MadLib.simple_event(function()
                         play_sound("rgmc_open_riff")
@@ -34,15 +34,16 @@ return {
                         G.jokers:emplace(nc)
                         nc:juice_up(0.3, 0.5)
                         return true
-                    end, 2.0, 'after')
+                    end, 3.75, 'after')
                 else -- nope!
                     MadLib.simple_event(function()
                         play_sound("rgmc_open_riff")
                         card_eval_status_text(card, 'extra', nil, nil, nil, { message = localize('k_nope_ex'), instant = true });
                         card:juice_up(0.3, 0.5)
                         return true
-                    end, 2.0, 'after')
+                    end, 3.75, 'after')
                 end
+                Madcap.Funcs.force_save()
             end
         end,
         demicoloncompat = false,

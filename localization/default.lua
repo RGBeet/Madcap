@@ -2139,7 +2139,7 @@ return {
                 name = "The Id",
                 text = {
                     { 
-                        "{X:dark_edition,C:white}^#1#{} Mult" 
+                        "{X:rgmc_emult,C:white}^#1#{} Mult" 
                     },
                     { 
                         "Destroy a {C:attention}random{} card in",
@@ -4225,6 +4225,14 @@ return {
 					"card(s) in your hand",
                 }
             },
+            c_rgmc_cosmos = {
+                name = 'Cosmos',
+                text = {
+					"Add a {C:rgmc_seafoam}Seafoam Seal{}",
+					"to {C:attention}#1#{} selected",
+					"card(s) in your hand",
+                }
+            },
             c_rgmc_reprise = {
                 name = 'Reprise',
                 text = {
@@ -4261,7 +4269,7 @@ return {
                 name = 'Vici',
                 text = {
 					"Apply {C:dark_edition}Flipped{} edition",
-					"to {C:attention}#1#{} random",
+					"to {C:attention}all{} non-editioned",
 					"card(s) in your hand",
                 }
             },

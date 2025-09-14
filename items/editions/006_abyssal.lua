@@ -22,7 +22,11 @@ return {
             return MadLib.collect_vars(total, self.config.extra.xmult_mod)
         end,
         calculate = function(self, card, context)
-            if Madcap.Funcs.edition_in_play(context,card) and G.GAME.mayhem > 0 then
+            if 
+                (context.post_joker or
+                (context.main_scoring and context.cardarea == G.play))
+                and G.GAME.mayhem > 0 
+            then
                 local total = G.GAME.mayhem * self.config.extra.xmult_mod
                 return MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiMult, card, total)
             end

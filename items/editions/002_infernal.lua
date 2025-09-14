@@ -18,18 +18,17 @@ return {
             return MadLib.collect_vars(self.config.x_score, G.GAME.probabilities.normal or 1, self.config.odds)
         end,
         calculate = function(self, card, context)
-            if Madcap.Funcs.edition_in_play(context,card) or context.joker_main then
+            if 
+                context.post_joker or
+                (context.main_scoring and context.cardarea == G.play) 
+            then
+                tell('Infernal be like')
                 card.ability.infernaled = true
-                card.ability.trigger = true
-                return {
-                    message = "...?",
-                    colour = G.C.PURPLE
+                return { 
+                    xscore = self.config.x_score or 3, 
+                    x_score = self.config.x_score or 3, 
+                    xscore_mod = self.config.x_score or 3 
                 }
-            end
-
-            if context.after and card.ability.infernaled then
-                card.ability.infernaled = nil -- not needed now
-                return MadLib.do_x_score(self.config.x_score)
             end
 
             -- If card was activated at any time during blind, 1 in 3 chance it BURNS UP!
@@ -42,7 +41,6 @@ return {
                         card.ability.trigger = nil
                     end
                 end
-                card.ability.trigger = nil
                 card.ability.infernaled = nil
             end
 

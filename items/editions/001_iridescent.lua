@@ -18,8 +18,10 @@ return {
             return MadLib.collect_vars(self.config.x_chips)
         end,
         calculate = function(self, card, context)
-            if Madcap.Funcs.edition_in_play(context,card) then
-
+            if 
+                context.post_joker or
+                (context.main_scoring and context.cardarea == G.play) 
+            then
                 -- Redistributes the sum of chips and mult 70-30
                 -- (larger value gets 70%, smaller gets 30%)
                 local tyler = hand_chips + mult

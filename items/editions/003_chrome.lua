@@ -19,7 +19,10 @@ return {
             return MadLib.collect_vars(self.config.x_score)
         end,
         calculate = function(self, card, context)
-            if Madcap.Funcs.edition_in_play(context,card) or context.joker_main then
+            if 
+                context.post_joker or
+                (context.main_scoring and context.cardarea == G.play) 
+            then
                 card.ability.chromed = true
                 return {
                     message = "...?",

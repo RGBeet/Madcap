@@ -41,7 +41,10 @@ return {
                 self.config.x_dollars or 1.5)
         end,
         calculate = function(self, card, context)
-            if Madcap.Funcs.edition_in_play(context,card) then
+            if 
+                context.post_joker or
+                (context.main_scoring and context.cardarea == G.play) 
+            then
                 -- Weighted random choice
                 local choice = nil
                 local total_weight = 0
