@@ -21,7 +21,7 @@ return {
         calculate = function(self, card, context)
             if context.joker_main or context.forcetrigger then
                 local amt = #MadLib.get_enhanced_cards(G.playing_cards,card.ability.enhancement)
-                return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips, card, card.ability.extra.chips * (amt or 0))
+                return { chips = card.ability.extra.chips * (amt or 0) }
             end
         end,
         demicoloncompat = true,

@@ -4,7 +4,7 @@ return {
     },
     data = {
         object_type = 'Consumable',
-        set     = "Tarot",
+        set     = "CosmaTarot",
         key     = "conundrum",
         atlas   = "placeholder",
         pos     = MLIB.coords(0,0),

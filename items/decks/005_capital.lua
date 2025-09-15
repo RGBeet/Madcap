@@ -13,8 +13,7 @@ return {
             return MadLib.collect_vars(self.config.starting_money, self.config.boss_money_mult, self.config.blind_price, self.config.shop_price, math.max(-100,bankrupt))
         end,
         apply = function(self, back)
-            G.GAME.modifiers.rgmc_deck          = true  -- music activated
-            G.GAME.modifiers.rgmc_capital       = true
+            Madcap.Funcs.init_deck('capital')
             G.GAME.modifiers.bankrupt_kill      = true
             G.GAME.modifiers.blind_price        = self.config.blind_price
             G.GAME.modifiers.shop_price         = self.config.shop_price

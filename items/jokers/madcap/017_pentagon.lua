@@ -22,7 +22,7 @@ return {
                 local matches = MadLib.list_matches_one(Madcap.Lists.PentagonalNumbers, function(c)
                     return MadLib.is_rank(context.other_card, SMODS.Ranks[c].id) 
                 end)
-                if matches then return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips, card, card.ability.extra.chips) end
+                if matches then return { chips = card.ability.extra.chips } end
             end
         end,
         demicoloncompat = true,

@@ -29,7 +29,7 @@ return {
                 context.forcetrigger or
                 (context.cardarea == G.jokers and context.joker_main)
             then
-                return MadLib.get_simple_score_data(MadLib.ScoreKeys.ExpMult, card, card.ability.extra.e_mult)
+                return { emult = card.ability.extra.e_mult }
             end
 
             -- End of round

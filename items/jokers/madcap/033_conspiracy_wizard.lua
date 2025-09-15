@@ -39,22 +39,19 @@ return {
             then
                 if MadLib.is_card(context.other_card, SMODS.Ranks[G.GAME.current_round.rgmc_wizard_card.rank].id) then -- u got the rank (prioritizes over suit)
                     G.GAME.current_round.rgmc_wizard_card.rank_discovered = true
-                    return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips, card, card.ability.extra.chips)
+                    return { chips = card.ability.extra.chips }
                 end
                 if context.other_card:is_suit(G.GAME.current_round.rgmc_wizard_card.suit) then -- u got the suit
                     G.GAME.current_round.rgmc_wizard_card.suit_discovered = true
-                    return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddMult, card, card.ability.extra.mult)
+                    return { mult = card.ability.extra.mult }
                 end
             end
 
             if context.forcetrigger then -- do both chip and mult, but do not reveal the cards
-                MadLib.simple_event(function()
-                    return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips, card, card.ability.extra.chips)
-                end, 0.3, 'immediate')
-
-                MadLib.simple_event(function()
-                    return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddMult, card, card.ability.extra.mult)
-                end, 0.3, 'immediate')
+                return { 
+                    chips = card.ability.extra.chips,
+                    mult = card.ability.extra.mult 
+                }
             end
         end,
         demicoloncompat = true,

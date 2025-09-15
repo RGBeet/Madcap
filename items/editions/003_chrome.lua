@@ -21,7 +21,8 @@ return {
         calculate = function(self, card, context)
             if 
                 context.post_joker or
-                (context.main_scoring and context.cardarea == G.play) 
+                (context.main_scoring and context.cardarea == G.play)
+                and G.GAME.chips > 0
             then
                 card.ability.triggered = true
                 return {

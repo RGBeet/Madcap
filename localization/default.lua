@@ -4012,6 +4012,30 @@ return {
                     '{C:attention}#2#s'
                 }
 			},
+			c_rgmc_burden = {
+				name = "Burden",
+                text = {
+                    'Enhances up to {C:attention}#1#{}',
+                    'selected cards to',
+                    '{C:attention}#2#s'
+                }
+			},
+			c_rgmc_wealth = {
+				name = "Wealth",
+                text = {
+                    'Enhances up to {C:attention}#1#{}',
+                    'selected cards to',
+                    '{C:attention}#2#s'
+                }
+			},
+			c_rgmc_vapour = {
+				name = "Vapour",
+                text = {
+                    'Enhances up to {C:attention}#1#{}',
+                    'selected cards to',
+                    '{C:attention}#2#s'
+                }
+			},
         },
         Rotarot = {
 			c_rgmc_rot_girder = {    -- magnet
@@ -4054,8 +4078,32 @@ return {
                     '{C:attention}#2#s'
                 }
 			},
-			c_rgmc_rot_heaven = { -- energium (copies leftmost card)
-				name = "Heaven!",
+			c_rgmc_rot_resonate = {
+				name = "Resonate!",
+                text = {
+                    'Enhances up to {C:attention}#1#{}',
+                    'selected cards to',
+                    '{C:attention}#2#s'
+                }
+			},
+			c_rgmc_rot_burden = {
+				name = "Burden!",
+                text = {
+                    'Enhances up to {C:attention}#1#{}',
+                    'selected cards to',
+                    '{C:attention}#2#s'
+                }
+			},
+			c_rgmc_rot_wealth = {
+				name = "Wealth!",
+                text = {
+                    'Enhances up to {C:attention}#1#{}',
+                    'selected cards to',
+                    '{C:attention}#2#s'
+                }
+			},
+			c_rgmc_rot_vapour = {
+				name = "Vapour!",
                 text = {
                     'Enhances up to {C:attention}#1#{}',
                     'selected cards to',

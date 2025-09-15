@@ -10,8 +10,8 @@ return {
         loc_vars = function(self, info_queue, card)
             return {
                 vars = {
-                    card.ability.extra.dollars,
-                    cash_to_lp(card.ability.extra.dollars)
+                    card.ability.dollars,
+                    cash_to_lp(card.ability.dollars)
                 }
             }
         end,
@@ -19,13 +19,18 @@ return {
             return to_big(G.GAME.dollars - 1) >= to_big(0)
         end,
         use = function(self, card, area, copier)
-            MadLib.loop_func(G.hand.cards, function(v)
-                MadLib.simple_event(function()
-                    v:set_edition(card.ability.edition, true)
-                    card:juice_up(0.3, 0.5)
-                    return true
-                end, 0.4, 'after')
-            end)
+            local amt = to_big(G.GAME.dollars - 1)
+            MadLib.simple_event(function()
+                ease_dollars(-amt, true)
+                card:juice_up(0.3, 0.5)
+                return true
+            end, 1.0, 'after')
+            MadLib.simple_event(function()
+                ease_lp((to_big(amt) / math.floor(to_big(G.GAME.dollars) or to_big(5))), true)
+                play_sound('rgmc_kaching', 0.8)
+                card:juice_up(0.3, 0.5)
+                return true
+            end, 1.0, 'after')
         end,
     }
 }

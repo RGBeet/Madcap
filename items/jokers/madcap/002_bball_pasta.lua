@@ -29,9 +29,8 @@ return {
 
             if context.joker_main or context.forcetrigger then
                 return {
-                    message = localize("rgmc_what"),
-                    chip_mod = lenient_bignum(card.ability.extra.chips),
-                    mult_mod = lenient_bignum(card.ability.extra.mult),
+                    chips   = lenient_bignum(card.ability.extra.chips),
+                    mult    = lenient_bignum(card.ability.extra.mult),
                 }
             end
 
@@ -39,8 +38,8 @@ return {
                 Madcap.Funcs.get_end_of_round(context)
                 and SMODS.pseudorandom_probability(card, 'bball_pasta', 1, card.ability.extra.odds)
             then
-                card.ability.extra.mult = card.ability.extra.mult + card.ability.extra.mult_mod
-                card.ability.extra.chips = card.ability.extra.chips + card.ability.extra.chip_mod
+                card.ability.extra.mult     = card.ability.extra.mult + card.ability.extra.mult_mod
+                card.ability.extra.chips    = card.ability.extra.chips + card.ability.extra.chip_mod
                 return { message = localize("k_upgrade_ex") }
             end
         end,

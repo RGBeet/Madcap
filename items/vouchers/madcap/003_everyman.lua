@@ -17,8 +17,8 @@ return {
                 and context.other_joker.config.center.rarity == 1 -- common
             then
                 return { 
-                    xscore  = self.config.extra,
-                    card    = context.other_joker
+                    xscore          = self.config.extra,
+                    message_card    = context.other_joker
                 }
             end
         end,

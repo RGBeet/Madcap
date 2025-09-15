@@ -23,37 +23,38 @@ return {
         end,
         calculate = function(self, card, context)
 
-            if context.discard then
-                MadLib.event({
-                    func = function()
-                        card:juice_up()
-                        if card.ability.immutable.increase < card.ability.immutable.odds then
-                            card.ability.immutable.increase = card.ability.immutable.increase + 1
-                        end
-                        return true
-                    end
-                })
+            if context.pre_discard then
+                card.ability.immutable.increase = MadLib.clamp(card.ability.immutable.increase+1, 0, card.ability.immutable.odds)
+                MadLib.simple_event(function()
+                    card:juice_up()
+                    return true
+                end, 0, 'after')
             end
 
             if -- upgrade!
                 context.cardarea == G.jokers
                 and (context.before or context.forcetrigger)
             then
-                return MadLib.get_simple_upgrade_data(MadLib.ScoreKeys.AddChips, card, card.ability.extra.chip_mod)
+                card.ability.chips = card.ability.chips + card.ability.chip_mod 
+                return {
+                    message = localize('k_upgrade_ex'),
+                    colour = G.C.CHIPS,
+                    message_card = card
+                }
             end
 
             if  -- the cards :)
                 context.joker_main -- playing the hand
-                and (to_big(card.ability.extra.chips) > to_big(0))
+                and to_big(card.ability.extra.chips) > to_big(0)
             then
-                return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips,card,card.ability.extra.chips)
+                return { chips = to_big(card.ability.extra.chips) }
             end
 
             if context.end_of_round and context.game_over == false and context.main_eval and not context.blueprint then
                 if SMODS.pseudorandom_probability(card, 'house_of_cards', 1 + card.ability.immutable.increase, card.ability.immutable.odds) then
                     tell('Reset')
                     card.ability.immutable.increase = 0
-                    return MadLib.get_simple_reset_data(MadLib.ScoreKeys.AddChips, card, 'chips')
+                    card.ability.chips = math.floor(card.ability.chips / 2)
                 else
                     return MadLib.get_safe_data(card)
                 end

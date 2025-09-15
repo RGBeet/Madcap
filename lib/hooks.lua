@@ -187,7 +187,10 @@ function CardArea:shuffle(_seed)
 		end
 		pos = pos + 1
 	end
-	MadLib.loop_func(self.cards, function(v) v.sort_marked = nil end)
+	MadLib.loop_func(self.cards, function(v)
+		if not v then return end
+		v.sort_marked = nil 
+	end)
 end
 
 -- Upon selecting the blind...

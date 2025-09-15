@@ -20,19 +20,14 @@ return {
                     return MadLib.has_fib_rank(v)
                 end) then -- WOW U GOT THE FIBONACCI!!
                     card.ability.extra.chips = card.ability.extra.chips + card.ability.extra.chip_mod
-                    return {
-                        message = localize("k_upgrade_ex"),
-                    }
+                    return { message = localize("k_upgrade_ex"), }
                 end
             end
             if -- demicolon
                 context.joker_main
                 or context.forcetrigger
             then
-                return {
-                    message = localize { type = 'variable', key = 'a_chips', vars = { card.ability.extra.chips } },
-                    chip_mod = card.ability.extra.chips
-                }
+                return { chips = card.ability.extra.chips }
             end
         end,
         perishable_compat = false,

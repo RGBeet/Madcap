@@ -18,8 +18,8 @@ return {
                 and context.other_joker.config.center.rarity == 1 -- common
             then
                 return {
-                    escore  = self.config.extra,
-                    card    = context.other_joker
+                    escore          = self.config.extra,
+                    message_card    = context.other_joker
                 }
             end
         end,
