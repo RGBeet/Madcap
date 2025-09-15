@@ -9,7 +9,7 @@ return {
         shader 	= 'infernal',
         weight 	= 2,
         extra_cost = 5,
-        config = { x_score = 3, odds = 3, will_shatter = false, trigger = nil},
+        config = { triggered = false, x_score = 2, odds = 3, will_shatter = false },
         sound = { sound = "rgmc_e_infernal", per = 1, vol = 0.2, },
         get_weight = function(self)
             return G.GAME.edition_rate * self.weight
@@ -20,36 +20,26 @@ return {
         calculate = function(self, card, context)
             if 
                 context.post_joker or
-                (context.main_scoring and context.cardarea == G.play) 
+                (context.main_scoring and context.cardarea == G.play)
             then
-                tell('Infernal be like')
-                card.ability.infernaled = true
+                if (total_score or 0) > 0 then card.ability.triggered = true end
                 return { 
-                    xscore = self.config.x_score or 3, 
-                    x_score = self.config.x_score or 3, 
-                    xscore_mod = self.config.x_score or 3 
+                    xscore = self.config.x_score or 3,
                 }
             end
 
             -- If card was activated at any time during blind, 1 in 3 chance it BURNS UP!
             if context.end_of_blind then
-                if card.ability.infernaled and not card.ability.eternal then
-                    if SMODS.pseudorandom_probability(card, 'infernal', 1, card.ability.extra.odds) then
-                        card:start_dissolve()
-                        card = nil
-                    else
-                        card.ability.trigger = nil
-                    end
+                if 
+                    card.ability.triggered == true
+                    and not card.ability.eternal 
+                    and SMODS.pseudorandom_probability(card, 'infernal', 1, card.ability.extra.odds) 
+                then
+                    target:start_dissolve({ G.C.DARK }, nil, 1.6)
+                    card = nil
+                else
+                    card.ability.triggered = false
                 end
-                card.ability.infernaled = nil
-            end
-
-            if context.joker_main then
-                card.config.trigger = true
-            end
-
-            if context.after then
-                card.config.trigger = nil
             end
         end,
     }

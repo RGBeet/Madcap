@@ -16,10 +16,13 @@ return {
                 context.repetition
                 and context.cardarea == G.hand
                 and context.scoring_name == "High Card" -- has a scoring hand, of course
+                and context.other_card
             then
-                local high_card 	= context.scoring_hand[1]
-                local retriggers 	= MadLib.clamp(card.ability.extra.retriggers, 1, card.ability.immutable.max_retriggers)
-                return MadLib.get_retrigger_data(high_card,retriggers,localize('k_rgmc_high_roller'))
+                return {
+                    card = context.other_card,
+                    message = localize('k_again_ex'),
+                    repetitions = MadLib.clamp(card.ability.extra.retriggers, 1, card.ability.immutable.max_retriggers),
+                }
             end
         end,
     }

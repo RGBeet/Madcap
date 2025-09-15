@@ -211,7 +211,7 @@ return {
 			e_rgmc_flipped= {
 				name = "Flipped",
 				text = {
-					"{C:chips}+#1#{} Chips",
+					"{C:purple}+#1#{} Score",
 					"Counts as a",
                     "{C:attention}Flipped{} card",
 				},

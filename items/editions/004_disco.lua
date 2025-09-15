@@ -69,37 +69,15 @@ return {
                         colour = G.C.MONEY
                     }
                 elseif choice == 'a_dollars' then
-                    ease_dollars(G.GAME.dollars + lenient_bignum(self.config[choice]))
-                    return {
-                        message = "+$" .. lenient_bignum(self.config[choice]),
-                        colour = G.C.MONEY
-                    }
+                    return { dollars = lenient_bignum(self.config[choice]) }
                 elseif choice == 'x_mult' then
-                    return {
-                        Xmult_mod = lenient_bignum(self.config[choice]),
-                        colour = G.C.MULT,
-                    }
+                    return { xmult   = lenient_bignum(self.config[choice]) }
                 elseif choice == 'a_mult' then
-                    return {
-                        mult_mod = lenient_bignum(self.config[choice]),
-                        colour = G.C.MULT,
-                    }
+                    return { mult = lenient_bignum(self.config[choice]) }
                 elseif choice == 'a_chips' then
-                    return {
-                        chip_mod = lenient_bignum(self.config[choice]),
-                        colour = G.C.CHIPS,
-                    }
+                    return { chips = lenient_bignum(self.config[choice]) }
                 elseif choice == 'x_score' then
-                    MadLib.simple_event(function()
-                        G.GAME.chips = to_big(G.GAME.chips) * to_big(self.config[choice])
-                        G.HUD:get_UIE_by_ID('chip_UI_count'):juice_up(0.3, 0.3)
-                        play_sound('holo1')
-                        return true
-                    end, 0.4, 'after')
-                    return {
-                        message = "...?",
-                        colour = G.C.PURPLE
-                    }
+                    return { xscore = lenient_bignum(self.config[choice]) }
                 else -- this shouldn't happen
                     return {
                         message = "...",

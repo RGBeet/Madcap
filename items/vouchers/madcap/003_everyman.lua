@@ -1,7 +1,7 @@
 return {
     data = {
         object_type = "Voucher",
-        pos         = MLIB.coords(0,3),
+        pos         = MLIB.coords(0,2),
         atlas       = 'vouchers',
         key 		= "everyman",
         cost 		= 6,
@@ -12,9 +12,14 @@ return {
             return MadLib.collect_vars(number_format(card.ability.extra))
         end,
         calculate 	= function (self, card, context)
-            if context.after then
-                local commons = Madcap.Funcs.get_common_jokers()
-                if commons > 0 then return MadLib.do_x_score(card.ability.extra, commons) end
+            if 
+                context.other_joker
+                and context.other_joker.config.center.rarity == 1 -- common
+            then
+                return { 
+                    xscore  = self.config.extra,
+                    card    = context.other_joker
+                }
             end
         end,
     }

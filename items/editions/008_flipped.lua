@@ -7,15 +7,23 @@ return {
         key     = "flipped",
         shader  = "flipped",
         weight  = 2,
-        config  = { extra = { chips = 16 }, trigger = nil, },
+        config  = { extra = { factor = 0.1 }, trigger = nil, },
         sound = { sound = "rgmc_e_flipped", per = 1, vol = 0.2, },
         get_weight = function(self)
             return G.GAME.edition_rate * self.weight
         end,
         loc_vars = function(self, info_queue)
-            return MadLib.collect_vars(self.config.extra.chips)
+            local blind_base = get_blind_amount(G.GAME.round_resets and G.GAME.round_resets.ante or 1)
+            return MadLib.collect_vars(blind_base * self.config.extra.factor)
         end,
         calculate = function(self, card, context)
+            if 
+                context.post_joker or
+                (context.main_scoring and context.cardarea == G.play)
+            then
+            local blind_base = get_blind_amount(G.GAME.round_resets and G.GAME.round_resets.ante or 1)
+                return { score = blind_base * (self.config.extra.factor or 0.1) }
+            end
         end,
     }
 }
