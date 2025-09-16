@@ -52,9 +52,7 @@ return {
             return MadLib.collect_vars(self.config.hand_size)
         end,
         apply = function(self, back)
-            G.GAME.modifiers.rgmc_deck = true  -- music activated
-            G.GAME.modifiers.rgmc_cross = true
-
+            Madcap.Funcs.init_deck('hexing')
         end,
         calculate = Madcap.DeckFuncs['cross'].calculate
     }

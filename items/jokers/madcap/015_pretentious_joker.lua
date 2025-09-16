@@ -25,7 +25,7 @@ return {
                 and context.other_card:is_suit(card.ability.extra.suit))
                 or context.forcetrigger
             then
-                return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddMult, card, card.ability.extra.mult)
+                return { mult = card.ability.extra.mult }
             end
         end,
         demicoloncompat = true,

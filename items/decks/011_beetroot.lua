@@ -14,6 +14,7 @@ return {
             return { vars = { self.config.likeliness } }
         end,
         apply = function (self, back)
+            Madcap.Funcs.init_deck('beetroot')
             G.GAME.madcap_content_rate = 15 * self.config.likeliness
         end
     }

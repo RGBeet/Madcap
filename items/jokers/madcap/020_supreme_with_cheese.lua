@@ -58,7 +58,7 @@ return {
         end,
         calculate = function(self, card, context)
             if context.joker_main and G.GAME.current_round.hands_played == 0 then
-                return MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiMult, card, card.ability.extra.x_mult)
+                return { xmult = card.ability.extra.x_mult }
             end
             Madcap.Funcs.food_joker_round_end(card)
         end,

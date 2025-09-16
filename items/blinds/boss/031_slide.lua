@@ -27,6 +27,7 @@ return {
                 for i=2, #cards do
                     local this_rank = SMODS.Ranks[cards[i]:get_id()]
                     local that_rank = SMODS.Ranks[cards[i-1]:get_id()]
+                    if not (this_rank and that_rank) then return false end
 
                     local n1 = (this_rank.base.nominal + this_rank.base.face_nominal)
                     local n2 = (that_rank.base.nominal + that_rank.base.face_nominal)

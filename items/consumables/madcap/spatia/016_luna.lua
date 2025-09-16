@@ -13,7 +13,7 @@ return {
         cost    = 8,
         aurinko = true,
         loc_vars = function(self, info_queue, card)
-            local amt = G.GAME.consumeable_usage
+            local amt = G.GAME.consumeable_usage_total
                 and Madcap.Lists.ConsumableSpatias[card.ability.set]
                 and (G.GAME.consumeable_usage_total or {})[Madcap.Lists.ConsumableSpatias[card.ability.set]]
                 or 0

@@ -42,7 +42,7 @@ return {
                 context.joker_main
                 and card.ability.extra.mult > 0
             then
-                return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddMult,card,card.ability.extra.mult)
+                return { mult = card.ability.extra.mult }
             end
         end,
         demicoloncompat = true,

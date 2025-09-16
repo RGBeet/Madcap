@@ -28,7 +28,11 @@ return {
                     context.other_card:is_suit(card.ability.extra.suit)
                     and SMODS.pseudorandom_probability(card, 'toughened_shungite', 1, card.ability.extra.odds)
                 then
-                    return MadLib.get_simple_upgrade_data(MadLib.ScoreKeys.AddChips, card, card.ability.extra.chip_mod)
+                    card.ability.extra.chips = card.ability.extra.chips + card.ability.extra.chip_mod
+                    return {
+                        message = localize('k_upgrade_ex'),
+                        colour  = G.C.MULT
+                    }
                 end
             end
 
@@ -37,17 +41,21 @@ return {
                 (context.joker_main or context.forcetrigger)
                 and MadLib.is_positive(card.ability.extra.chips)
             then
-                return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips, card, card.ability.extra.chips)
+                return { chips = card.ability.extra.chips }
             end
 
             -- reset at end of ante
             if
                 context.end_of_round
+                and context.blind.boss
                 and not context.individual
                 and not context.repetition
-                and G.GAME.round % Madcap.Funcs.get_blinds_per_ante() == 0
             then
-                return MadLib.get_simple_reset_data(MadLib.ScoreKeys.AddMult, card, 'mult')
+                card.ability.extra.chips = 0
+                return {
+                    message = localize('k_reset'),
+                    colour  = G.C.FILTER
+                }
             end
         end,
         perishable_compat = false,

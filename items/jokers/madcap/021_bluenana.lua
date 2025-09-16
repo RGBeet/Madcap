@@ -28,7 +28,7 @@ return {
                 context.forcetrigger or
                 (context.cardarea == G.jokers and context.joker_main)
             then
-                return MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiChips, card, card.ability.extra.x_chips)
+                return { xchips = card.ability.extra.x_chips }
             end
 
             -- End of round

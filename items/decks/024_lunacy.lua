@@ -55,8 +55,7 @@ return {
             return MadLib.collect_vars(self.config.finisher_frequency, self.config.ante_win)
         end,
         apply = function(self, back)
-            G.GAME.modifiers.rgmc_deck          = true  -- music activated
-            G.GAME.modifiers.rgmc_lunacy        = true
+            Madcap.Funcs.init_deck('lunacy')
             G.GAME.rgmc_total_mayhem            = true
             G.GAME.starting_params.add_mayhem   = 10
         end,

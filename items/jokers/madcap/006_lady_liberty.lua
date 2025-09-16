@@ -22,16 +22,12 @@ return {
                 context.before
                 and G.GAME.current_round.hands_played == 0  -- first round only!
             then
-                local shuffled   = MadLib.shuffle_sort_list(context.scoring_hand, math.min(card.ability.extra.seals, card.ability.immutable.max_seals), function(v)
+                local shuffled = MadLib.shuffle_sort_list(context.scoring_hand, math.min(card.ability.extra.seals, card.ability.immutable.max_seals), function(v)
                     return not v.seal
                 end)
 
-                MadLib.loop_func(shuffled, function(v)
-
-                end)
-
                 MadLib.loop_check_func_limited(shuffled, function(v)
-                    return not v.seal -- no seal
+                    return true
                 end, function(v)
                     MadLib.seal_event(v,'rgmc_patina')
                 end, card.ability.extra.seals)

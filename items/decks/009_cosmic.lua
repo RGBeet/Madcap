@@ -19,5 +19,8 @@ return {
                 }
             }
         end,
+        apply = function(self, back)
+            Madcap.Funcs.init_deck('cosmic')
+        end,
     }
 }

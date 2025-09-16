@@ -13,6 +13,7 @@ return {
             return { vars = { self.config.rgmc_luxury_pts } }
         end,
         apply = function(self, back)
+            Madcap.Funcs.init_deck('argentum')
             G.GAME.starting_params.rgmc_luxury_pts = self.config.rgmc_luxury_pts
         end,
     }

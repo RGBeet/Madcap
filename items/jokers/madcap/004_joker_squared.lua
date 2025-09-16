@@ -14,11 +14,11 @@ return {
             if
                 (context.cardarea == G.play and context.other_card)
                 or context.forcetrigger
-            then
-                local matches = MadLib.list_matches_one(MadLib.RankTypes['Square'], function(c)
+                and (MadLib.list_matches_one(MadLib.RankTypes['Square'], function(c)
                     return MadLib.is_rank(context.other_card, SMODS.Ranks[c].id) 
-                end)
-                if matches then return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddMult,card,card.ability.extra.mult) end
+                end) > 0)
+            then
+                return { mult = card.ability.extra.mult }
             end
         end,
         demicoloncompat = true,
