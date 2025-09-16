@@ -3753,7 +3753,7 @@ return {
                 }
             },
             c_rgmc_pathways = {
-                name = 'Pathways',
+                name = 'Infinite Pathways',
                 text = {
                     "For the next {C:attention}Shop{}, gives a choice",
                     "between {C:attention}+1{} Booster, {C:attention}+1{} Shop Item,",
@@ -3797,7 +3797,7 @@ return {
             },
             -- Bonus Cosmas?!
             c_rgmc_conundrum = { -- Eclipse
-                name = 'Conundrum',
+                name = 'Pushing Onwards',
                 text = {
 					"Apply {C:dark_edition}Flipped{} edition",
 					"to {C:attention}#1#{} selected",
@@ -4218,7 +4218,7 @@ return {
                 }
             },
             c_rgmc_ember = {
-                name = 'Ember',
+                name = 'Ignite',
                 text = {
 					"Add a {C:rgmc_ether}Ether Seal{}",
 					"to {C:attention}#1#{} selected",
@@ -4250,7 +4250,7 @@ return {
                 }
             },
             c_rgmc_duality = {
-                name = 'Duality',
+                name = 'Ambivalence',
                 text = {
 					"Add a {C:rgmc_sunrise}Sunrise Seal{}",
 					"to {C:attention}#1#{} selected",
@@ -4266,7 +4266,7 @@ return {
                 }
             },
             c_rgmc_vici = {
-                name = 'Vici',
+                name = 'Veni, Vidi, Vici',
                 text = {
 					"Apply {C:dark_edition}Flipped{} edition",
 					"to {C:attention}all{} non-editioned",
@@ -4332,6 +4332,22 @@ return {
                     "{C:money}$#1#{} => {C:rgmc_luxury}£#2#{}"
                 }
             },
+            c_rgmc_shadow = {
+                name = 'Your Shadow',
+                text = {
+                    "Summon a random",
+                    "{C:eternal}Eternal{} Joker",
+                    "{C:dark_edition}+#2#{} Joker slot{C:inactive}(s)"
+                }
+            },
+            c_rgmc_voyage = {
+                name = 'Voyage',
+                text = {
+                    "Adds a {C:attention}discounted",
+                    "{C:spatiaplanet}Subhand{} voucher",
+                    "to the next shop"
+                }
+            },
             c_rgmc_magnify = {
                 name = 'Magnify',
                 text = {
@@ -4339,14 +4355,6 @@ return {
                     "of a random {C:attention}Joker",
                     "by {C:purple}X#1#{}",
                     "{C:dark_edition}-#2#{} Joker slot{C:inactive}(s)"
-                }
-            },
-            c_rgmc_shadow = {
-                name = 'Shadow',
-                text = {
-                    "Summon a random",
-                    "{C:eternal}Eternal{} Joker",
-                    "{C:dark_edition}+#2#{} Joker slot{C:inactive}(s)"
                 }
             },
             c_rgmc_triplicate = {
@@ -4363,14 +4371,6 @@ return {
                     "{C:potentiacrystal}Empower every",
                     "{C:rgmc_unusual,E:1}Sub-Hand",
                     "by {C:attention}#1#{} level(s)"
-                }
-            },
-            c_rgmc_voyage = {
-                name = 'Voyage',
-                text = {
-                    "Adds a {C:attention}discounted",
-                    "{C:spatiaplanet}Subhand{} voucher",
-                    "to the next shop"
                 }
             },
             c_rgmc_magic_hat = {
