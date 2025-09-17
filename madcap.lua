@@ -1961,6 +1961,17 @@ function Madcap.Funcs.empower_subhand(card, hand, instant, amount, context)
 	local basic_func = true
 	local empower_level = (G.GAME.subhands[hand].empower or 0)
 
+	if not G.GAME.subhands[hand].enabled then
+		update_hand_text({
+            sound = 'button', volume = 0.7, pitch = 0.8, delay = 1.0
+        }, {
+            handname = localize(hand),
+            level    = "!",
+            chips    = '',
+			mult	 = ''
+        })
+	end
+
 	if basic_func then
     	empower_level = math.max(0, empower_level + amount)
 	end
@@ -2297,6 +2308,18 @@ end
 
 function Madcap.Funcs.card_level_subhand(card, sh)
 	local subhand = SubHands[sh].name
+
+	if not G.GAME.subhands[hand].enabled then
+		update_hand_text({
+            sound = 'button', volume = 0.7, pitch = 0.8, delay = 1.0
+        }, {
+            handname = localize(hand),
+            level    = "!",
+            chips    = '',
+			mult	 = ''
+        })
+	end
+
     update_hand_text({sound = 'button', volume = 0.7, pitch = 0.8, delay = 2.0}, {
 		handname	= localize(subhand),
 		chips 		= G.GAME.subhands[subhand].chips,
