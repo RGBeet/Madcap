@@ -2705,21 +2705,39 @@ function SMODS.change_base(card, suit, rank)
     return card
 end
 
+function MadLib.force_poker_hand(poker_hand)
+	if not results[poker_hand][1] then
+        for _, v in ipairs(G.handlist) do
+            if results[v][1] then
+                results[poker_hand] = results[v]
+                break
+            end
+        end
+    end
+end
+
 --Used to mess around with poker hand stuff (e.g. Waveworx)
 local evaluate_poker_hand_ref = evaluate_poker_hand
 function evaluate_poker_hand(hand)
     local results = evaluate_poker_hand_ref(hand)
+	local forced = false
 
-    -- force poker hand.
-    if G.GAME.force_poker_hand then
-        if not results[G.GAME.force_poker_hand][1] then
-            for _, v in ipairs(G.handlist) do
-                if results[v][1] then
-                    results[G.GAME.force_poker_hand] = results[v]
-                    break
-                end
-            end
-        end
+    -- Force poker hand.
+    if not forced then
+		-- Waveworx
+		if G.GAME.force_poker_hand then MadLib.force_poker_hand(G.GAME.force_poker_hand) end
+
+		-- Mulch
+		local mulch = next(SMODS.find_card('mulch'))
+		if mulch then
+			local high_rank, low_rank = Madcap.Funcs.get_high_and_low(G.hand.cards)
+			if 
+				high_rank == (mulch.ability.extra.ranks[1] or '7')
+				and low_rank == (mulch.ability.extra.ranks[2] or '2')
+			then
+				MadLib.force_poker_hand(mulch.ability.extra.poker_hand or 'Straight')
+			end
+		end
     end
 
     return results

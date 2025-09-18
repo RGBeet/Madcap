@@ -26,14 +26,12 @@ return {
                     number_format(card.ability.extra.mult))
         end,
         calculate = function(self, card, context)
-
             if context.joker_main or context.forcetrigger then
                 return {
                     chips   = lenient_bignum(card.ability.extra.chips),
                     mult    = lenient_bignum(card.ability.extra.mult),
                 }
             end
-
             if
                 Madcap.Funcs.get_end_of_round(context)
                 and SMODS.pseudorandom_probability(card, 'bball_pasta', 1, card.ability.extra.odds)
