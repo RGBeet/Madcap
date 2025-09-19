@@ -133,7 +133,8 @@ Madcap = {
 			},
 			Money = {
 				'gold',
-				'lucky'
+				'lucky',
+				'rgmc_deluxe',
 			},
 		},
 	},
@@ -2728,15 +2729,44 @@ function evaluate_poker_hand(hand)
 		if G.GAME.force_poker_hand then MadLib.force_poker_hand(G.GAME.force_poker_hand) end
 
 		-- Mulch
-		local mulch = next(SMODS.find_card('mulch'))
+		local mulch = next(SMODS.find_card('j_rgmc_mulch'))
 		if mulch then
-			local high_rank, low_rank = Madcap.Funcs.get_high_and_low(G.hand.cards)
+			local high_rank, low_rank = Madcap.Funcs.get_high_and_low(hand)
 			if 
 				high_rank == (mulch.ability.extra.ranks[1] or '7')
 				and low_rank == (mulch.ability.extra.ranks[2] or '2')
 			then
 				MadLib.force_poker_hand(mulch.ability.extra.poker_hand or 'Straight')
 			end
+		end
+
+		-- Spider Solitaire
+		-- Mulch
+		local spider = next(SMODS.find_card('j_rgmc_spider_solitaire'))
+		if spider and results['Straight'][1] then
+			local cardtype = hand[1]:has_light_suit()
+				and 'light' or 'dark'
+			print('card type is ' .. cardtype)
+			for _, v in pairs(hand) do
+				if cardtype == 'light' then
+					if v:has_light_suit() then
+						print('light -> dark')
+						cardtype = 'dark'
+					else
+						cardtype = nil
+						break
+					end
+				else
+					if v:has_dark_suit() then
+						print('dark -> light')
+						cardtype = 'light'
+					else
+						cardtype = nil
+						break
+					end
+				end
+			end
+			if cardtype then results['Straight Flush'] = results['Straight'] end
 		end
     end
 

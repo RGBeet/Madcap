@@ -15,8 +15,10 @@ return {
         },
         loc_vars = function(self, info_queue, card)
             return MadLib.collect_vars_colours(
+                localize(card.ability.extra.suit, 'suits_plural'),
                 number_format(card.ability.extra.chips),
-                localize(card.ability.extra.suit, 'suits_singular'),
+                number_format(card.ability.extra.chip_mod),
+                number_format(card.ability.extra.base_chips),
                 { G.C.SUITS[card.ability.extra.suit] })
         end,
         calculate = function(self, card, context)

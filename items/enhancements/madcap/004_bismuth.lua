@@ -16,8 +16,8 @@ return {
         atlas   = 'enhancements',
         pos     = MLIB.coords(0,3),
         config  = { immutable = { sticker_type = 'red' } },
-        no_rank = true,
-        no_suit = true,
+        no_rank             = true,
+        no_suit             = true,
         always_scores       = true,
         replace_base_card   = true,
         loc_vars = function(self, info_queue, card)

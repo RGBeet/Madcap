@@ -11,13 +11,14 @@ return {
         rarity  = 1,
         cost    = 5,
         config = {
-            extra       = { suit = 'rgmc_towers', h_size = 2 },
+            extra       = { suit = 'rgmc_towers', h_size = 1 },
             immutable   = { active = 0 }
         },
         loc_vars = function(self, info_queue, card)
             return MadLib.collect_vars_colours(
                 localize(card.ability.extra.suit, 'suits_singular'),
-                card.ability.extra.h_size
+                number_format(card.ability.extra.h_size),
+                number_format(card.ability.immutable.active),
                 { G.C.SUITS[card.ability.extra.suit] })
         end,
         calculate = function(self, card, context)

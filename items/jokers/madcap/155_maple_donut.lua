@@ -12,13 +12,13 @@ return {
         eternal_compat      = false,
         perishable_compat   = false,
         config = {
-            extra = { x_numerator = 1.2, rounds_remaining = 5 },
-            immutable = { max_rounds = 5 }
+            extra = { x_numerator = 1.2, rounds_remaining = 4 },
+            immutable = { max_rounds = 4 }
         },
         loc_vars = function(self, info_queue, card)
             return MadLib.collect_vars_colours(
-                number_format(card.ability.extra.rounds_remaining),
                 number_format(card.ability.extra.x_numerator),
+                number_format(card.ability.extra.rounds_remaining),
                 { MadLib.get_warning_colour(card.ability.extra.rounds_remaining / card.ability.immutable.max_rounds) })
         end,
         calculate = function(self, card, context)

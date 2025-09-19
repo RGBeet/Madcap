@@ -15,8 +15,8 @@ return {
         },
         loc_vars = function(self, info_queue, card)
             return MadLib.collect_vars_colours(
-                localize(card.ability.extra.suit, 'suits_singular'),
                 card.ability.extra.dollars,
+                localize(card.ability.extra.suit, 'suits_plural'),
                 { G.C.SUITS[card.ability.extra.suit] })
         end,
         calculate = function(self, card, context)

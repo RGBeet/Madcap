@@ -79,12 +79,42 @@ function Card:remove_from_deck(from_debuff)
 	Madcap.Funcs.update_global_joker_counts()
 end
 
+function Madcap.Funcs.get_aargon(card, group)
+    -- find index of the given card in the group
+    local idx
+    for i, c in ipairs(group) do
+        if c == card then
+            idx = i
+            break
+        end
+    end
+    if not idx then return -9876 end  -- card not found in group
+    -- look left
+    local left_card = group[idx - 1]
+    if not left_card then return -9876 end  -- nothing to the left
+    -- check if it's bismuth
+    if SMODS.has_enhancement(left_card, 'm_rgmc_bismuth') then
+        -- recurse
+        return Madcap.Funcs.get_aargon(left_card, group)
+    else
+        -- return rank of left card
+        return left_card:get_id()
+    end
+end
+
 local card_get_id_ref = Card.get_id
 function Card:get_id()
 	if not get_id_use then
 		get_id_use = true
 
 		local id = card_get_id_ref(self) or self.base.id
+
+		if SMODS.has_enhancement(card, 'm_rgmc_bismuth') then
+			id = (next(SMODS.find_card('j_rgmc_aargon')) and self.area)
+				and Madcap.Funcs.get_aargon(self,self.area)
+				or -9876
+			end
+		end
 
 		if id == "rgmc_X" then -- x cards equal
             id = SMODS.Ranks[G.GAME.x_value].id
@@ -113,6 +143,7 @@ function Card:get_id()
 		return card_get_id_ref(self)
 	end
 end
+
 local score_card_ref = SMODS.score_card
 function SMODS.score_card(card, context)
 	if card.base.value == 'rgmc_infinity' and not infinity_scoring then
