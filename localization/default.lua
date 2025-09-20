@@ -2275,6 +2275,16 @@ return {
                     "{C:attention}Straight Flush"
                 },
             },
+            j_rgmc_aargon = {
+                name = "Aargon",
+                text = {
+                },
+            },
+            j_rgmc_aargon = {
+                name = "Aargon",
+                text = {
+                },
+            },
             -- Finity compat
             j_rgmc_finity_blindfold = {
                 name = "Beige Blindfold",

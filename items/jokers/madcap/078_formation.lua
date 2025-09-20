@@ -16,7 +16,13 @@ return {
             return MadLib.collect_vars(card.ability.extra.x_mult, card.ability.extra.type)
         end,
         calculate = function(self, card, context)
-            if (context.joker_main and next(context.poker_hands[card.ability.poker_hand])) or context.forcetrigger then return MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiMult, card, card.ability.extra.x_mult) end
+            if 
+                (context.joker_main
+                    and next(context.poker_hands[card.ability.poker_hand])) 
+                or context.forcetrigger 
+            then 
+                return { xmult = card.ability.extra.x_mult }
+            end
         end,
         in_pool = function(self, args) -- can play at least 6 cards
             return G.hand and G.hand.config.highlighted_limit > 5

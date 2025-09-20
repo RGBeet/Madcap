@@ -113,7 +113,6 @@ function Card:get_id()
 			id = (next(SMODS.find_card('j_rgmc_aargon')) and self.area)
 				and Madcap.Funcs.get_aargon(self,self.area)
 				or -9876
-			end
 		end
 
 		if id == "rgmc_X" then -- x cards equal

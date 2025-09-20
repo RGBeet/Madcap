@@ -19,7 +19,6 @@ return {
                 { G.C.SUITS[card.ability.extra.suit] })
         end,
         calculate = function(self, card, context)
-
             if context.destroy_card then
                 if 
                     not (context.blueprint or context.retrigger_joker)
