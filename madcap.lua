@@ -239,7 +239,8 @@ function Madcap.Funcs.run_start()
             hand    = {},   -- held in hand
             play    = {},   -- highlighted and played
             ante    = 0
-        }
+        },
+		potentias_used		= 0
     }
 	MadLib.loop_table(madcap_vals, function(k,v) G.GAME[k] = v end)
 
@@ -1828,11 +1829,8 @@ function level_up_hand(card, hand, instant, amount, context)
 			#SMODS.find_card('j_rgmc_rocket_keychain') > 0
 		then
 			-- loop thru
-			MadLib.loop_func(G.jokers.cards, function(v)
-				if
-					v.config.center.key == 'j_rgmc_rocket_keychain'
-					and hand == v.ability.extra.target_hand
-				then
+			MadLib.loop_func(SMODS.find_card('j_rgmc_rocket_keychain'), function(v)
+				if hand == v.ability.extra.target_hand then
 					level_up_hand_ref(card, MadLib.get_most_played_hand(), instant, v.ability.extra.level_ups)
 				end
 			end)
@@ -2040,6 +2038,12 @@ end
 
 function Madcap.Funcs.use_potentia_card(card)
 	local subhand = SubHands[card.ability.subhand or 'Balanced'].name
+	-- level up a random hand
+	if #SMODS.find_card('j_rgmc_empowerer') > 0 then
+		MadLib.loop_func(SMODS.find_card('j_rgmc_rocket_keychain'), function(v)
+			level_up_hand_ref(card, MadLib.get_random_poker_hand(), false, G.GAME.potentias_used)
+		end)
+	end
 	Madcap.Funcs.empower_subhand(card, subhand, false, card.ability.levels or 1)
 end
 
