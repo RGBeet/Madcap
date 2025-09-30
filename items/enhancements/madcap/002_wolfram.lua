@@ -13,10 +13,15 @@ return {
         end,
         calculate = function(self, card, context)
             if context.cardarea == G.play and context.main_scoring then
-                return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddMult, card, card.ability.extra.mult)
+                return { mult = card.ability.extra.mult }
             end
             if context.playing_card_end_of_round and context.cardarea == G.hand then
-                return MadLib.get_simple_upgrade_data(MadLib.ScoreKeys.AddMult, card, card.ability.extra.gain)
+                card.ability.extra.mult = card.ability.extra.mult + card.ability.extra.gain
+                return {
+                    message     = localize('k_upgrade_ex'),
+                    colour      = G.C.MULT,
+                    card        = card
+                }
             end
         end,
         draw = function(self, card, layer)

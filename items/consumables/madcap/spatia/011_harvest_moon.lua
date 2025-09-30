@@ -11,7 +11,7 @@ return {
         pos     = MLIB.coords(1,4),
         cost    = 8,
         aurinko = false,
-        config = { subhand = 'Dazzling', levels = 1 },
+        config = { subhand = 'ml_sh_enhanced', levels = 1 },
         set_card_type_badge = function(self, card, badges)
             badges[1] = create_badge(localize("rgmc_moon"), get_type_colour(self or card.config, card), nil, 1.2)
         end,
@@ -20,6 +20,9 @@ return {
         end,
         loc_vars = function(self, info_queue, center)
             return Madcap.Funcs.get_moon_card_vars(self.config.subhand, self.config.levels)
+        end,
+        use = function(self, card, area, copier)
+            Madcap.Funcs.use_moon_card(card)
         end,
     }
 }

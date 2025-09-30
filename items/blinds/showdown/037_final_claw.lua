@@ -1,10 +1,7 @@
 function Madcap.Funcs.boss_claw_end(self,silent)
     if G.GAME.blind.disabled then return end
-    SMODS.change_play_limit(self.config.selection_size)
-    if self.config.hand_size > 0 then
-        G.hand:change_size(-self.config.hand_size)
-        --self.config.hand_size = 0
-    end
+    SMODS.change_play_limit(-self.config.selection_size)
+    G.hand:change_size(-self.config.selection_size)
 end
 
 return {
@@ -18,6 +15,7 @@ return {
         in_pool = function(self)
             return true
         end,
+        mult = 4,
         loc_vars = function(self, info_queue, blind)
             local hand_limit = G.hand and G.hand.config.highlighted_limit
             local must_play = (G.GAME.blind and G.GAME.blind.key == self.key) -- you are playing this blind
@@ -28,13 +26,8 @@ return {
         end,
         set_blind = function(self, reset, silent)
             if not G.GAME.blind.disabled then
-                local select_size = (G.hand and G.hand.config.highlighted_limit or 0) + self.config.selection_size
-                local hand_size = (G.hand and G.hand.config.card_limit or 0)
-                local add_hand_size = hand_size - select_size
                 SMODS.change_play_limit(self.config.selection_size)
-                if add_hand_size < 0 then
-                    G.hand:change_size(add_hand_size)
-                end
+                G.hand:change_size(self.config.selection_size)
                 self.config.active = true
             end
         end,

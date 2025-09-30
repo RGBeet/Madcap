@@ -42,11 +42,7 @@ return {
             end
         end,
         calc_dollar_bonus = function(self, card)
-            if 
-                context.end_of_round 
-                and G.GAME.blind.boss 
-                and to_big(card.ability.extra.money) ~= to_big(0)
-            then
+            if  G.GAME.blind.boss and to_big(card.ability.extra.money) ~= to_big(0) then
                 return lenient_bignum(card.ability.extra.money)
             end
         end,

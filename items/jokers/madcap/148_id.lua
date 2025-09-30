@@ -4,7 +4,7 @@ function MadLib.get_card_position(card,min,max)
     min = min or 1
     max = max or right
     for i=math.max(1, min), math.min(max, right) do
-        if G.jokers.cards[i] == card then return i; end
+        if card.area.cards[i] == card then return i; end
     end
     return nil
 end

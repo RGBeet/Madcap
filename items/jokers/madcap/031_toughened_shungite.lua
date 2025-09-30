@@ -47,7 +47,7 @@ return {
             -- reset at end of ante
             if
                 context.end_of_round
-                and context.blind.boss
+                and (context.blind and context.blind.boss)
                 and not context.individual
                 and not context.repetition
             then

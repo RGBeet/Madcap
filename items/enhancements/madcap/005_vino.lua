@@ -17,30 +17,37 @@ return {
         disenhancement      = true,
         loc_vars = function(self, info_queue, card)
             local _numer, _denom = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'vino')
-            local x_score = math.max(0,card.ability.extra.x_score)
-            return MadLib.collect_vars(number_format(MadLib.round(x_score,2)), number_format(MadLib.round(x_score/2, 2)), number_format(_numer), number_format(_denom))
+            local x_score = math.max(0,MadLib.round(card.ability.extra.x_score,2))
+            return MadLib.collect_vars(number_format(x_score), number_format(x_score/2), number_format(_numer), number_format(_denom))
         end,
         calculate = function(self, card, context)
             -- Scoring effect
             if context.cardarea == G.play and context.main_scoring then
                 card.ability.extra.active = true
-                return MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiScore, card, MadLib.round(math.max(0,card.ability.extra.x_score), 2))
+                return { xscore = math.max(0,MadLib.round(card.ability.extra.x_score, 2)) }
             end
 
             -- Held in hand effect
-            if context.cardarea == G.hand and context.main_scoring and SMODS.pseudorandom_probability(card, 'vino', 1, card.ability.extra.odds)
+            if
+                context.cardarea == G.hand
+                and context.main_scoring
+                and SMODS.pseudorandom_probability(card, 'vino', 1, card.ability.extra.odds)
             then
-                return MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiScore, card, MadLib.round(math.max(0,card.ability.extra.x_score/2), 2))
+                card.ability.extra.active = true
+                return { xscore = math.max(0,MadLib.round(card.ability.extra.x_score/2, 2)) }
             end
 
-            if context.after and (context.full_hand or context.scoring_hand) and to_big(G.GAME.chips) > to_big(G.GAME.blind.chips) then
+            if
+                context.after
+                and (context.full_hand or context.scoring_hand)
+                and to_big(G.GAME.chips) > to_big(G.GAME.blind.chips)
+            then
                 MadLib.simple_event(function()
                     card:set_ability(G.P_CENTERS['m_rgmc_bismuth'])
                     card:juice_up()
                     play_sound('rgmc_flourish')
                     return
                 end, 0.8, 'after')
-
             end
         end,
     }

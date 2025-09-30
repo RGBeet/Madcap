@@ -5,7 +5,7 @@ return {
     },
     data = {
         object_type = "Voucher",
-        pos     = MLIB.coords(8,2),
+        pos     = MLIB.coords(4,2),
         atlas   = 'vouchers',
         key 	= "spatia_traveller",
         cost 	= 7,

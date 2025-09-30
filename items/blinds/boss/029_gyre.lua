@@ -12,8 +12,10 @@ return {
         end,
         calculate = function (self, blind, context)
             if 
-                not G.GAME.blind.disabled 
-                and context.other_card and MadLib.has_fib_rank(context.other_card) 
+                not G.GAME.blind.disabled
+                and context.cardarea == G.play
+                and context.other_card
+                and MadLib.has_fib_rank(context.other_card)
             then
                 context.other_card:start_dissolve({ HEX("57ecab") }, nil, 1.6)
             end

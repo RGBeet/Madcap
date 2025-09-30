@@ -32,4 +32,6 @@ return {
 	["Music"]		= true, 	-- the music which appears on madcap decks/stakes
 	["Mayhem"] 		= true, -- the Mayhem system
 	["Madcap Stakes"] 	= true, -- does nothing atm
+
+	["WIP Content"]	= true	-- content not yet finished. beware!!
 }

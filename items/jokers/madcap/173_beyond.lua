@@ -16,7 +16,7 @@ return {
             mult        = 15
         } },
         loc_vars = function(self, info_queue, card)
-            return MadLib.collect_vars(localize(card.ability.extra.ranks[1] or '4', 'ranks'),
+            return MadLib.collect_vars(localize(card.ability.extra.rank or 'rgmc_Infinity', 'ranks'),
                 localize(card.ability.extra.poker_hand, 'poker_hands'),
                 number_format(card.ability.extra.x_mult),
                 number_format(card.ability.extra.mult))

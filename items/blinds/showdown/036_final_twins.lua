@@ -28,9 +28,9 @@ return {
                 MadLib.loop_table(cards, function(k,v1)
                     if #v1 < 2 then return end
                     pseudoshuffle(cards[k], pseudoseed('final_twins'))
-                    MadLib.loop_func(cards[k], function(_,i)
-                        if not (i%2 == 0 or i+1 < #cards[k]) then return end
-                        v:start_dissolve({ HEX("88A5D9") }, nil, 1.5)
+                    MadLib.loop_func(cards[k], function(v,i)
+                        if not (i%2 == 0 or i+1 < #cards[k]) or (not v) then return end
+                       v:start_dissolve({ HEX("88A5D9") }, nil, 1.5)
                     end)
                 end)
             end

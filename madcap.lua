@@ -213,7 +213,6 @@ function Madcap.Funcs.run_start()
         G.GAME.subhands[k].l_chips  	= v.l_chips or 0.1
         G.GAME.subhands[k].enabled  	= false
         G.GAME.subhands[k].empower		= 0
-        G.GAME.subhands[k].evolve		= 0
     end
 
     local madcap_vals = {
@@ -229,6 +228,8 @@ function Madcap.Funcs.run_start()
         x_value             = 10,       -- value of x cards (linked to wisteria chimes)
         temporary_hands     = 0,        -- hands you get when you run out
         temporary_discards  = 0,        -- discards you get when you run out
+		max_temp_hands		= 5,
+        max_temp_discards	= 5,
         last_enhancement    = nil,      -- used for chrome edition and ??? enhancement
         punisher_mode       = false,
         rank_dist           = nil,      -- used to see which
@@ -779,10 +780,116 @@ function Madcap.Funcs.read_mayhem()
 	tell('Mayhem State is now ' .. tostring(Madcap.Funcs.get_mayhem_state()) .. '.')
 end
 
-function MadLib.compare_numbers(a,b,and_equals)
-	local v1 = type(a) == 'number' and to_big(a) or a
-	local v2 = type(b) == 'number' and to_big(b) or b
-	return (and_equals and v1 >= v2) or (v1 > v2)
+-- Ease temporary hands
+function Madcap.Funcs.ease_temp_hands(mod, silent, instant)
+    local _mod = function(mod)
+        if math.abs(math.max(G.GAME.temporary_hands, mod)) == 0 then return end
+        local hand_UI = G.HUD:get_UIE_by_ID('temp_hand_UI_count')
+        mod = mod or 0
+        mod = math.max(-G.GAME.temporary_hands, mod)
+        local text = '+'
+        local col = G.C.GREEN
+        if mod < 0 then
+            text = ''
+            col = G.C.RED
+        end
+        --Ease from current chips to the new number of chips
+        G.GAME.temporary_hands = G.GAME.temporary_hands + mod
+        attention_text({
+          text = text..mod,
+          scale = 0.8*0.8,
+          hold = 0.7,
+          cover = hand_UI.parent,
+          cover_colour = col,
+          align = 'cm',
+          })
+        hand_UI.config.object:update()
+        G.HUD:recalculate()
+        --Play a chip sound
+        if not silent then play_sound('chips2', 1.2) end
+    end
+    if instant then
+        _mod(mod or 1)
+    else
+        G.E_MANAGER:add_event(Event({
+        trigger = 'immediate',
+        func = function()
+            _mod(mod or 1)
+            return true
+        end
+        }))
+    end
+end
+
+function Madcap.Funcs.ease_temp_discards(mod, silent, instant)
+    local _mod = function(mod)
+        if math.abs(math.max(G.GAME.temporary_discards, mod)) == 0 then return end
+        local discard_UI = G.HUD:get_UIE_by_ID('temp_discard_UI_count')
+        mod = mod or 0
+        mod = math.max(-G.GAME.temporary_discards, mod)
+        local text = '+'
+        local col = G.C.GREEN
+        if mod < 0 then
+            text = ''
+            col = G.C.RED
+        end
+        --Ease from current chips to the new number of chips
+        G.GAME.temporary_discards = G.GAME.temporary_discards + mod
+        --Popup text next to the chips in UI showing number of chips gained/lost
+        attention_text({
+          text = text..mod,
+          scale = 0.8*0.8,
+          hold = 0.7,
+          cover = discard_UI.parent,
+          cover_colour = col,
+          align = 'cm',
+          })
+        discard_UI.config.object:update()
+        G.HUD:recalculate()
+        --Play a chip sound
+        if not silent then play_sound('chips2', 1.2) end
+    end
+    if instant then
+        _mod(mod or 1)
+    else
+        G.E_MANAGER:add_event(Event({
+        trigger = 'immediate',
+        func = function()
+            _mod(mod or 1)
+            return true
+        end
+        }))
+    end
+end
+
+function Madcap.Funcs.use_temp_discards(mod, instant, silent)
+	mod = mod or 1
+	Madcap.Funcs.ease_temp_discards(-mod)
+	ease_discard(mod, instant, silent)
+end
+
+function Madcap.Funcs.use_temp_hands(mod, instant, silent)
+	mod = mod or 1
+	Madcap.Funcs.ease_temp_hands(-mod)
+	ease_discard(mod, instant, silent)
+end
+
+-- temporary discard addition
+local ease_discard_ref = ease_discard
+function ease_discard(mod, instant, silent)
+	ease_discard_ref(mod,instant,silent)
+    if G.GAME.current_round.discards_left + mod == 0 and G.GAME.temporary_discards > 0 then
+        Madcap.Funcs.use_temp_discards(1, false, false)
+    end
+end
+
+-- temporary hand addition
+local ease_hands_played_ref = ease_hands_played
+function ease_hands_played(mod, instant)
+	ease_hands_played_ref(mod,instant)
+    if G.GAME.current_round.hands_left + mod == 0 and G.GAME.temporary_hands > 0 then
+        Madcap.Funcs.use_temp_hands(1, false, false)
+    end
 end
 
 function Madcap.Funcs.ease_mayhem(_mod, _check, _silent, _instant)
@@ -790,21 +897,20 @@ function Madcap.Funcs.ease_mayhem(_mod, _check, _silent, _instant)
     MadLib.simple_event(function()
         local round_UI = G.HUD:get_UIE_by_ID('mayhem_UI_count')
         local add_mayhem, lose_mayhem = to_big(_mod) > to_big(0), to_big(_mod) < to_big(0)
+
         local text  = add_mayhem and '+' or ''
         local col   = (add_mayhem and G.C.RGMC_MAYHEM) or (lose_mayhem and G.C.RED) or G.C.FILTER
 
 		local _old = (G.GAME.mayhem or 0)
         G.GAME.mayhem = _old + _mod
-        if MadLib.compare_numbers(G.GAME.mayhem, G.GAME.max_mayhem) then
-			_mod = G.GAME.max_mayhem - (G.GAME.mayhem + _mod)
-		end
+        if G.GAME.mayhem > G.GAME.max_mayhem then _mod = G.GAME.max_mayhem - (G.GAME.mayhem + _mod) end
 
         if round_UI then
             G.HUD:recalculate()
             if MadLib.is_animation_enabled() then
                 attention_text({
-                    text            = text .. tostring(math.abs(_mod)),
-                    scale           = 1,
+                    text            = text .. tostring(_mod),
+                    scale           = 0.75,
                     hold            = _instant and 0 or 0.7,
                     cover           = round_UI.parent,
                     cover_colour    = col,
@@ -814,7 +920,6 @@ function Madcap.Funcs.ease_mayhem(_mod, _check, _silent, _instant)
         end
 
 		local _new = lenient_bignum(_old + _mod)
-
 		local mayhem_state 		= Madcap.Funcs.get_mayhem_state(recalculate)
 		local sound 			= 'rgmc_mayhem_t' .. tostring(math.max(1,math.min(3,mayhem_state)))
 
@@ -822,13 +927,13 @@ function Madcap.Funcs.ease_mayhem(_mod, _check, _silent, _instant)
         if MadLib.is_animation_enabled() and not _silent then
             if lose_mayhem then
                 play_sound('rgmc_mayhem_down', 0.8)
-                play_sound('timpani')
+                --play_sound('timpani')
 			elseif add_mayhem then
 				if mayhem_state > G.GAME.mayhem_state then
 					play_sound(sound)
 					delay(2.0)
 				else
-					play_sound('timpani')
+					--play_sound('timpani')
 					play_sound('rgmc_mayhem_up', 0.8)
 				end
             end
@@ -1339,7 +1444,7 @@ function Madcap.Funcs.get_hand_sigma(group)
 
 		if not (irregular or no_rank) then
 			total = total + SMODS.Ranks[v.base.value].nominal
-		elseif v:get_id() == 'rgmc_X' then -- X rank gives a random value
+		elseif MadLib.is_rank(v, SMODS.Ranks['rgmc_X'].id) then -- X rank gives a random value
 			total = total + (G.GAME.x_value or 0)
 		end
 	end)
@@ -1350,40 +1455,15 @@ end
 Madcap.Funcs.get_sigma_value = Madcap.Funcs.get_hand_sigma
 
 -- Get the "hand sum" for cards such as All-Star Joker
-function MadLib.get_hand_sum(hand, count_irregulars)
-	local total = 0
-    for _, v in ipairs(hand) do
-        if
-			not SMODS.has_no_rank(v)
-			and not ((not count_irregulars) and v:rank_in_list(MadLib.RankTypes.Irregular))
-		then
-			local rank = SMODS.Ranks[v.base.value]
-			total = total + rank.nominal
-		elseif v:get_id() == 'rgmc_X' then -- X rank gives a random value
-			total = total + G.GAME.x_value
-		elseif count_irregulars then
-			if v:get_id() == 'rgmc_sum' then -- sum gives sum of deck sans irregulars
-				total = Madcap.Funcs.get_hand_sigma(hand) -- do not count irregulars
-			end
-        end
-    end
-	return total
-end
+local add_to_hand_sum_ref = MadLib.add_to_hand_sum
+function MadLib.add_to_hand_sum(card, count_irregulars)
+	if MadLib.is_rank(v, SMODS.Ranks['rgmc_X'].id) then -- X rank gives a random value
+		return G.GAME.x_value
+	end
 
-function Madcap.Funcs.less_than(a,b,equals)
-    if equals then
-        return to_big(a) <= to_big(b)
-    else
-        return to_big(a) < to_big(b)
-    end
-end
-
-function Madcap.Funcs.greater_than(a,b,equals)
-    if equals then
-        return to_big(a) >= to_big(b)
-    else
-        return to_big(a) > to_big(b)
-    end
+	if MadLib.is_rank(v, SMODS.Ranks['rgmc_Sum'].id) then
+		return Madcap.Funcs.get_hand_sigma(hand)
+	end
 end
 
 -- Target Deck: create a reward tag.
@@ -1483,76 +1563,6 @@ if SMODS and SMODS.calculate_individual_effect then
 	end
 end
 
-
--- reset_castle_card hook for things like Dropshot and Number Blocks
--- Also exclude specific ranks/suits (such as abstract cards)
--- taken from cryptid, it's a really solid way of doing start of round shit
-local rcc = reset_castle_card
-function reset_castle_card()
-	rcc()
-
-	-- neighborhood watch
-	G.GAME.current_round.rgmc_edwin_card = { rank = "5", suit = "Hearts" }
-	G.GAME.current_round.rgmc_wizard_card = { rank = "9", suit = "Spades", rank_discovered = false, suit_discovered = false }
-
-	-- barbershop joker
-	G.GAME.current_round.rgmc_barbershop = { suit = nil, order = {} }
-
-	local valid_castle_cards = {}
-    for k, v in ipairs(G.playing_cards) do
-		if not Madcap.Funcs.card_is_rankless_suitless(v) then valid_castle_cards[#valid_castle_cards + 1] = v end
-	end
-
-	if valid_castle_cards[1] then -- there are cards with ranks and suits
-		-- Neighborhood Watch (Edwin)
-		local castle_card = pseudorandom_element(valid_castle_cards, pseudoseed("rgmc_neighborhood_watch" .. G.GAME.round_resets.ante))
-		if not G.GAME.current_round.rgmc_edwin_card then G.GAME.current_round.rgmc_edwin_card = {} end
-		G.GAME.current_round.rgmc_edwin_card.suit  = castle_card.base.suit
-		G.GAME.current_round.rgmc_edwin_card.rank  = castle_card.base.value
-		G.GAME.current_round.rgmc_edwin_card.id    = castle_card.base.id
-
-		-- make this end of ante later
-		local castle_card2 = pseudorandom_element(valid_castle_cards, pseudoseed("rgmc_conspiracy_wizard" .. G.GAME.round_resets.ante))
-		if not G.GAME.current_round.rgmc_edwin_card then G.GAME.current_round.rgmc_edwin_card = {} end
-		G.GAME.current_round.rgmc_edwin_card.suit  = castle_card.base.suit
-		G.GAME.current_round.rgmc_edwin_card.rank  = castle_card.base.value
-		G.GAME.current_round.rgmc_edwin_card.id    = castle_card.base.id
-	end
-
-	-- This is for the Barbershop Joker
-	G.GAME.current_round.rgmc_barbershop.changed = false
-    G.GAME.current_round.rgmc_barbershop.index = G.GAME.current_round.rgmc_barbershop.index or 1
-
-    local suit_set = {}
-    for _, v in ipairs(G.playing_cards) do
-        if not v:nosuit() then
-            suit_set[v.base.suit] = true
-        end
-    end
-
-    local suits = {}
-    for suit, _ in pairs(suit_set) do
-        table.insert(suits, suit)
-    end
-
-    -- Sort to ensure a defined order before shuffling (optional)
-    table.sort(suits)
-
-    -- Ensuring a structured shuffle (rotated shuffle approach)
-    local seed = pseudoseed('rgmc_barbershop_joker'..tostring(G.GAME.round_resets.ante)..tostring(G.GAME.round_resets.ante))
-
-    -- Assign the shuffled order
-    pseudoshuffle(suits,seed)
-    G.GAME.current_round.rgmc_barbershop.order = suits
-
-    -- Ensure rgmc_barbershop.index is valid before accessing suits
-    local index = G.GAME.current_round.rgmc_barbershop.index or 1
-    if index < 1 or index > #suits then index = 1 end  -- Default to 1 if out of bounds
-
-    G.GAME.current_round.rgmc_barbershop.suit = G.GAME.current_round.rgmc_barbershop.order[index]
-
-end
-
 function Card:glass_michel_save()
 	tell('Glass Michel saved!')
 	self.ability.glass_michel = nil -- no longer needed
@@ -1573,54 +1583,6 @@ function Card:shatter()
 		print('shatter')
 		shatter_ref(self)
 	end
-end
-
--- temporary discard addition
-local ease_discard_ref = ease_discard
-function ease_discard(mod, instant, silent)
-	ease_discard_ref(mod,instant,silent)
-	--tell_stat('discards',G.GAME.current_round.discards_left)
-    if
-        G.GAME.current_round.discards_left + mod == 0
-        and G.GAME.temporary_discards > 0
-    then
-        ease_discard(1, instant, silent)
-        G.GAME.temporary_discards = G.GAME.temporary_discards - 1
-		local words = localize("rgmc_temp_discard_minus_ex")
-		attention_text({
-			scale = 0.7,
-			text = words,
-			maxw = 12,
-			hold = Madcap.Funcs.get_default_attention_hold(words),
-			align = 'cm',
-			offset = {x = 0, y = -1},
-			major = G.play
-		})
-    end
-end
-
--- temporary hand addition
-local ease_hands_played_ref = ease_hands_played
-function ease_hands_played(mod, instant)
-	ease_hands_played_ref(mod,instant)
-	--tell_stat('hands',G.GAME.current_round.hands_left)
-    if
-        G.GAME.current_round.hands_left + mod == 0
-        and G.GAME.temporary_hands > 0
-    then
-        ease_hands_played(1, instant, silent)
-        G.GAME.temporary_hands = G.GAME.temporary_hands - 1
-		local words = localize("rgmc_temp_hand_minus_ex")
-		attention_text({
-			scale = 0.7,
-			text = words,
-			maxw = 12,
-			hold = Madcap.Funcs.get_default_attention_hold(words),
-			align = 'cm',
-			offset = {x = 0, y = -1},
-			major = G.play
-		})
-    end
 end
 
 -- Setting the cost of the card, likely for the shop?
@@ -1890,174 +1852,6 @@ function Madcap.Funcs.pulse_flame(duration, intensity) -- duration is in seconds
 	G.rgmc_flame_override["intensity"] 	= intensity or 2
 end
 
-function Madcap.Funcs.calculate_empower_bonus(hand)
-	if not G.GAME.subhands or G.GAME.subhands[hand] then return 0 end
-
-	local level 	= G.GAME.subhands[hand].level
-	local emplvl 	= (G.GAME.subhands[hand].empower or 0)
-	local chips 	= G.GAME.subhands[hand].chips 	^ (1 + level * 0.002) ^ (1 + emplvl * 0.005)
-	local mult 		= G.GAME.subhands[hand].mult 	^ (1 + level * 0.002) ^ (1 + emplvl * 0.005)
-
-	return math.ceil(chips), math.ceil(mult)
-end
-
-function Madcap.Funcs.evolve_subhand(card, hand, instant, amount, context)
-	amount = amount or 1
-	local basic_func = true
-	local evolve_level = (G.GAME.subhands[hand].evolve or 0)
-
-	if basic_func then
-    	evolve_level = math.max(0, evolve_level + amount)
-	end
-    if not instant then
-        -- update the UI before setting the new values
-		update_hand_text({
-            sound = 'button', volume = 0.7, pitch = 0.8, delay = 1.0
-        }, {
-            handname = localize('ml_sh_'..hand),
-            level    = G.GAME.subhands['ml_sh_'..hand].level,
-            chips    = '...',
-            mult     = '...'
-        })
-
-		if MadLib.is_animation_enabled()  then
-			local nu_chips, nu_mult = mfuncs.calculate_empower_bonus(hand)
-
-			update_hand_text({ sound = 'rgmc_empower', volume = 0.7, pitch = 0.8, delay = 2.5 }, {
-				handname = localize(hand),
-				level    = lenient_bignum(evolve_level),
-				chips    = number_format(nu_chips),
-				mult     = number_format(nu_mult)
-			})
-			MadLib.simple_event(function()
-				ease_colour(G.C.UI_CHIPS, copy_table(G.C.RGMC_EVIL), 0.1)
-				ease_colour(G.C.UI_MULT, copy_table(G.C.RGMC_EVIL), 0.1)
-				Madcap.Funcs.pulse_flame(0.01, evolve_level)
-				MadLib.event({
-					trigger = "after",
-					blockable = false,
-					blocking = false,
-					delay = 2.5,
-					func = function()
-					ease_colour(G.C.UI_CHIPS, G.C.BLUE, 1)
-					ease_colour(G.C.UI_MULT, G.C.RED, 1)
-					return true
-					end,
-				})
-				return true
-			end, 2.5, 'after')
-		end
-	end
-
-	update_hand_text({ sound = "button", volume = 0.7, pitch = 0.9, delay = 0 }, { level = to_big(empower_level) })
-	delay(2.6)
-    G.GAME.subhands[hand].empower = empower_level
-	MadLib.clear_hand_text()
-end
-
-function Madcap.Funcs.empower_subhand(card, hand, instant, amount, context)
-	amount = amount or 1
-	local basic_func = true
-	local empower_level = (G.GAME.subhands[hand].empower or 0)
-
-	if not G.GAME.subhands[hand].enabled then
-		update_hand_text({
-            sound = 'button', volume = 0.7, pitch = 0.8, delay = 1.0
-        }, {
-            handname = localize(hand),
-            level    = "!",
-            chips    = '',
-			mult	 = ''
-        })
-	end
-
-	if basic_func then
-    	empower_level = math.max(0, empower_level + amount)
-	end
-    if not instant then
-        -- update the UI before setting the new values
-		update_hand_text({
-            sound = 'button', volume = 0.7, pitch = 0.8, delay = 1.0
-        }, {
-            handname = localize(hand),
-            level    = G.GAME.subhands[hand].level,
-            chips    = G.GAME.subhands[hand].chips,
-            mult     = G.GAME.subhands[hand].mult
-        })
-
-		if MadLib.is_animation_enabled()  then
-			local nu_chips, nu_mult = mfuncs.calculate_empower_bonus(hand)
-			update_hand_text({ sound = 'rgmc_empower', volume = 0.7, pitch = 0.8, delay = 2.0 }, {
-				handname = localize(hand),
-				level    = lenient_bignum(empower_level),
-				chips    = lenient_bignum(nu_chips),
-				mult     = lenient_bignum(nu_mult)
-			})
-			MadLib.simple_event(function()
-				ease_colour(G.C.UI_CHIPS, copy_table(G.C.RGMC_UNUSUAL), 0.1)
-				ease_colour(G.C.UI_MULT, copy_table(G.C.RGMC_UNUSUAL), 0.1)
-				Madcap.Funcs.pulse_flame(0.01, empower_level)
-				MadLib.event({
-					trigger = "after",
-					blockable = false,
-					blocking = false,
-					delay = 2.5,
-					func = function()
-					ease_colour(G.C.UI_CHIPS, G.C.BLUE, 1)
-					ease_colour(G.C.UI_MULT, G.C.RED, 1)
-					return true
-					end,
-				})
-				return true
-			end, 2.5, 'after')
-		end
-	end
-	update_hand_text({ sound = "button", volume = 0.7, pitch = 0.9, delay = 2.0 }, { level = to_big(empower_level) })
-	delay(2.6)
-    G.GAME.subhands[hand].empower = empower_level
-	MadLib.clear_hand_text()
-end
-
-function Madcap.Funcs.use_spatia_card(card)
-	MadLib.loop_func(card.ability.subhands, function(v)
-		Madcap.Funcs.card_level_subhand(card,v)
-	end)
-	MadLib.loop_func(card.ability.hands, function(v)
-		Madcap.Funcs.card_level_hand(card,v)
-	end)
-end
-
-function Madcap.Funcs.card_level_hand(card, hand_type)
-    update_hand_text({sound = 'button', volume = 0.7, pitch = 0.8, delay = 0.3}, {
-		handname 	= localize(hand_type, 'poker_hands'),
-		chips 		= G.GAME.hands[hand_type].chips,
-		mult 		= G.GAME.hands[hand_type].mult,
-		level		= G.GAME.hands[hand_type].level
-	})
-    level_up_hand(card, hand_type)
-    update_hand_text({sound = 'button', volume = 0.7, pitch = 1.1, delay = 0}, {mult = 0, chips = 0, handname = '', level = ''})
-    if G.GAME.current_round.current_hand.handname ~= "" then
-        G.E_MANAGER:add_event(Event({
-            trigger = 'after',
-            func = function()
-                G.hand:parse_highlighted()
-                return true
-            end
-        }))
-    end
-end
-
-function Madcap.Funcs.use_potentia_card(card)
-	local subhand = SubHands[card.ability.subhand or 'Balanced'].name
-	-- level up a random hand
-	if #SMODS.find_card('j_rgmc_empowerer') > 0 then
-		MadLib.loop_func(SMODS.find_card('j_rgmc_rocket_keychain'), function(v)
-			level_up_hand_ref(card, MadLib.get_random_poker_hand(), false, G.GAME.potentias_used)
-		end)
-	end
-	Madcap.Funcs.empower_subhand(card, subhand, false, card.ability.levels or 1)
-end
-
 function Madcap.Funcs.get_planet_vars(id)
     return {
         vars = {
@@ -2066,72 +1860,6 @@ function Madcap.Funcs.get_planet_vars(id)
             G.GAME.hands[id].l_mult,
             G.GAME.hands[id].l_chips,
 			colours = {(to_big(G.GAME.hands[id].level) == to_big(1) and G.C.UI.TEXT_DARK or G.C.HAND_LEVELS[to_number(math.min(7, G.GAME.hands[id].level))])},
-        },
-    }
-end
-
-function Madcap.Funcs.get_spatia_vars(hand_list, subhand_list)
-	local all_vars     = { }
-	local all_colours  = { }
-
-	MadLib.loop_func(hand_list, function(ha)
-		local hand = G.GAME.hands and G.GAME.hands[ha]
-		table.insert(all_vars, hand and hand.level or 1)
-		table.insert(all_vars, localize(ha,'poker_hands') or "???")
-		table.insert(all_vars, hand and hand.l_mult or 0)
-		table.insert(all_vars, hand and hand.l_chips or 0)
-		table.insert(all_colours,(
-			to_big(hand and hand.level or 1) == to_big(1) and G.C.UI.TEXT_DARK
-			or G.C.HAND_LEVELS[to_number(math.min(7, hand and hand.level or 1))]
-		))
-	end)
-
-	MadLib.loop_func(subhand_list, function(sh)
-		local subhand = G.GAME.subhands and G.GAME.subhands[SubHands[sh].name]
-		table.insert(all_vars, subhand and subhand and subhand.level or 1)
-		table.insert(all_vars, localize(SubHands[sh].name))
-		table.insert(all_vars, (subhand and subhand.l_mult 
-			or SubHands[sh].l_mult) + 1)
-		table.insert(all_vars, (subhand and subhand.l_chips 
-			or SubHands[sh].l_chips) + 1)
-		table.insert(all_colours,(
-			to_big(subhand and subhand.level or 1) == to_big(1) and G.C.UI.TEXT_DARK
-			or G.C.HAND_LEVELS[to_number(math.min(7, subhand and subhand.level or 1))]
-		))
-	end)
-	all_vars['colours'] = all_colours
-	return { vars = all_vars }
-end
-
-function Madcap.Funcs.get_moon_card_vars(sh,levels)
-	local subhand 	= G.GAME.subhands and G.GAME.subhands[SubHands[sh].name]
-	local current_level = subhand and subhand.level or 1
-    return {
-        vars = {
-            current_level,
-            localize(SubHands[sh].name),
-            (subhand and subhand.l_mult
-				or SubHands[sh].l_mult) + 1,
-            (subhand and subhand.l_chips
-				or SubHands[sh].l_chips) + 1,
-			colours = { ( to_big(subhand and subhand.level or 1) == to_big(1) and G.C.UI.TEXT_DARK or G.C.HAND_LEVELS[to_number(math.min(7, subhand and subhand.level or 1))]), }
-        }
-    }
-end
-
-function Madcap.Funcs.get_potentia_vars(sh,lvl)
-	local subhand 	= G.GAME.subhands and G.GAME.subhands[SubHands[sh].name]
-	local current_level = subhand and subhand.level 	or 1
-	local empower_level = subhand and subhand.empower 	or 0
-    return {
-        vars = {
-            current_level,
-            (empower_level > 0) and (" + " .. empower_level .."") or "",
-            localize(SubHands[sh].name),
-            lvl,
-			colours = {
-				to_big(current_level) < to_big(2) and G.C.BLACK or G.C.HAND_LEVELS[to_number(math.min(7, current_level))]
-			}
         },
     }
 end
@@ -2305,43 +2033,6 @@ function Madcap.Funcs.get_potentia_card_vars(sh,lvl)
 			colours = { to_big(current_level) < to_big(2) and G.C.BLACK or G.C.HAND_LEVELS[to_number(math.min(7, current_level))] }
         },
     }
-end
-
-function Madcap.Funcs.use_moon_card(card)
-	MadLib.loop_func(card.ability.subhands, function(v) Madcap.Funcs.card_level_subhand(card,v) end)
-end
-
-function Madcap.Funcs.card_level_subhand(card, sh)
-	local subhand = SubHands[sh].name
-
-	if not G.GAME.subhands[hand].enabled then
-		update_hand_text({
-            sound = 'button', volume = 0.7, pitch = 0.8, delay = 1.0
-        }, {
-            handname = localize(hand),
-            level    = "!",
-            chips    = '',
-			mult	 = ''
-        })
-	end
-
-    update_hand_text({sound = 'button', volume = 0.7, pitch = 0.8, delay = 2.0}, {
-		handname	= localize(subhand),
-		chips 		= G.GAME.subhands[subhand].chips,
-		mult 		= G.GAME.subhands[subhand].mult,
-		level 		= G.GAME.subhands[subhand].level
-	})
-    Madcap.Funcs.level_up_subhand(card, subhand)
-    update_hand_text({sound = 'button', volume = 0.7, pitch = 1.1, delay = 2.0}, {mult = 0, chips = 0, handname = '', level = ''})
-    if G.GAME.current_round.current_hand.handname ~= "" then
-        G.E_MANAGER:add_event(Event({
-            trigger = 'after',
-            func = function()
-                G.hand:parse_highlighted()
-                return true
-            end
-        }))
-    end
 end
 
 function Madcap.Funcs.get_flame_intensity_override(_F,flame)
@@ -2733,17 +2424,6 @@ function SMODS.change_base(card, suit, rank)
     return card
 end
 
-function MadLib.force_poker_hand(poker_hand)
-	if not results[poker_hand][1] then
-        for _, v in ipairs(G.handlist) do
-            if results[v][1] then
-                results[poker_hand] = results[v]
-                break
-            end
-        end
-    end
-end
-
 --Used to mess around with poker hand stuff (e.g. Waveworx)
 local evaluate_poker_hand_ref = evaluate_poker_hand
 function evaluate_poker_hand(hand)
@@ -2800,7 +2480,414 @@ function evaluate_poker_hand(hand)
     return results
 end
 
-SMODS.load_file('lib/subhands.lua')()
+--[[
+
+    Poker sub-hands add variety and versatility to poker hands
+    without creating clutter.
+
+    Rather than making light and dark spectrum variants of each
+    Spectrum poker hands.
+
+    Multiple subhands can apply to one hand (e.g. High Dark Straight)
+
+]]
+
+function Card:get_rank_from_id()
+	for k,v in pairs(SMODS.Ranks) do
+		if v.id == self:get_id() then return v end
+	end
+	return nil
+end
+
+function Card:has_high_rank()
+    if SMODS.has_no_rank(self) then return false end
+    local _rank = self:get_rank_from_id()
+    return (_rank and _rank.nominal > 6)
+end
+
+function Card:has_low_rank()
+    if SMODS.has_no_rank(self) then return false end
+    local _rank = self:get_rank_from_id()
+    return (_rank and _rank.nominal <= 6)
+end
+
+SubHands = {
+    Light = {
+        name       = 'ml_sh_light',
+        priority   = 2,
+        x_mult     = 1.05,
+        x_chips    = 1.12,
+        l_mult     = 0.05,
+        l_chips    = 0.04,
+        check_hand = function(hand) -- at least 5 light suits (wilds included)
+            local light_cards   = MadLib.loop_func(hand, function(v) return v:has_light_suit() end)
+            local dark_cards    = MadLib.loop_func(hand, function(v) return v:has_dark_suit() end)
+            return light_cards >= (G.GAME.subhand_minimum or 5) and light_cards > 3 and light_cards > dark_cards
+        end,
+    },
+    Dark = {
+        name       = 'ml_sh_dark',
+        priority   = 2,
+        x_mult     = 1.12,
+        x_chips    = 1.05,
+        l_mult     = 0.04,
+        l_chips    = 0.05,
+        check_hand = function(hand) -- at least 5 light suits (wilds included)
+            local light_cards   = MadLib.loop_func(hand, function(v) return v:has_light_suit() end)
+            local dark_cards    = MadLib.loop_func(hand, function(v) return v:has_dark_suit() end)
+            return dark_cards >= (G.GAME.subhand_minimum or 5) and dark_cards > 3 and light_cards < dark_cards
+        end,
+    },
+    Balanced = {
+        name       = 'ml_sh_balanced',
+        priority   = 2,
+        x_mult     = 1.10,
+        x_chips    = 1.10,
+        l_mult     = 0.05,
+        l_chips    = 0.05,
+        check_hand = function(hand) -- at least 5 light suits (wilds included)
+            local light_cards   = MadLib.loop_func(hand, function(v) return v:has_light_suit() end)
+            local dark_cards    = MadLib.loop_func(hand, function(v) return v:has_dark_suit() end)
+            return #hand >= (G.GAME.subhand_minimum or 5) and light_cards == dark_cards
+        end,
+    },
+    Dazzling = {
+        name       = 'ml_sh_enhanced',
+        priority   = 3,
+        x_mult     = 1.10,
+        x_chips    = 1.10,
+        l_mult     = 0.05,
+        l_chips    = 0.05,
+        check_hand = function(hand) -- at least 5 unique enhancements (+ voucher unlocked)
+            local enha = {}
+            local unique = MadLib.loop_func(hand, function(v)
+                if not enha[v.config.center.key] then
+                    enha[v.config.center.key] = true
+                    return true
+                end
+                return false
+            end)
+            --tell(tostring(unique) .. ' unique entries.')
+            return unique >= (G.GAME.subhand_minimum or 5) -- wip
+        end,
+    },
+    High = {
+        name       = 'ml_sh_high',
+        priority   = 1,
+        x_mult     = 1.10,
+        x_chips    = 1.04,
+        l_mult     = 0.05,
+        l_chips    = 0.04,
+        check_hand = function(hand) -- at least 5 ranks 2-6 + Ace (+ voucher unlocked)
+            local high_cards   = MadLib.loop_func(hand, function(v) return v:has_high_rank() end)
+            local low_cards    = MadLib.loop_func(hand, function(v) return v:has_low_rank() end)
+            return #hand >= (G.GAME.subhand_minimum or 5) and high_cards > 3 and high_cards > low_cards
+        end,
+    },
+    Low = {
+        name       = 'ml_sh_low',
+        priority   = 1,
+        x_mult     = 1.04,
+        x_chips    = 1.10,
+        l_mult     = 0.04,
+        l_chips    = 0.05,
+        check_hand = function(hand) -- at least 5 ranks 7-K + Ace (+ voucher unlocked)
+            local high_cards   = MadLib.loop_func(hand, function(v) return v:has_high_rank() end)
+            local low_cards    = MadLib.loop_func(hand, function(v) return v:has_low_rank() end)
+            return #hand >= (G.GAME.subhand_minimum or 5) and low_cards > 3 and high_cards < low_cards
+        end,
+    }
+}
+
+MadLib.clear_hand_text = function(pit,vol)
+    tell('Clear Hand Text')
+   update_hand_text({ sound = 'button', volume = vol or 0.7, pitch = pit or 1.1, delay = 0 },
+            { mult = 0, chips = 0, handname = '', level = '' })
+end
+
+-- Sets subhand to TRUE (on) or FALSE (off) - if no state is provided, acts as a toggler.
+function Madcap.Funcs.set_subhand(_sh,_state)
+	if not (G.GAME.subhands and G.GAME.subhands[_sh]) then return false end
+	G.GAME.subhands[_sh].enabled = _state or (not G.GAME.subhands[_sh].enabled)
+
+    print(G.GAME.subhands or "NOTHING")
+
+
+    return true
+end
+
+-- Levels up the subhand
+MadLib.level_up_subhand = function(card, subhand, instant, amount)
+    tell('Level Up Subhand')
+    -- if no amount, assume it's just 1 level up
+    amount = to_big(amount or 1) -- to_big to avoid crash
+
+	if not instant then
+        -- update the UI before setting the new values
+		update_hand_text({
+            sound = 'button', volume = 0.7, pitch = 0.8, delay = 0.3
+        }, {
+            handname = localize(subhand.prefix),
+            level    = G.GAME.subhands[subhand].level,
+            chips    = G.GAME.subhands[subhand].chips,
+            mult     = G.GAME.subhands[subhand].mult
+        })
+	end
+
+	-- set the values
+    local lchips    = G.GAME.subhands[subhand].level * G.GAME.subhands[subhand].level_chips
+    local lmult     = G.GAME.subhands[subhand].level * G.GAME.subhands[subhand].level_mult
+    G.GAME.subhands[subhand].level    = math.max(G.GAME.subhands[subhand].level + amount, 0)
+    G.GAME.subhands[subhand].chips    = math.max(G.GAME.subhands[subhand].chips + lchips, 0)
+    G.GAME.subhands[subhand].mult     = math.max(G.GAME.subhands[subhand].chips + lmult, 0)
+
+    -- Animation type stuff
+    if (G.SETTINGS.FASTFORWARD or 0) > 0 then
+        G.E_MANAGER:add_event(Event({
+            trigger = 'after',
+            delay = 0.2,
+            func = function()
+				play_sound('tarot1')
+				if card then card:juice_up(0.8, 0.5) end
+				G.TAROT_INTERRUPT_PULSE = true
+				return true
+            end
+        }))
+        update_hand_text({ sound = 'button',  volume = 0.7,  pitch = 0.9,  delay = 0 }, {
+            level   = G.GAME.subhands[subhand].level,
+            chips   = G.GAME.subhands[subhand].chips,
+            mult    = G.GAME.subhands[subhand].mult,
+            StatusText = true
+        })
+    else
+        G.E_MANAGER:add_event(Event({
+            trigger = 'after', delay = 0.2,
+            func = function()
+				play_sound('tarot1')
+				if card then card:juice_up(0.8, 0.5) end
+				G.TAROT_INTERRUPT_PULSE = true
+				return true
+            end
+        }))
+        update_hand_text({ delay = 0 }, { mult = G.GAME.subhands[subhand].mult, StatusText = true })
+        G.E_MANAGER:add_event(Event({
+            trigger = 'after', delay = 0.9,
+            func = function()
+				play_sound('tarot1')
+				if card then card:juice_up(0.8, 0.5) end
+				return true
+            end
+        }))
+        update_hand_text({ delay = 0 }, { chips   = G.GAME.subhands[subhand].chips, StatusText = true })
+        G.E_MANAGER:add_event(Event({
+            trigger = 'after', delay = 0.9,
+            func = function()
+				play_sound('tarot1')
+				if card then card:juice_up(0.8, 0.5) end
+				G.TAROT_INTERRUPT_PULSE = nil
+				return true
+            end
+        }))
+        update_hand_text({sound = 'button', volume = 0.7, pitch = 0.9, delay = 0}, { level = G.GAME.subhands[subhand].level })
+		MadLib.clear_hand_text()
+    end
+end
+
+function MadLib.get_subhands(_cards)
+    local subhand_list = {}
+    MadLib.loop_table(SubHands, function(k,v)
+        if not (G.GAME.subhands[v.name] and G.GAME.subhands[v.name].enabled) then
+            return false
+        end
+        local result = v.check_hand(_cards)
+        if not result then return false end
+        subhand_list[#subhand_list+1] = v.name
+        return true
+    end)
+    --print(subhand_list)
+    return subhand_list
+end
+
+function MadLib.context_has_subhand(context,name)
+    return context.subhands and MadLib.has_subhand(context.subhands,name) or false
+end
+
+function MadLib.has_subhand(list,name)
+    for i, v in ipairs(list) do
+        if v == name then return true end
+    end
+    return false
+end
+
+function Madcap.Funcs.get_potentia_bonus(hand, cards)
+	if not hand then return 0 end
+	local card_bonus = math.max(1, #(cards or {}) - (G.GAME.subhand_minimum or 5) + 1)
+	return MadLib.round(1 +
+		(G.GAME.subhands[hand].empower or 0)
+		* (card_bonus/6), 2)
+end
+
+function Madcap.Funcs.calculate_empower_bonus(hand, cards)
+	if not G.GAME.subhands or G.GAME.subhands[hand] then return 0 end
+	local EP = Madcap.Funcs.get_potentia_bonus(hand, cards)
+	return G.GAME.subhands[hand].chips * EP, G.GAME.subhands[hand].mult * EP
+end
+
+function Madcap.Funcs.empower_subhand(card, hand, instant, amount, context)
+	amount = amount or 1
+	local basic_func = true
+	local empower_level = (G.GAME.subhands[hand].empower or 0)
+
+    print(hand)
+    print(G.GAME.subhands[hand])
+
+	if basic_func then
+    	empower_level = math.max(0, empower_level + amount)
+	end
+    if not instant then
+        -- update the UI before setting the new values
+		update_hand_text({
+            sound = 'button', volume = 0.7, pitch = 0.8, delay = 1.0
+        }, {
+            handname = localize(hand),
+            level    = G.GAME.subhands[hand].level,
+            chips    = G.GAME.subhands[hand].chips,
+            mult     = G.GAME.subhands[hand].mult
+        })
+
+		if MadLib.is_animation_enabled()  then
+			local nu_chips, nu_mult = mfuncs.calculate_empower_bonus(hand)
+			update_hand_text({ sound = 'rgmc_empower', volume = 0.7, pitch = 0.8, delay = 2.0 }, {
+				handname = localize(hand),
+				level    = lenient_bignum(empower_level),
+				chips    = lenient_bignum(nu_chips),
+				mult     = lenient_bignum(nu_mult)
+			})
+			MadLib.simple_event(function()
+				ease_colour(G.C.UI_CHIPS, copy_table(G.C.RGMC_UNUSUAL), 0.1)
+				ease_colour(G.C.UI_MULT, copy_table(G.C.RGMC_UNUSUAL), 0.1)
+				Madcap.Funcs.pulse_flame(0.01, empower_level)
+				MadLib.event({
+					trigger = "after",
+					blockable = false,
+					blocking = false,
+					delay = 2.5,
+					func = function()
+					ease_colour(G.C.UI_CHIPS, G.C.BLUE, 1)
+					ease_colour(G.C.UI_MULT, G.C.RED, 1)
+					return true
+					end,
+				})
+				return true
+			end, 2.5, 'after')
+		end
+	end
+
+	update_hand_text({ sound = "button", volume = 0.7, pitch = 0.9, delay = 2.0 }, { level = to_big(empower_level) })
+	delay(2.6)
+    G.GAME.subhands[hand].empower = empower_level
+	MadLib.clear_hand_text()
+end
+
+function Madcap.Funcs.hand_display_mod(hand, text, disp_text, poker_hands, scoring_hand)
+
+    local subhands = MadLib.get_subhands(scoring_hand)
+    local return_true = nil
+    local prefix, suffix = '', ''
+
+    -- Add subhands stuff first
+	if #subhands > 0 and (#scoring_hand > 0 or #hand > 0) then
+		local pre_lvl_col	= G.hand_text_area.hand_level.config.colour or G.C.HAND_LEVELS[1]
+		suffix, prefix = ' (+',''
+
+		MadLib.loop_func(subhands,function(v,i)
+			-- hand name prefix
+        	prefix = prefix .. ' '.. localize(v)
+			-- level suffix
+			if not G.GAME.subhands and G.GAME.subhands[v] and G.GAME.subhands[v].level > 0 then return end
+			suffix = suffix .. tostring(G.GAME.subhands[v].level)
+
+			if G.GAME.subhands[v].empower > 0 then
+				suffix = suffix .. '(' .. tostring(G.GAME.subhands[v].empower) .. ')'
+			end
+
+			if i < #subhands then
+				suffix = suffix .. ','
+			else
+				suffix = suffix .. ')'
+			end
+		end)
+
+		local _mult 	= MadLib.calculate_mult(G.GAME.hands[text].mult, subhands)
+		local _chips 	= MadLib.calculate_chips(G.GAME.hands[text].chips, subhands)
+        disp_text = prefix .. ' ' .. disp_text
+
+        update_hand_text({ immediate = nil, nopulse = true, delay = 0}, {
+			level = G.GAME.hands[text].level .. suffix,
+			handname = disp_text,
+			mult = _mult,
+			chips = _chips
+		})
+		G.hand_text_area.hand_level.config.colour = pre_lvl_col
+		return_true = true
+	end
+
+	disp_text = MadLib.normalize_spaces(disp_text)
+
+	if AKYRS then
+        return_true = return_true or AKYRS.hand_display_mod(hand, text, disp_text, poker_hands) ~= nil
+    end
+
+    return return_true
+end
+
+local parse_highlighted_ref = CardArea.parse_highlighted
+function CardArea:parse_highlighted()
+    parse_highlighted_ref(self)
+end
+
+-- Assumes subhands is a list of PASSED subhand types.
+
+function MadLib.calculate_chips(_chips,sh)
+    --tell("Calculate Chips")
+    local final_chips = _chips
+    if sh then
+        for i=1, #sh do
+            local _xchips = G.GAME.subhands[sh[i]].chips
+            final_chips = final_chips * _xchips
+            tell("Chips x" .. tostring(_xchips))
+        end
+    end
+    --if not sh then tell("I don't see any subhands...") end
+    if Cryptid then final_chips = Cryptid.ascend(final_chips) end
+    --tell('Final chips is ' .. tostring(final_chips))
+    return final_chips
+end
+
+function MadLib.calculate_mult(_mult,sh)
+    --tell("Calculate Mult")
+    local final_mult = _mult
+    if sh then
+        for i=1, #sh do
+            local _xmult = G.GAME.subhands[sh[i]].mult
+            final_mult = final_mult * _xmult
+            tell("Mult x" .. tostring(_xmult))
+        end
+    end
+    --if not sh then tell("I don't see any subhands...") end
+    if Cryptid then final_mult = Cryptid.ascend(final_mult) end
+    --tell('Final mult is ' .. tostring(final_mult))
+    return final_mult
+end
+
+--[[
+local evaluate_play_ref = G.FUNCS.evaluate_play
+function G.FUNCS.evaluate_play(self, e)
+    evaluate_play_ref(self, e)
+end
+]]
+
+
 SMODS.load_file('lib/scoring.lua')()
 SMODS.load_file('lib/hooks.lua')()
 SMODS.load_file('lib/vanilla_override.lua')()
@@ -3248,8 +3335,129 @@ Madcap.MayhemJokersBlacklist = {
 	'j_ring_master'
 }
 
+function Madcap.Funcs.is_subhand_visible(subhand)
+	return subhand and subhand.enabled
+end
+
+Madcap.Lists.SubhandOrder = {
+	'ml_sh_light',
+	'ml_sh_dark',
+	'ml_sh_high',
+	'ml_sh_low',
+	'ml_sh_enhanced',
+	'ml_sh_balanced',
+}
 
 
+function create_UIBox_subhand_tip(sh)
+	if not G.GAME.subhands[sh].example then return {n=G.UIT.R, config={align = "cm"},nodes = {}} end
+
+	local cardarea = CardArea(2, 2, 3.5 * G.CARD_W, 0.75 * G.CARD_H, { card_limit = 5, type = 'title', highlight_limit = 0 })
+	for k, v in ipairs(G.GAME.subhands[sh].example) do
+		local card = Card(0,0, 0.5*G.CARD_W, 0.5*G.CARD_H, G.P_CARDS[v[1]], G.P_CENTERS[v.enhancement or 'c_base'])
+		if v.edition then card:set_edition(v.edition, true, true) end
+		if v.seal then card:set_seal(v.seal, true, true) end
+		if v[2] then card:juice_up(0.3, 0.2) end
+		if k == 1 then play_sound('paper1',0.95 + math.random()*0.1, 0.3) end
+		ease_value(card.T, 'scale',v[2] and 0.25 or -0.15,nil,'REAL',true,0.2)
+		--if v['akyrs_letter'] then card:set_letters(v['akyrs_letter']) card.ability.forced_letter_render = true end
+		if v.is_null then card.is_null = true end
+		cardarea:emplace(card)
+	end
+
+	return {n=G.UIT.R, config={align = "cm", colour = G.C.WHITE, r = 0.1}, nodes={
+		{n=G.UIT.C, config={align = "cm"}, nodes={ {n=G.UIT.O, config={object = cardarea}}}}
+	}}
+end
+
+function G.UIDEF.subhands()
+
+	local subhands = {}
+
+	if not (G.GAME and G.GAME.subhands) then
+		tell('ERROR! No subhands')
+		return
+	end
+
+	MadLib.loop_func(Madcap.Lists.SubhandOrder, function(sh)
+		local current_subhand = G.GAME.subhands[sh]
+		local empower = current_subhand.empower and current_subhand.empower > 0
+
+		local cm_minw 	= (not empower) and 1.1 or (1.1 * 0.8)
+		local cm_scale 	= (not empower) and 0.45 or (0.45 * 0.8)
+
+		if not current_subhand or (not current_subhand.enabled and current_subhand.level == 1) then return end
+		--print(current_subhand.chips)
+		subhands[#subhands+1] = {n=G.UIT.R, config={align = "cm", padding = 0.05, r = 0.1, colour = darken(G.C.JOKER_GREY, current_subhand.enabled and 0.1 or 0.4), emboss = 0.05, hover = false, force_focus = true, on_demand_tooltip = {filler = {func = create_UIBox_subhand_tip, args = sh}}}, nodes={
+		{n=G.UIT.C, config={align = "cl", padding = 0, minw = 5}, nodes={
+			{n=G.UIT.C, config={align = "cm", padding = 0.01, r = 0.1, colour = G.C.HAND_LEVELS[math.min(7, current_subhand.level)], minw = 1.5, outline = 0.8, outline_colour = G.C.WHITE}, nodes={
+			{n=G.UIT.T, config={text = localize('k_level_prefix')..current_subhand.level, scale = 0.5, colour = G.C.UI.TEXT_DARK}}
+			}},
+			{n=G.UIT.C, config={align = "cm", minw = 4.5, maxw = 4.5}, nodes={
+			{n=G.UIT.T, config={text = ' '..localize(sh), scale = 0.45, colour = G.C.UI.TEXT_LIGHT, shadow = true}}
+			}}
+		}},
+			{n=G.UIT.C, config={align = "cm", padding = 0.05, colour = G.C.BLACK,r = 0.1}, nodes={
+				{n=G.UIT.C, config={align = "cr", padding = 0.01, r = 0.1, colour = G.C.CHIPS, minw = cm_minw}, nodes={
+					{n=G.UIT.T, config={text = 'x'..number_format(current_subhand.chips, 1000000), scale = cm_scale, colour = G.C.UI.TEXT_LIGHT}},
+					{n=G.UIT.B, config={w = 0.08, h = 0.01}}
+				}},
+				{n=G.UIT.T, config={text = ",", scale = cm_scale, colour = G.C.WHITE}},
+				{n=G.UIT.C, config={align = "cl", padding = 0.01, r = 0.1, colour = G.C.MULT, minw = cm_minw}, nodes={
+				{n=G.UIT.B, config={w = 0.08,h = 0.01}},
+				{n=G.UIT.T, config={text = 'x'..number_format(current_subhand.mult, 1000000), scale = cm_scale, colour = G.C.UI.TEXT_LIGHT}}
+				}},
+				empower and {n=G.UIT.T, config={text = ",", scale = cm_scale, colour = G.C.WHITE}} or nil,
+				empower and {n=G.UIT.C, config={align = "cl", padding = 0.01, r = 0.1, colour = darken(G.C.RGMC_UNUSUAL, 0.5), minw = cm_minw}, nodes={
+				{n=G.UIT.B, config={w = 0.08,h = 0.01}},
+				{n=G.UIT.T, config={text = 'x'..number_format(Madcap.Funcs.get_potentia_bonus(sh), 1000000), scale = cm_scale, colour = G.C.UI.TEXT_LIGHT}}
+				}} or nil,
+			}},
+			{n=G.UIT.C, config={align = "cm"}, nodes={
+				{n=G.UIT.T, config={text = '  #', scale = 0.45, colour = G.C.UI.TEXT_LIGHT, shadow = true}}
+				}},
+			{n=G.UIT.C, config={align = "cm", padding = 0.05, colour = G.C.L_BLACK,r = 0.1, minw = 0.9}, nodes={
+				{n=G.UIT.T, config={text = "???", scale = 0.45, colour = G.C.FILTER, shadow = true}},
+			}}
+		}}
+	end)
+
+	local t = {n=G.UIT.ROOT, config={align = "cm", minw = 3, padding = 0.1, r = 0.1, colour = G.C.CLEAR}, nodes={
+		{ n=G.UIT.R, config = {align = "cm", padding = 0.04}, nodes = subhands },
+	}}
+
+	return t
+end
+
+--[[
+{n=G.UIT.R, config={align = "cm", padding = 0.05, r = 0.1, colour = darken(G.C.JOKER_GREY, 0.1), emboss = 0.05, hover = true, force_focus = true, on_demand_tooltip = {text = localize(handname, 'poker_hand_descriptions'), filler = {func = create_UIBox_hand_tip, args = handname}}}, nodes={
+      {n=G.UIT.C, config={align = "cl", padding = 0, minw = 5}, nodes={
+        {n=G.UIT.C, config={align = "cm", padding = 0.01, r = 0.1, colour = G.C.HAND_LEVELS[math.min(7, G.GAME.hands[handname].level)], minw = 1.5, outline = 0.8, outline_colour = G.C.WHITE}, nodes={
+          {n=G.UIT.T, config={text = localize('k_level_prefix')..G.GAME.hands[handname].level, scale = 0.5, colour = G.C.UI.TEXT_DARK}}
+        }},
+        {n=G.UIT.C, config={align = "cm", minw = 4.5, maxw = 4.5}, nodes={
+          {n=G.UIT.T, config={text = ' '..localize(handname,'poker_hands'), scale = 0.45, colour = G.C.UI.TEXT_LIGHT, shadow = true}}
+        }}
+      }},
+      {n=G.UIT.C, config={align = "cm", padding = 0.05, colour = G.C.BLACK,r = 0.1}, nodes={
+        {n=G.UIT.C, config={align = "cr", padding = 0.01, r = 0.1, colour = G.C.CHIPS, minw = 1.1}, nodes={
+          {n=G.UIT.T, config={text = number_format(G.GAME.hands[handname].chips, 1000000), scale = 0.45, colour = G.C.UI.TEXT_LIGHT}},
+          {n=G.UIT.B, config={w = 0.08, h = 0.01}}
+        }},
+        {n=G.UIT.T, config={text = "X", scale = 0.45, colour = G.C.MULT}},
+        {n=G.UIT.C, config={align = "cl", padding = 0.01, r = 0.1, colour = G.C.MULT, minw = 1.1}, nodes={
+          {n=G.UIT.B, config={w = 0.08,h = 0.01}},
+          {n=G.UIT.T, config={text = number_format(G.GAME.hands[handname].mult, 1000000), scale = 0.45, colour = G.C.UI.TEXT_LIGHT}}
+        }}
+      }},
+      {n=G.UIT.C, config={align = "cm"}, nodes={
+          {n=G.UIT.T, config={text = '  #', scale = 0.45, colour = G.C.UI.TEXT_LIGHT, shadow = true}}
+        }},
+      {n=G.UIT.C, config={align = "cm", padding = 0.05, colour = G.C.L_BLACK,r = 0.1, minw = 0.9}, nodes={
+        {n=G.UIT.T, config={text = G.GAME.hands[handname].played, scale = 0.45, colour = G.C.FILTER, shadow = true}},
+      }}
+    }}
+]]
 
 function Madcap.Funcs.get_mayhem_multiplier(mayhem)
     local t = MadLib.clamp(mayhem / 10, 0, 1)
@@ -3344,11 +3552,6 @@ function Madcap.Funcs.modify_scoring_hand(scoring_hand)
 		end)
 	end
 	return scoring_hand
-end
-
-function MadLib.swap(list, i, j)
-    if not (list and list[i] and list[j]) then return end
-    list[i], list[j] = list[j], list[i]
 end
 
 function Madcap.Funcs.shuffle_deck(cards)
@@ -3472,7 +3675,7 @@ function Madcap.Funcs.mayhemize_table(_card, _table, _args)
 				local _data
 
 				if Madcap.DefineExtras[_card.config.center.key] then
-					tell('Finding extra value...')
+					--tell('Finding extra value...')
 					_data = Madcap.DefineExtras[_card.config.center.key][k]
 				else
 					_data = Madcap.MayhemConversions[_key]
@@ -3898,65 +4101,6 @@ end
 -- LOADING JOKERS
 --mod_path..root
 Madcap.object_buffer['Jokers'] = Madcap.object_buffer['Jokers'] or {}
-
-local function load_items(path,func)
-	local files = NFS.getDirectoryItems(mod_path..path)
-	tell('File path is '.. path)
-	MadLib.loop_func(files, function(file)
-		tell('File is '..file)
-		local f, err = SMODS.load_file(path..file)
-		if err then
-			tell_error(err)
-			--errors[file] = err
-			return false
-		end
-
-		local item = f()
-		if not (item and item.data) then
-			tell('Item could not load - improper data structure.')
-			return false
-		elseif item.devmode and item.devmode ~= Madcap.Data.devmode then
-			tell('Item could not load - devmode only!')
-			return false
-		end
-
-		if item.categories and MadLib.list_matches_one(item.categories, function(c)
-			return MadcapConfig[v] ~= nil and MadcapConfig[v] == false
-		end) then
-			tell('Item '..(item.data and item.data.key or 'UNKNOWN')..' could not load - configs turned off.')
-			return false
-		end
-
-		local data = item.data
-		if data.object_type then
-			if func then func(item.data) end
-			tell('Attempting to load item '..(item.data and item.data.key or 'UNKNOWN')..'.')
-			SMODS[data.object_type](data)
-		end
-	end)
-end
-
-local function loop_directories(tbl, path)
-    path = path or {}
-    tell('Loading Directories')
-	print(path)
-	MadLib.loop_table(tbl, function(key,value)
-        if type(value) ~= "table" then return false end
-		if value.pass ~= nil and value.pass() == true then
-			tell("Loading folder at: " .. table.concat(path, ".") .. (next(path) and "." or "") .. key)
-			local final_path = 'items/'
-			MadLib.loop_func(path, function(v,i)
-				final_path = final_path .. v .. '/'
-			end)
-			load_items(final_path..key..'/',value.func)
-		else
-			table.insert(path, key)
-			loop_directories(value, path)
-			table.remove(path)
-		end
-	end)
-end
-
 -- Usage
 
 local function add_object_type(tbl, path, type)
@@ -4167,43 +4311,72 @@ for set, objs in pairs(Madcap.object_buffer) do
 		SMODS[set](objs[i])
 	end
 end
+
+local function load_items(path,func)
+	local files = NFS.getDirectoryItems(mod_path..path)
+	tell('File path is '.. path)
+	MadLib.loop_func(files, function(file)
+		tell('File is '..file)
+		local f, err = SMODS.load_file(path..file)
+		if err then
+			tell_error(err)
+			--errors[file] = err
+			return false
+		end
+
+		local item = f()
+
+		if not (item and item.data) then
+			tell('Item could not load - improper data structure.')
+			return false
+		elseif item.devmode and item.devmode ~= Madcap.Data.devmode then
+			tell('Item could not load - devmode only!')
+			return false
+		end
+
+		if item.categories and MadLib.list_matches_one(item.categories, function(c)
+			return MadcapConfig[v] ~= nil and MadcapConfig[v] == false
+		end) then
+			tell('Item '..(item.data and item.data.key or 'UNKNOWN')..' could not load - configs turned off.')
+			return false
+		end
+
+		local data = item.data
+		if data.object_type then
+			if func then func(item.data) end
+			tell('Attempting to load item '..(item.data and item.data.key or 'UNKNOWN')..'.')
+			SMODS[data.object_type](data)
+		end
+	end)
+end
+
+local function loop_directories(tbl, path)
+    path = path or {}
+    tell('Loading Directories')
+	print(path)
+	MadLib.loop_table(tbl, function(key,value)
+        if type(value) ~= "table" then return false end
+		if value.pass ~= nil and value.pass() == true then
+			tell("Loading folder at: " .. table.concat(path, ".") .. (next(path) and "." or "") .. key)
+			local final_path = 'items/'
+			MadLib.loop_func(path, function(v,i)
+				final_path = final_path .. v .. '/'
+			end)
+			load_items(final_path..key..'/',value.func)
+		else
+			table.insert(path, key)
+			loop_directories(value, path)
+			table.remove(path)
+		end
+	end)
+end
+
 loop_directories(Madcap.Directories)
 
 -- File loading ended!
 print(errors)
 for f, e in ipairs(errors) do
     tell_stat("Error loading file",e)
-end
-
--- Easier way to handle the removal of descaling Jokers
-function MadLib.goodbye_card(card)
-    MadLib.simple_event(function()
-        play_sound("tarot1")
-        card.T.r = -0.2
-        card:juice_up(0.3, 0.4)
-        card.states.drag.is = true
-        card.children.center.pinch.x = true
-        MadLib.simple_event(function()
-            card:remove()
-            return true
-        end, 0.3, 'after', false)
-    end,0.0)
-end
-
--- Easier way to handle the descaling Joker Logic?
-local function handle_descaling_joker_logic(trigger,card,v1,v2,type)
-	if not (card and context) then
-		return nil
-	end
-    if trigger() and context.main_eval and not context.blueprint then
-        if card.ability.extra[v1] - card.ability.extra[v2]<= 0 then
-            MadLib.goodbye_card(card)
-        else
-            MadLib.calculate_food_loss(card, type, card.ability.extra[v2])
-            card.ability.extra[v1] = card.ability[v1] - card.ability.extra[v2]
-            return MadLib.get_simple_downgrade_data(type, card, card.ability.extra[v2])
-        end
-    end
 end
 
 function Madcap.Funcs.get_food_descale(value)
@@ -4223,7 +4396,6 @@ end
 ]]
 
 if not Cryptid then
-
 	--Calculate events on cash out
 	local gfco = G.FUNCS.cash_out
 	G.FUNCS.cash_out = function(e)
@@ -4231,89 +4403,12 @@ if not Cryptid then
 		SMODS.calculate_context({ cash_out = true })
 		return ret
 	end
-
 end
 
-local card_stop_drag_ref = Card.stop_drag
-function Card:stop_drag()
-    local c = card_stop_drag_ref(self)
-
-	if (self.area == G.hand or self.area == G.play) then
-		--tell("CARD RELEASED!!!!")
-		--tell('Center is ' .. tostring(self.config.center.key))
-	end
-
-	local fancy_cards = {}
-    if self.area and (self.area == G.hand or self.area == G.play) then
-		for i=1, #self.area.cards do
-			local _card = self.area.cards[i]
-			if _card.config.center.key == 'm_rgmc_lazurite' then
-				tell('Added to fancy cards')
-				table.insert(fancy_cards, {index = i, type = _card.config.center.key}) -- add lazurite index
-			end
-		end
-	end
-
-	-- lazurite cards copy the rank and suit of the card to their right
-	for i = #fancy_cards, 1, -1 do
-		local _index 	= fancy_cards[i].index
-		local _card 	= self.area.cards[_index]
-		local _type 	= fancy_cards[i].type
-		local _target, _rank, _suit
-
-		print(fancy_cards[i])
-		if _type == 'm_rgmc_lazurite' then
-			local changed
-			local copy_rank = _index < #self.area.cards
-			if copy_rank then
-				changed 	= _card.base.value ~= _rank or _card.base.suit ~= _suit
-				_target 	= self.area.cards[_index+1]
-				_rank 	= _target.base.value -- get the true value
-				_suit		= _target.base.suit
-				assert(SMODS.change_base(_card, _suit, _rank))
-			end
-			changed = changed or (_card.config.center.no_rank == copy_rank)
-			_card.config.center.no_rank 			= not copy_rank
-			_card.config.center.no_suit 			= not copy_rank
-			_card.config.center.replace_base_card 	= not copy_rank
-			if changed then
-				_card:juice_up(0.5, 0.7)
-				delay(1.0)
-			end
-		end
-	end
-    -- if G.deck and self.area and self.area == G.jokers and self.config.center_key == "j_akyrs_hibana" then
-    --    G.deck:shuffle()
-    -- end
-    return c
-end
-
-local card_open_ref = Card.open
 
 Madcap.JokerLists.ExtraChoices = {
 	'jeff'
 }
-
-function Card:open()
-	local orig = self.ability.extra or 1
-	-- checks if there are any +booster slot jokers
-	local _helpers = 0
-	if _helpers > 0 then
-		for k, v in pairs(_helpers) do
-			if v.ability.extra and v.ability.extra.extra_choices then
-				orig = orig + v.ability.extra.extra_choices
-			end
-		end
-		self.config.choose = math.floor(orig)
-		self.ability.extra = math.floor(orig)
-	end
-	-- commence regular opening
-	card_open_ref(self)
-	G.E_MANAGER:add_event(Event({delay = 0.5, timer = 'REAL', func = function()
-		if _helpers > 0 then G.GAME.pack_choices = math.floor(self.ability.extra) end
-		return true
-	end }))
-end
 
 
 -- Has at least 1 card selected
@@ -4531,6 +4626,7 @@ Madcap.CustomCashouts = {
 
 }
 
+--[[
 function create_UIBox_HUDD()
     local scale = 0.4
     local stake_sprite = get_stake_sprite(G.GAME.stake or 1, 0.5)
@@ -4673,7 +4769,7 @@ function create_UIBox_HUDD()
       }}
     }}
 end
-
+]]
 
 --[[
 function create_UIBox_HUD_blindd()
@@ -4705,157 +4801,11 @@ end
 ]]
 
 
-local function get_nested(orig, path)
-    local current = orig
-    for _, i in ipairs(path) do
-        if current and current.nodes and current.nodes[i] then
-            current = current.nodes[i]
-        else
-            return nil -- invalid path
-        end
-    end
-    return current
-end
-
-local uibox_blind_ref = create_UIBox_HUD_blind
-function create_UIBox_HUD_blind()
-	local orig = uibox_blind_ref()
-    local stake_sprite = get_stake_sprite(G.GAME.stake or 1, 0.5)
-
-	--tell('UI to find:')
-	--print(orig.nodes[2].nodes[2].nodes[2].nodes)
-
-	local score_text = { n=G.UIT.R, config={align = "cm", maxw = 2.8}, nodes={
-				{n=G.UIT.T, config={ref_table = G.GAME, ref_value = 'chips_text', lang = G.LANGUAGES['en-us'], scale = 0.75, colour = G.C.WHITE, id = 'chip_UI_count', func = 'chip_UI_set', shadow = true}}}}
-
-	local blind_chips_text = { n=G.UIT.R, config={align = "cm", maxw = 2.8}, nodes={
-				{n=G.UIT.O, config={ w = 0.5, h = 0.5 , object = stake_sprite, hover = true, can_collide = false}},
-				{n=G.UIT.T, config={ref_table = G.GAME.blind, ref_value = 'chip_text', lang = G.LANGUAGES['en-us'], scale = 0.75, colour = G.C.GOLD, id = 'HUD_blind_count', func = 'blind_chip_UI_scale', shadow = true}}
-			}}
-
-	-- Replace the first part with the actual score
-	local _nodes
-	if G.akyrs_blind_icons then
-		table.insert(orig.nodes[2].nodes,{
-			n=G.UIT.C, config={align = "cm",r = 0.1, padding = 0.05, emboss = 0.05, minw = 2.9, colour = G.C.BLACK},
-			nodes={ score_text, blind_chips_text }
-		})
-	else
-		orig.nodes[2].nodes[2].nodes[2].nodes[1] = score_text
-		orig.nodes[2].nodes[2].nodes[2].nodes[2] = blind_chips_text
-	end
-
-	return orig
-end
-
-
-local uibox_ref = create_UIBox_HUD
-function create_UIBox_HUD()
-	local orig = uibox_ref()
-		--if not Entropy.DeckOrSleeve("doc") then return orig end
-    local scale = 0.4
-    local stake_sprite = get_stake_sprite(G.GAME.stake or 1, 0.5)
-
-    local contents = {}
-
-    local spacing = 0.13
-    local temp_col = G.C.DYN_UI.BOSS_MAIN
-    local temp_col2 = G.C.DYN_UI.BOSS_DARK
-
-
-    local qwerty = orig.nodes[1].nodes[1].nodes[3]
-
-    qwerty.nodes[1].nodes = nil
-
-	-- Shorten the run info button
-    if orig.nodes[1].nodes[1].nodes[5].nodes[1].nodes[1].nodes[1].config.id == "run_info_button" then
-    orig.nodes[1].nodes[1].nodes[5].nodes[1].nodes[1].nodes[1] = {n=G.UIT.C, config={id = 'run_info_button', align = "cm", minh = 1, minw = 1.5,padding = 0.05, r = 0.1, hover = true, colour = G.C.RED, button = "run_info", shadow = true}, nodes={
-            {n=G.UIT.R, config={align = "cm", padding = 0, maxw = 1.4}, nodes={
-              {n=G.UIT.T, config={text = localize('b_run_info_1'), scale = 1.2*scale, colour = G.C.UI.TEXT_LIGHT, shadow = true}}
-            }},
-            {n=G.UIT.R, config={align = "cm", padding = 0, maxw = 1.4}, nodes={
-              {n=G.UIT.T, config={text = localize('b_run_info_2'), scale = 1*scale, colour = G.C.UI.TEXT_LIGHT, shadow = true, focus_args = {button = G.F_GUIDE and 'guide' or 'back', orientation = 'bm'}, func = 'set_button_pip'}}
-            }}
-          }}
-    end
-
-    -- Shorten the options button
-    if orig.nodes[1].nodes[1].nodes[5].nodes[1].nodes[1].nodes[2].config.button == "options" then
-        orig.nodes[1].nodes[1].nodes[5].nodes[1].nodes[1].nodes[2] = {n=G.UIT.C, config={align = "cm", minh = 1, minw = 1.5,padding = 0.05, r = 0.1, hover = true, colour = G.C.ORANGE, button = "options", shadow = true}, nodes={
-            {n=G.UIT.C, config={align = "cm", maxw = 1.4, focus_args = {button = 'start', orientation = 'bm'}, func = 'set_button_pip'}, nodes={
-              {n=G.UIT.T, config={text = localize('b_options'), scale = scale, colour = G.C.UI.TEXT_LIGHT, shadow = true}}
-            }},
-          }}
-    end
-
-    -- Shrink hands
-    local hand_data = orig.nodes[1].nodes[1].nodes[4].nodes[1].nodes[1]
-    hand_data.config.minh = hand_data.config.minh * 0.75
-    MadLib.loop_func(hand_data.nodes, function(v)
-		if v and v.scale then v.scale = v.scale * 0.5 end
-	end)
-	-- Rearrange round/ante and button UI
-	local buttons 		= orig.nodes[1].nodes[1].nodes[5].nodes[1]
-	orig.nodes[1].nodes[1].nodes[5].nodes[1] = nil
-	local round_data 	= orig.nodes[1].nodes[1].nodes[5].nodes[2]
-	table.insert(orig.nodes[1].nodes[1].nodes, { n = G.UIT.R, config = { align = "cm", id = 'row_buttons'}, nodes = buttons.nodes })
-
-	table.insert(round_data.nodes[1].nodes,{n=G.UIT.C, config={minw = spacing},nodes={}})
-	table.insert(round_data.nodes[1].nodes,{n=G.UIT.C, config={id = 'hud_mayhem',align = "cm", padding = 0.05, minw = 1.45, emboss = 0.05, r = 0.1, colour = G.C.DYN_UI.BOSS_MAIN}, nodes={
-		{n=G.UIT.R, config={align = "cm", minh = 0.33, maxw = 1.35 }, nodes={
-			{n=G.UIT.T, config={text = localize('rgmc_mayhem'), scale = 0.85*scale, colour = G.C.UI.TEXT_LIGHT, shadow = true}},
-		}},
-		{n=G.UIT.R, config={align = "cm", r = 0.1, minw = 1.2, colour = G.C.DYN_UI.BOSS_DARK }, nodes={
-			{n=G.UIT.O, config={object = DynaText({string = {{ref_table = G.GAME, ref_value = 'mayhem'}}, font = G.LANGUAGES['en-us'].font, colours = { G.C.RGMC_UNUSUAL }, shadow = true, rotate = true, scale = 2*scale}), id = 'mayhem_UI_count'}},
-		}}
-	}})
-    return orig
-end
-
-local blind_choice_ref = create_UIBox_blind_choice
-function create_UIBox_blind_choice(type, run_info)
-	local blind = blind_choice_ref(type, run_info)
-	local extra = nil
-
-	-- Capital Deck
-	if G.GAME.modifiers.rgmc_capital == true then
-		local is_boss = (type == 'Boss')
-		local cost = G.GAME.modifiers.blind_price * (is_boss and (G.GAME.modifiers.boss_money_mult or 1.5) or 1)
-		local cost_string = ' $' .. tostring(cost)
-		local function insert_after_blind_name(nodes, new_node)
-			for i, node in ipairs(nodes or {}) do
-				print(node)
-				if node.config and node.config.id == 'blind_name' then
-					-- Insert right after
-					table.insert(nodes, i + 1, new_node)
-					return true -- done
-				end
-				-- search deeper
-				if insert_after_blind_name(node.nodes, new_node) then
-					return true
-				end
-			end
-			return false
-		end
-		insert_after_blind_name(blind.nodes, { n=G.UIT.R, config = { align = "cm", padding = 0.07, r = 0.1, minw = 2.6, colour = G.C.BLACK, emboss = 0.05 }, nodes = {
-			{n=G.UIT.C, config = { align = "cm" }, nodes = {
-				{ n=G.UIT.O, config = { object = DynaText({ string = {{ string = localize('k_costs'), colour = G.C.WHITE}}, colours = {G.C.CHANCE}, scale = 0.35, silent = true, pop_delay = 4.5, shadow = true, maxw = 3})}},
-				{ n=G.UIT.O, config = { object = DynaText({ string = {{ string = cost_string, colour = G.C.GOLD }}, colours = {G.C.CHANCE}, scale = 0.35, silent = true, pop_delay = 4.5, shadow = true, maxw = 3})}}
-			}}
-		}})
-	end
-
-	return blind
-end
-
-function Madcap.Funcs.mod_blind_box(blind_type, ax, original)
-    return original
-end
-
 --[[
 	LUXURY POINT stuff
 ]]
 
+--[[
 function Madcap.Funcs.get_luxury_pts_ui()
 	if G.GAME.rgmc_luxury_pts == 0 then return nil end
 	local scale = 0.5
@@ -4895,6 +4845,7 @@ function Madcap.Funcs.get_luxury_pts_ui()
 		}}
 	}}
 end
+]]
 
 -- convert cash to lp
 function cash_to_lp(m)
@@ -4927,17 +4878,18 @@ G.FUNCS.can_buy_luxury = function(e)
     end
 end
 
+--
 function ease_lp(mod, instant)
 	if mod == 0 then return end
 	local function _mod(mod)
-		local dollar_UI = G.SHOP_SIGN and G.SHOP_SIGN:get_UIE_by_ID('luxury_pts_text_UI')
+		local dollar_UI = G.HUD:get_UIE_by_ID('luxury_text_UI')
 			or nil
 		mod = mod or 0
 		local text = '+' .. localize('£')
 		local col = G.C.RGMC_LUXURY
 		if to_big(mod) < to_big(0) then
 			text = '-' .. localize('£')
-			col = G.C.RGMC_EVIL
+			col = G.C.FILTER
 		end
 		--Ease from current chips to the new number of chips
 		G.GAME.rgmc_luxury_pts = math.max(0, G.GAME.rgmc_luxury_pts + mod)
@@ -4972,14 +4924,14 @@ end
 
 -- does it use LP?
 function Madcap.Funcs.uses_lp(card)
-	return card.force_lp or card.config.center.rarity == 'rgmc_unusual'
+	return card.ability.force_lp or card.config.center.rarity == 'rgmc_unusual'
 end
 
 -- luxury items get the L
 local currency_sell_ui_ref = MadLib.define_get_currency_sell_ui
 function MadLib.define_get_currency_sell_ui(card)
 	if Madcap.Funcs.uses_lp(card) then
-		return {n=G.UIT.T, config={text = localize('£'), colour = G.C.RGMC_LUXURY, scale = 0.4, shadow = true}}
+		return {n=G.UIT.T, config={text = localize('£'), colour = G.C.WHITE, scale = 0.4, shadow = true}}
 	end
     return currency_sell_ui_ref(card)
 end
@@ -5166,6 +5118,10 @@ if AKYRS_CROSSMOD then
 		end)
 	end
 end
+
+MadLib.loop_func(SMODS.Seals, function(v)
+	print(v.key)
+end)
 
 ----------------------------------------------
 ------------MOD CODE END----------------------

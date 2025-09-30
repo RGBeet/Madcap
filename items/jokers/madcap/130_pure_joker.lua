@@ -29,6 +29,7 @@ return {
                 return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddMult, card, card.ability.extra.mult)
             end
         end,
+        -- lanterns has
         demicoloncompat = true,
     }
 }

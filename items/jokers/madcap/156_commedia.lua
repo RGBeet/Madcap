@@ -12,7 +12,8 @@ return {
         eternal_compat      = false,
         perishable_compat   = false,
         config = {
-            extra = { sell_cost = 15, mult = 30 }
+            new_cost = -15,
+            extra = { mult = 30 }
         },
         loc_vars = function(self, info_queue, card)
             return MadLib.collect_vars(
@@ -26,6 +27,10 @@ return {
             then
                 return { mult = card.ability.extra.mult }
             end
+        end,
+        add_to_deck = function(self, card, from_debuff)
+            card.cost = card.ability.extra.sell_cost
+            card:set_cost()
         end,
         demicoloncompat = true
     },

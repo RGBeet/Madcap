@@ -19,8 +19,8 @@ return {
             MadLib.flip_cards(MadLib.get_cards_from_shuffled_deck(G.hand.cards, #G.hand.cards, function(c)
                 return SMODS.pseudorandom_probability(card, 'lowbrow', 1, card.ability.extra.odds)
             end), function(c)
-                MadLib.simple_event(function ()
-                    SMODS.change_base(c, SMODS.Suits[c.base.suit].value, pseudorandom_element(list, pseudoseed('lowbrow'))) -- change da rank
+                MadLib.simple_event(function () --??
+                    SMODS.change_base(c, SMODS.Suits[c.base.suit].value, pseudorandom_element(Madcap.LowbrowRanks, pseudoseed('lowbrow'))) -- change da rank
                     return true
                 end)
             end)

@@ -102,6 +102,8 @@ function Madcap.Funcs.get_aargon(card, group)
     end
 end
 
+MadLib.SpecificRanks['rgmc_aesthetic'] = -92895
+
 local card_get_id_ref = Card.get_id
 function Card:get_id()
 	if not get_id_use then
@@ -109,10 +111,21 @@ function Card:get_id()
 
 		local id = card_get_id_ref(self) or self.base.id
 
-		if SMODS.has_enhancement(card, 'm_rgmc_bismuth') then
+		if
+			self.config.center.specific_rank
+		then
+			tell('Has specific rank!')
+			if SMODS.Ranks[self.config.center.specific_rank] then
+				id = (SMODS.Ranks[self.config.center.specific_rank] and SMODS.Ranks[self.config.center.specific_rank].id)
+					or MadLib.SpecificRanks[self.config.center.specific_rank]
+					or -91698
+			end
+		end
+
+		if SMODS.has_enhancement(self, 'm_rgmc_bismuth') then
 			id = (next(SMODS.find_card('j_rgmc_aargon')) and self.area)
 				and Madcap.Funcs.get_aargon(self,self.area)
-				or -9876
+				or -91798
 		end
 
 		if id == "rgmc_X" then -- x cards equal
@@ -142,6 +155,14 @@ function Card:get_id()
 		return card_get_id_ref(self)
 	end
 end
+
+local is_suit_hook = Card.is_suit
+function Card:is_suit(...)
+
+
+    return is_suit_hook(self, ...)
+end
+
 
 local score_card_ref = SMODS.score_card
 function SMODS.score_card(card, context)
@@ -237,24 +258,24 @@ function Madcap.Funcs.blind_start()
 end
 
 
-Madcap.RandomPoolBlacklist = {
-	Voucher 	= true,
-	Booster 	= true,
-	Enhanced 	= true,
-	Edition 	= true,
-	Stake 		= true,
-	Seal 		= true,
-	Demo 		= true,
-	Back 		= true,
-	Sleeve 		= true,
-	Default 	= true,
+Madcap.Lists.RandomPoolBlacklist = {
+	Voucher 	= 1,
+	Booster 	= 1,
+	Enhanced 	= 0,
+	Edition 	= 0,
+	Stake 		= 0,
+	Seal 		= 0,
+	Demo 		= 0,
+	Back 		= 0,
+	Sleeve 		= 0,
+	Default 	= 0,
 }
 
-function Madcap.Funcs.get_random_set(seed, blacklist)
+function Madcap.Funcs.get_random_set(seed, blacklist, min_number)
     local pool = pseudorandom_element(G.P_CENTER_POOLS, pseudoseed(seed))
     local set = pool and pool[1] and pool[1].set
 
-    while not set or blacklist[set] do
+    while not set or (blacklist[set] ~= nil and blacklist[set] < min_number) do
         pool = pseudorandom_element(G.P_CENTER_POOLS, pseudoseed(seed))
         set = pool and pool[1] and pool[1].set
     end
@@ -262,15 +283,28 @@ function Madcap.Funcs.get_random_set(seed, blacklist)
 	return set
 end
 
+function MadLib.is_shop_area(area)
+	--print('area is' .. area.key)
+	return area == (G.shop_jokers or {})
+    or area == (G.shop_vouchers or {})
+    or area == (G.shop_booster or {})
+end
+
 local old_create_card = create_card
 function create_card(_type, area, legendary, _rarity, skip_materialize, soulable, forced_key, key_append)
+
+	if G.GAME.rgmc_glitch_enabled then
+		_type = Madcap.Funcs.get_random_set('glitch_in_the_system', Madcap.Lists.RandomPoolBlacklist, MadLib.is_shop_area(area) and 1 or 2)
+		print("Glitch Enabled! Type is")
+		print(_type)
+	end
 
 	if 
 		next(SMODS.find_card("j_rgmc_happy_stick_joker")) 
 		and MadLib.list_matches_one(SMODS.find_card("j_rgmc_happy_stick_joker"), function(v)
 		return SMODS.pseudorandom_probability(v, 'happy_stick_joker', 1, v.ability.extra.odds)
 	end) then
-		_type = Madcap.Funcs.get_random_set('happy_stick_joker',Madcap.RandomPoolBlacklist)
+		_type = Madcap.Funcs.get_random_set('happy_stick_joker', Madcap.Lists.RandomPoolBlacklist, 2)
 	end
 
 	local card = old_create_card(_type, area, legendary, _rarity, skip_materialize, soulable, forced_key, key_append)
@@ -284,4 +318,308 @@ function create_card(_type, area, legendary, _rarity, skip_materialize, soulable
 
 
 	return card
+end
+
+-- Get pack
+local getpackref = get_pack
+function get_pack(_key, _type)
+	local abc = getpackref(_key, _type)
+	return abc
+end
+
+-- reset_castle_card hook for things like Dropshot and Number Blocks
+-- Also exclude specific ranks/suits (such as abstract cards)
+-- taken from cryptid, it's a really solid way of doing start of round shit
+local rcc = reset_castle_card
+function reset_castle_card()
+	rcc()
+
+	-- neighborhood watch
+	G.GAME.current_round.rgmc_edwin_card = { rank = "5", suit = "Hearts" }
+	G.GAME.current_round.rgmc_wizard_card = { rank = "9", suit = "Spades", rank_discovered = false, suit_discovered = false }
+
+	-- barbershop joker
+	G.GAME.current_round.rgmc_barbershop = { suit = nil, order = {} }
+
+	local valid_castle_cards = {}
+    for k, v in ipairs(G.playing_cards) do
+		if not Madcap.Funcs.card_is_rankless_suitless(v) then valid_castle_cards[#valid_castle_cards + 1] = v end
+	end
+
+	if valid_castle_cards[1] then -- there are cards with ranks and suits
+		-- Neighborhood Watch (Edwin)
+		local castle_card = pseudorandom_element(valid_castle_cards, pseudoseed("rgmc_neighborhood_watch" .. G.GAME.round_resets.ante))
+		if not G.GAME.current_round.rgmc_edwin_card then G.GAME.current_round.rgmc_edwin_card = {} end
+		G.GAME.current_round.rgmc_edwin_card.suit  = castle_card.base.suit
+		G.GAME.current_round.rgmc_edwin_card.rank  = castle_card.base.value
+		G.GAME.current_round.rgmc_edwin_card.id    = castle_card.base.id
+
+		-- make this end of ante later
+		local castle_card2 = pseudorandom_element(valid_castle_cards, pseudoseed("rgmc_conspiracy_wizard" .. G.GAME.round_resets.ante))
+		if not G.GAME.current_round.rgmc_edwin_card then G.GAME.current_round.rgmc_edwin_card = {} end
+		G.GAME.current_round.rgmc_edwin_card.suit  = castle_card.base.suit
+		G.GAME.current_round.rgmc_edwin_card.rank  = castle_card.base.value
+		G.GAME.current_round.rgmc_edwin_card.id    = castle_card.base.id
+	end
+
+	-- This is for the Barbershop Joker
+	G.GAME.current_round.rgmc_barbershop.changed = false
+    G.GAME.current_round.rgmc_barbershop.index = G.GAME.current_round.rgmc_barbershop.index or 1
+
+    local suit_set = {}
+    for _, v in ipairs(G.playing_cards) do
+        if not v:nosuit() and v.base.suit ~= nil then
+            suit_set[v.base.suit] = true
+        end
+    end
+
+    local suits = {}
+    for suit, _ in pairs(suit_set) do
+        table.insert(suits, suit)
+    end
+
+    -- Sort to ensure a defined order before shuffling (optional)
+    table.sort(suits)
+
+    -- Ensuring a structured shuffle (rotated shuffle approach)
+    local seed = pseudoseed('rgmc_barbershop_joker'..tostring(G.GAME.round_resets.ante)..tostring(G.GAME.round_resets.ante))
+
+    -- Assign the shuffled order
+    pseudoshuffle(suits,seed)
+    G.GAME.current_round.rgmc_barbershop.order = suits
+
+    -- Ensure rgmc_barbershop.index is valid before accessing suits
+    local index = G.GAME.current_round.rgmc_barbershop.index or 1
+    if index < 1 or index > #suits then index = 1 end  -- Default to 1 if out of bounds
+
+    G.GAME.current_round.rgmc_barbershop.suit = G.GAME.current_round.rgmc_barbershop.order[index]
+end
+
+
+
+function Madcap.Funcs.mod_blind_box(blind_type, ax, original)
+    return original
+end
+
+local function get_nested(orig, path)
+    local current = orig
+    for _, i in ipairs(path) do
+        if current and current.nodes and current.nodes[i] then
+            current = current.nodes[i]
+        else
+            return nil -- invalid path
+        end
+    end
+    return current
+end
+
+local uibox_blind_ref = create_UIBox_HUD_blind
+function create_UIBox_HUD_blind()
+	local orig = uibox_blind_ref()
+    local stake_sprite = get_stake_sprite(G.GAME.stake or 1, 0.5)
+
+	--tell('UI to find:')
+	--print(orig.nodes[2].nodes[2].nodes[2].nodes)
+
+	local score_text = { n=G.UIT.R, config={align = "cm", maxw = 2.8}, nodes={
+				{n=G.UIT.T, config={ref_table = G.GAME, ref_value = 'chips_text', lang = G.LANGUAGES['en-us'], scale = 0.75, colour = G.C.WHITE, id = 'chip_UI_count', func = 'chip_UI_set', shadow = true}}}}
+
+	local blind_chips_text = { n=G.UIT.R, config={align = "cm", maxw = 2.8}, nodes={
+				{n=G.UIT.O, config={ w = 0.5, h = 0.5 , object = stake_sprite, hover = true, can_collide = false}},
+				{n=G.UIT.T, config={ref_table = G.GAME.blind, ref_value = 'chip_text', lang = G.LANGUAGES['en-us'], scale = 0.75, colour = G.C.GOLD, id = 'HUD_blind_count', func = 'blind_chip_UI_scale', shadow = true}}
+			}}
+
+	-- Replace the first part with the actual score
+	local _nodes
+	if G.akyrs_blind_icons then
+		table.insert(orig.nodes[2].nodes,{
+			n=G.UIT.C, config={align = "cm",r = 0.1, padding = 0.05, emboss = 0.05, minw = 2.9, colour = G.C.BLACK},
+			nodes={ score_text, blind_chips_text }
+		})
+	else
+		orig.nodes[2].nodes[2].nodes[2].nodes[1] = score_text
+		orig.nodes[2].nodes[2].nodes[2].nodes[2] = blind_chips_text
+	end
+
+	return orig
+end
+
+local uibox_ref = create_UIBox_HUD
+function create_UIBox_HUD()
+	local orig = uibox_ref()
+		--if not Entropy.DeckOrSleeve("doc") then return orig end
+    local scale = 0.4
+    local stake_sprite = get_stake_sprite(G.GAME.stake or 1, 0.5)
+
+    local contents = {}
+
+    local spacing = 0.13
+    local temp_col = G.C.DYN_UI.BOSS_MAIN
+    local temp_col2 = G.C.DYN_UI.BOSS_DARK
+
+
+    local qwerty = orig.nodes[1].nodes[1].nodes[3]
+
+    qwerty.nodes[1].nodes = nil
+
+	-- Shorten the run info button
+    if orig.nodes[1].nodes[1].nodes[5].nodes[1].nodes[1].nodes[1].config.id == "run_info_button" then
+    orig.nodes[1].nodes[1].nodes[5].nodes[1].nodes[1].nodes[1] = {n=G.UIT.C, config={id = 'run_info_button', align = "cm", minh = 1, minw = 1.5,padding = 0.05, r = 0.1, hover = true, colour = G.C.RED, button = "run_info", shadow = true}, nodes={
+            {n=G.UIT.R, config={align = "cm", padding = 0, maxw = 1.4}, nodes={
+              {n=G.UIT.T, config={text = localize('b_run_info_1'), scale = 1.2*scale, colour = G.C.UI.TEXT_LIGHT, shadow = true}}
+            }},
+            {n=G.UIT.R, config={align = "cm", padding = 0, maxw = 1.4}, nodes={
+              {n=G.UIT.T, config={text = localize('b_run_info_2'), scale = 1*scale, colour = G.C.UI.TEXT_LIGHT, shadow = true, focus_args = {button = G.F_GUIDE and 'guide' or 'back', orientation = 'bm'}, func = 'set_button_pip'}}
+            }}
+          }}
+    end
+
+    -- Shorten the options button
+    if orig.nodes[1].nodes[1].nodes[5].nodes[1].nodes[1].nodes[2].config.button == "options" then
+        orig.nodes[1].nodes[1].nodes[5].nodes[1].nodes[1].nodes[2] = {n=G.UIT.C, config={align = "cm", minh = 1, minw = 1.5,padding = 0.05, r = 0.1, hover = true, colour = G.C.ORANGE, button = "options", shadow = true}, nodes={
+            {n=G.UIT.C, config={align = "cm", maxw = 1.4, focus_args = {button = 'start', orientation = 'bm'}, func = 'set_button_pip'}, nodes={
+              {n=G.UIT.T, config={text = localize('b_options'), scale = scale, colour = G.C.UI.TEXT_LIGHT, shadow = true}}
+            }},
+          }}
+    end
+
+    -- Shrink hands
+    local hand_data = orig.nodes[1].nodes[1].nodes[4].nodes[1].nodes[1]
+    hand_data.config.minh = hand_data.config.minh * 0.75
+    MadLib.loop_func(hand_data.nodes, function(v)
+		if v and v.scale then v.scale = v.scale * 0.5 end
+	end)
+	-- Rearrange round/ante and button UI
+	local buttons 		= orig.nodes[1].nodes[1].nodes[5].nodes[1]
+	orig.nodes[1].nodes[1].nodes[5].nodes[1] = nil
+	local round_data 	= orig.nodes[1].nodes[1].nodes[5].nodes[2]
+	table.insert(orig.nodes[1].nodes[1].nodes, { n = G.UIT.R, config = { align = "cm", id = 'row_buttons'}, nodes = buttons.nodes })
+
+	table.insert(round_data.nodes[1].nodes,{n=G.UIT.C, config={minw = spacing},nodes={}})
+	table.insert(round_data.nodes[1].nodes,{n=G.UIT.C, config={id = 'hud_mayhem',align = "cm", padding = 0.05, minw = 1.45, emboss = 0.05, r = 0.1, colour = G.C.DYN_UI.BOSS_MAIN}, nodes={
+		{n=G.UIT.R, config={align = "cm", minh = 0.33, maxw = 1.35 }, nodes={
+			{n=G.UIT.T, config={text = localize('rgmc_mayhem'), scale = 0.85*scale, colour = G.C.UI.TEXT_LIGHT, shadow = true}},
+		}},
+		{n=G.UIT.R, config={align = "cm", r = 0.1, minw = 1.2, colour = G.C.DYN_UI.BOSS_DARK }, nodes={
+			{n=G.UIT.O, config={object = DynaText({string = {{ref_table = G.GAME, ref_value = 'mayhem'}}, font = G.LANGUAGES['en-us'].font, colours = { G.C.RGMC_UNUSUAL }, shadow = true, rotate = true, scale = 2*scale}), id = 'mayhem_UI_count'}},
+		}},
+		{n=G.UIT.R, config={align = "cm", colour = G.C.CLEAR}, nodes={
+			{n=G.UIT.T, config={text = '/', scale = scale, colour = darken(G.C.UI.TEXT_LIGHT,0.3), shadow = true}},
+			{n=G.UIT.O, config={object = DynaText({string = {{ref_table = G.GAME, ref_value = 'max_mayhem'}}, font = G.LANGUAGES['en-us'].font, colours = {darken(G.C.RGMC_UNUSUAL,0.2)},shadow = true, rotate = true, scale = scale}),id = 'max_mayhem_UI'}}
+		}}
+	}})
+    return orig
+end
+
+local blind_choice_ref = create_UIBox_blind_choice
+function create_UIBox_blind_choice(type, run_info)
+	local blind = blind_choice_ref(type, run_info)
+	local extra = nil
+
+	-- Capital Deck
+	if G.GAME.modifiers.rgmc_capital == true then
+		local is_boss = (type == 'Boss')
+		local cost = G.GAME.modifiers.blind_price * (is_boss and (G.GAME.modifiers.boss_money_mult or 1.5) or 1)
+		local cost_string = ' $' .. tostring(cost)
+		local function insert_after_blind_name(nodes, new_node)
+			for i, node in ipairs(nodes or {}) do
+				print(node)
+				if node.config and node.config.id == 'blind_name' then
+					-- Insert right after
+					table.insert(nodes, i + 1, new_node)
+					return true -- done
+				end
+				-- search deeper
+				if insert_after_blind_name(node.nodes, new_node) then
+					return true
+				end
+			end
+			return false
+		end
+		insert_after_blind_name(blind.nodes, { n=G.UIT.R, config = { align = "cm", padding = 0.07, r = 0.1, minw = 2.6, colour = G.C.BLACK, emboss = 0.05 }, nodes = {
+			{n=G.UIT.C, config = { align = "cm" }, nodes = {
+				{ n=G.UIT.O, config = { object = DynaText({ string = {{ string = localize('k_costs'), colour = G.C.WHITE}}, colours = {G.C.CHANCE}, scale = 0.35, silent = true, pop_delay = 4.5, shadow = true, maxw = 3})}},
+				{ n=G.UIT.O, config = { object = DynaText({ string = {{ string = cost_string, colour = G.C.GOLD }}, colours = {G.C.CHANCE}, scale = 0.35, silent = true, pop_delay = 4.5, shadow = true, maxw = 3})}}
+			}}
+		}})
+	end
+
+	return blind
+end
+
+
+local card_open_ref = Card.open
+function Card:open()
+	local orig = self.ability.extra or 1
+	-- checks if there are any +booster slot jokers
+	local _helpers = 0
+	if _helpers > 0 then
+		for k, v in pairs(_helpers) do
+			if v.ability.extra and v.ability.extra.extra_choices then
+				orig = orig + v.ability.extra.extra_choices
+			end
+		end
+		self.config.choose = math.floor(orig)
+		self.ability.extra = math.floor(orig)
+	end
+	-- commence regular opening
+	card_open_ref(self)
+	G.E_MANAGER:add_event(Event({delay = 0.5, timer = 'REAL', func = function()
+		if _helpers > 0 then G.GAME.pack_choices = math.floor(self.ability.extra) end
+		return true
+	end }))
+end
+
+local card_stop_drag_ref = Card.stop_drag
+function Card:stop_drag()
+    local c = card_stop_drag_ref(self)
+
+	if (self.area == G.hand or self.area == G.play) then
+		--tell("CARD RELEASED!!!!")
+		--tell('Center is ' .. tostring(self.config.center.key))
+	end
+
+	local fancy_cards = {}
+    if self.area and (self.area == G.hand or self.area == G.play) then
+		for i=1, #self.area.cards do
+			local _card = self.area.cards[i]
+			if _card.config.center.key == 'm_rgmc_lazurite' then
+				tell('Added to fancy cards')
+				table.insert(fancy_cards, {index = i, type = _card.config.center.key}) -- add lazurite index
+			end
+		end
+	end
+
+	-- lazurite cards copy the rank and suit of the card to their right
+	for i = #fancy_cards, 1, -1 do
+		local _index 	= fancy_cards[i].index
+		local _card 	= self.area.cards[_index]
+		local _type 	= fancy_cards[i].type
+		local _target, _rank, _suit
+
+		print(fancy_cards[i])
+		if _type == 'm_rgmc_lazurite' then
+			local changed
+			local copy_rank = _index < #self.area.cards
+			if copy_rank then
+				changed 	= _card.base.value ~= _rank or _card.base.suit ~= _suit
+				_target 	= self.area.cards[_index+1]
+				_rank 	= _target.base.value -- get the true value
+				_suit		= _target.base.suit
+				assert(SMODS.change_base(_card, _suit, _rank))
+			end
+			changed = changed or (_card.config.center.no_rank == copy_rank)
+			_card.config.center.no_rank 			= not copy_rank
+			_card.config.center.no_suit 			= not copy_rank
+			_card.config.center.replace_base_card 	= not copy_rank
+			if changed then
+				_card:juice_up(0.5, 0.7)
+				delay(1.0)
+			end
+		end
+	end
+    -- if G.deck and self.area and self.area == G.jokers and self.config.center_key == "j_akyrs_hibana" then
+    --    G.deck:shuffle()
+    -- end
+    return c
 end

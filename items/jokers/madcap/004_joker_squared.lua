@@ -12,11 +12,11 @@ return {
         end,
         calculate = function(self, card, context)
             if
-                (context.cardarea == G.play and context.other_card)
-                or context.forcetrigger
-                and (MadLib.list_matches_one(MadLib.RankTypes['Square'], function(c)
+                ((context.cardarea == G.play and context.other_card)
+                or context.forcetrigger)
+                and MadLib.list_matches_one(MadLib.RankTypes['Square'], function(c)
                     return MadLib.is_rank(context.other_card, SMODS.Ranks[c].id) 
-                end) > 0)
+                end)
             then
                 return { mult = card.ability.extra.mult }
             end

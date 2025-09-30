@@ -2,7 +2,7 @@ function Madcap.Funcs.get_galactic_chips()
     local poker_hand 	= G.GAME.last_played_hand or 'High Card'
     local hand_chips 	= G.GAME and G.GAME.hands[poker_hand].chips or 5
     local hand_level 	= G.GAME and G.GAME.hands[poker_hand].level or 1
-    local total 		= math.floor(hand_chips * hand_level) * 2
+    local total 		= math.floor(hand_chips / 2) * hand_level
     return total, poker_hand, hand_chips, hand_level
 end
 
@@ -39,7 +39,8 @@ return {
                 (context.main_scoring and context.cardarea == G.play) 
             then
                 -- get the data for the last played poker hand
-                return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips, card, total)
+                local total = Madcap.Funcs.get_galactic_chips()
+                return { chips = total }
             end
         end,
     }

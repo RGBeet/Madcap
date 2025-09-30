@@ -28,7 +28,7 @@ return {
             if
                 context.first_hand_drawn
             then -- add clown sticker to card in first half of deck
-                local _cards   = MadLib.MLIB.coordssible_deck(G.deck.cards)
+                local _cards   = MadLib.get_possible_deck(G.deck.cards)
                 local _index   =  math.floor(math.random() * #_cards) + 1
                 --tell("Card is ".. tostring(_index))
                 SMODS.Stickers["rgmc_clown"]:apply(_cards[_index], true)

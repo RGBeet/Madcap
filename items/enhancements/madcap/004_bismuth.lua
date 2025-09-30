@@ -30,6 +30,7 @@ return {
                     card.ability.immutable.sticker_type = new_type
                     card.ability['rgmc_bismuth_'..new_type] = true
                     SMODS.Stickers['rgmc_bismuth_'..new_type]:apply(self,true)
+                    tell('New steal is ' .. new_type)
                 end
             end
             if context.playing_card_end_of_round then

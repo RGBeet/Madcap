@@ -15,7 +15,7 @@ return {
         end,
         debuff_hand = function(self, cards, hand, handname, check)
             local pass = MadLib.list_matches_all(cards, function(v)
-                return SMODS.has_no_rank(card)
+                return SMODS.has_no_rank(v)
                     or SMODS.Ranks[MadLib.get_value(v)].nominal < 10
             end) or G.GAME.blind.disabled
             if not pass then

@@ -25,7 +25,7 @@ end
 
 function Madcap.Funcs.use_consumable_specific_special_card(card)
 	local set, xchips, xmult = card.ability.set, 1 + (card.ability.xchips or 0), 1 + (card.ability.xmult or 0)
-	local select_hand = Madcap.get_most_played_hand()
+	local select_hand = MadLib.get_most_played_hand()
 	local nset = G.GAME.consumeable_usage_total and G.GAME.consumeable_usage_total[set] or 0
     
 	if not select_hand then return end

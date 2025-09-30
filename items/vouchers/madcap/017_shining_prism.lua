@@ -4,17 +4,16 @@ return {
     },
     data = {
         object_type = "Voucher",
-        pos     = MLIB.coords(5,1),
+        pos     = MLIB.coords(4,0),
         atlas   = 'vouchers',
-        key 	= "eensy_weensy",
-        cost 	= 7,
+        key 	= "shining_prism",
+        cost 	= 9,
         loc_vars = function(self, info_queue)
             return { vars = { G.GAME.subhand_minimum or 5 } }
         end,
         redeem 	= function(self)
             MadLib.simple_event(function()
-                Madcap.Funcs.set_subhand('low',true)
-                Madcap.Funcs.evolve_subhand('low', 1)
+                Madcap.Funcs.set_subhand('ml_sh_enhanced',true)
                 return true
             end)
         end,

@@ -12,8 +12,7 @@ return {
         cost    = 4,
         aurinko = false,
         config  = {
-            hands 			= { 'Straight', MadLib.SpectrumId..'Straight Spectrum' },
-            subhands		= { 'Light' },
+            subhands		= { 'ml_sh_light', 'ml_sh_dark' },
             level_factor	= 1
         },
         set_card_type_badge = function(self, card, badges)
@@ -23,7 +22,7 @@ return {
             return true
         end,
         loc_vars = function(self, info_queue, center)
-            return Madcap.Funcs.get_spatia_vars(self.config.hands,self.config.subhands)
+            return Madcap.Funcs.get_spatia_vars(self.config.subhands)
         end,
         use = function(self, card, area, copier)
             Madcap.Funcs.use_spatia_card(card, card.ability.subhands, card.ability.level_factor)

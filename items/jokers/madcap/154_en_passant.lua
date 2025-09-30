@@ -38,9 +38,11 @@ return {
 
             if 
                 not (context.blueprint or context.retrigger_joker)
-                and #context.full_hand == 1
-                and G.GAME.current_round.hands_played == 0 
+                and context.cardarea == G.play
+                and G.GAME.current_round.hands_played == 0
+                and (context.full_hand and #context.full_hand == 1)
                 and context.full_hand[1]:is_suit(card.ability.extra.suit)
+                and context.main_eval
             then
                 card.ability.immutable.active = card.ability.immutable.active + 1
                 G.hand:change_size(card.ability.extra.h_size)

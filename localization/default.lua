@@ -9,28 +9,11 @@ return {
 			}
 		},
         Back = {
-			b_rgmc_pale = {
-				name = "Pale Deck",
-				text = {
-                    "Start run with {C:attention}Echoes{} and {C:attention}Projection{}",
-                    "{C:attention}-#1#{} hand size",
-				},
-			},
 			b_rgmc_hexing = {
 				name = "Hexing Deck",
 				text = {
 					"Start with {C:attention}Special{} suits",
 					"Removes ranks {C:attention}2{} through {C:attention}5{}"
-				},
-			},
-			b_rgmc_target = {
-				name = "Target Deck",
-				text = {
-					"At end of Blind, gain a",
-					"reward or punishment",
-					"if score is within #1#X or",
-					"above #2#X of,",
-					"blind requirements",
 				},
 			},
 			b_rgmc_sangria = {
@@ -75,7 +58,7 @@ return {
 				},
 			},
 			b_rgmc_spatial = {
-				name = "Cosmic Deck",
+				name = "Spatial Deck",
 				text = {
 					"???"
 				},
@@ -110,13 +93,6 @@ return {
                     "the {C:rgmc_bismuth}Deck of Lunacy{}",
 					"Combines most {C:attention}Vanilla{}",
                     "and {C:rgmc_madcap}Madcap{} mechanics{}",
-				},
-			},
-			b_rgmc_jumble = {
-				name = "Jumble Deck",
-				text = {
-					"After defeating each {C:attention}Boss Blind{},",
-					"ranks in deck are {C:attention}jumbled{}"
 				},
 			},
 			b_rgmc_cross = {
@@ -184,10 +160,10 @@ return {
 				name = "Galactic",
 				text = {
 					"{C:chips}+#4#{} Chips",
-                    "{C:inactive}(Gives {X:planet,C:white}0.5X{C:inactive} chip value times",
+                    "{C:inactive}(Gives {X:planet,C:white}X0.5{C:inactive} chip value times",
                     "{C:planet}level{} of {C:attention}last played{C:inactive} Poker Hand -",
                     "{C:inactive}currently{C:attention} #1#{C:inactive})",
-                    "({C:chips}(#2# / 2){C:inactive} x {C:planet}#3#{C:inactive})",
+                    "{C:inactive}({C:chips}#2#){C:inactive}/2) * {C:planet}#3#{C:inactive})",
 				},
 			},
 			e_rgmc_abyssal = {
@@ -195,7 +171,7 @@ return {
 				text = {
                     "{X:mult,C:white}X#1#{} Mult",
                     "{C:inactive}(Gives {X:mult,C:white}X#2#{C:inactive} Mult",
-                    "{C:inactive}per {C:purple}Mayhem{C:inactive})",
+                    "{C:inactive}per {C:rgmc_mayhem}Mayhem{C:inactive})",
 				},
 			},
 			e_rgmc_luxury = {
@@ -528,256 +504,6 @@ return {
                     "???"
                 },
             },
-            bl_rgmc_chaos_boss0 = {
-                name = "Danger!",
-                text = {
-                    "#1# is approaching...",
-                },
-            },
-            bl_rgmc_chaos_boss1 = {
-                name = "Insanus Infinitus",
-                text = {
-                    "(#1# left)"
-                },
-            },
-            --[[
-                The Final Boss - 5 Phases
-
-                ALL PHASES:
-                    - You cannot run out of hands - instead, destroy cards at random
-
-                PHASE 1: Bixbite Beetroot
-                    - Randomizes card suit, rank, enhancement, seal, and edition
-                        based on weight system - think "controlled chaos".
-                    - You cannot play the same hand twice in a row. (Debuff Hand)
-                    - After beating Blind, this Blind
-                        harnesses the <Fifth Dimension> and
-                        splits into three timelines (Red, Green, Blue).
-                        Proceed to Phase 2.
-
-                PHASE 2: Beta Rubra (Red Beet)
---                     -
-
-                PHASE 3: Beta Viridis (Green Beet)
-                    -
-
-                PHASE 4: Beta Caerulea (Blue Beet)
-                    -
-
-                PHASE 5: Sateenkaarijuuri (The Rainbow Beet)
-                    - The "split timelines" are brought together,
-                        merging copies together
-
-            ]]
-            bl_rgmc_final_beet = {
-                name = "Bixbite Beetroot",
-                text = {
-                    "Face the power of",
-                    "Absolute Madcap"
-                }
-            },
-            bl_rgmc_beet_red = {
-                name = "Beta Rubra",
-                text = {
-                    "?!?"
-                }
-            },
-            bl_rgmc_beet_green = {
-                name = "Beta Viridis",
-                text = {
-                    "?!?"
-                }
-            },
-            bl_rgmc_beet_blue = {
-                name = "Beta Caerulea",
-                text = {
-                    "?!?"
-                }
-            },
-            bl_rgmc_beet_final = {
-                name = "Sateenkaarijuuri",
-                text = {
-                    "It ends now."
-                }
-            },
-            -- more fluff compat: dx blinds
-            bl_rgmc_bottle_dx = {
-                name = "The Bottle DX",
-                text = {
-                    "All non-Goblet cards",
-                    "are debuffed"
-                }
-            },
-            bl_rgmc_sword_dx = {
-                name = "The Sword DX",
-                text = {
-                    "All non-Tower cards",
-                    "are debuffed"
-                }
-            },
-            bl_rgmc_keyhole_dx = {
-                name = "The Keyhole DX",
-                text = {
-                    "Playing a regular hand",
-                    "destroys all cards"
-                }
-            },
-            bl_rgmc_ladder_dx = {
-                name = "The Ladder DX",
-                text = {
-                    "???"
-                }
-            },
-            bl_rgmc_levy_dx = {
-                name = "The Levy DX",
-                text = {
-                    "???"
-                }
-            },
-            bl_rgmc_grave_dx = {
-                name = "The Grave DX",
-                text = {
-                    "???"
-                }
-            },
-            bl_rgmc_jest_dx = {
-                name = "The Jest DX",
-                text = {
-                    "???"
-                }
-            },
-            bl_rgmc_elevator_dx = {
-                name = "The Elevator DX",
-                text = {
-                    "???"
-                }
-            },
-            bl_rgmc_sum_dx = {
-                name = "The Sum DX",
-                text = {
-                    "???"
-                }
-            },
-            bl_rgmc_statue_dx = {
-                name = "The Statue DX",
-                text = {
-                    "???"
-                }
-            },
-            bl_rgmc_cheap_dx = {
-                name = "The Cheap DX",
-                text = {
-                    "???"
-                }
-            },
-            bl_rgmc_ricochet_dx = {
-                name = "The Ricochet DX",
-                text = {
-                    "???"
-                }
-            },
-            bl_rgmc_coil_dx = {
-                name = "The Coil DX",
-                text = {
-                    "???"
-                }
-            },
-            bl_rgmc_final_blindfold_dx = {
-                name = "Beige Blindfold DX",
-                text = {
-                    "???"
-                }
-            },
-            bl_rgmc_final_hoop_dx = {
-                name = "Han Purple Hoop DX",
-                text = {
-                    "???"
-                }
-            },
-            bl_rgmc_final_pin_dx = {
-                name = "Han Purple Hoop DX",
-                text = {
-                    "???"
-                }
-            },
-            bl_rgmc_final_chimes_dx = {
-                name = "Wisteria Chimes DX",
-                text = {
-                    "???"
-                }
-            },
-            bl_rgmc_halo_dx = {
-                name = "The Halo DX",
-                text = {
-                    "???"
-                }
-            },
-            bl_rgmc_spiral_dx = {
-                name = "The Spiral DX",
-                text = {
-                    "???"
-                }
-            },
-            bl_rgmc_carousel_dx = {
-                name = "The Carousel DX",
-                text = {
-                    "???"
-                }
-            },
-            bl_rgmc_axe_dx = {
-                name = "The Axe DX",
-                text = {
-                    "???"
-                }
-            },
-            bl_rgmc_rust_dx = {
-                name = "The Rust DX",
-                text = {
-                    "???"
-                }
-            },
-            bl_rgmc_figure__dx = {
-                name = "The Figure DX",
-                text = {
-                    "???"
-                }
-            },
-            bl_rgmc_factor__dx = {
-                name = "The Factor DX",
-                text = {
-                    "???"
-                }
-            },
-            bl_rgmc_gyre_dx = {
-                name = "The Gyre DX",
-                text = {
-                    "???"
-                }
-            },
-            bl_rgmc_bowler_dx = {
-                name = "The Bowler DX",
-                text = {
-                    "???"
-                }
-            },
-            bl_rgmc_din_dx = {
-                name = "The Din DX",
-                text = {
-                    "???"
-                }
-            },
-            bl_rgmc_flip_dx = {
-                name = "The Flip DX",
-                text = {
-                    "???"
-                }
-            },
-            bl_rgmc_switch_dx = {
-                name = "The Switch DX",
-                text = {
-                    "???"
-                }
-            },
         },
         Joker = {
             j_rgmc_thorium_joker = {
@@ -798,9 +524,8 @@ return {
                 text = {
                     "Retrigger {C:attention}#1#{} played",
                     "card used in scoring",
-                    "{C:attention}#2#{} additional time(s)",
-                    "Upon successful trigger,",
-                    "change retrigger position"
+                    "{C:attention}#2#{} additional times",
+                    "{C:inactive,s:0.7}(Position changes each hand)"
                 },
             },
             j_rgmc_glass_michel = {
@@ -1397,9 +1122,13 @@ return {
             j_rgmc_nope_joker = {
                 name = "nope.jkr",
                 text = {
-                    "When {C:blue}playing{} or {C:red}discarding{},",
-                    "{C:green}#1# in {} ({C:green}#2#{} / {C:green}#3#{}) chance to",
-                    "gain / lose a {C:blue}hand{}/{C:red}discard{}"
+                    {
+                        "Upon {C:blue}playing{} or {C:red}discarding:",
+                        "{C:green}#1# in {} ({C:green}#2#{} chance to",
+                        "gain +#3# {C:attention}temporary{} {C:blue}hands{} or {C:red}discards",
+                        "{C:green}#2# in {} ({C:green}#3#{} chance for",
+                        "-#3# {C:blue}hands{} or {C:red}discards"
+                    }
                 },
             },
             j_rgmc_bolstered_joker = {
@@ -2161,8 +1890,8 @@ return {
                     "give {C:chips}+#2#{} Chips",
                     "Discarding {V:1}#1#",
                     "reduces value by {C:blue}-#3#",
-                    "{C:ianctive}(Revert to {C:blue}+#4#",
-                    "{C:inactive}at start of blind)"
+                    "{C:inactive}(Revert to {C:blue}+#4#",
+                    "{C:inactive}at start of Blind)"
                 },
             },
             j_rgmc_point_and_click = {
@@ -2176,7 +1905,7 @@ return {
             j_rgmc_green_thumb = {
                 name = "Green Thumb",
                 text = {
-                    "At end of {C:attention}blind{}",
+                    "At end of {C:attention}Blind{},",
                     "earn {C:money}$#1#{} for",
                     "every held {V:1}#2#{} card"
                 },
@@ -2186,7 +1915,7 @@ return {
                 text = {
                     "If {C:attention}first hand{} of round is",
                     "a single {V:1}#1#{}, gain",
-                    "{C:attention}+#1#{} hand size",
+                    "{C:attention}+#2#{} hand size",
                     "for the round",
                     "{C:inactive}Currently {C:attention}+#3#{C:inactive} hand size)"
                 },
@@ -2223,8 +1952,8 @@ return {
                     "{C:attention}base mult",
                     "of your {C:attention}last played",
                     "poker hand",
-                    "{C:inactive}(Currently{C:attention}#3#",
-                    "{C:inactive}and {C:mult}+#2#{C:inactive} Mult)"
+                    "{C:inactive}(Currently {C:attention}#1#",
+                    "{C:inactive}and {C:mult}+#2# {C:inactive}Mult)"
                 },
             },
             j_rgmc_klondike = {
@@ -2278,11 +2007,257 @@ return {
             j_rgmc_aargon = {
                 name = "Aargon",
                 text = {
+                    "Played {C:rgmc_bismuth}Bismuth{} cards",
+                    "are considered the",
+                    "{C:attention}rank{} and {C:attention}suit{} of",
+                    "the card to its {C:attention}left"
                 },
             },
-            j_rgmc_aargon = {
-                name = "Aargon",
+            j_rgmc_brains_and_bronze = {
+                name = "Brains and Bronze",
                 text = {
+                    "Retrigger {C:attention}scored{} cards",
+                    "with {C:attention}Cuprum{} Seals", "{C:attention}#1#{} time(s)"
+                },
+            },
+            j_rgmc_coke_a_coal = {
+                name = "Coke-A-Coal",
+                text = {
+                    "Held {C:attention}Ferrous{} cards",
+                    "give {X:mult,C:white}X#1#{} Mult",
+                    "{C:green}#2# in #3#{} chance for",
+                    "held {C:attention}Ferrous{} cards",
+                    "to {C:red}not{} upgrade at",
+                    "end of {C:attention}blind"
+                },
+            },
+            j_rgmc_flunky = {
+                name = "Flunky",
+                text = {
+                    "{X:rgmc_xscore,C:white}X#1#{} Score",
+                    "if played hand is {C:attention}Low{}"
+                },
+            },
+            j_rgmc_joker_noir = {
+                name = "Joker Noir",
+                text = {
+                    "{X:mult,C:white}X#1#{} Mult",
+                    "if ranks of scoring cards",
+                    "equal {C:attention}#2#{}",
+                    "If ranks {C:attention}exceed{} #2#,",
+                    "{C:rgmc_evil}destroy{} a random",
+                    "{C:attention}card{} in deck"
+                },
+            },
+            j_rgmc_jimbos_ultimatum = {
+                name = "Jimbo's Ultimatum",
+                text = {
+                    "If {C:attention}first hand{} of round", "is a single card {C:rgmc_evil}destroy{} it",
+                    "and {C:attention}create a new card",
+                    "{C:green}#1# in #2#{} chance",
+                    "this card has the {C:attention}highest{}",
+                    "held rank",
+                    "Otherwise, this card will have",
+                    "the {C:attention}lowest{} held rank",
+                    "{C:inactive}Have I truly become",
+                    "{C:inactive}a monster?"
+                },
+            },
+            j_rgmc_heads_up = {
+                name = "Heads Up",
+                text = {
+                    "Held {C:attention}#1#s{} and {C:attention}#2#s{}",
+                    "give {X:green,C:white}X#3#{} Numerator",
+                    "Held {C:attention}#4#s{}",
+                    "give {X:green,C:white}X#5#{} Numerator",
+                },
+            },
+            j_rgmc_wario_de_mambo = {
+                name = "Wario de Mambo",
+                text = {
+                    "Earn {C:rgmc_luxury}£#1#{} if",
+                    "the following {C:attention}poker hands{}",
+                    "are played {C:attention}in order{}:",
+                    "{C:planet}#2#{}, {C:planet}#3#{},",
+                    "{C:planet}#4#{}, {C:planet}#5#{}"
+                },
+            },
+            j_rgmc_high_speed_steel = {
+                name = "High Speed Steel",
+                text = {
+                    "Held {C:attention}Wolfram{} cards",
+                    "give {X:chips,C:white}X#1#{} Chips",
+                    "{C:green}#2# in #3#{} chance for",
+                    "held {C:attention}Wolfram{} cards",
+                    "to {C:red}not{} upgrade at",
+                    "end of {C:attention}blind"
+                },
+            },
+            j_rgmc_beyond = {
+                name = "The Beyond",
+                text = {
+                    "{X:mult,C:white}#1#{} Mult",
+                    "If played hand",
+                    "contains a #2#",
+                    "Otherwise, scored {C:attention}#3#s",
+                    "give {C:mult}+#4#{} Mult"
+                },
+            },
+            j_rgmc_big_cheese = {
+                name = "The Big Cheese",
+                text = {
+                    "Earn {C:rgmc_luxury}£#1#{}",
+                    "if played hand is {C:attention}Low{}"
+                },
+            },
+            j_rgmc_calotype_joker = {
+                name = "Calotype Joker",
+                text = {
+                    "Scored {C:attention}base edition{} cards",
+                    "have a {C:green}#1# in #2#{} chance",
+                    "to become {C:dark_edition}Negative{}"
+                },
+            },
+            j_rgmc_oh_boy_beet_soup = {
+                name = "Oh Boy! Beet Soup!",
+                text = {
+                    "If held hand",
+                    "contains only {C:rgmc_light}Light{} suits,",
+                    "this Joker gives {X:mult,C:white}#1#{} Mult",
+                    "for every {C:attention}unique suit"
+
+                },
+            },
+            j_rgmc_factor = {
+                name = "FACTOR!!!",
+                text = {
+                    {"{C:attention}floor{} + {C:attention}sine{} * {C:attention}amplitude{} = {X:mult,C:white}X#1#{} Mult"},
+                    {"{C:attention}R{} = {C:attention}#2#{} rounds",
+                    "{C:attention}J{} = {C:attention}#3#{} Jokers",
+                    "{C:attemtion}M{} = {C:attention}X#4#{} base Xmult",
+                    "{C:attention}floor{} = {C:red}max{}(0, 1 - (J-1)/7)",
+                    "{C:attention}sine{}  = ({C:red}sin{}((R-0.75) * 2*π/5) + 1)/2",
+                    "amplitude = {C:red}max{}(0,(J*M) - F)"}
+                },
+            },
+            j_rgmc_caesar_cipher = {
+                name = "Caesar Cipher",
+                text = {
+                    "{C:attention}Rank{}-specific Jokers",
+                    "have their {C:attention}target{} ranks",
+                    "{C:attention,E:1}shifted{} up by {C:attention}#1#",
+                    "{C:inactive}(e.g. {C:attention}2{C:inactive} -> {C:attention}#2#{C:inactive})"
+                },
+            },
+            j_rgmc_empowerer = {
+                name = "Empowered Joker",
+                text = {
+                    "Upon using a {C:potentiacrystal}Potentia Crystal{},",
+                    "level up a random {C:attention}poker hand{}",
+                    "{C:attention}#1#{} level{C:inactive}(s){} for every",
+                    "{C:potentiacrystal}Potentia Crystal used this run",
+                    "{C:inactive}(Currently {C:attention}+#2#{C:inactive} level(s))"
+                },
+            },
+            j_rgmc_pumpkin_keychain = {
+                name = "Pumpkin Keychain",
+                text = {
+                    "Using a base edition #1#",
+                    "creates a {C:dark_edition}Negative{} copy",
+					"{C:inactive,s:0.9}(Upon triggering or",
+                    "{C:inactive,s:0.9}defeating Boss Blind,",
+                    "{C:inactive,s:0.9}change Spectral)",
+                },
+            },
+            j_rgmc_funeral_for_a_friend = {
+                name = "Funeral For a Friend",
+                text = {
+                    {
+                        "{X:mult,C:white}X#7#{} Mult"
+                    },
+                    {
+                        "This Joker gains {X:mult,C:white}X#9#{} Mult",
+                        "if a {C:attention}#8#{} of a",
+                        "{C:attention}unique suit{} is destroyed",
+                        "{C:inactive}({C:attention}#10#{C:inactive}/#11#)"
+                    },
+                    {
+                        "Suits Played:",
+                        "{V:1}#1#{}, {V:2}#2#{},",
+                        "{V:3}#3#{}, {V:4}#4#{},",
+                        "{V:5}#5#{}, {V:6}#6#{},"
+                    }
+                },
+            },
+            j_rgmc_love_lies_bleeding = {
+                name = "Love Lies Bleeding",
+                text = {
+                    "If played hand contains",
+                    "a scoring {C:attention}#1#{}, this Joker",
+                    "gives {X:rgmc_emult,C:white}^0.01{} Mult per",
+                    "held {V:1}#2#{} card"
+                },
+            },
+            j_rgmc_glitch_in_the_system = {
+                name = "Glitch in the System",
+                text = {
+                    "{C:rgmc_mayhem}+#1#{} Mayhem",
+                    "{C:rgmc_bismuth,E:1}?!?{}"
+                },
+            },
+            j_rgmc_utah_teapot = {
+                name = "Utah Teapot",
+                text = {
+                    "If played hand is",
+                    "a {C:planet}Pair{} of {C:attention}base-2{} numbers",
+                    "{C:rgmc_evil}destroy{} both cards",
+                    "and {C:attention}create{} a new card",
+                    "with the {C:rgmc_bismuth,E:1}next base-2 rank",
+                    "{C:inactive}(Will create {C:attention}#1#{C:inactive})"
+                },
+            },
+            j_rgmc_simple_simon = {
+                name = "Utah Teapot",
+                text = {
+                    "After playing {C:attention}final hand{},",
+                    "give {C:blue}+#1#{} hand{C:inactive}(s)",
+                    "and {C:attention}#2#{} hand size",
+                    "{C:inactive}(Currently {C:blue}+#3#{C:inactive} hands",
+                    "{C:inactive}and {C:attention}#4#{C:inactive} hand size)"
+                },
+            },
+            j_rgmc_mmmmmmm = {
+                name = "MMMMMMM",
+                text = {
+                    "If {C:attention}first{} {C:blue}hand{} or {C:red}discard",
+                    "contains a single {C:attention}face{} card",
+                    "convert it to an {C:attention}#3#",
+                    "with a random {C:attention}enhancement{} or {C:attention}seal"
+                },
+            },
+            j_rgmc_apeiros = {
+                name = "Apeiros",
+                text = {
+                    "Scored {C:rgmc_bismuth}#1#s{}",
+                    "apply a random {C:attention}enhancement",
+                    "to a {C:attention}random card{}",
+                    "{C:attention}held{} in hand"
+                },
+            },
+            j_rgmc_pandoras_potato = {
+                name = "Pandora's Potato",
+                text = {
+                    "{C:rgmc_mayhem}+#1#{} Mayhem",
+                    "{C:green}+#2#{} Numerator",
+                    "{E:1,C:rgmc_bismuth}?!?"
+                },
+            },
+            j_rgmc_madlib = {
+                name = "MadLib",
+                text = {
+                    "{C:attention}Spawned{} Jokers may",
+                    "have {C:rgmc_bismuth}randomized{} values...",
+                    "{C:inactive}(Get it?)"
                 },
             },
             -- Finity compat
@@ -3250,22 +3225,14 @@ return {
                 name = "Rigel IV",
                 text = {
                     {
+                        "Levels up a {C:attention}random{} poker hand",
+                        "of {C:attention}5{} cards {C:inactive}(or greater!)"
+                    },
+                    {
                         "{S:0.6}({S:0.6,V:1}lvl.#1#{S:0.6}){S:0.75} Level up",
-                        "{S:0.75,C:attention}#2#",
-                        "{S:0.75,C:mult}+#3#{S:0.75} Mult and",
-                        "{S:0.75,C:chips}+#4#{S:0.75} Chips",
-                    },
-                    {
-                        "{S:0.6}({S:0.6,V:2}lvl.#5#{S:0.6}){S:0.75} Level up",
-                        "{S:0.75,C:attention}#6#",
-                        "{S:0.75,C:mult}+#7#{S:0.75} Mult and",
-                        "{S:0.75,C:chips}+#8#{S:0.75} Chips",
-                    },
-                    {
-                        "{S:0.6}({S:0.6,V:3}lvl.#9#{S:0.6}){S:0.75} Level up",
-                        "{S:0.75,C:attention}#10# {C:inactive}Sub-Hand{}",
-                        "{S:0.75,X:mult,C:white}X#11#{S:0.75} Mult and",
-                        "{S:0.75,X:chips,C:white}X#12#{S:0.75} Chips",
+                        "{S:0.75,C:attention}#2# {C:inactive}Sub-Hand{}",
+                        "{S:0.75,X:mult,C:white}X#3#{S:0.75} Mult and",
+                        "{S:0.75,X:chips,C:white}X#4#{S:0.75} Chips",
                     }
                 },
             },
@@ -3273,22 +3240,14 @@ return {
                 name = "Aquaworld",
                 text = {
                     {
+                        "Levels up a {C:attention}random{} poker hand",
+                        "of {C:attention}5{} cards {C:inactive}(or greater!)"
+                    },
+                    {
                         "{S:0.6}({S:0.6,V:1}lvl.#1#{S:0.6}){S:0.75} Level up",
-                        "{S:0.75,C:attention}#2#",
-                        "{S:0.75,C:mult}+#3#{S:0.75} Mult and",
-                        "{S:0.75,C:chips}+#4#{S:0.75} Chips",
-                    },
-                    {
-                        "{S:0.6}({S:0.6,V:2}lvl.#5#{S:0.6}){S:0.75} Level up",
-                        "{S:0.75,C:attention}#6#",
-                        "{S:0.75,C:mult}+#7#{S:0.75} Mult and",
-                        "{S:0.75,C:chips}+#8#{S:0.75} Chips",
-                    },
-                    {
-                        "{S:0.6}({S:0.6,V:3}lvl.#9#{S:0.6}){S:0.75} Level up",
-                        "{S:0.75,C:attention}#10# {C:inactive}Sub-Hand{}",
-                        "{S:0.75,X:mult,C:white}X#11#{S:0.75} Mult and",
-                        "{S:0.75,X:chips,C:white}X#12#{S:0.75} Chips",
+                        "{S:0.75,C:attention}#2# {C:inactive}Sub-Hand{}",
+                        "{S:0.75,X:mult,C:white}X#3#{S:0.75} Mult and",
+                        "{S:0.75,X:chips,C:white}X#4#{S:0.75} Chips",
                     }
                 },
             },
@@ -3296,22 +3255,14 @@ return {
                 name = "Prometheus IX",
                 text = {
                     {
+                        "Levels up a {C:attention}random{} poker hand",
+                        "of {C:attention}5{} cards {C:inactive}(or greater!)"
+                    },
+                    {
                         "{S:0.6}({S:0.6,V:1}lvl.#1#{S:0.6}){S:0.75} Level up",
-                        "{S:0.75,C:attention}#2#",
-                        "{S:0.75,C:mult}+#3#{S:0.75} Mult and",
-                        "{S:0.75,C:chips}+#4#{S:0.75} Chips",
-                    },
-                    {
-                        "{S:0.6}({S:0.6,V:2}lvl.#5#{S:0.6}){S:0.75} Level up",
-                        "{S:0.75,C:attention}#6#",
-                        "{S:0.75,C:mult}+#7#{S:0.75} Mult and",
-                        "{S:0.75,C:chips}+#8#{S:0.75} Chips",
-                    },
-                    {
-                        "{S:0.6}({S:0.6,V:3}lvl.#9#{S:0.6}){S:0.75} Level up",
-                        "{S:0.75,C:attention}#10# {C:inactive}Sub-Hand{}",
-                        "{S:0.75,X:mult,C:white}X#11#{S:0.75} Mult and",
-                        "{S:0.75,X:chips,C:white}X#12#{S:0.75} Chips",
+                        "{S:0.75,C:attention}#2# {C:inactive}Sub-Hand{}",
+                        "{S:0.75,X:mult,C:white}X#3#{S:0.75} Mult and",
+                        "{S:0.75,X:chips,C:white}X#4#{S:0.75} Chips",
                     }
                 },
             },
@@ -3319,22 +3270,14 @@ return {
                 name = "Tartarus II",
                 text = {
                     {
+                        "Levels up a {C:attention}random{} poker hand",
+                        "of {C:attention}5{} cards {C:inactive}(or greater!)"
+                    },
+                    {
                         "{S:0.6}({S:0.6,V:1}lvl.#1#{S:0.6}){S:0.75} Level up",
-                        "{S:0.75,C:attention}#2#",
-                        "{S:0.75,C:mult}+#3#{S:0.75} Mult and",
-                        "{S:0.75,C:chips}+#4#{S:0.75} Chips",
-                    },
-                    {
-                        "{S:0.6}({S:0.6,V:2}lvl.#5#{S:0.6}){S:0.75} Level up",
-                        "{S:0.75,C:attention}#6#",
-                        "{S:0.75,C:mult}+#7#{S:0.75} Mult and",
-                        "{S:0.75,C:chips}+#8#{S:0.75} Chips",
-                    },
-                    {
-                        "{S:0.6}({S:0.6,V:3}lvl.#9#{S:0.6}){S:0.75} Level up",
-                        "{S:0.75,C:attention}#10# {C:inactive}Sub-Hand{}",
-                        "{S:0.75,X:mult,C:white}X#11#{S:0.75} Mult and",
-                        "{S:0.75,X:chips,C:white}X#12#{S:0.75} Chips",
+                        "{S:0.75,C:attention}#2# {C:inactive}Sub-Hand{}",
+                        "{S:0.75,X:mult,C:white}X#3#{S:0.75} Mult and",
+                        "{S:0.75,X:chips,C:white}X#4#{S:0.75} Chips",
                     }
                 },
             },
@@ -3342,22 +3285,20 @@ return {
                 name = "Varakkis",
                 text = {
                     {
+                        "Levels up a {C:attention}random{} poker hand",
+                        "of {C:attention}5{} cards {C:inactive}(or greater!)"
+                    },
+                    {
                         "{S:0.6}({S:0.6,V:1}lvl.#1#{S:0.6}){S:0.75} Level up",
-                        "{S:0.75,C:attention}#2#",
-                        "{S:0.75,C:mult}+#3#{S:0.75} Mult and",
-                        "{S:0.75,C:chips}+#4#{S:0.75} Chips",
+                        "{S:0.75,C:attention}#2# {C:inactive}Sub-Hand{}",
+                        "{S:0.75,X:mult,C:white}X#3#{S:0.75} Mult and",
+                        "{S:0.75,X:chips,C:white}X#4#{S:0.75} Chips",
                     },
                     {
                         "{S:0.6}({S:0.6,V:2}lvl.#5#{S:0.6}){S:0.75} Level up",
-                        "{S:0.75,C:attention}#6#",
-                        "{S:0.75,C:mult}+#7#{S:0.75} Mult and",
-                        "{S:0.75,C:chips}+#8#{S:0.75} Chips",
-                    },
-                    {
-                        "{S:0.6}({S:0.6,V:3}lvl.#9#{S:0.6}){S:0.75} Level up",
-                        "{S:0.75,C:attention}#10# {C:inactive}Sub-Hand{}",
-                        "{S:0.75,X:mult,C:white}X#11#{S:0.75} Mult and",
-                        "{S:0.75,X:chips,C:white}X#12#{S:0.75} Chips",
+                        "{S:0.75,C:attention}#6# {C:inactive}Sub-Hand{}",
+                        "{S:0.75,X:mult,C:white}X#7#{S:0.75} Mult and",
+                        "{S:0.75,X:chips,C:white}X#8#{S:0.75} Chips",
                     }
                 },
             },
@@ -3365,22 +3306,20 @@ return {
                 name = "Jurassika",
                 text = {
                     {
+                        "Levels up a {C:attention}random{} poker hand",
+                        "of {C:attention}5{} cards {C:inactive}(or greater!)"
+                    },
+                    {
                         "{S:0.6}({S:0.6,V:1}lvl.#1#{S:0.6}){S:0.75} Level up",
-                        "{S:0.75,C:attention}#2#",
-                        "{S:0.75,C:mult}+#3#{S:0.75} Mult and",
-                        "{S:0.75,C:chips}+#4#{S:0.75} Chips",
+                        "{S:0.75,C:attention}#2# {C:inactive}Sub-Hand{}",
+                        "{S:0.75,X:mult,C:white}X#3#{S:0.75} Mult and",
+                        "{S:0.75,X:chips,C:white}X#4#{S:0.75} Chips",
                     },
                     {
                         "{S:0.6}({S:0.6,V:2}lvl.#5#{S:0.6}){S:0.75} Level up",
-                        "{S:0.75,C:attention}#6#",
-                        "{S:0.75,C:mult}+#7#{S:0.75} Mult and",
-                        "{S:0.75,C:chips}+#8#{S:0.75} Chips",
-                    },
-                    {
-                        "{S:0.6}({S:0.6,V:3}lvl.#9#{S:0.6}){S:0.75} Level up",
-                        "{S:0.75,C:attention}#10# {C:inactive}Sub-Hand{}",
-                        "{S:0.75,X:mult,C:white}X#11#{S:0.75} Mult and",
-                        "{S:0.75,X:chips,C:white}X#12#{S:0.75} Chips",
+                        "{S:0.75,C:attention}#6# {C:inactive}Sub-Hand{}",
+                        "{S:0.75,X:mult,C:white}X#7#{S:0.75} Mult and",
+                        "{S:0.75,X:chips,C:white}X#8#{S:0.75} Chips",
                     }
                 },
             },
@@ -3388,22 +3327,14 @@ return {
                 name = "Globulos",
                 text = {
                     {
+                        "Levels up a {C:attention}random{} poker hand",
+                        "of {C:attention}5{} cards {C:inactive}(or greater!)"
+                    },
+                    {
                         "{S:0.6}({S:0.6,V:1}lvl.#1#{S:0.6}){S:0.75} Level up",
-                        "{S:0.75,C:attention}#2#",
-                        "{S:0.75,C:mult}+#3#{S:0.75} Mult and",
-                        "{S:0.75,C:chips}+#4#{S:0.75} Chips",
-                    },
-                    {
-                        "{S:0.6}({S:0.6,V:2}lvl.#5#{S:0.6}){S:0.75} Level up",
-                        "{S:0.75,C:attention}#6#",
-                        "{S:0.75,C:mult}+#7#{S:0.75} Mult and",
-                        "{S:0.75,C:chips}+#8#{S:0.75} Chips",
-                    },
-                    {
-                        "{S:0.6}({S:0.6,V:3}lvl.#9#{S:0.6}){S:0.75} Level up",
-                        "{S:0.75,C:attention}#10# {C:inactive}Sub-Hand{}",
-                        "{S:0.75,X:mult,C:white}X#11#{S:0.75} Mult and",
-                        "{S:0.75,X:chips,C:white}X#12#{S:0.75} Chips",
+                        "{S:0.75,C:attention}#2# {C:inactive}Sub-Hand{}",
+                        "{S:0.75,X:mult,C:white}X#3#{S:0.75} Mult and",
+                        "{S:0.75,X:chips,C:white}X#4#{S:0.75} Chips",
                     }
                 },
             },
@@ -3411,22 +3342,14 @@ return {
                 name = "Xykulix",
                 text = {
                     {
+                        "Levels up a {C:attention}random{} poker hand",
+                        "of {C:attention}5{} cards {C:inactive}(or greater!)"
+                    },
+                    {
                         "{S:0.6}({S:0.6,V:1}lvl.#1#{S:0.6}){S:0.75} Level up",
-                        "{S:0.75,C:attention}#2#",
-                        "{S:0.75,C:mult}+#3#{S:0.75} Mult and",
-                        "{S:0.75,C:chips}+#4#{S:0.75} Chips",
-                    },
-                    {
-                        "{S:0.6}({S:0.6,V:2}lvl.#5#{S:0.6}){S:0.75} Level up",
-                        "{S:0.75,C:attention}#6#",
-                        "{S:0.75,C:mult}+#7#{S:0.75} Mult and",
-                        "{S:0.75,C:chips}+#8#{S:0.75} Chips",
-                    },
-                    {
-                        "{S:0.6}({S:0.6,V:3}lvl.#9#{S:0.6}){S:0.75} Level up",
-                        "{S:0.75,C:attention}#10# {C:inactive}Sub-Hand{}",
-                        "{S:0.75,X:mult,C:white}X#11#{S:0.75} Mult and",
-                        "{S:0.75,X:chips,C:white}X#12#{S:0.75} Chips",
+                        "{S:0.75,C:attention}#2# {C:inactive}Sub-Hand{}",
+                        "{S:0.75,X:mult,C:white}X#3#{S:0.75} Mult and",
+                        "{S:0.75,X:chips,C:white}X#4#{S:0.75} Chips",
                     }
                 },
             },
@@ -3567,20 +3490,16 @@ return {
 					"{C:rgmc_potentiacrystal,E:1}+#4#{} Atomic Power"
                 },
             },
+            c_rgmc_elevatium = {
+                name = "Elevatium",
+                text = {
+                    "Empower every",
+                    "{C:legendary,E:1}subhand",
+					"by {C:rgmc_potentiacrystal,E:1}+#4#{} Atomic Power"
+                },
+            },
         },
 		Sleeve = {
-			sleeve_rgmc_pale_sleeve = {
-				name = "Pale Sleeve",
-				text = {
-					"W.I.P.",
-				},
-			},
-			sleeve_rgmc_pale_sleeve_alt = {
-				name = "Pale Sleeve +",
-				text = {
-					"W.I.P.",
-				},
-			},
 			sleeve_rgmc_hexing_sleeve = {
 				name = "Hexing Sleeve",
 				text = {
@@ -3601,18 +3520,6 @@ return {
 			},
 			sleeve_rgmc_sangria_sleeve_alt = {
 				name = "Sangria Sleeve +",
-				text = {
-					"W.I.P.",
-				},
-			},
-			sleeve_rgmc_target_sleeve = {
-				name = "Target Sleeve",
-				text = {
-					"W.I.P.",
-				},
-			},
-			sleeve_rgmc_target_sleeve_alt = {
-				name = "Target Sleeve +",
 				text = {
 					"W.I.P.",
 				},
@@ -3677,14 +3584,14 @@ return {
 					"W.I.P.",
 				},
 			},
-			sleeve_rgmc_jumble_sleeve = {
-				name = "Jumble Sleeve",
+			sleeve_rgmc_giga_sleeve = {
+				name = "Giga Sleeve",
 				text = {
 					"W.I.P.",
 				},
 			},
-			sleeve_rgmc_jumble_sleeve_alt = {
-				name = "Jumble Sleeve +",
+			sleeve_rgmc_giga_sleeve_alt = {
+				name = "Giga Sleeve +",
 				text = {
 					"W.I.P.",
 				},
@@ -3801,11 +3708,11 @@ return {
             c_rgmc_cosmic_tree = {
                 name = 'The Cosmic Tree',
                 text = {
-                    "Gain {C:money}$#1#{} for every {C:attention}3{}",
+                    "Gain {C:rgmc_luxury}£#1#{} for every {C:attention}3{}",
                     "unique {C:attention}ranks{} in deck",
-                    "and {C:money}$#2#{} for every {C:attention}2{}",
+                    "and {C:rgmc_luxury}£#2#{} for every {C:attention}2{}",
                     "unique {C:attention}suits{} in deck",
-                    "{C:inactive}(Currently {C:money}$#3#{C:inactive})"
+                    "{C:inactive}(Currently {C:rgmc_luxury}£#3#{C:inactive})"
                 }
             },
             c_rgmc_life_map = {
@@ -3956,143 +3863,6 @@ return {
 			},
         },
         AntiSpectral = {
-            c_rgmc_anti_familiar= {
-                name = 'Familiar...?',
-                text = {
-                    "Destroys {C:red}#1#{} {C:attention}face{} cards",
-                    "from your deck"
-                }
-            },
-            c_rgmc_anti_grim= {
-                name = 'Grim...?',
-                text = {
-                    "Destroys {C:red}#1#%{} of",
-                    "your highest rank",
-                    "from your deck",
-                    "{C:inactive}(Will destroy {C:attention}#2#{C:inactive} #3#s)"
-                }
-            },
-            c_rgmc_anti_incantation = {
-                name = 'Incantation...?',
-                text = {
-                    "Destroys {C:red}#1#%{} of your",
-                    "{C:attention}lowest{} number rank",
-                    "from your deck",
-                    "{C:inactive}(Will destroy {C:attention}#2#{C:inactive} #3#s)"
-                }
-            },
-            c_rgmc_anti_talisman= {
-                name = 'Incantation...?',
-                text = {
-                    "Disables blind rewards and",
-                    "interest for {C:attention}#1#{} rounds",
-                    "Gives {C:money}#2#{} afterwards",
-                }
-            },
-            c_rgmc_anti_aura = {
-                name = 'Aura...?',
-                text = {
-                    "Disables and debuffs editions",
-                    "for {C:attention}#1#{} rounds",
-                    "Gives {C:money}#2#{} for",
-                    "each card debuffed",
-                }
-            },
-            c_rgmc_anti_wraith = {
-                name = 'Wraith...?',
-                text = {
-                    "Debuffs all {C:attention}Jokers{}",
-                    "above {C:green}Uncommon{} rarity",
-                    "for {C:attention}#1#{} round(s)",
-                    "Gives {C:money}+#2#{} for",
-                    "each Joker debuffed",
-                }
-            },
-            c_rgmc_anti_sigil = {
-                name = 'Sigil...?',
-                text = {
-                    "Chooses a random {C:attention}suit{}",
-                    "from your deck and",
-                    "destroys {C:red}#1#%{} of cards",
-                    "matching selected suit"
-                }
-            },
-            c_rgmc_anti_ouija = {
-                name = 'Ouija...?',
-                text = {
-                    "Chooses a random {C:attention}rank{}",
-                    "from your deck and",
-                    "destroys {C:red}#1#%{} of cards",
-                    "matching selected rank"
-                }
-            },
-            c_rgmc_anti_ectoplasm = {
-                name = 'Ectoplasm...?',
-                text = {
-                    "Debuffs {C:red}#1#{} random Jokers",
-                    "for {C:attention}#1#{} round(s)",
-                    "Gain {C:attention}+1{} hand size",
-                    "afterwards"
-                }
-            },
-            c_rgmc_anti_immolate = {
-                name = 'Immolate...?',
-                text = {
-                    "Creates {C:attention}#1#{} {C:rgmc_vino}Vino{} cards",
-                    "{C:money}-$#2#{}",
-                }
-            },
-            c_rgmc_anti_ankh = {
-                name = 'Ankh...?',
-                text = {
-                    "Creates an {C:attention}Eternal",
-                    "{C:attention}Engraved{} copy of",
-                    "a random held {C:attention}Joker{}",
-                }
-            },
-            c_rgmc_anti_deja_vu = {
-                name = 'Deja Vu...?',
-                text = {
-                    "Disables {C:attention}retriggering{}",
-                    "for {C:attention}#1#{} rounds",
-                    "Gain {C:money}$#2#{} afterwards",
-                }
-            },
-            c_rgmc_anti_hex = {
-                name = 'Hex...?',
-                text = {
-                    "Removes {C:attention}editions{} and",
-                    "{C:attention}enhancements{} from",
-                    "{C:attention}all{} cards in deck",
-                    "Gain {C:money}$#2#{} per {C:orange}edition{}",
-                    "and {C:money}$#3#{} per {C:orange}enhancement{}",
-                }
-            },
-            c_rgmc_anti_trance = {
-                name = 'Trance...?',
-                text = {
-                    "Remove {C:attention}#1#{} levels",
-                    "from {C:planet}#2#{}",
-                    "Add {C:attention}#3{} levels to {C:planet}#1#{}",
-                    "lowest scoring hands",
-                }
-            },
-            c_rgmc_anti_medium = {
-                name = 'Medium...?',
-                text = {
-                    "Disable {C:purple}consumables{}",
-                    "for {C:attention}#1#{} rounds",
-                    "{C:attention}+#2#{} consumable slots",
-                    "afterwards",
-                }
-            },
-            c_rgmc_anti_cryptid = {
-                name = 'Cryptid...?',
-                text = {
-                    "{C:attention}+#1#{} Ante",
-                    "{C:dark_edition}+#2#{} Joker slots",
-                }
-            },
         },
         Tarot = {
 			c_rgmc_girder = { -- ferrous
@@ -4678,6 +4448,21 @@ return {
                     "create a {C:cosmatarot}Cogito Tag{}",
                 },
 			},
+			tag_rgmc_twofer = {
+				name = "Twofer Tag",
+                text = {
+                    "Adds {C:attention}2 {C:voucher}Vouchers",
+                    "to the next shop"
+                }
+			},
+            tag_promotion = {
+                name = "Promotion Tag",
+                text = {
+                    "After defeating",
+                    "the Boss Blind,",
+                    "gain {C:rgmc_luxury}$#1#"
+                }
+            },
 			tag_rgmc_cogito = {
 				name = "Cogito Tag",
 				text = {
@@ -5010,7 +4795,6 @@ return {
 				text = {
                     "{C:rgmc_mayhem}+#1#{} Mayhem",
                     "{C:attention}+#2#{} Ante",
-					"{C:inactive}The game gets madder...",
 				},
 			},
 			v_rgmc_mindmelt = {
@@ -5018,30 +4802,12 @@ return {
 				text = {
                     "{C:rgmc_mayhem}+#1#{} Mayhem",
 					"{C:attention}+#2#{} Ante",
-					"{C:inactive}Your mind begins to melt...",
 				},
 			},
 			v_rgmc_joker = {
 				name = "Joker",
 				text = {
                     "{C:mult}+#1#{} Mult{C:inactive}...?"
-				},
-			},
-            -- Void/Lantern suits
-			v_rgmc_chiaroscuro = {
-				name = "Chiaroscuro",
-				text = {
-					"{C:rgmc_voids}Void{} suits are",
-                    "{C:attention}2X{} more likely",
-                    "to appear"
-				},
-			},
-			v_rgmc_tenebrism = {
-				name = "Tenebrism",
-				text = {
-					"{C:rgmc_lanterns}Lantern{} suits are",
-                    "{C:attention}4X{} more likely",
-                    "to appear"
 				},
 			},
             -- Cosma Tarots
@@ -5096,204 +4862,78 @@ return {
                     "by half"
 				},
 			},
-            -- Painted/Twinkling
-			v_rgmc_brush_strokes = {
-				name = "Brush Strokes",
+
+			v_rgmc_bright_bulb= {
+				name = "Bright Bulb",
 				text = {
-                    "Playing cards can",
-                    "appear in shop with",
-                    "{C:rgmc_unusual}Painted{} and {C:attention}Entropic{}"
+                    "Hands can gain additional",
+                    "{C:chips}chips{} and {C:mult}mult{} from",
+                    "playing {C:rgmc_light}Light{} subhands",
+                    "{C:inactive}(Hand must contain {C:attention}#1# {C:inactive}cards",
+                    "{C:inactive}with #2# containing {C:attention}light {C:inactive}suits)"
 				},
 			},
-			v_rgmc_little_star = {
-				name = "Little Star",
+			v_rgmc_blacklight= {
+				name = "Blacklight",
 				text = {
-                    "{C:inactive}Twinkle, twinkle...{}",
-                    "Playing cards can",
-                    "appear in shop with",
-                    "{C:rgmc_unusual}Twinkling{} and {C:attention}Entropic{}"
+                    "Hands can gain additional",
+                    "{C:chips}chips{} and {C:mult}mult{} from",
+                    "playing {C:rgmc_dark}Dark{} subhands",
+                    "{C:inactive}(Hand must contain {C:attention}#1# {C:inactive}cards",
+                    "{C:inactive}with #2# containing {C:attention}dark {C:inactive}suits)"
 				},
 			},
-            -- Light/Dark
-			v_rgmc_day_and_night = {
-				name = "{C:rgmc_light}Day{} and {C:rgmc_dark}Night{}",
+			v_rgmc_kings_crown= {
+				name = "King's Crown",
 				text = {
-                    "Hands can now gain additional",
-                    "{C:chips}Chips{} and {C:mult}Mult{} from",
-                    "{C:rgmc_light}Light{} and {C:rgmc_dark}Dark{} subhands",
-                    "{C:inactive}(At least {C:attention}#1#{C:inactive} cards",
-                    "{C:inactive}containing {C:rgmc_light}Light{C:inactive}/{C:rgmc_dark}Dark{C:inactive} suits)"
+                    "Hands can gain additional",
+                    "{C:chips}chips{} and {C:mult}mult{} from",
+                    "playing {C:purple}High{} subhands",
+                    "{C:inactive}(Hand must contain {C:attention}#1# {C:inactive}cards",
+                    "{C:inactive}with #2# containing {C:attention}high {C:inactive}ranks)"
 				},
 			},
-			v_rgmc_midday = {
-				name = "{C:rgmc_light}Midday",
+			v_rgmc_humble_gibus= {
+				name = "Humble Gibus",
 				text = {
-                    "Boosts the power of",
-                    "{C:rgmc_light}Light{} subhands",
-                    "{C:inactive}(At least {C:attention}#1#{C:inactive} cards",
-                    "{C:inactive}containing {C:rgmc_light}Light{C:inactive} suits)"
+                    "Hands can gain additional",
+                    "{C:chips}chips{} and {C:mult}mult{} from",
+                    "playing {C:green}Low{} subhands",
+                    "{C:inactive}(Hand must contain {C:attention}#1# {C:inactive}cards",
+                    "{C:inactive}with #2# containing {C:attention}low {C:inactive}ranks)"
 				},
 			},
-			v_rgmc_midnight = {
-				name = "{C:rgmc_dark}Midnight",
+			v_rgmc_shining_prism = {
+				name = "Shining Prism",
 				text = {
-                    "Boosts the power of",
-                    "{C:rgmc_dark}Dark{} subhands",
-                    "{C:inactive}(At least {C:attention}#1#{C:inactive} cards",
-                    "{C:inactive}containing {C:rgmc_dark}Dark{C:inactive} suits)"
+                    "Hands can gain additional",
+                    "{C:chips}chips{} and {C:mult}mult{} from",
+                    "playing {C:rgmc_bismuth}Dazzling{} subhands",
+                    "{C:inactive}(Hand must contain {C:attention}#1# {C:inactive}cards",
+                    "{C:inactive}with #2# {C:attention}unique enhancements {C:inactive})"
 				},
 			},
-			v_rgmc_twilight = {
-				name = "{C:rgmc_light}Twil{C:rgmc_dark}ight",
+			v_rgmc_balance = {
+				name = "Inner Balance",
 				text = {
-                    "Further empowers",
-                    "{C:attention}Light{} and {C:attention}Dark{} sub-hands",
-                    "{C:inactive}(At least {C:attention}#1#{C:inactive} cards",
-                    "{C:inactive}containing {C:rgmc_light}Light{C:inactive}/{C:rgmc_dark}Dark{C:inactive} suits)"
+                    "Hands can gain additional",
+                    "{C:chips}chips{} and {C:mult}mult{} from",
+                    "playing {C:attention}Neutral{} subhands",
+                    "{C:inactive}(Hand must contain {C:attention}#1# {C:inactive}cards",
+                    "{C:inactive}with an equal number of",
+                    "{C:inactive}light and dark suits)"
 				},
 			},
-            -- High/Low
-			v_rgmc_ebb_and_flow = {
-				name = "Ebb and Flow",
+			v_rgmc_joker = {
+				name = "Joker Voucher",
 				text = {
-                    "Hands can now gain additional",
-                    "{C:chips}Chips{} and {C:mult}Mult{} from",
-                    "{C:attention}High{} and {C:attention}Low{} subhands",
-                    "{C:inactive}(At least {C:attention}#1#{C:inactive} cards",
-                    "{C:inactive}containing ranks",
-                    "{C:attention}above #2#{C:inactive}/{C:attention}below #3#{C:inactive})"
+                    "{C:mult}+#1#{} Mult{C:inactive}...?"
 				},
 			},
-			v_rgmc_eensy_weensy = {
-				name = "Eensy Weensy",
+			v_rgmc_joker2 = {
+				name = "Jester Voucher",
 				text = {
-                    "Boosts the power of",
-                    "{C:attention}Low{} subhands",
-                    "{C:inactive}(At least {C:attention}#1#{C:inactive} cards",
-                    "{C:inactive}containing ranks",
-                    "{C:attention}below #2#{C:inactive})"
-				},
-			},
-			v_rgmc_extra_large = {
-				name = "Extra Large",
-				text = {
-                    "Boosts the power of",
-                    "{C:attention}High{} subhands",
-                    "{C:inactive}(At least {C:attention}#1#{C:inactive} cards",
-                    "{C:inactive}containing ranks {C:attention}above #2#{C:inactive})"
-				},
-			},
-			v_rgmc_median = {
-				name = "The Median",
-				text = {
-                    "Further empowers",
-                    "{C:attention}High{} and {C:attention}Low{} subhands",
-                    "{C:inactive}(At least {C:attention}#1#{C:inactive} cards",
-                    "{C:inactive}containing ranks",
-                    "{C:attention}above #2#{C:inactive}/{C:attention}below #3#{C:inactive})"
-				},
-			},
-            -- Dazzling
-			v_rgmc_radiance = {
-				name = "Radiance",
-				text = {
-                    "Hands can now gain",
-                    "additional {C:chips}Chips{} and {C:mult}Mult",
-                    "from {C:rgmc_bismuth}Dazzling{} subhands",
-                    "{C:inactive}(At least {C:attention}#1#{C:inactive} cards",
-                    "{C:inactive}containing {C:rgmc_bismuth}unique",
-                    "{C:inactive} enhancements"
-				},
-			},
-			v_rgmc_brilliance = {
-				name = "Brilliance",
-				text = {
-                    "Boosts the power of",
-                    "from {C:rgmc_bismuth}Dazzling{} subhands",
-                    "{C:inactive}(At least {C:attention}#1#{C:inactive} cards",
-                    "{C:inactive}containing {C:rgmc_bismuth}unique",
-                    "{C:inactive} enhancements"
-				},
-			},
-            -- AnTags
-			v_rgmc_antimony = {
-				name = "Antimony",
-				text = {
-                    "{C:red}AnTags{} have a",
-                    "{C:green}#1# in #2#{} chance",
-                    "to give {C:money}$#3#",
-                    "upon {C:attention}activation{}"
-				},
-			},
-			v_rgmc_antiquated = {
-				name = "Antiquated",
-				text = {
-                    "{C:red}AnTags{} have a",
-                    "{C:green}#1# in #2#{} chance",
-                    "to spawn their {C:attention}counterpart{}",
-                    "upon {C:attention}activation{}"
-				},
-			},
-            -- Void and Lantern Suits
-			v_rgmc_irregularity = {
-				name = "Irregularity",
-				text = {
-                    "{C:rgmc_voids}Void{} and {C:rgmc_lanterns{}Lantern{} suits",
-                    "appear {C:attention}#1#X{} more frequently"
-				},
-			},
-			v_rgmc_voidup = {
-				name = "Void Power",
-				text = {
-                    "{C:rgmc_voids}Voids{} are considered {C:attention}Dark{}",
-                    "and add {C:dark_edition}X#1#{} Mayhem"
-				},
-			},
-			v_rgmc_lanternup = {
-				name = "Lantern Power",
-				text = {
-                    "{C:rgmc_lanterns}Lanterns{} are considered {C:attention}Light{}",
-                    "and remove {C:dark_edition}X#1#{} Mayhem"
-				},
-			},
-			v_rgmc_light_within_darkness = {
-				name = "Light Within Darkness",
-				text = {
-                    "Further empowers the",
-                    "{C:rgmc_voids}Void{} and {C:rgmc_lanterns}Lantern{}",
-                    "suits"
-				},
-			},
-            -- Rift Limit (Rift-Raft exclusive!)
-			v_rgmc_raise_the_rift = {
-				name = "Raise the Rift",
-				text = {
-                    "{C:dark_edition}+#1#{} Rifting Limit",
-                    "{C:red}-#2#{} discard(s) each round",
-                    "{C:inactive}(Currently {C:attention}#2#{C:inactive} cards per Blind)",
-				},
-			},
-			v_rgmc_oculus_rift = {
-				name = "Oculus Rift",
-				text = {
-                    "{C:dark_edition}+#1#{} Rifting Limit",
-                    "{C:blue}-#1#{} discard(s) each round",
-                    "{C:inactive}(Currently {C:attention}#2#{C:inactive} cards per Blind)",
-				},
-			},
-            -- Event Passes
-			v_rgmc_event1 = {
-				name = "Absolute Mayhem",
-				text = {
-                    "Invokes {C:dark_edition}Stage 1{}",
-                    "{C:inactive}(Buyer beware!!)",
-				},
-			},
-			v_rgmc_event2 = {
-				name = "Amorphous Maelstrom",
-				text = {
-                    "Invokes {C:dark_edition}Stage 2{}",
-                    "{C:inactive}(Buyer beware!!)",
+                    "{C:mult}+#1#{} Mult{C:inactive}...?"
 				},
 			},
         },
@@ -5812,6 +5452,16 @@ return {
                     "{C:inactive,s:0.7}move back one position)",
 				},
 			},
+            rgmc_bronze_seal = {
+				name = "Cuprum Seal",
+				text = {
+					"This card is placed closer",
+                    "to {C:attention}rear{} of deck",
+                    "{C:inactive,s:0.7}(Rolls #3# times",
+                    "{C:inactive,s:0.7}with a #1# in #2# chance to",
+                    "{C:inactive,s:0.7}move back one position)",
+				},
+			},
             rgmc_jade_seal = {
 				name = "Jade Seal",
 				text = {
@@ -6071,10 +5721,8 @@ return {
 			rgmc_inactive            = "Inactive",
 
 			-- temp hand/discard
-			rgmc_temp_hand_plus          = "+1 Temp. Hand",
-			rgmc_temp_discard_plus       = "+1 Temp. Discard",
-			rgmc_temp_hand_minus_ex      = "Temp. Hand Used!",
-			rgmc_temp_discard_minus_ex   = "Temp. Discard Used!",
+			k_t_hands_plus           = "+#1# Temp. Hands",
+			k_t_discards_plus        = "+#1# Temp. Discards",
 
 			-- chinese! chinese!
             rgmc_chinese_line1      = "Just fried rice",
@@ -6093,9 +5741,6 @@ return {
             rgmc_rad_chinese_line4      = "Yuck, Toxic Mu Shu!",
             rgmc_rad_chinese_line5      = "Ouch, Thermonuclear Heartburn!",
             rgmc_rad_chinese_line6      = "Atomic Peking Duck?!!",
-
-            rgmc_compat_cryptid     = "+ Cryptid!",
-            rgmc_compat_finity      = "+ Finity!",
 
             -- text
             rgmc_spam               = "SPAM",
@@ -6133,7 +5778,7 @@ return {
 			k_rgmc_chaotic   = "Chaotic",
 			k_rgmc_felinus   = "Felinus",
 
-            
+            b_subhands      = "Subhands",
 			k_rgmc_luxury_bonus      = "Luxury Bonus",
 
 			k_cosmatarot             = "Cosma Tarot",

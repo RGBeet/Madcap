@@ -7,7 +7,7 @@ return {
         key     = "capital",
         atlas   = 'decks',
         pos     = MLIB.coords(1,1),
-        config = { starting_money  = 20, boss_money_mult = 2, blind_price = 3, shop_price = 2, },
+        config = { starting_money  = 25, boss_money_mult = 1.5, blind_price = 3, shop_price = 2, },
         loc_vars = function(self)
             local bankrupt = (G.GAME and G.GAME.bankrupt_at) or 0
             return MadLib.collect_vars(self.config.starting_money, self.config.boss_money_mult, self.config.blind_price, self.config.shop_price, math.max(-100,bankrupt))

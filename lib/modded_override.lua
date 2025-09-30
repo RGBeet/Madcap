@@ -20,7 +20,8 @@ if next(SMODS.find_mod("TOGAPack")) then
         end,
         calculate = function(self, card, context)
             if 
-                (#context.full_hand == 1 
+                (context.full_hand
+                and #context.full_hand == 1
                 and context.destroy_card == context.full_hand[1] 
                 and MadLib.joker_check_rank(context.destroy_card, card, '6'))
                 or context.forcetrigger 
@@ -178,7 +179,7 @@ if next(SMODS.find_mod("TOGAPack")) then
                     or MadLib.joker_check_rank(context.other_card, card, 'rgmc_x'))
             then
                 return not context.other_card.debuff and {
-                    xchips = math.max(card.ability.extra.h_xchips, 1)
+                    xchips = math.max(card.ability.extra.h_x_chips, 1)
                 } or {
                     message = localize('k_debuffed'),
                     colour = G.C.RED
@@ -1608,12 +1609,14 @@ if next(SMODS.find_mod("MoreFluff")) then
                 and G.GAME.current_round.hands_played == 0)
                 or context.forcetrigger
             then
-                MadLib.event(function()
-                    add_tag(Tag('tag_double'))
-                    play_sound('generic1', 0.9 + math.random()*0.1, 0.8)
-                    play_sound('holo1', 1.2 + math.random()*0.1, 0.4)
-                    return true
-                end)
+                MadLib.event({
+                    func = function()
+                        add_tag(Tag('tag_double'))
+                        play_sound('generic1', 0.9 + math.random()*0.1, 0.8)
+                        play_sound('holo1', 1.2 + math.random()*0.1, 0.4)
+                        return true
+                    end
+                })
                 if not context.forcetrigger then return true end
             end
         end
@@ -1773,9 +1776,9 @@ if next(SMODS.find_mod("MoreFluff")) then
         },
         loc_vars = function(self, info_queue, card)
             return { vars = {
-                center.ability.extra.mult,
-                center.ability.extra.chips,
-                center.ability.extra.dollars,
+                card.ability.extra.mult,
+                card.ability.extra.chips,
+                card.ability.extra.dollars,
                 localize(card.ability.extra.rank, 'ranks'),
             }}
         end,
@@ -1807,7 +1810,7 @@ if next(SMODS.find_mod("MoreFluff")) then
             }
         },
         loc_vars = function(self, info_queue, card)
-            local new_numerator, new_denominator = SMODS.get_probability_vars(center, 1, center.ability.extra.odds, 'slotmachine')
+            local new_numerator, new_denominator = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'slotmachine')
             return {
                 vars = {
                     new_numerator,
@@ -2480,7 +2483,7 @@ if next(SMODS.find_mod("allinjest")) then
                 context.individual
                 and not context.blueprint
                 and context.cardarea == G.play
-                and MadLib.joker_check_rank(v, card, '4')
+                and MadLib.joker_check_rank(context.other_card, card, '4')
                 and SMODS.pseudorandom_probability(card, 'tetrominoker', 1, card.ability.extra.odds)
             then
                 G.playing_card = (G.playing_card and G.playing_card + 1) or 1
@@ -2680,7 +2683,7 @@ if next(SMODS.find_mod("allinjest")) then
     }, true)
 
     -- Word Art
-    Madcap.Lists.WordArtJokers = { 'Ace', 'King', 'Queen', 'Jack', MadLib.RankIds['Knight'], 'rgmc_X', 'rgmc_M' }
+    Madcap.Lists.WordArtJokers = { 'Ace', 'King', 'Queen', 'Jack', MadLib.RankIds['Knight'], 'rgmc_X', 'rgmc_Madcap' }
     SMODS.Joker:take_ownership('aij_word_art', {
         config = {
             extra = { mult = 4 }
@@ -2698,7 +2701,7 @@ if next(SMODS.find_mod("allinjest")) then
                 end)
             end
             if context.joker_main and _cards > 0 then
-                return { mult = card.ability.extra.mult_per_card * _cards }
+                return { mult = card.ability.extra.mult * _cards }
             end
         end
     }, true)

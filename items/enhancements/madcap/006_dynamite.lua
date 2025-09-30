@@ -97,7 +97,7 @@ return {
                         return true
                     end)
                 end
-                return MadLib.get_fake_score_data(MadLib.ScoreKeys.MultiScore, card,  card.ability.extra.x_score)
+                return { xscore = card.ability.extra.x_score }
             end
 
             if context.final_scoring_step and card.ability.extra.active and context.scoring_hand then

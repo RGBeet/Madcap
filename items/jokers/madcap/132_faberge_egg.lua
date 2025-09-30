@@ -11,8 +11,8 @@ return {
         pos     = MLIB.coords(13,1),
         rarity  = 3,
         cost    = 9,
-        force_luxury = true,
         config = {
+            force_luxury = true,
             extra = { price = 4 } 
         },
         loc_vars = function(self, info_queue, card)

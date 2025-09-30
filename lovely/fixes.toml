@@ -8,8 +8,8 @@ priority = 1000
 [[patches]]
 [patches.pattern]
 target = "game.lua"
-pattern = '''self.GAME.current_round.reroll_cost = self.GAME.base_reroll_cost'''
-position = "after"
+pattern = '''self.GAME.round_resets.hands = self.GAME.starting_params.hands'''
+position = "before"
 payload = '''Madcap.Funcs.run_start()
 Madcap.Funcs.ante_start()'''
 match_indent = true
@@ -330,7 +330,7 @@ pattern = '''if c1.cost ~= 0 then'''
 position = 'at'
 payload = '''
 if Madcap.Funcs.uses_lp(c1) then
-	ease_lp(self:calc_lp() * -1)
+	ease_lp(c1:calc_lp() * -1)
 elseif c1.cost ~= 0 then
 '''
 match_indent = true
@@ -412,6 +412,7 @@ if G.GAME.rgmc_luxury_pts > 0 then
     card.states.visible = false
     card:set_cost()
     card.ability.force_lp = true
+    tell('force LP!')
     G.shop_jokers:emplace(card)
     create_shop_card_ui(card, 'Joker', G.shop_jokers)
     MadLib.simple_event(function()
@@ -516,4 +517,62 @@ rgmc_voids = '⚄',
 rgmc_lanterns = '⚅',
 '''
 match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = 'cardarea.lua'
+pattern = '''update_hand_text({immediate = true, nopulse = nil, delay = 0}, {handname=disp_text, level=G.GAME.hands[text].level, mult = G.GAME.hands[text].mult, chips = G.GAME.hands[text].chips})
+            end'''
+position = "at"
+payload = '''update_hand_text({immediate = true, nopulse = nil, delay = 0}, {handname=disp_text, level=G.GAME.hands[text].level, mult = G.GAME.hands[text].mult, chips = G.GAME.hands[text].chips})'''
+match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = 'card.lua'
+pattern = 'if self.area and self.ability.couponed and (self.area == G.shop_jokers or self.area == G.shop_booster) then self.cost = 0 end'
+position = 'after'
+match_indent = true
+payload = '''
+
+if self.added_to_deck then
+    if self.ability.new_cost then
+        self.sell_cost = self.ability.new_cost or 0
+    end
+end
+
+'''
+
+[[patches]]
+[patches.pattern]
+target = 'card.lua'
+pattern = "not SMODS.is_eternal(self, {from_sell = true}) then"
+position = 'before'
+match_indent = true
+payload = '''not (self.cost < 0 and (G.GAME.dollars + self.cost) < G.GAME.bankrupt_at) and'''
+
+[[patches]]
+[patches.pattern]
+target = 'functions/UI_definitions.lua'
+pattern = '''{
+            label = localize('b_poker_hands'),
+            chosen = true,
+            tab_definition_function = create_UIBox_current_hands,
+        },'''
+position = 'after'
+match_indent = true
+payload = '''{
+    label = localize('b_subhands'),
+    tab_definition_function = G.UIDEF.subhands,
+},'''
+
+[[patches]]
+[patches.pattern]
+target = 'functions/common_events.lua'
+pattern = '''(options or {}).ignore_showdown_check'''
+position = 'at'
+match_indent = true
+payload = '''(type(options) == 'boolean' and options)
+or (options or {}).ignore_showdown_check'''
+
 

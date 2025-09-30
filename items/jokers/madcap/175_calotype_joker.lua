@@ -23,7 +23,8 @@ return {
                 and not context.blueprint
                 and context.cardarea == G.play
                 and (context.other_card
-                    and not (context.other_card.edition or context.other_card.edition.negative))
+                and not context.other_card.edition ~= nil
+                and not (context.other_card.edition ~= nil and context.other_card.edition.negative))
             then
                 if SMODS.pseudorandom_probability(card, 'calotype_joker', 1, card.ability.extra.odds) then
                     card.ability.extra.odds = card.ability.extra.base_odds

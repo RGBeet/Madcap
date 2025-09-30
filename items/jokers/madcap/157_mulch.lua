@@ -4,7 +4,7 @@ function Madcap.Funcs.get_high_and_low(cards)
 
     MadLib.loop_func(cards, function(v)
         local value = SMODS.Ranks[MadLib.get_value(v)]
-        local nominal = value.nominal + value.face_nominal
+        local nominal = value.nominal + (value.face_nominal or 0)
         if high_nom < nominal then
             high_rank   = value
             high_nom    = nominal

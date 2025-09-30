@@ -11,7 +11,7 @@ return {
         rarity  = 1,
         cost    = 5,
         config = {
-            extra = { chips = 25, chip_mod = 5, base_chips = 25, suit = 'rgmc_goblets' }
+            extra = { chips = 15, chip_mod = 3, base_chips = 15, suit = 'rgmc_goblets' }
         },
         loc_vars = function(self, info_queue, card)
             return MadLib.collect_vars_colours(
@@ -34,7 +34,7 @@ return {
             if 
                 context.discard 
                 and context.other_card:is_suit(card.ability.extra.suit)
-                and to_big(card.ability.extra.chips) > to_big(card.ability.extar.chip_mod) 
+                and to_big(card.ability.extra.chips) > to_big(card.ability.extar.chip_mod)
             then
                 card.ability.extra.chips = card.ability.extra.chips - card.ability.extra.chip_mod
                 return {
@@ -46,7 +46,8 @@ return {
             if
                 (context.individual
                 and context.cardarea == G.hand
-                and context.other_card:is_suit(card.ability.extra.suit))
+                and context.other_card:is_suit(card.ability.extra.suit)
+                and not context.end_of_round)
                 or context.forcetrigger
             then
                 return { chips = card.ability.extra.chips }

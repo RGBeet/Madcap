@@ -23,7 +23,7 @@ return {
         calculate = function(self, card, context)
             if context.joker_main then  
                 return {
-                    xchip = card.ability.extra.x_chips,
+                    xchips = card.ability.extra.x_chips,
                     xmult = card.ability.extra.x_mult
                 }
             end

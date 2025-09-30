@@ -7,13 +7,11 @@ return {
         mult    = 1.25,
         dollars = 8,
         boss_colour = HEX('ABB3FF'),
+        config  = { extra = { } },
         in_pool = function(self)
             return G.playing_cards and #MadLib.get_list_matches(G.playing_cards,function(v)
                 return v:get_id() == SMODS.Ranks[tostring(G.GAME.x_value)].id
             end) > 4 or Madcap.Data.devmode
-        end,
-        loc_vars = function(self, info_queue, card)
-            return  MadLib.collect_vars(number_format(card.ability.extra.mult_increase), localize(string.lower("k_" .. SMODS.Rarities[self.config.immutable.min_rarity].key)))
         end,
         debuff_hand = function(self, cards, hand, handname, check)
             if not G.GAME.blind.disabled then

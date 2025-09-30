@@ -12,15 +12,14 @@ return {
         cost    = 4,
         aurinko = false,
         config = {
-            hands 			= { 'Five of a Kind', MadLib.SpectrumId..'Spectrum Five' },
-            subhands		= { 'Light' },
+            subhands		= { 'ml_sh_enhanced' },
             level_factor	= 1
         },
         set_card_type_badge = function(self, card, badges)
             badges[1] = create_badge(localize("k_planet"), get_type_colour(self or card.config, card), nil, 1.2)
         end,
         loc_vars = function(self, info_queue, center)
-            return Madcap.Funcs.get_spatia_vars(self.config.hands,self.config.subhands)
+            return Madcap.Funcs.get_spatia_vars(self.config.subhands)
         end,
         can_use = function(self, card)
             return true

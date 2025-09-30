@@ -1,4 +1,3 @@
-
 return {
     data = {
         object_type = "Joker",
@@ -20,42 +19,49 @@ return {
         end,
         calculate = function(self, card, context)
             if context.before or context.forcetrigger then
-                local add = SMODS.pseudorandom_probability(card, 'nope_joker', 1, card.ability.extra.odds, "Nope.jkr") and 1
-                    or SMODS.pseudorandom_probability(card, 'nope_joker', 1, card.ability.extra.odds2, "Nope.jkr") and -1
-                    or 0
+
+                local good_odds = SMODS.pseudorandom_probability(card, 'nope_joker', 1, card.ability.extra.odds, "nope_jkr_pos") and 1
+                local bad_odds  = SMODS.pseudorandom_probability(card, 'nope_joker', 1, card.ability.extra.odds, "nope_jkr_neg") and 1
                 local discarding = context.pre_discard and true or false
 
-                if add ~= 0 then
-                    if discarding then -- hand
-                        ease_discard(add)
-                    else -- discard
-                        ease_hands_played(add)
-                    end
-                end
+                local amount = (good_odds and card.ability.extra.add)
+                    or (bad_odds and -card.ability.extra.add)
+                    or 0
 
-                if add == 0 then --
-                    return {
-                        message = localize("k_nope_ex"),
-                        colour  = discarding and G.C.RED or G.C.BLUE
-                    }
-                elseif add == 1 then -- add
-                    return {
-                        message = localize({
-                            type = "variable",
-                            key = "a_" .. (discarding and "discard" or "hand") .. "_plus",
-                            colour  = discarding and G.C.RED or G.C.BLUE,
-                            vars = { add }
-                        }),
-                    }
-                else -- subtract
-                    return {
-                        message = localize({
-                            type = "variable",
-                            key = "a_" .. (discarding and "discard" or "hand") .. "_minus",
-                            colour  = discarding and G.C.RED or G.C.BLUE,
-                            vars = { add }
-                        }),
-                    }
+                if amount ~= 0 then
+                    if discarding then
+                        if G.GAME.temporary_discards + amount < G.GAME.max_temp_discards then
+                            Madcap.Funcs.ease_temp_discards(amount, false, false)
+                        else
+                            ease_discard(amount)
+                        end
+                    else
+                        if G.GAME.temporary_hands + amount < G.GAME.max_temp_hands then
+                            Madcap.Funcs.ease_temp_hands(amount, false, false)
+                        else
+                            ease_hands_played(amount)
+                        end
+                    end
+
+                    if good_odds then
+                        return {
+                            message = localize({
+                                type = "variable",
+                                key = "a_" .. (discarding and "discard" or "hand") .. "_plus",
+                                colour  = discarding and G.C.RED or G.C.BLUE,
+                                vars = { add }
+                            }),
+                        }
+                    else
+                        return {
+                            message = localize({
+                                type = "variable",
+                                key = "a_" .. (discarding and "discard" or "hand") .. "_minus",
+                                colour  = discarding and G.C.RED or G.C.BLUE,
+                                vars = { add }
+                            }),
+                        }
+                    end
                 end
             end
         end,

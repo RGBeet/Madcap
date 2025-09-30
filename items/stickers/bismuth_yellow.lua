@@ -13,6 +13,7 @@ return {
         loc_vars = function(self, info_queue, card)
             return MadLib.collect_vars(fix_value(card))
         end,
+        config = { extra = { edit_factor = 1 } },
         should_apply = false,
         apply = function(self, card, val)
         end,

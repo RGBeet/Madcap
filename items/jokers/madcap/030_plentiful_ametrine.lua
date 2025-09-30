@@ -10,7 +10,7 @@ return {
             extra = { odds = 4, mult = 0, mult_mod = 4, suit = 'rgmc_goblets' }
         },
         loc_vars = function(self, info_queue, card)
-            local _numer, _denom = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'vari_seala')
+            local _numer, _denom = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'plentiful_ametrine')
             return MadLib.collect_vars(
                     number_format(_numer),
                     number_format(_denom),
@@ -46,7 +46,7 @@ return {
             -- reset at end of ante
             if
                 context.end_of_round
-                and context.blind.boss
+                and (context.blind and context.blind.boss)
                 and not context.individual
                 and not context.repetition
             then

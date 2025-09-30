@@ -18,7 +18,11 @@ MadLib.RankManipulation = {}
 MadLib.FaceManipulation = {}
 
 function MadLib.is_rank(card,id,bypass_rankless,base_id)
-    base_id = base_id or card.base.id
+    base_id = base_id or (card and card.base.id)
+    if not base_id then
+        tell('Card is nil?')
+        return false
+    end
     if G.jokers then
         MadLib.loop_func(G.jokers.cards, function(v)
             local info = MadLib.RankManipulation[v.config.center.key]
@@ -58,7 +62,7 @@ function MadLib.has_even_rank(card)
     print(MadLib.RankTypes.Even)
     return not SMODS.has_no_rank(card)
         and MadLib.list_matches_one(MadLib.RankTypes.Even, function(v) 
-            return MadLib.is_rank(card,MadLib.rank_to_id(v))
+            return MadLib.is_rank(card,SMODS.Ranks[v].id)
         end)
 end
 
@@ -67,7 +71,7 @@ function MadLib.has_fib_rank(card)
     print(MadLib.RankTypes.Fibonacci)
     return not SMODS.has_no_rank(card)
         and MadLib.list_matches_one(MadLib.RankTypes.Fibonacci, function(v) 
-            return MadLib.is_rank(card,MadLib.rank_to_id(v))
+            return MadLib.is_rank(card,SMODS.Ranks[v].id)
         end)
 end
 

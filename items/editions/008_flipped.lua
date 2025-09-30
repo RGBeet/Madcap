@@ -22,7 +22,7 @@ return {
                 (context.main_scoring and context.cardarea == G.play)
             then
             local blind_base = get_blind_amount(G.GAME.round_resets and G.GAME.round_resets.ante or 1)
-                return { score = blind_base * (self.config.extra.factor or 0.1) }
+                return { ascore = blind_base * (self.config.extra.factor or 0.1) }
             end
         end,
     }

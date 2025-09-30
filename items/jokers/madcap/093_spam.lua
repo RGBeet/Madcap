@@ -27,15 +27,12 @@ return {
         end,
         calculate = function(self, card, context)
             if context.joker_main or context.forcetrigger then
+                local sound_effect = math.random(1,3)
                 return {
                     message = localize("rgmc_spam_ex"),
                     chip_mod = lenient_bignum(card.ability.extra.chips),
                     mult_mod = lenient_bignum(card.ability.extra.mult),
-                    func = function()
-                        local sound_effect = math.random(1, 4)
-                        play_sound('rgmc_spam'..tostring(sound_effect), 1, 1)
-                        return true
-                    end
+                    sound = 'rgmc_spam'..tostring(sound_effect),
                 }
             end
             if Madcap.Funcs.banana_context(context) then

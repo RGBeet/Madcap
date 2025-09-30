@@ -10,7 +10,7 @@ return {
         atlas   = "potentia",
         pos     = MLIB.coords(0,2),
         cost    = 8,
-        config  = { subhand = 'High', levels = 1 },
+        config  = { subhand = 'ml_sh_high', levels = 1 },
         aurinko = true,
         loc_vars = function(self, info_queue, center)
             return Madcap.Funcs.get_potentia_vars(self.config.subhand, self.config.levels)

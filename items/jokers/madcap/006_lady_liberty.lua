@@ -19,18 +19,30 @@ return {
         end,
         calculate = function(self, card, context)
             if
-                context.before
-                and G.GAME.current_round.hands_played == 0  -- first round only!
+                (context.before
+                and context.scoring_hand
+                and G.GAME.current_round.hands_played == 0)
+                or (context.forcetrigger and G.hand.cards)
             then
-                local shuffled = MadLib.shuffle_sort_list(context.scoring_hand, math.min(card.ability.extra.seals, card.ability.immutable.max_seals), function(v)
-                    return not v.seal
-                end)
+                local area = context.forcetrigger and G.hand.cards or context.scoring_hand or {}
+                local n, max = 0, math.min(card.ability.extra.seals, card.ability.immutable.max_seals)
+                local targets = {}
 
-                MadLib.loop_check_func_limited(shuffled, function(v)
-                    return true
-                end, function(v)
-                    MadLib.seal_event(v,'rgmc_patina')
-                end, card.ability.extra.seals)
+                for i=1, #area do
+                    if not area[i].seal then
+                        n = n + 1
+                        targets[n] = area[i]
+                        if not (n < max) then break end
+                    end
+                end
+                MadLib.loop_func(targets, function(v)
+                    MadLib.simple_event(function()
+                        v:set_seal('rgmc_patina', true)
+                        v:juice_up(0.3,0.3)
+                        play_sound('tarot2', 1.2, 0.4)
+                        return true
+                    end, 0.4, 'immediate')
+                end)
             end
         end,
         demicoloncompat = true,

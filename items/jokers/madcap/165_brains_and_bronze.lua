@@ -20,9 +20,10 @@ return {
                 context.individual
                 and context.cardarea == G.play
             then
-                if context.other_card.seal == 'rgmc_cuprum_seal' then
+                print(context.other_card.seal)
+                if context.other_card.seal == 'rgmc_bronze' then
                     return { repetitions = card.ability.extra.repetitions*2 }
-                elseif context.other_card.seal == 'rgmc_patina_seal' then
+                elseif context.other_card.seal == 'rgmc_patina' then
                     return { repetitions = card.ability.extra.repetitions }
                 end
             end

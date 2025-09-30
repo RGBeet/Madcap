@@ -20,17 +20,25 @@ return {
                 and G.GAME.current_round.discards_used == 0)
                 or (context.forcetrigger and G.hand.cards)
             then -- first discard = apply bronze seal and 15 bonus chips
-                local area = context.discard and G.hand.highlighted or G.hand.cards
-                MadLib.loop_check_func_limited(area, function(v)
-                    return not v.seal
-                end, function(v)
+                local area = context.forcetrigger and G.hand.cards or G.hand.highlighted or {}
+                local n, max = 0, math.min(card.ability.extra.seals, card.ability.immutable.max_seals)
+                local targets = {}
+
+                for i=1, #area do
+                    if not area[i].seal then
+                        n = n + 1
+                        targets[n] = area[i]
+                        if not (n < max) then break end
+                    end
+                end
+                MadLib.loop_func(targets, function(v)
                     MadLib.simple_event(function()
-                        v:set_seal('rgmc_cuprum', true)
+                        v:set_seal('rgmc_cuprum_seal', true)
                         v:juice_up(0.3,0.3)
                         play_sound('tarot2', 1.2, 0.4)
                         return true
-                    end, 0.4, 'before')
-                end, math.min(card.ability.extra.seals, card.ability.immutable.max_seals))
+                    end, 0.4, 'immediate')
+                end)
             end
         end,
         demicoloncompat = true,
