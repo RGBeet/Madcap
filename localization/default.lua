@@ -2153,6 +2153,138 @@ return {
                     },
                 },
             },
+            -- 151-200
+            j_rgmc_happy_hour = {
+                name = "Happy Hour",
+                text = {
+                    "Held {V:1}#1#",
+                    "give {C:chips}+#2#{} Chips",
+                    "Discarding {V:1}#1#",
+                    "reduces value by {C:blue}-#3#",
+                    "{C:ianctive}(Revert to {C:blue}+#4#",
+                    "{C:inactive}at start of blind)"
+                },
+            },
+            j_rgmc_point_and_click = {
+                name = "Point and Click",
+                text = {
+                    "If {C:attention}first hand{} of round is",
+                    "a single {V:1}#1#{}, destroy a",
+                    "random {C:attention}held card"
+                },
+            },
+            j_rgmc_green_thumb = {
+                name = "Green Thumb",
+                text = {
+                    "At end of {C:attention}blind{}",
+                    "earn {C:money}$#1#{} for",
+                    "every held {V:1}#2#{} card"
+                },
+            },
+            j_rgmc_en_passant = {
+                name = "En Passant",
+                text = {
+                    "If {C:attention}first hand{} of round is",
+                    "a single {V:1}#1#{}, gain",
+                    "{C:attention}+#1#{} hand size",
+                    "for the round",
+                    "{C:inactive}Currently {C:attention}+#3#{C:inactive} hand size)"
+                },
+            },
+            j_rgmc_maple_donut = {
+                name = "Maple Donut",
+                text = {
+                    "{X:green,C:white}X#1#{} Numerator",
+                    "{C:inactive}(#2# bites left)"
+                },
+            },
+            j_rgmc_commedia = {
+                name = "Commedia",
+                text = {
+                    "{C:mult}+#1#{} Mult",
+                    "Costs {C:money}$#2#{} to remove",
+                },
+            },
+            j_rgmc_mulch = {
+                name = "Mulch",
+                text = {
+                    "If played hand",
+                    "contains {C:attention}5{} cards with",
+                    "a high {C:attention}#1#",
+                    "and a low {C:attention}#2#,",
+                    "it is considered",
+                    "a {C:attention}#3#"
+                },
+            },
+            j_rgmc_cheese_manor = {
+                name = "Cheese Manor",
+                text = {
+                    "Gives half the",
+                    "{C:attention}base mult",
+                    "of your {C:attention}last played",
+                    "poker hand",
+                    "{C:inactive}(Currently{C:attention}#3#",
+                    "{C:inactive}and {C:mult}+#2#{C:inactive} Mult)"
+                },
+            },
+            j_rgmc_klondike = {
+                name = "Klondike",
+                text = {
+                    "Scoring cards with",
+                    "{C:attention}money{} enhancements gain",
+                    "{C:blue}+#1#{} permanent bonus chips",
+                    "{C:green}#2# in #3#{} chance to",
+                    "{C:attention}melt{} at end of blind"
+                },
+            },
+            j_rgmc_numberjoker = {
+                name = "Numberjoker",
+                text = {
+                    "This Joker gains {C:mult}+#1#{} Mult",
+                    "whenever a {C:attention}non-face{} card",
+                    "is discarded",
+                    "Resets after playing a hand",
+                    "{C:inactive}(Currently {C:chips}+#2#{C:inactive} Mult)"
+                },
+            },
+            j_rgmc_daybreak = {
+                name = "Daybreak",
+                text = {
+                    "{X:mult,C:white}X#1#{} Mult if played hand",
+                    "is {C:rgmc_light}Light{} or {C:attention}High{}",
+                    "{X:mult,C:white}X#2#{} Mult if played hand",
+                    "contain {C:attention}both{} subhands"
+                },
+            },
+            j_rgmc_nightfall = {
+                name = "Nightfall",
+                text = {
+                    "{X:mult,C:white}X#1#{} Mult if played hand",
+                    "is {C:rgmc_dark}Dark{} or {C:attention}Low{}",
+                    "{X:mult,C:white}X#2#{} Mult if played hand",
+                    "contain {C:attention}both{} subhands"
+                },
+            },
+            j_rgmc_spider_solitaire = {
+                name = "Spider Solitaire",
+                text = {
+                    "If played hand contains a",
+                    "{C:attention}Straight{} with an",
+                    "alternating {C:rgmc_light}Light{}/{C:rgmc_dark}Dark{} pattern,",
+                    "it is considered a",
+                    "{C:attention}Straight Flush"
+                },
+            },
+            j_rgmc_aargon = {
+                name = "Aargon",
+                text = {
+                },
+            },
+            j_rgmc_aargon = {
+                name = "Aargon",
+                text = {
+                },
+            },
             -- Finity compat
             j_rgmc_finity_blindfold = {
                 name = "Beige Blindfold",
@@ -2833,8 +2965,8 @@ return {
 				name = "Aesthetic Card",
 				text = {
                     {
-                        "{C:mult}+4{} Mult",
-                        "Counts as an {C:attention}#1#",
+                        "{C:mult}+#1#{} Mult",
+                        "Counts as an {C:attention}#2#",
                         "of its {C:rgmc_bismuth}own suit{}",
                         "{C:inactive}(So Retro!)"
                     },

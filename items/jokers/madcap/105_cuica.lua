@@ -13,7 +13,7 @@ return {
             extra = { chips = 0, chip_mod = 8, rank = '2' }
         },
         loc_vars = function(self, info_queue, card)
-            return MadLib.collect_vars(number_format(card.ability.extra.chip_mod), 
+            return MadLib.collect_vars(number_format(card.ability.extra.chip_mod),
                 localize(card.ability.extra.rank or '2', 'ranks'),
                 number_format(card.ability.extra.chips))
         end,
