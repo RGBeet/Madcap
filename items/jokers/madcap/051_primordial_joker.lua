@@ -16,7 +16,7 @@ return {
         end,
         calculate = function(self, card, context)
             if context.joker_main or context.forcetrigger then
-                return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddMult, card, card.ability.extra.mult * (G.GAME and G.GAME.mayhem or 0))
+                return { mult = card.ability.extra.mult * (G.GAME and G.GAME.mayhem or 0) }
             end
         end,
         in_pool = function(self, args) -- at least 1 Mayhem

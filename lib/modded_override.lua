@@ -1,3 +1,7 @@
+local big_juice = function(card)
+    card:juice_up(0.7)
+end
+
 -- TOGA'S Stuff
 if next(SMODS.find_mod("TOGAPack")) then
 
@@ -234,7 +238,7 @@ if next(SMODS.find_mod("TOGAPack")) then
                         v.base.times_played = v.base.times_played + 1
                         v.ability.played_this_ante = true
                         G.GAME.round_scores.cards_played.amt = G.GAME.round_scores.cards_played.amt + 1
-                        draw_card(G.deck, G.play, i*100 / #sms_deck, 'up', nil, v)
+                        draw_card(G.deck, G.play, v2*100 / #sms_deck, 'up', nil, v)
                     end
                 end
             end)
@@ -882,14 +886,22 @@ if next(SMODS.find_mod("Bunco")) then
         group = group or G.playing_cards
         if not group then return '2' end
         local min_nominal = 9999
-        local rank = '2'
+        local rank  = '2'
+        local rank2 = nil 
 
         MadLib.loop_func(group, function(v)
             if SMODS.has_no_rank(v) then return end
-            local nominal = MadLib.get_rank_nominal(MadLib.get_value(v))
-            if nominal < min_nominal then
+            local nominal = nil
+            for _, r in pairs(SMODS.Ranks) do
+                if MadLib.is_rank(v, r.id) then
+                    rank2       = r.key
+                    nominal     = r.nominal + (r.face_nominal or 0)
+                    break
+                end
+            end
+            if nominal and nominal < min_nominal then
                 min_nominal = nominal
-                rank = MadLib.get_value(v)
+                rank        = rank2
             end
         end)
 
@@ -925,7 +937,7 @@ if next(SMODS.find_mod("Bunco")) then
                         v:flip();
                         play_sound('tarot2', 1, 0.6);
                         big_juice(card);
-                        other_card:juice_up(0.3, 0.3);
+                        v:juice_up(0.3, 0.3);
                         return true
                     end, 0.15, 'after')
                     if condition then delay(0.7 * 1.25) end

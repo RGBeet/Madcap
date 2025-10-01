@@ -1226,10 +1226,9 @@ return {
                 name = "Jestrogen",
                 text = {
                     "If played hand contains a",
-                    "{C:attention}#1#{} or {C:attention}#2#{}",
+                    "{C:attention}#1#{} or {C:attention}#2#{},",
                     "{C:attention}retrigger{} all",
-                    "scored {C:attention}#3#s",
-                    "{C:attention}#4#{} time(s)"
+                    "scored #3#s {C:attention}#4#{} time(s)"
                 },
             },
             j_rgmc_radioactive_chinese = {
@@ -4448,13 +4447,6 @@ return {
                     "create a {C:cosmatarot}Cogito Tag{}",
                 },
 			},
-			tag_rgmc_twofer = {
-				name = "Twofer Tag",
-                text = {
-                    "Adds {C:attention}2 {C:voucher}Vouchers",
-                    "to the next shop"
-                }
-			},
             tag_promotion = {
                 name = "Promotion Tag",
                 text = {
@@ -4542,14 +4534,14 @@ return {
 					"becomes {C:dark_edition}Luxury{}",
 				},
             },
-			tag_rgmc_xchips = {
+			tag_rgmc_chippy = {
 				name = "Chippy Tag",
 				text = {
 					"Gain {X:chips,C:white}X#1#{} Chips",
 					"during the {C:attention}next blind{}"
 				},
 			},
-			tag_rgmc_xmult = {
+			tag_rgmc_multy = {
 				name = "Multy Tag",
 				text = {
 					"Gain {X:mult,C:white}X#1#{} Mult",
@@ -4674,36 +4666,7 @@ return {
                     "{C:inactive}(Will give {C:money}$#2#{C:inactive})",
                 }
             },
-            tag_rgmc_target_mk1 = {
-				name = "Reward Tag I",
-				text = {
-					"Gives a free",
-					"{C:attention}R.G. Booster{}"
-				},
-			},
-            tag_rgmc_target_mk2 = {
-				name = "Reward Tag II",
-				text = {
-					"Gives a free",
-					"{C:attention}Mega R.G. RGBooster{}"
-				},
-			},
-            tag_rgmc_anti_target_mk1 = {
-				name = "Punish AnTag I",
-				text = {
-					"At end of Blind,",
-                    "create a random {C:attention}AnTag{}"
-				},
-			},
-            tag_rgmc_anti_target_mk2 = {
-				name = "Punish AnTag II",
-				text = {
-					"At end of Blind,",
-                    "level down #1#,",
-                    "random poker hands"
-				},
-			},
-            tag_promotion = {
+            tag_rgmc_promotion = {
                 name = "Promotion Tag",
                 text = {
                     "After defeating",
@@ -4711,7 +4674,7 @@ return {
                     "gain {C:rgmc_luxury}£#1#"
                 }
             },
-            tag_twofer = {
+            tag_rgmc_twofer = {
                 name = "Twofer Tag",
                 text = {
                     "Adds {C:attention}#1#{} {C:voucher}Vouchers",

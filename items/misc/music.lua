@@ -9,21 +9,21 @@ local list = {
 	return G.GAME
 		and G.GAME.modifiers.rgmc_deck
 		and G.shop
-		and 2
+		and 3
 	end, 0.8, true),
 
     Madcap.Funcs.GetMusic('music_madcap_booster',function()
 	return G.GAME
 		and G.GAME.modifiers.rgmc_deck
 		and Madcap.Funcs.is_choosing_card()
-		and 2
+		and 4
 	end, 0.8, true),
 
     Madcap.Funcs.GetMusic('music_madcap_celestial',function()
 	return G.GAME
 		and G.GAME.modifiers.rgmc_deck
 		and Madcap.Funcs.is_choosing_celestial()
-		and 2
+		and 4
 	end, 0.8, true),
 
     Madcap.Funcs.GetMusic('music_madcap_boss',function()
@@ -41,7 +41,7 @@ local list = {
 					and (G.jokers.cards[i].config.center.rarity == "rgmc_unusual"
 					or G.jokers.cards[i].config.center.rarity == "rgmc_chaotic")
 				then
-					return math.huge
+					return 9999
 				end
 			end
 		end

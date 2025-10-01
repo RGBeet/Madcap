@@ -19,7 +19,10 @@ return {
             return false -- AnTags don't appear normally.
         end,
         apply = function(self, tag, context)
-            if context.type == self.config.type then
+            if 
+                context.type == self.config.type
+                and G.GAME.current_round.hands_played == 0
+            then
                 tag:yep('+'..tostring(self.config.extra.blind_increase), G.C.RED, function() return true end)
                 Madcap.Funcs.show_tag_effect_text("Blind Increased!")
                 G.GAME.blind:multiply_chips(1 + (self.config.blind_increase or 0.5))

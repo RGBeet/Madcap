@@ -901,11 +901,12 @@ function Madcap.Funcs.ease_mayhem(_mod, _check, _silent, _instant)
         local text  = add_mayhem and '+' or ''
         local col   = (add_mayhem and G.C.RGMC_MAYHEM) or (lose_mayhem and G.C.RED) or G.C.FILTER
 
-		local _old = (G.GAME.mayhem or 0)
-        G.GAME.mayhem = _old + _mod
-        if G.GAME.mayhem > G.GAME.max_mayhem then _mod = G.GAME.max_mayhem - (G.GAME.mayhem + _mod) end
-
-        if round_UI then
+		if (G.GAME.mayhem + _mod) > G.GAME.max_mayhem then		
+        	_mod = _mod - (G.GAME.mayhem + _mod - G.GAME.max_mayhem) 
+        end
+		if _mod == 0 then return end
+        
+		if round_UI then
             G.HUD:recalculate()
             if MadLib.is_animation_enabled() then
                 attention_text({
@@ -919,7 +920,7 @@ function Madcap.Funcs.ease_mayhem(_mod, _check, _silent, _instant)
             end
         end
 
-		local _new = lenient_bignum(_old + _mod)
+		G.GAME.mayhem			= G.GAME.mayhem + _mod
 		local mayhem_state 		= Madcap.Funcs.get_mayhem_state(recalculate)
 		local sound 			= 'rgmc_mayhem_t' .. tostring(math.max(1,math.min(3,mayhem_state)))
 
@@ -942,7 +943,6 @@ function Madcap.Funcs.ease_mayhem(_mod, _check, _silent, _instant)
 		if mayhem_state ~= G.GAME.mayhem_state then
 			G.GAME.mayhem_state = mayhem_state
 		end
-
 
         SMODS.calculate_context({ mayhem_changed = G.GAME.mayhem })
         if _check then Madcap.Funcs.read_mayhem() end -- does post-setting calculations (if requested)
@@ -1316,19 +1316,20 @@ function Madcap.Funcs.clamp_mayhem(m)
 	return (mayhem + mod > 0 and mayhem + mod <= max_mayhem) and m or (mod < 0) and -mayhem or (max_mayhem - mayhem)
 end
 
-function Madcap.Funcs.calculate_mayhem_decay(max_mult)
-	-- Mayhem decay
-	local mayhem = G.GAME.mayhem or 0
-	local max_mayhem_mult = max_mult or 1.10
-	local mayhem_mult = MadLib.clamp(G.GAME.mayhem_decay or 0.85, 0.5, max_mayhem_mult)
+function Madcap.Funcs.get_starting_deck_size()
+	return 52
+end
 
-	local voids, lanterns, modded_suits, base_suits,enhancements,editions,seals = 0,0,0,0,0,0,0
-	local suits = {}
+function Madcap.Funcs.get_mayhem_data()
 
+	-- Get stuff from cards
+	local voids,lanterns,modded_suits, base_suits,enhancements,editions,seals = 0,0,0,0,0,0,0
+	local suits,ranks = {},{}
 	MadLib.loop_func(G.playing_cards, function(v)
 		-- Voids add more Mayhem than other suits.
-		suits[v.base.suit] = true
-		suits[v.base.suit] = true
+		suits[v.base.suit] 	= true
+		ranks[v.base.value] = true
+
 		local check_modded = true
 		if v:is_suit('rgmc_voids') then
 			voids = voids + 1
@@ -1347,6 +1348,7 @@ function Madcap.Funcs.calculate_mayhem_decay(max_mult)
 		else
 			base_suits = base_suits + 1 -- hearts/diamonds/spades/clubs
 		end
+
 		if v.config.center.key ~= 'c_base' then -- has an enhancement
 			enhancements = enhancements + 1
 		end
@@ -1358,38 +1360,50 @@ function Madcap.Funcs.calculate_mayhem_decay(max_mult)
 		end
 	end)
 
-	local starting_cards = 52 -- TODO: modify for decks that start out with fewer cards
+	-- How many cards does the player have?
+	local card_offset = math.abs(#G.playing_cards - Madcap.Funcs.get_starting_deck_size())
+	local suit_offset = math.abs(#suits - 4)
 
-	local sc_deviation = math.abs(#G.playing_cards - starting_cards)
-	--mayhem_mult = mayhem_mult * 0.9 * (1.01 ^ sc_deviation)
+	-- How many cards does the player have?
+	local jokers = (G.jokers and #G.jokers.cards) or 0
 
-	local exponentials = {
-		{n1 = 1.050, n2 = voids },
-		{n1 = 0.925, n2 = lanterns },
-		{n1 = 1.025, n2 = modded_suits },
-		{n1 = 1.020, n2 = base_suits },
-		{n1 = 1.025, n2 = editions },
-		{n1 = 1.015, n2 = enhancements },
-		{n1 = 1.005, n2 = seals },
-		{n1 = 1.005, n2 = sc_deviation },
+	return {
+		voids 			= { amount = voids, mult = 1/50 },
+		lanterns 		= { amount = lanterns, mult =  -1/100 },
+		modded_suits 	= { amount = modded_suits, mult = 1/100 },
+		base_suits		= { amount = base_suits, mult = -1/200 },
+		enhancements	= { amount = enhancements, mult = 1/10 },
+		editions		= { amount = editions, mult = 1/5 },
+		seals			= { amount = seals, mult = 1/20 },
+		card_offset		= { amount = card_offset, mult = 1/50 },
+		suit_offset		= { amount = suit_offset, mult = 1/20 },
+		jokers			= { amount = jokers, mult = 1/20 }
 	}
 
-	MadLib.loop_func(exponentials, function(v)
-		local result = mayhem_mult * (v.n1 ^ v.n2)
-		tell(tostring(mayhem_mult) .. " * " .. "( " .. tostring(v.n1) .. " ^ " .. tostring(v.n2) .. " ) = " .. tostring(result))
-		mayhem_mult = result
+end
+
+function Madcap.Funcs.calculate_mayhem_add()
+	-- Mayhem decay
+	local mayhem = G.GAME.mayhem or 0
+	local max_mayhem_mult = 1.1
+	local mayhem_decay = G.GAME.mayhem_decay or 0.85
+
+	local total = 0
+	local data = Madcap.Funcs.get_mayhem_data() -- done this way so other mods can add on
+
+	MadLib.loop_table(data, function(k,v)
+		total = total + (v.amount * v.mult)
+		tell(k .. ' - Add ' .. tostring(v.amount) .. ' * ' .. tostring(v.mult))
 	end)
 
-	local mayhem_product = MadLib.round(math.max(0.5, math.min(mayhem_mult, max_mayhem_mult)), 2)
-	tell('Final Mayhem product is ' .. tostring(mayhem_product) .. '.')
-
-	return MadLib.round(mayhem - math.min(mayhem - (mayhem * mayhem_product), mayhem), 2)
+	local mayhem_add = MadLib.round(MadLib.clamp(total, -5, 5), 2)
+	tell('+Mayhem is ' .. tostring(mayhem_add) .. '.')
+	return mayhem_add
 end
 
 function Madcap.Funcs.blind_end_mayhem_check()
 
-	local mayhem_add = Madcap.Funcs.calculate_mayhem_decay()
-	Madcap.Funcs.set_mayhem(mayhem_add, true, false)
+	Madcap.Funcs.ease_mayhem(Madcap.Funcs.calculate_mayhem_add())
 	local mayhem_state = G.GAME.mayhem_state or 0
 	Madcap.Funcs.read_mayhem()
 
@@ -2433,7 +2447,7 @@ function evaluate_poker_hand(hand)
     -- Force poker hand.
     if not forced then
 		-- Waveworx
-		if G.GAME.force_poker_hand then MadLib.force_poker_hand(G.GAME.force_poker_hand) end
+		if G.GAME.force_poker_hand then MadLib.force_poker_hand(results, G.GAME.force_poker_hand) end
 
 		-- Mulch
 		local mulch = next(SMODS.find_card('j_rgmc_mulch'))
@@ -3290,8 +3304,8 @@ loop_keys_add({ 'extra_value', 'hands_played_at_create' },
 
 if next(SMODS.find_mod("Pacdam")) or next(SMODS.find_mod("pacdam")) then
 	tell('Pacdam loaded!')
-	Madcap.MayhemValues['AddPow'] = { factor = 0.8, level = 2, multiply = true }
-	loop_keys_add({ 'pow', 'pow_mod', 'perma_pow' },
+	Madcap.MayhemValues['AddPow'] = { factor = 0.5, level = 2, multiply = true }
+	loop_keys_add({ 'pow', 'pow_mod', 'perma_pow', 'pow_decay' },
 		Madcap.MayhemConversions,  mlibmv['AddPow'])
 end
 
@@ -4626,227 +4640,6 @@ Madcap.CustomCashouts = {
 
 }
 
---[[
-function create_UIBox_HUDD()
-    local scale = 0.4
-    local stake_sprite = get_stake_sprite(G.GAME.stake or 1, 0.5)
-
-    local contents = {}
-
-    local spacing = 0.13
-    local temp_col = G.C.DYN_UI.BOSS_MAIN
-    local temp_col2 = G.C.DYN_UI.BOSS_DARK
-            contents.round = {
-                {n=G.UIT.R, config={align = "cm"}, nodes={
-                    {n=G.UIT.C, config={id = 'hud_hands',align = "cm", padding = 0.05, minw = 1.45, colour = temp_col, emboss = 0.05, r = 0.1}, nodes={
-                  {n=G.UIT.R, config={align = "cm", minh = 0.33, maxw = 1.35}, nodes={
-                    {n=G.UIT.T, config={text = localize('k_hud_hands'), scale = 0.85*scale, colour = G.C.UI.TEXT_LIGHT, shadow = true}},
-                  }},
-                  {n=G.UIT.R, config={align = "cm", r = 0.1, minw = 1.2, colour = temp_col2}, nodes={
-                    {n=G.UIT.O, config={object = DynaText({string = {{ref_table = G.GAME.current_round, ref_value = 'hands_left'}}, font = G.LANGUAGES['en-us'].font, colours = {G.C.BLUE},shadow = true, rotate = true, scale = 2*scale}),id = 'hand_UI_count'}},
-                  }}
-                }},
-                {n=G.UIT.C, config={minw = spacing},nodes={}},
-                {n=G.UIT.C, config={align = "cm", padding = 0.05, minw = 1.45, colour = temp_col, emboss = 0.05, r = 0.1}, nodes={
-                  {n=G.UIT.R, config={align = "cm", minh = 0.33, maxw = 1.35}, nodes={
-                    {n=G.UIT.T, config={text = localize('k_hud_discards'), scale = 0.85*scale, colour = G.C.UI.TEXT_LIGHT, shadow = true}},
-                  }},
-                  {n=G.UIT.R, config={align = "cm"}, nodes={
-                    {n=G.UIT.R, config={align = "cm", r = 0.1, minw = 1.2, colour = temp_col2}, nodes={
-                      {n=G.UIT.O, config={object = DynaText({string = {{ref_table = G.GAME.current_round, ref_value = 'discards_left'}}, font = G.LANGUAGES['en-us'].font, colours = {G.C.RED},shadow = true, rotate = true, scale = 2*scale}),id = 'discard_UI_count'}},
-                    }}
-                  }},
-                }},
-              }},
-              {n=G.UIT.R, config={minh = spacing},nodes={}},
-              {n=G.UIT.R, config={align = "cm"}, nodes={
-                {n=G.UIT.C, config={align = "cm", padding = 0.05, minw = 1.45*2 + spacing, minh = 1.15, colour = temp_col, emboss = 0.05, r = 0.1}, nodes={
-                  {n=G.UIT.R, config={align = "cm"}, nodes={
-                    {n=G.UIT.C, config={align = "cm", r = 0.1, minw = 1.28*2+spacing, minh = 1, colour = temp_col2}, nodes={
-                      {n=G.UIT.O, config={object = DynaText({string = {{ref_table = G.GAME, ref_value = 'dollars', prefix = localize('$')}}, maxw = 1.35, colours = {G.C.MONEY}, font = G.LANGUAGES['en-us'].font, shadow = true,spacing = 2, bump = true, scale = 2.2*scale}), id = 'dollar_text_UI'}}
-                  }},
-                  }},
-                }},
-            }},
-            {n=G.UIT.R, config={minh = spacing},nodes={}},
-            {n=G.UIT.R, config={align = "cm"}, nodes={
-              {n=G.UIT.C, config={id = 'hud_ante',align = "cm", padding = 0.05, minw = 1.45, minh = 1, colour = temp_col, emboss = 0.05, r = 0.1}, nodes={
-                {n=G.UIT.R, config={align = "cm", minh = 0.33, maxw = 1.35}, nodes={
-                  {n=G.UIT.T, config={text = localize('k_ante'), scale = 0.85*scale, colour = G.C.UI.TEXT_LIGHT, shadow = true}},
-                }},
-                {n=G.UIT.R, config={align = "cm", r = 0.1, minw = 1.2, colour = temp_col2}, nodes={
-                  {n=G.UIT.O, config={object = DynaText({string = {{ref_table = G.GAME.round_resets, ref_value = 'ante'}}, colours = {G.C.IMPORTANT},shadow = true, font = G.LANGUAGES['en-us'].font, scale = 2*scale}),id = 'ante_UI_count'}},
-                  {n=G.UIT.T, config={text = " ", scale = 0.3*scale}},
-                  {n=G.UIT.T, config={text = "/ ", scale = 0.7*scale, colour = G.C.WHITE, shadow = true}},
-                  {n=G.UIT.T, config={ref_table = G.GAME, ref_value='win_ante', scale = scale, colour = G.C.WHITE, shadow = true}}
-                }},
-              }},
-              {n=G.UIT.C, config={minw = spacing},nodes={}},
-              {n=G.UIT.C, config={align = "cm", padding = 0.05, minw = 1.45, minh = 1, colour = temp_col, emboss = 0.05, r = 0.1}, nodes={
-                {n=G.UIT.R, config={align = "cm", maxw = 1.35}, nodes={
-                  {n=G.UIT.T, config={text = localize('k_round'), minh = 0.33, scale = 0.85*scale, colour = G.C.UI.TEXT_LIGHT, shadow = true}},
-                }},
-                {n=G.UIT.R, config={align = "cm", r = 0.1, minw = 1.2, colour = temp_col2, id = 'row_round_text'}, nodes={
-                  {n=G.UIT.O, config={object = DynaText({string = {{ref_table = G.GAME, ref_value = 'round'}}, colours = {G.C.IMPORTANT},shadow = true, scale = 2*scale}),id = 'round_UI_count'}},
-                }},
-              }},
-            }},
-    }
-
-    contents.hand =
-        {n=G.UIT.R, config={align = "cm", id = 'hand_text_area', colour = darken(G.C.BLACK, 0.1), r = 0.1, emboss = 0.05, padding = 0.03}, nodes={
-            {n=G.UIT.C, config={align = "cm"}, nodes={
-              {n=G.UIT.R, config={align = "cm", minh = 1.1}, nodes={
-                {n=G.UIT.O, config={id = 'hand_name', func = 'hand_text_UI_set',object = DynaText({string = {{ref_table = G.GAME.current_round.current_hand, ref_value = "handname_text"}}, colours = {G.C.UI.TEXT_LIGHT}, shadow = true, float = true, scale = scale*1.4})}},
-                {n=G.UIT.O, config={id = 'hand_chip_total', func = 'hand_chip_total_UI_set',object = DynaText({string = {{ref_table = G.GAME.current_round.current_hand, ref_value = "chip_total_text"}}, colours = {G.C.UI.TEXT_LIGHT}, shadow = true, float = true, scale = scale*1.4})}},
-                {n=G.UIT.T, config={ref_table = G.GAME.current_round.current_hand, ref_value='hand_level', scale = scale, colour = G.C.UI.TEXT_LIGHT, id = 'hand_level', shadow = true}}
-              }},
-              {n=G.UIT.R, config={align = "cm", minh = 1, padding = 0.1}, nodes={
-                {n=G.UIT.C, config={align = "cr", minw = 2, minh =1, r = 0.1,colour = G.C.UI_CHIPS, id = 'hand_chip_area', emboss = 0.05}, nodes={
-                    {n=G.UIT.O, config={func = 'flame_handler',no_role = true, id = 'flame_chips', object = Moveable(0,0,0,0), w = 0, h = 0}},
-                    {n=G.UIT.O, config={id = 'hand_chips', func = 'hand_chip_UI_set',object = DynaText({string = {{ref_table = G.GAME.current_round.current_hand, ref_value = "chip_text"}}, colours = {G.C.UI.TEXT_LIGHT}, font = G.LANGUAGES['en-us'].font, shadow = true, float = true, scale = scale*2.3})}},
-                    {n=G.UIT.B, config={w=0.1,h=0.1}},
-                }},
-                {n=G.UIT.C, config={align = "cm"}, nodes={
-                  {n=G.UIT.T, config={text = "X", lang = G.LANGUAGES['en-us'], scale = scale*2, colour = G.C.UI_MULT, shadow = true}},
-                }},
-                {n=G.UIT.C, config={align = "cl", minw = 2, minh=1, r = 0.1,colour = G.C.UI_MULT, id = 'hand_mult_area', emboss = 0.05}, nodes={
-                  {n=G.UIT.O, config={func = 'flame_handler',no_role = true, id = 'flame_mult', object = Moveable(0,0,0,0), w = 0, h = 0}},
-                  {n=G.UIT.B, config={w=0.1,h=0.1}},
-                  {n=G.UIT.O, config={id = 'hand_mult', func = 'hand_mult_UI_set',object = DynaText({string = {{ref_table = G.GAME.current_round.current_hand, ref_value = "mult_text"}}, colours = {G.C.UI.TEXT_LIGHT}, font = G.LANGUAGES['en-us'].font, shadow = true, float = true, scale = scale*2.3})}},
-                }}
-              }}
-            }}
-          }}
-    contents.dollars_chips = {n=G.UIT.R, config={align = "cm",r=0.1, padding = 0,colour = G.C.DYN_UI.BOSS_MAIN, emboss = 0.05, id = 'row_dollars_chips'}, nodes={
-      {n=G.UIT.C, config={align = "cm", padding = 0.1}, nodes={
-        {n=G.UIT.C, config={align = "cm", minw = 1.3}, nodes={
-          {n=G.UIT.R, config={align = "cm", padding = 0, maxw = 1.3}, nodes={
-            {n=G.UIT.T, config={text = localize('k_round'), scale = 0.42, colour = G.C.UI.TEXT_LIGHT, shadow = true}}
-          }},
-          {n=G.UIT.R, config={align = "cm", padding = 0, maxw = 1.3}, nodes={
-            {n=G.UIT.T, config={text =localize('k_lower_score'), scale = 0.42, colour = G.C.UI.TEXT_LIGHT, shadow = true}}
-          }}
-        }},
-        {n=G.UIT.C, config={align = "cm", minw = 3.3, minh = 0.7, r = 0.1, colour = G.C.DYN_UI.BOSS_DARK}, nodes={
-          {n=G.UIT.O, config={w=0.5,h=0.5 , object = stake_sprite, hover = true, can_collide = false}},
-          {n=G.UIT.B, config={w=0.1,h=0.1}},
-          {n=G.UIT.T, config={ref_table = G.GAME, ref_value = 'chips_text', lang = G.LANGUAGES['en-us'], scale = 0.85, colour = G.C.WHITE, id = 'chip_UI_count', func = 'chip_UI_set', shadow = true}}
-        }}
-      }}
-    }}
-
-    contents.buttons = {
-      {n=G.UIT.C, config={align = "cm", r=0.1, colour = G.C.CLEAR, shadow = true, id = 'button_area', padding = 0.2}, nodes={
-          {n=G.UIT.R, config={id = 'run_info_button', align = "cm", minh = 1.75, minw = 1.5,padding = 0.05, r = 0.1, hover = true, colour = G.C.RED, button = "run_info", shadow = true}, nodes={
-            {n=G.UIT.R, config={align = "cm", padding = 0, maxw = 1.4}, nodes={
-              {n=G.UIT.T, config={text = localize('b_run_info_1'), scale = 1.2*scale, colour = G.C.UI.TEXT_LIGHT, shadow = true}}
-            }},
-            {n=G.UIT.R, config={align = "cm", padding = 0, maxw = 1.4}, nodes={
-              {n=G.UIT.T, config={text = localize('b_run_info_2'), scale = 1*scale, colour = G.C.UI.TEXT_LIGHT, shadow = true, focus_args = {button = G.F_GUIDE and 'guide' or 'back', orientation = 'bm'}, func = 'set_button_pip'}}
-            }}
-          }},
-          {n=G.UIT.R, config={align = "cm", minh = 1.75, minw = 1.5,padding = 0.05, r = 0.1, hover = true, colour = G.C.ORANGE, button = "options", shadow = true}, nodes={
-            {n=G.UIT.C, config={align = "cm", maxw = 1.4, focus_args = {button = 'start', orientation = 'bm'}, func = 'set_button_pip'}, nodes={
-              {n=G.UIT.T, config={text = localize('b_options'), scale = scale, colour = G.C.UI.TEXT_LIGHT, shadow = true}}
-            }},
-          }}
-        }}
-    }
-
-    return {n=G.UIT.ROOT, config = {align = "cm", padding = 0.03, colour = G.C.UI.TRANSPARENT_DARK}, nodes={
-      {n=G.UIT.R, config = {align = "cm", padding= 0.05, colour = G.C.DYN_UI.MAIN, r=0.1}, nodes={
-        {n=G.UIT.R, config={align = "cm", colour = G.C.DYN_UI.BOSS_DARK, r=0.1, minh = 30, padding = 0.08}, nodes={
-          {n=G.UIT.R, config={align = "cm", minh = 0.3}, nodes={}},
-          {n=G.UIT.R, config={align = "cm", id = 'row_blind', minw = 1, minh = 3.75}, nodes={}},
-          contents.dollars_chips,
-          contents.hand,
-          {n=G.UIT.R, config={align = "cm", id = 'row_round'}, nodes={
-            {n=G.UIT.C, config={align = "cm"}, nodes=contents.buttons},
-            {n=G.UIT.C, config={align = "cm"}, nodes=contents.round}
-          }},
-        }}
-      }}
-    }}
-end
-]]
-
---[[
-function create_UIBox_HUD_blindd()
-  local scale = 0.4
-  local stake_sprite = get_stake_sprite(G.GAME.stake or 1, 0.5)
-  local has_blind_drawn = next(SMODS.find_card("j_aij_blind_drawn")) and type == 'Boss'
-  G.GAME.blind:change_dim(1.5,1.5)
-
-  return {n=G.UIT.ROOT, config={align = "cm", minw = 4.5, r = 0.1, colour = G.C.BLACK, emboss = 0.05, padding = 0.05, func = 'HUD_blind_visible', id = 'HUD_blind'}, nodes={
-      {n=G.UIT.R, config={align = "cm", minh = 0.7, r = 0.1, emboss = 0.05, colour = G.C.DYN_UI.MAIN}, nodes={
-        {n=G.UIT.C, config={align = "cm", minw = 3}, nodes={
-          {n=G.UIT.O, config={object = DynaText({string = {{ref_table = G.GAME.blind, ref_value = 'loc_name'}}, colours = {G.C.UI.TEXT_LIGHT},shadow = true, rotate = true, silent = true, float = true, scale = 1.6*scale, y_offset = -4}),id = 'HUD_blind_name'}},
-        }},
-      }},
-      {n=G.UIT.R, config={align = "cm", minh = 2.74, r = 0.1,colour = G.C.DYN_UI.DARK}, nodes={
-        {n=G.UIT.R, config={align = "cm", id = 'HUD_blind_debuff', func = 'HUD_blind_debuff'}, nodes={}},
-        {n=G.UIT.R, config={align = "cm",padding = 0.15}, nodes={
-          {n=G.UIT.O, config={object = G.GAME.blind, draw_layer = 1}},
-          {n=G.UIT.C, config={align = "cm",r = 0.1, padding = 0.05, emboss = 0.05, minw = 2.9, colour = G.C.BLACK}, nodes={
-            --{n=G.UIT.R, config={align = "cm", maxw = 2.8}, nodes={
-              --{n=G.UIT.T, config={text = localize('ph_blind_score_at_least'), scale = 0.3, colour = G.C.WHITE, shadow = true}}
-            --}},
-
-          }},
-        }},
-		}},
-    }}
-end
-]]
-
-
---[[
-	LUXURY POINT stuff
-]]
-
---[[
-function Madcap.Funcs.get_luxury_pts_ui()
-	if G.GAME.rgmc_luxury_pts == 0 then return nil end
-	local scale = 0.5
-	local pts_ui = {n = G.UIT.O, config = {
-		object = DynaText({
-			string = { { ref_table = G.GAME, ref_value = 'rgmc_luxury_pts', prefix = "£" } },
-			scale_function = function()
-				return scale_number(G.GAME.rgmc_luxury_pts, 1.3 * scale, 99999, 1000000)
-			end,
-			maxw = 1.3,
-			colours = { G.C.RGMC_LUXURY },
-			font = G.LANGUAGES['en-us'].font,
-			shadow = true,
-			spacing = 2,
-			bump = true,
-			scale = 1.3 * scale,
-		}),
-		id = 'luxury_pts_text_UI'
-		}
-	}
-	return {n=G.UIT.R, config={align = "cm", padding = 0.1, minw = 3.5, colour = G.C.DYN_UI.DARK, r = 0.1}, nodes={
-		{n=G.UIT.C, config = { align = "cm" }, nodes = {
-			{ n=G.UIT.O,
-				config = {
-					object = DynaText({
-						string = {{ string = localize('k_luxury_pts')..': ', colour = G.C.WHITE}},
-						colours = { G.C.RGMC_LUXURY },
-						scale = 1.0 * scale,
-						silent = true,
-						pop_delay = 4.5,
-						shadow = true,
-						maxw = 3,
-					})
-				}
-			},
-			pts_ui
-		}}
-	}}
-end
-]]
-
 -- convert cash to lp
 function cash_to_lp(m)
 	local lp = math.max(1, math.floor(m * 0.75))
@@ -4884,7 +4677,7 @@ function ease_lp(mod, instant)
 	local function _mod(mod)
 		local dollar_UI = G.HUD:get_UIE_by_ID('luxury_text_UI')
 			or nil
-		mod = mod or 0
+		mod = cash_to_lp(mod or 0)
 		local text = '+' .. localize('£')
 		local col = G.C.RGMC_LUXURY
 		if to_big(mod) < to_big(0) then
@@ -4895,7 +4688,6 @@ function ease_lp(mod, instant)
 		G.GAME.rgmc_luxury_pts = math.max(0, G.GAME.rgmc_luxury_pts + mod)
 		if dollar_UI then
 			dollar_UI.config.object.string = '£' .. number_format(G.GAME.rgmc_luxury_pts or 0)
-			G.SHOP_SIGN:recalculate()
 			--Popup text next to the chips in UI showing number of chips gained/lost
 			attention_text({
 				text = text .. tostring(math.abs(mod)),
@@ -4921,6 +4713,7 @@ function ease_lp(mod, instant)
 		}))
 	end
 end
+
 
 -- does it use LP?
 function Madcap.Funcs.uses_lp(card)

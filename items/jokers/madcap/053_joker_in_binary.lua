@@ -30,7 +30,7 @@ return {
                     or MadLib.is_rank(context.other_card, SMODS.Ranks[card.ability.extra.ranks[1]].id)
                     or MadLib.is_rank(context.other_card, SMODS.Ranks[card.ability.extra.ranks[2]].id)
                 then
-                    return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips, card, card.ability.extra.chips)
+                    return { chips = card.ability.extra.chips }
                 end
             end
         end,

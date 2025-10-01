@@ -17,7 +17,7 @@ end
 MadLib.RankManipulation = {}
 MadLib.FaceManipulation = {}
 
-function MadLib.is_rank(card,id,bypass_rankless,base_id)
+function MadLib.is_rank(card, id, bypass_rankless, base_id)
     base_id = base_id or (card and card.base.id)
     if not base_id then
         tell('Card is nil?')

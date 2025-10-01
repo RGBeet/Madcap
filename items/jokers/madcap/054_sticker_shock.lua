@@ -32,7 +32,7 @@ return {
                             return true
                         end, 0.1, 'immediate')
                     end)
-                    MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips, card, #stickers * card.ability.extra.chips)
+                    return { chips = #stickers * card.ability.extra.chips }
                 end
             end
         end,

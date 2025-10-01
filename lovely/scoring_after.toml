@@ -165,7 +165,7 @@ payload = """G.GAME.consumeable_usage_total.rgmc_cosma = G.GAME.consumeable_usag
 if card.config.center.set == 'CosmaTarot' then 
 
 G.GAME.consumeable_usage_total = G.GAME.consumeable_usage_total or {}
-G.GAME.consumeable_usage_total.akyrs_umbral = (G.GAME.consumeable_usage_total.rgmc_cosma or 0) + 1
+G.GAME.consumeable_usage_total.rgmc_cosma = (G.GAME.consumeable_usage_total.rgmc_cosma or 0) + 1
 
 G.E_MANAGER:add_event(Event({
         trigger = 'immediate',

@@ -316,7 +316,6 @@ function create_card(_type, area, legendary, _rarity, skip_materialize, soulable
 		end
 	end
 
-
 	return card
 end
 
@@ -444,70 +443,34 @@ function create_UIBox_HUD_blind()
 	return orig
 end
 
+local edit_uibox_ref = MadLib.edit_uibox_contents
+function MadLib.edit_uibox_contents(contents, scale)
+	local scale_mayhem = scale * (3/4)
+	contents = edit_uibox_ref(contents, scale)
+	for i=1,2 do
+		contents.buttons[1].nodes[i].config.minw = contents.buttons[1].nodes[i].config.minw * 0.75
+		contents.buttons[1].nodes[i].config.minh = contents.buttons[1].nodes[i].config.minh * 0.6
+	end
+	contents.dollars_chips = nil
+	table.insert(contents.buttons[1].nodes,{n=G.UIT.R, config={id = 'hud_mayhem',align = "cm", padding = 0.05, emboss = 0.05, r = 0.1, colour = G.C.DYN_UI.BOSS_MAIN}, nodes={
+		{n=G.UIT.R, config={align = "cm", minh = 0.33, maxw = 1.35 }, nodes={
+			{n=G.UIT.T, config={text = localize('rgmc_mayhem'), scale = scale_mayhem, colour = G.C.UI.TEXT_LIGHT, shadow = true}},
+		}},
+		{n=G.UIT.R, config={align = "cm", r = 0.1, minw = 1, colour = G.C.DYN_UI.BOSS_DARK }, nodes={
+			{n=G.UIT.O, config={object = DynaText({string = {{ref_table = G.GAME, ref_value = 'mayhem'}}, font = G.LANGUAGES['en-us'].font, colours = { G.C.RGMC_UNUSUAL }, shadow = true, rotate = true, scale = scale_mayhem * 2}), id = 'mayhem_UI_count'}},
+		}},
+		{n=G.UIT.R, config={align = "cm", colour = G.C.CLEAR}, nodes={
+			{n=G.UIT.T, config={text = '/', scale = scale_mayhem, colour = darken(G.C.UI.TEXT_LIGHT,0.3), shadow = true}},
+			{n=G.UIT.O, config={object = DynaText({string = {{ref_table = G.GAME, ref_value = 'max_mayhem'}}, font = G.LANGUAGES['en-us'].font, colours = {darken(G.C.RGMC_UNUSUAL,0.2)},shadow = true, rotate = true, scale = scale_mayhem}),id = 'max_mayhem_UI'}}
+		}}
+	}})
+	return contents
+end
+
 local uibox_ref = create_UIBox_HUD
 function create_UIBox_HUD()
 	local orig = uibox_ref()
 		--if not Entropy.DeckOrSleeve("doc") then return orig end
-    local scale = 0.4
-    local stake_sprite = get_stake_sprite(G.GAME.stake or 1, 0.5)
-
-    local contents = {}
-
-    local spacing = 0.13
-    local temp_col = G.C.DYN_UI.BOSS_MAIN
-    local temp_col2 = G.C.DYN_UI.BOSS_DARK
-
-
-    local qwerty = orig.nodes[1].nodes[1].nodes[3]
-
-    qwerty.nodes[1].nodes = nil
-
-	-- Shorten the run info button
-    if orig.nodes[1].nodes[1].nodes[5].nodes[1].nodes[1].nodes[1].config.id == "run_info_button" then
-    orig.nodes[1].nodes[1].nodes[5].nodes[1].nodes[1].nodes[1] = {n=G.UIT.C, config={id = 'run_info_button', align = "cm", minh = 1, minw = 1.5,padding = 0.05, r = 0.1, hover = true, colour = G.C.RED, button = "run_info", shadow = true}, nodes={
-            {n=G.UIT.R, config={align = "cm", padding = 0, maxw = 1.4}, nodes={
-              {n=G.UIT.T, config={text = localize('b_run_info_1'), scale = 1.2*scale, colour = G.C.UI.TEXT_LIGHT, shadow = true}}
-            }},
-            {n=G.UIT.R, config={align = "cm", padding = 0, maxw = 1.4}, nodes={
-              {n=G.UIT.T, config={text = localize('b_run_info_2'), scale = 1*scale, colour = G.C.UI.TEXT_LIGHT, shadow = true, focus_args = {button = G.F_GUIDE and 'guide' or 'back', orientation = 'bm'}, func = 'set_button_pip'}}
-            }}
-          }}
-    end
-
-    -- Shorten the options button
-    if orig.nodes[1].nodes[1].nodes[5].nodes[1].nodes[1].nodes[2].config.button == "options" then
-        orig.nodes[1].nodes[1].nodes[5].nodes[1].nodes[1].nodes[2] = {n=G.UIT.C, config={align = "cm", minh = 1, minw = 1.5,padding = 0.05, r = 0.1, hover = true, colour = G.C.ORANGE, button = "options", shadow = true}, nodes={
-            {n=G.UIT.C, config={align = "cm", maxw = 1.4, focus_args = {button = 'start', orientation = 'bm'}, func = 'set_button_pip'}, nodes={
-              {n=G.UIT.T, config={text = localize('b_options'), scale = scale, colour = G.C.UI.TEXT_LIGHT, shadow = true}}
-            }},
-          }}
-    end
-
-    -- Shrink hands
-    local hand_data = orig.nodes[1].nodes[1].nodes[4].nodes[1].nodes[1]
-    hand_data.config.minh = hand_data.config.minh * 0.75
-    MadLib.loop_func(hand_data.nodes, function(v)
-		if v and v.scale then v.scale = v.scale * 0.5 end
-	end)
-	-- Rearrange round/ante and button UI
-	local buttons 		= orig.nodes[1].nodes[1].nodes[5].nodes[1]
-	orig.nodes[1].nodes[1].nodes[5].nodes[1] = nil
-	local round_data 	= orig.nodes[1].nodes[1].nodes[5].nodes[2]
-	table.insert(orig.nodes[1].nodes[1].nodes, { n = G.UIT.R, config = { align = "cm", id = 'row_buttons'}, nodes = buttons.nodes })
-
-	table.insert(round_data.nodes[1].nodes,{n=G.UIT.C, config={minw = spacing},nodes={}})
-	table.insert(round_data.nodes[1].nodes,{n=G.UIT.C, config={id = 'hud_mayhem',align = "cm", padding = 0.05, minw = 1.45, emboss = 0.05, r = 0.1, colour = G.C.DYN_UI.BOSS_MAIN}, nodes={
-		{n=G.UIT.R, config={align = "cm", minh = 0.33, maxw = 1.35 }, nodes={
-			{n=G.UIT.T, config={text = localize('rgmc_mayhem'), scale = 0.85*scale, colour = G.C.UI.TEXT_LIGHT, shadow = true}},
-		}},
-		{n=G.UIT.R, config={align = "cm", r = 0.1, minw = 1.2, colour = G.C.DYN_UI.BOSS_DARK }, nodes={
-			{n=G.UIT.O, config={object = DynaText({string = {{ref_table = G.GAME, ref_value = 'mayhem'}}, font = G.LANGUAGES['en-us'].font, colours = { G.C.RGMC_UNUSUAL }, shadow = true, rotate = true, scale = 2*scale}), id = 'mayhem_UI_count'}},
-		}},
-		{n=G.UIT.R, config={align = "cm", colour = G.C.CLEAR}, nodes={
-			{n=G.UIT.T, config={text = '/', scale = scale, colour = darken(G.C.UI.TEXT_LIGHT,0.3), shadow = true}},
-			{n=G.UIT.O, config={object = DynaText({string = {{ref_table = G.GAME, ref_value = 'max_mayhem'}}, font = G.LANGUAGES['en-us'].font, colours = {darken(G.C.RGMC_UNUSUAL,0.2)},shadow = true, rotate = true, scale = scale}),id = 'max_mayhem_UI'}}
-		}}
-	}})
     return orig
 end
 
