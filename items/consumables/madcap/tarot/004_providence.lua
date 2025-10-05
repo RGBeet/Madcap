@@ -15,20 +15,58 @@ return {
             return MadLib.collect_vars(_numer, _denom, (card.ability.extra.max_cards or 2))
         end,
         can_use = function(self, card)
-            return G.hand and G.hand.cards and #G.hand.cards > 0 -- is there a hand of cards available?
+            if not (G.hand and G.hand.cards) then return false end
+            local editionless_cards = SMODS.Edition:get_edition_cards(G.hand, true)
+            return #editionless_cards > 0 -- is there a hand of cards available?
         end,
         use = function(self, card, area, copier)
             if SMODS.pseudorandom_probability(card, 'providence', 1, card.ability.extra.odds) then
-                local bestish = MadLib.shuffle_sort_list(G.hand.cards, math.min(card.ability.extra.max_cards, #G.hand.cards), function(v)
+                local editionless_cards = SMODS.Edition:get_edition_cards(G.hand, true)
+                local eligible_cards = MadLib.shuffle_sort_list(editionless_cards, math.min(card.ability.extra.max_cards, #G.hand.cards), function(v)
                     return not v.edition -- no edition
                 end, function(a,b)
-                    return (MadLib.get_card_total_value(a) + math.random()*8 - 4) > MadLib.get_card_total_value(b) -- goes for enhanced cards first
+                    return MadLib.get_card_total_value(a) > MadLib.get_card_total_value(b)
                 end)
-                MadLib.flip_cards(bestish, function(c)
-                    c:set_edition(MadLib.get_weighted_edition(Madcap.ProvidenceEditions))
-                end, nil, function(c)
-                    c:juice_up(0.3, 0.3)
+                print(eligible_cards)
+                MadLib.loop_func(eligible_cards, function(v)
+                    MadLib.simple_event(function()
+                        local edition = poll_edition('providence', nil, true, true)
+                        v:set_edition(edition, true)
+                        check_for_unlock({ type = 'have_edition' })
+                        return true
+                    end, 0.5, 'after')
                 end)
+            else
+                G.E_MANAGER:add_event(Event({
+                    trigger = 'after',
+                    delay = 0.4,
+                    func = function()
+                        attention_text({
+                            text = localize('k_nope_ex'),
+                            scale = 1.3,
+                            hold = 1.4,
+                            major = card,
+                            backdrop_colour = G.C.SECONDARY_SET.Tarot,
+                            align = (G.STATE == G.STATES.TAROT_PACK or G.STATE == G.STATES.SPECTRAL_PACK or G.STATE == G.STATES.SMODS_BOOSTER_OPENED) and
+                                'tm' or 'cm',
+                            offset = { x = 0, y = (G.STATE == G.STATES.TAROT_PACK or G.STATE == G.STATES.SPECTRAL_PACK or G.STATE == G.STATES.SMODS_BOOSTER_OPENED) and -0.2 or 0 },
+                            silent = true
+                        })
+                        G.E_MANAGER:add_event(Event({
+                            trigger = 'after',
+                            delay = 0.06 * G.SETTINGS.GAMESPEED,
+                            blockable = false,
+                            blocking = false,
+                            func = function()
+                                play_sound('tarot2', 0.76, 0.4)
+                                return true
+                            end
+                        }))
+                        play_sound('tarot2', 1, 0.4)
+                        card:juice_up(0.3, 0.5)
+                        return true
+                    end
+                }))
             end
         end,
     }

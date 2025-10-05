@@ -60,7 +60,11 @@ return {
             if context.joker_main and G.GAME.current_round.hands_played == 0 then
                 return { xmult = card.ability.extra.x_mult }
             end
-            Madcap.Funcs.food_joker_round_end(card)
+
+            -- End of round
+            if Madcap.Funcs.get_end_of_round(context) then
+                return MadLib.food_joker_logic(card)
+            end
         end,
         demicoloncompat = true
     },

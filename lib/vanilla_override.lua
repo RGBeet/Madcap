@@ -391,9 +391,9 @@ SMODS.Joker:take_ownership('mail', {
             and not context.other_card.debuff
             and MadLib.is_rank(context.other_card, G.GAME.current_round.mail_card.id)
         then
-            G.GAME.dollar_buffer = (G.GAME.dollar_buffer or 0) + card.ability.extra.dollars
+            G.GAME.dollar_buffer = (G.GAME.dollar_buffer or 0) + card.ability.extra
             return {
-                dollars = card.ability.extra.dollars,
+                dollars = card.ability.extra,
                 func = function() -- This is for timing purposes, it runs after the dollar manipulation
                     MadLib.simple_event(function()
                         G.GAME.dollar_buffer = 0

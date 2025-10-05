@@ -13,7 +13,7 @@ return {
         end,
         redeem 	= function(self)
             MadLib.simple_event(function()
-                Madcap.Funcs.set_subhand('ml_sh_enhanced',true)
+                Madcap.Funcs.set_subhand('ml_sh_spectrum',true)
                 return true
             end)
         end,

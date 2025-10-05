@@ -11,7 +11,7 @@ return {
         pos     = MLIB.coords(1,4),
         cost    = 8,
         aurinko = false,
-        config = { subhand = 'ml_sh_enhanced', levels = 1 },
+        config = { subhand = 'ml_sh_spectrum', levels = 1 },
         set_card_type_badge = function(self, card, badges)
             badges[1] = create_badge(localize("rgmc_moon"), get_type_colour(self or card.config, card), nil, 1.2)
         end,

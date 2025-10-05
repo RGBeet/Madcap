@@ -28,7 +28,7 @@ return {
                 current = localize { type = 'variable', key = 'a_mult', vars = { card.ability.extra.mult } }
                 colour = G.C.MULT
             elseif card.ability.immutable.mode == 3 then
-                current = localize { type = 'variable', key = 'a_money', vars = { card.ability.extra.dollars } }
+                current = localize { type = 'variable', key = 'a_dollars', vars = { card.ability.extra.dollars } }
                 colour = G.C.MONEY
             else
                 current = localize { type = 'variable', key = 'a_xmult', vars = { card.ability.extra.x_mult } }
@@ -50,6 +50,8 @@ return {
                     }
                 else
                     card.ability.immutable.mode = card.ability.immutable.mode + 1
+                    card.ability.extra.hands_left = card.ability.extra.hands_left - 1
+                    return { message = { localize("rgmc_minus_round") }, colour = G.C.FILTER, }
                 end
             end
             if context.joker_main then

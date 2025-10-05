@@ -27,13 +27,32 @@ return {
         end,
         calculate = function(self, card, context)
             -- upgrade
-            if context.cardarea == G.play and context.individual and context.other_card:is_suit(card.ability.extra.suit) and SMODS.pseudorandom_probability(card, 'vibrant_tourmaline', 1, card.ability.extra.odds)
-            then return MadLib.get_simple_upgrade_data(MadLib.ScoreKeys.AddMoney, card, card.ability.extra.money_mod) end
+            if
+                context.cardarea == G.play
+                and context.individual
+                and context.other_card:is_suit(card.ability.extra.suit)
+                and SMODS.pseudorandom_probability(card, 'vibrant_tourmaline', 1, card.ability.extra.odds)
+            then
+                card.ability.extra.money = card.ability.extra.money + card.ability.extra.money_mod
+                return {
+                    message = localize('k_upgrade_ex'),
+                    colour  = G.C.MULT
+                }
+            end
+
             -- add money
-            if context.forcetrigger then return MadLib.get_add_money_data(card) end
+            if context.forcetrigger then
+                return { dollars = card.ability.extra.money }
+            end
+
             -- reset at end of ante
-            if not context.individual and context.end_of_round and G.GAME.blind.boss and not (context.blueprint or context.repetition)
-            then return MadLib.get_simple_reset_data(MadLib.ScoreKeys.AddMoney, card, 'money') end
+            if context.new_ante then
+                card.ability.extra.money = 0
+                return {
+                    message = localize('k_reset'),
+                    colour  = G.C.FILTER
+                }
+            end
         end,
         in_pool = function(self, args)
             return G.GAME.Exotic

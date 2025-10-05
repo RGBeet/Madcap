@@ -29,9 +29,10 @@ return {
 	["Partners"] 	= true, -- false if Partner API is not installed.
 	["Boosters"]	= true,
 	["Vouchers"]	= true,
+	["Tags"]	= true,
 	["Music"]		= true, 	-- the music which appears on madcap decks/stakes
 	["Mayhem"] 		= true, -- the Mayhem system
-	["Madcap Stakes"] 	= true, -- does nothing atm
+	["Stakes"] 	= true, -- does nothing atm
 
 	["WIP Content"]	= true	-- content not yet finished. beware!!
 }

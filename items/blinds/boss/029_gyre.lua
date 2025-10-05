@@ -10,15 +10,16 @@ return {
         in_pool = function(self)
             return Madcap.Data.devmode
         end,
-        calculate = function (self, blind, context)
-            if 
-                not G.GAME.blind.disabled
-                and context.cardarea == G.play
-                and context.other_card
-                and MadLib.has_fib_rank(context.other_card)
-            then
-                context.other_card:start_dissolve({ HEX("57ecab") }, nil, 1.6)
+        recalc_debuff = function(self, card, from_blind)
+            if card.area ~= G.jokers and not G.GAME.blind.disabled then
+                if
+                    not SMODS.has_no_rank(card)
+                    and MadLib.has_fib_rank(card)
+                then
+                    return true
+                end
+                return false
             end
-        end
+        end,
     }
 }

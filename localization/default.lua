@@ -1296,24 +1296,29 @@ return {
                 name = "The Penumbral",
                 text = {
                     "{X:mult,C:white}X#1#{} Mult",
-                    "if played hand contains",
-                    "a {C:rgmc_dark}Dark #2#"
+                    "if played hand is {C:rgmc_dark}Dark"
                 },
             },
             j_rgmc_photovoltaic = {
                 name = "The Photovoltaic",
                 text = {
                     "{X:mult,C:white}X#1#{} Mult",
-                    "if played hand contains",
-                    "a {C:rgmc_light}Light #2#"
+                    "if played hand is {C:rgmc_light}Light"
+                },
+            },
+            j_rgmc_variegated = {
+                name = "The Variegated",
+                text = {
+                    "{X:chips,C:white}X#1#{} Chips",
+                    "if played hand is {C:rgmc_bismuth}Prismatic"
                 },
             },
             j_rgmc_palette = {
                 name = "The Palette",
                 text = {
-                    "{X:chips,C:white}X#1#{} Chips",
-                    "if scoring hand contains",
-                    "{C:attention}5{} unique {C:attention}enhancements",
+                    "This Joker gives {X:chips,C:white}X#1#{} Chips",
+                    "per unique {C:attention}enhancement",
+                    "in played hand"
                 },
             },
             j_rgmc_streemerz = {
@@ -1757,15 +1762,6 @@ return {
                     "or seal",
                     "Upon addition,",
                     "gain {C:rgmc_mayhem}+#4# Mayhem"
-                },
-            },
-            j_rgmc_variegated = {
-                name = "The Variegated",
-                text = {
-                    "{X:mult,C:white}X#1#{} Mult{}",
-                    "per scored {C:rgmc_bismuth}Bismuth{} card",
-                    "if hand contains at least",
-                    "one {C:attention}other enhancement"
                 },
             },
             j_rgmc_hammer_keychain = {
@@ -2620,7 +2616,7 @@ return {
                     "{C:green}probabilities{} for each {C:attention}#2#",
                     "scored this hand",
                     "{C:attention}Resets{} each hand",
-                    "{C:inactive}(Currently{C:green}+#3#{C:inactive})"
+                    "{C:inactive}(Currently {C:green}+#3#{C:inactive})"
                 } 
             },
             j_aij_david = {
@@ -3892,7 +3888,7 @@ return {
 				name = "Providence",
                 text = {
                     "#1# in #2# chance to",
-                    "apply random {X:dark_edition}edition{}",
+                    "apply random {X:dark_edition,C:white}edition{}",
 					"to #3# {C:attention}random{} cards",
                     "in hand"
                 }
@@ -4534,18 +4530,25 @@ return {
 					"becomes {C:dark_edition}Luxury{}",
 				},
             },
-			tag_rgmc_chippy = {
-				name = "Chippy Tag",
+			tag_rgmc_scoop= {
+				name = "Scoop Tag",
 				text = {
-					"Gain {X:chips,C:white}X#1#{} Chips",
-					"during the {C:attention}next blind{}"
+                    "{C:chips}+#1#{} Chips",
+                    "until end of Blind",
 				},
 			},
-			tag_rgmc_multy = {
-				name = "Multy Tag",
+			tag_rgmc_snack = {
+				name = "Snack Tag",
 				text = {
-					"Gain {X:mult,C:white}X#1#{} Mult",
-					"during the {C:attention}next blind{}"
+                    "{C:mult}+#1#{} Mult",
+                    "until end of Blind",
+				},
+			},
+			tag_rgmc_souper = {
+				name = "Souper Tag",
+				text = {
+                    "{X:mult,C:white}X#1#{} Mult",
+                    "until next {C:red}discard",
 				},
 			},
 			tag_rgmc_anti_boomerang = {
@@ -4871,9 +4874,9 @@ return {
 				text = {
                     "Hands can gain additional",
                     "{C:chips}chips{} and {C:mult}mult{} from",
-                    "playing {C:rgmc_bismuth}Dazzling{} subhands",
+                    "playing {C:rgmc_bismuth}Prismatic{} subhands",
                     "{C:inactive}(Hand must contain {C:attention}#1# {C:inactive}cards",
-                    "{C:inactive}with #2# {C:attention}unique enhancements {C:inactive})"
+                    "{C:inactive}with #2# {C:attention}unique suits {C:inactive})"
 				},
 			},
 			v_rgmc_balance = {
@@ -5723,7 +5726,7 @@ return {
             ml_sh_light             = "Light",
             ml_sh_dark              = "Dark",
             ml_sh_balanced          = "Neutral",
-            ml_sh_enhanced          = "Dazzling",
+            ml_sh_spectrum          = "Dazzling",
             ml_sh_high              = "High",
             ml_sh_low               = "Low",
 
@@ -5734,6 +5737,41 @@ return {
             k_costs                 = "Costs",
             k_luxury_pts            = "Luxury Points",
             ['£']                   = '£',
+
+            -- Config
+            ui_rgmc_requires_restart    = "Requires Restart",
+
+
+            ui_rgmc_subhands            = "Subhands",
+            ui_rgmc_mayhem              = "Mayhem",
+            ui_rgmc_luxury              = "Luxury Points",
+
+            ui_rgmc_cosma               = "Cosma Tarots",
+            ui_rgmc_spatia              = "Spatia Planets",
+            ui_rgmc_potentia            = "Potentia Crystals",
+            ui_rgmc_tarot               = "New Tarots",
+            ui_rgmc_planet              = "New Planets",
+            ui_rgmc_spectral            = "New Spectrals",
+
+            ui_rgmc_ranks1              = "Static Ranks",
+            ui_rgmc_ranks2              = "Dynamic Ranks",
+            ui_rgmc_ranks3              = "High Ranks",
+            ui_rgmc_ranks4              = "UNO Ranks",
+
+            ui_rgmc_deck                = "Decks",
+            ui_rgmc_booster             = "Boosters",
+            ui_rgmc_voucher             = "Vouchers",
+            ui_rgmc_stake               = "Stakes",
+            ui_rgmc_tag                 = "Tag",
+            ui_rgmc_wip                 = "WIP Content",
+
+            ui_rgmc_suits1              = "Parallel Suits",
+            ui_rgmc_suits2              = "Chaotic Suits",
+            ui_rgmc_rarities            = "Rarities",
+            ui_rgmc_unusual             = "Unusual",
+            ui_rgmc_gimmick             = "Gimmick",
+            ui_rgmc_chaotic             = "Chaotic",
+
 
             -- Rarities
 			k_rgmc_unusual   = "Unusual",

@@ -10,21 +10,23 @@ return {
         cost    = 6,
         pos     = MLIB.coords(6,1),
         config =  {
-            extra = { chips = 70, type = 'Dazzling' }
+            extra = { chips = 70, subhand = 'ml_sh_spectrum' }
         },
         loc_vars = function(self, info_queue, card)
             return MadLib.collect_vars(card.ability.extra.chips, card.ability.extra.type)
         end,
         calculate = function(self, card, context)
             if
-                (context.cardarea == G.jokers and MadLib.context_has_subhand(context,'ml_sh_enhanced'))
+                (context.cardarea == G.jokers
+                    and MadLib.context_has_subhand(context, card.ability.extra.subhand or 'ml_sh_spectrum'))
                 or context.forcetrigger
             then
-                return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips, card, card.ability.extra.chips)
+                return { chips = card.ability.extra.chips }
             end
         end,
-        in_pool = function(self, args) -- can play Dazzling subhands
-            return G.GAME.subhands and G.GAME.subhands['ml_sh_enhanced']
+        in_pool = function(self, args)
+            return (G.GAME.subhands and G.GAME.subhands[self.config.extra.subhand or 'ml_sh_spectrum'])
+                or MadLib.get_suit_count(G.playing_cards) > 4
         end,
         demicoloncompat = true,
     }

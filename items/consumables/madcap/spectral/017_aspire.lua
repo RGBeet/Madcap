@@ -35,12 +35,13 @@ return {
         loc_vars = function(self, info_queue, card)
         end,
         can_use = function(self, card)
-            return MadLib.list_matches_one(G.consumeables, function(v)
-                return Madcap.Lists.CosmaConversions[v.config.center.key]
+            if not (G.consumeables and G.consumeables.cards) then return end
+            return MadLib.list_matches_one(G.consumeables.cards, function(v)
+                return Madcap.Lists.CosmaConversions[v and v.config and v.config.center.key]
             end)
         end,
         use = function(self, card, area, copier)
-            MadLib.loop_func(G.consumeables, function(v)
+            MadLib.loop_func(G.consumeables.cards, function(v)
                 if not (v and v.area and Madcap.Lists.CosmaConversions[v.config.center.key]) then return end
                 v:start_dissolve({ G.C.SPECTRAL, G.C.WHITE })
                 MadLib.simple_event(function()

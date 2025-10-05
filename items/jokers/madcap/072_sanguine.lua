@@ -25,7 +25,7 @@ return {
                         return v:is_suit(card.ability.extra.suits[2])
                     end)
                 end
-                if pass then return MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiMult, card, card.ability.extra.x_mult) end
+                if pass then return { xmult = card.ability.extra.x_mult } end
             end
         end,
         in_pool = function(self, args)

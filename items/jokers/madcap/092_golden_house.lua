@@ -37,7 +37,7 @@ return {
                     if to_big(chippys) > to_big(0) then
                         card.ability.extra.chips = card.ability.extra.chips + chippys
                         card_eval_status_text(context_blueprint_card or card, 'extra', nil, nil, nil, {
-                            message = "+" .. number_format(to_big(chips)),
+                            message = "+" .. number_format(to_big(chippys)),
                             colour = G.C.CHIPS,
                             card = card
                         })
@@ -46,7 +46,7 @@ return {
                     if to_big(multys) > to_big(0) then
                         card.ability.extra.mult = card.ability.extra.mult + multys
                         card_eval_status_text(context_blueprint_card or card, 'extra', nil, nil, nil, {
-                            message = "+" .. number_format(to_big(mult)),
+                            message = "+" .. number_format(to_big(multys)),
                             colour = G.C.MULT,
                             card = card
                             })

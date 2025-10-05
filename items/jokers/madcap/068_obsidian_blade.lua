@@ -24,11 +24,35 @@ return {
         end,
         calculate = function(self, card, context)
             -- upgrade
-            if context.cardarea == G.play and context.individual and context.other_card:is_suit(card.ability.extra.suit) and SMODS.pseudorandom_probability(card, 'obsidian_blade', 1, card.ability.extra.odds) then return MadLib.get_simple_upgrade_data(MadLib.ScoreKeys.MultiMult, card, card.ability.extra.xmult_mod) end
+            if
+                context.cardarea == G.play
+                and context.individual
+                and context.other_card:is_suit(card.ability.extra.suit)
+                and SMODS.pseudorandom_probability(card, 'obsidian_blade', 1, card.ability.extra.odds)
+            then
+                card.ability.extra.mult = card.ability.extra.x_mult + card.ability.extra.xmult_mod
+                return {
+                    message = localize('k_upgrade_ex'),
+                    colour  = G.C.MULT
+                }
+            end
+
             -- score
-            if (context.cardarea == G.jokers and context.joker_main and card.ability.extra.x_mult ~= 1 and card.ability.extra.x_mult > 0) or context.forcetrigger then return MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiMult, card, card.ability.extra.x_mult) end
+            if
+                (context.joker_main or context.forcetrigger)
+                and card.ability.extra.x_mult > 1
+            then
+                return { xmult = card.ability.extra.x_mult }
+            end
+
             -- reset at end of ante
-            if not context.individual and context.end_of_round and G.GAME.blind.boss and not (context.blueprint or context.repetition) then return MadLib.get_simple_reset_data(MadLib.ScoreKeys.MultiMult, card, 'x_mult', 1) end
+            if context.new_ante then
+                card.ability.extra.x_mult = 0
+                return {
+                    message = localize('k_reset'),
+                    colour  = G.C.FILTER
+                }
+            end
         end,
         in_pool = function(self, args)
             return G.GAME.Exotic

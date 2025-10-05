@@ -25,7 +25,7 @@ return {
                         return v:is_suit(card.ability.extra.suits[2])
                     end)
                 end
-                if pass then return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips, card, card.ability.extra.chips) end
+                if pass then return { chips = card.ability.extra.chips } end
             end
         end,
         in_pool = function(self, args)

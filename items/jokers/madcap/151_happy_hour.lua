@@ -34,7 +34,7 @@ return {
             if 
                 context.discard 
                 and context.other_card:is_suit(card.ability.extra.suit)
-                and to_big(card.ability.extra.chips) > to_big(card.ability.extar.chip_mod)
+                and to_big(card.ability.extra.chips) > to_big(card.ability.extra.chip_mod)
             then
                 card.ability.extra.chips = card.ability.extra.chips - card.ability.extra.chip_mod
                 return {

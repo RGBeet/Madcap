@@ -32,7 +32,7 @@ return {
                     G.GAME.chips = math.floor(new_total / 2)
                     MadLib.manipulate_chips_mult(0,0)
                     MadLib.simple_event(function()
-                        ease_dollars(blind.config.extra)
+                        ease_dollars(self.config.extra)
                         return true
                     end, 1,'after')
                     MadLib.simple_event(function()

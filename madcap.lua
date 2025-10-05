@@ -140,7 +140,7 @@ Madcap = {
 	},
 	Data = {
 		seed		= 'rgmc', 	-- primary seed for random stuff
-		devmode 	= true, 	-- When true, enables all the debug text and unfinished content.
+		devmode 	= false, 	-- When true, enables all the debug text and unfinished content.
 	},
 }
 
@@ -649,12 +649,18 @@ end
 
 -- Is choosing a card. (Used for music!)
 function Madcap.Funcs.is_choosing_card()
-    return G.booster_pack
+    return G.booster_pack and not G.booster_pack.REMOVED and SMODS.OPENED_BOOSTER
+end
+
+function Madcap.Funcs.is_choosing_card_special()
+    return Madcap.Funcs.is_choosing_card()
+	and (SMODS.OPENED_BOOSTER.config.center.kind == "CosmaTarot"
+		or SMODS.OPENED_BOOSTER.config.center.kind == "SpatiaPlanet")
 end
 
 -- Is choosing a Celestial / Spectral pack. (Used for music!)
 function Madcap.Funcs.is_choosing_celestial()
-    return G.booster_pack_meteors
+    return G.booster_pack_meteors and not G.booster_pack_meteors.REMOVED and SMODS.OPENED_BOOSTER
 end
 
 function Madcap.Funcs.get_boss_status()
@@ -2452,6 +2458,7 @@ function evaluate_poker_hand(hand)
 		-- Mulch
 		local mulch = next(SMODS.find_card('j_rgmc_mulch'))
 		if mulch then
+			mulch = SMODS.find_card('j_rgmc_mulch')[1]
 			local high_rank, low_rank = Madcap.Funcs.get_high_and_low(hand)
 			if 
 				high_rank == (mulch.ability.extra.ranks[1] or '7')
@@ -2554,7 +2561,7 @@ SubHands = {
     },
     Balanced = {
         name       = 'ml_sh_balanced',
-        priority   = 2,
+        priority   = 3,
         x_mult     = 1.10,
         x_chips    = 1.10,
         l_mult     = 0.05,
@@ -2566,23 +2573,14 @@ SubHands = {
         end,
     },
     Dazzling = {
-        name       = 'ml_sh_enhanced',
+        name       = 'ml_sh_spectrum',
         priority   = 3,
         x_mult     = 1.10,
         x_chips    = 1.10,
         l_mult     = 0.05,
         l_chips    = 0.05,
         check_hand = function(hand) -- at least 5 unique enhancements (+ voucher unlocked)
-            local enha = {}
-            local unique = MadLib.loop_func(hand, function(v)
-                if not enha[v.config.center.key] then
-                    enha[v.config.center.key] = true
-                    return true
-                end
-                return false
-            end)
-            --tell(tostring(unique) .. ' unique entries.')
-            return unique >= (G.GAME.subhand_minimum or 5) -- wip
+            return MadLib.get_suit_count(hand) >= (G.GAME.subhand_minimum or 5) -- wip
         end,
     },
     High = {
@@ -2704,6 +2702,23 @@ MadLib.level_up_subhand = function(card, subhand, instant, amount)
         }))
         update_hand_text({sound = 'button', volume = 0.7, pitch = 0.9, delay = 0}, { level = G.GAME.subhands[subhand].level })
 		MadLib.clear_hand_text()
+    end
+end
+
+function Madcap.Funcs.do_after_scoring_stuff()
+    --tags
+    for i = 1, #G.GAME.tags do
+        local ret = G.GAME.tags[i]:apply_to_run({type = 'rgmc_after'})
+	end
+
+    -- Cont2nuum
+    if next(SMODS.find_card('j_rgmc_cont2nuum')) then
+        MadLib.loop_func(G.hand.cards, function(v)
+            MadLib.simple_event(function()
+                v.area:remove_from_highlighted(v)
+                return true
+            end, 0.05, 'after')
+        end)
     end
 end
 
@@ -3358,7 +3373,7 @@ Madcap.Lists.SubhandOrder = {
 	'ml_sh_dark',
 	'ml_sh_high',
 	'ml_sh_low',
-	'ml_sh_enhanced',
+	'ml_sh_spectrum',
 	'ml_sh_balanced',
 }
 
@@ -4642,10 +4657,7 @@ Madcap.CustomCashouts = {
 
 -- convert cash to lp
 function cash_to_lp(m)
-	local lp = math.max(1, math.floor(m * 0.75))
-	--tell('Dollars: ' .. number_format(m))
-	--tell('Luxury Points: ' .. number_format(lp))
-	return lp
+	return math.ceil(m/2)
 end
 
 function Card:calc_lp()
@@ -4673,11 +4685,11 @@ end
 
 --
 function ease_lp(mod, instant)
+	print('EASE LP by' .. (mod < 0 and '' or '+') .. tostring(mod))
 	if mod == 0 then return end
 	local function _mod(mod)
 		local dollar_UI = G.HUD:get_UIE_by_ID('luxury_text_UI')
 			or nil
-		mod = cash_to_lp(mod or 0)
 		local text = '+' .. localize('£')
 		local col = G.C.RGMC_LUXURY
 		if to_big(mod) < to_big(0) then
@@ -4915,6 +4927,50 @@ end
 MadLib.loop_func(SMODS.Seals, function(v)
 	print(v.key)
 end)
+
+--[[
+
+              create_toggle {
+                label = localize('paperback_ui_enable_ranks'),
+                ref_table = PB_UTIL.config,
+                ref_value = 'ranks_enabled',
+              }
+]]
+
+SMODS.current_mod.config_tab = function()
+	return {
+		n = G.UIT.ROOT,
+		config = { align = 'cm', padding = 0.05, emboss = 0.05, r = 0.1, colour = G.C.BLACK },
+		nodes = {
+			{ n = G.UIT.R,
+				config = { align = 'cm', minh = 1 },
+				nodes = {
+					{ n = G.UIT.T,
+						config = {
+							text = localize('ui_rgmc_requires_restart'),
+							colour = G.C.RED,
+							scale = 0.5
+						}
+					}
+				}
+			},
+			{ n = G.UIT.R,
+				config = { align = 'cm' },
+				nodes = {
+					{
+						n = G.UIT.C, config = { align = 'cm' }, nodes = {
+							create_toggle {
+								label = localize('ui_rgmc_ranks4'),
+								ref_table = MadcapConfig,
+								ref_value = "UNO Ranks"
+							}
+						},
+					}
+				},
+			}
+		},
+	}
+end
 
 ----------------------------------------------
 ------------MOD CODE END----------------------

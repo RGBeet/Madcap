@@ -32,11 +32,19 @@ return {
 
             -- Reduces by ? until lower than 0.5X Mult, then destructs.
             if context.skip_blind then -- uh oh...
-                if (card.ability.extra.x_mult - card.ability.extra.x_mult_penalty) > 0.5 then -- going down
-                    return Madcap.Funcs.get_simple_downgrade_data(MadLib.ScoreKeys.MultiMult, card, card.ability.extra.x_mult_penalty)
+                if card.ability.extra.x_mult - card.ability.extra.x_mult_penalty < 0.5 then
+                    SMODS.destroy_cards(card, nil, nil, true)
+                    return {
+                        message = "!!"
+                        colour = G.C.MULT
+                    }
                 else
-                    -- fucking explode
-                    return MadLib.banana_remove(card)
+                    -- See note about SMODS Scaling Manipulation on the wiki
+                    card.ability.extra.x_mult = card.ability.extra.x_mult - card.ability.extra.x_mult_penalty
+                    return {
+                        message = localize { type = 'variable', key = 'a_chips_minus', vars = { card.ability.extra.x_mult_penalty } },
+                        colour = G.C.MULT
+                    }
                 end
             end
 

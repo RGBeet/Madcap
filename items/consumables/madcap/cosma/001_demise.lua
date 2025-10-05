@@ -21,6 +21,7 @@ return {
         end,
         can_use = function(self, card)
             return #G.consumeables.cards < G.consumeables.config.card_limit
+                and G.GAME.rgmc_demise_card
         end,
         use = function(self, card, area, copier)
             local used_tarot = copier or card

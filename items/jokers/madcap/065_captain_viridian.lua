@@ -27,6 +27,14 @@ return {
                 local _success = Madcap.Funcs.set_edition_flipped(context.other_card)
                 if _success then return MadLib.simple_card_message(card, localize("rgmc_flipped_ex")) end
             end
+
+            if
+                context.other_card
+                and context.other_card.edition
+                and context.other_card.edition.flipped
+            then
+                return { chips = card.ability.extra.chips }
+            end
         end,
         demicoloncompat = true,
     }

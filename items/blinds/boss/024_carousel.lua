@@ -1,13 +1,16 @@
+local move_ref = Moveable.drag
+function Moveable.drag(self, offset)
+  if self.is and type(self.is) == "function" and self:is(Card) and self.area == G.jokers then
+    if G and G.GAME and G.GAME.blind and G.GAME.blind.boss and not G.GAME.blind.disabled and G.GAME.blind.name == 'bl_rgmc_carousel' then
+      return
+    end
+  end
+
+  return move_ref(self, offset)
+end
+
 -- When the Carousel is defeated or disabled (Luchador/Chicot/etc.)
 function Madcap.Funcs.boss_carousel_end(self,silent)
-    MadLib.loop_func(G.jokers.cards, function(v)
-        if v.carousel_pinned then return end
-        v.carousel_pinned = nil
-        MadLib.simple_event(function()
-            v.pinned = nil
-            v:juice_up(0.3,0.3)
-        end, 0.8, 'after')
-    end)
 end
 
 return {
@@ -24,17 +27,6 @@ return {
         calculate = function(self, blind, context)
             -- Setting blind
             if context.setting_blind and not G.GAME.blind.disabled then
-                -- If a Joker is not already marked as Pinned, mark the Joker as Pinned.
-                MadLib.loop_func(G.jokers.cards, function(v)
-                    if v.pinned then return end
-                    v.carousel_pinned = true
-                    -- Show that the Joker is now marked as Pinned.
-                    MadLib.simple_event(function()
-                        v.pinned = true
-                        v:juice_up(0.3,0.3)
-                    end, 0.8, 'after')
-                end)
-
                 -- Shuffle the Jokers three times.
                 MadLib.number_func(3, function(i)
                     MadLib.simple_event(function()

@@ -82,3 +82,23 @@ end
 '''
 match_indent = true
 times = 1
+
+
+[[patches]]
+[patches.pattern]
+target = 'card.lua'
+pattern = '''if center.name == "Half Joker" and (center.discovered or self.bypass_discovery_center) then'''
+position = 'before'
+payload = '''if not center then return end'''
+match_indent = true
+times = 1
+
+
+# Continuum
+[[patches]]
+[patches.pattern]
+target = '=[SMODS _ "src/utils.lua"]'
+pattern = '''local old_center = self.config.center'''
+position = "after"
+payload = "Madcap.Funcs.alter_score_order(card,scoring_hand,context,in_scoring)"
+match_indent = true

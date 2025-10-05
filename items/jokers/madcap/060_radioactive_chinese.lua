@@ -15,11 +15,11 @@ return {
                 rounds_remaining = 8,
                 effects = {
                     { 1.5,   0.95 },  -- Xscore
-                    { 1.5,   0.75 },  -- Xmult
-                    { 1.5,   0.85 },  -- Xchips
-                    { 0.25,  0.70 },  -- Xmult
+                    { 1.5,   0.75 },  -- Xchips
+                    { 1.5,   0.85 },  -- Xmult
+                    { 0.25,  0.70 },  -- Xchips
                     { 0.25,  0.80 },  -- Xmult
-                    { 1.12,  0.5 }   -- Escore
+                    { 1.12,  0.5 }    -- Escore
                 }
             },
             immutable = { mode = 1 }
@@ -69,42 +69,26 @@ return {
                 context.forcetrigger or
                 (context.cardarea == G.jokers and context.joker_main)
             then
-                local passes = SMODS.pseudorandom_probability(card, 'rgmc_radioactive_chinese_' .. tostring(card.ability.immutable.mode),
-                    1, card.ability.extra.odds, "Radioactive Chinese?!")
-                local val = passes and 1 or 2
-
-                --tell('Value: '..number_format(card.ability.extra.effects[card.ability.immutable.mode]))
+                local val = SMODS.pseudorandom_probability(card, 'rgmc_radioactive_chinese_' .. tostring(card.ability.immutable.mode),
+                    1, card.ability.extra.odds, "Radioactive Chinese?!") and 1 or 2
+                local pick = card.ability.extra.effects[card.ability.immutable.mode][val]
                 if
-                    card.ability.immutable.mode == 1 -- radioactive stir fry (Xscore)
+                    card.ability.immutable.mode == 1
                 then
-                    -- Xscore
-                    card.ability['rgmc_e_score'] = val
-                    return {
-                        message = "...!?",
-                        colour = G.C.PURPLE
-                    }
+                    return { xscore = pick }
                 elseif
                     card.ability.immutable.mode == 2
                     or card.ability.immutable.mode == 4
                 then
-                    -- +chip
-                    return MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiChips, card, card.ability.extra.effects[card.ability.immutable.mode])
+                    return { xchips = pick }
                 elseif
                     card.ability.immutable.mode == 3
                     or card.ability.immutable.mode == 5
                 then
-                    -- +mult
-                    return MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiMult, card, card.ability.extra.effects[card.ability.immutable.mode])
+                    return { xmult = pick }
                 else
-                    card.ability['rgmc_e_score'] = 1
-                    return {
-                        message = "...!?",
-                        colour = G.C.PURPLE
-                    }
+                    return { escore = pick }
                 end
-            end
-
-            if context.after then
             end
 
             -- End of round

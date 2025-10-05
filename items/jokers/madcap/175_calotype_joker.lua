@@ -28,8 +28,9 @@ return {
             then
                 if SMODS.pseudorandom_probability(card, 'calotype_joker', 1, card.ability.extra.odds) then
                     card.ability.extra.odds = card.ability.extra.base_odds
+                    local this_card = context.other_card
                     MadLib.simple_event(function()
-                        context.other_card:set_edition({ negative = true }, true)
+                        this_card:set_edition({ negative = true }, true)
                         return true
                     end, 1.0, 'after')
                     return {

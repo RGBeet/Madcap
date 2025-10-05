@@ -18,7 +18,7 @@ return {
                 (context.cardarea == G.play and context.other_card and SMODS.has_enhancement(context.other_card, 'm_stone')) 
                 or context.forcetrigger 
             then
-                return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddMult, card, card.ability.extra.mult)
+                return { mult = card.ability.extra.mult }
             end
             if Madcap.Funcs.banana_context(context) then 
                 return MadLib.banana_logic(card, 'arkose_michel') 

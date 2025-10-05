@@ -1663,15 +1663,15 @@ if next(SMODS.find_mod("MoreFluff")) then
     SMODS.Joker:take_ownership('mf_hallofmirrors', {
         config = {
             h_size = 0,
-            h_mod = 3,
+            h_mod = 1,
             extra = { rank = '6' }
         },
         loc_vars = function(self, info_queue, card)
             local funny = {}
-            MadLib.loop_func(card and card.ability.extra.ranks or self.config.extra.ranks, function(v)
-                table.insert(funny, (v == 1) and G.C.FILTER or G.C.UI.TEXT_INACTIVE)
-            end)
-            return MadLib.collect_vars(localize(card.ability.extra.ranks[1], 'ranks'), localize(card.ability.extra.ranks[2], 'ranks'), card.ability.extra.chips, card.ability.extra.mult)
+            --(card and card.ability.extra.ranks or self.config.extra.ranks, function(v)
+            --   table.insert(funny, (v == 1) and G.C.FILTER or G.C.UI.TEXT_INACTIVE)
+            --end)
+            return MadLib.collect_vars(card.ability.h_mod, localize(card.ability.extra.rank, 'ranks'), card.ability.h_size)
         end,
         calculate = function(self, card, context)
             if
@@ -2098,7 +2098,7 @@ if next(SMODS.find_mod("allinjest")) then
         config = { extra = { odds = 2 } },
         loc_vars = function(self, info_queue, card)
             local _numer, _denom = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'fou_du_roi')
-            return MadLib.collect_vars(number_format(_denom), number_format(math.max(0, _denom - _numer)))
+            return MadLib.collect_vars(number_format(math.max(0, _denom - _numer)), number_format(_denom))
         end,
         calculate = function(self, card, context)
             if
@@ -2323,23 +2323,50 @@ if next(SMODS.find_mod("allinjest")) then
     -- Mondrian Joker
     SMODS.Joker:take_ownership('aij_mondrian_joker', {
         config = {
-            extra = { rank = '4' }
+            extra = { rank = '4', mult_mod = 4 }
         },
         loc_vars = function(self, info_queue, card)
-            local count = MadLib.loop_func(G.playing_cards, function(v)
-                return MadLib.joker_check_rank(v, card, '4')
-            end)
-            local nominal = math.min(MadLib.get_rank_nominal(card.ability.extra.rank or '4'), 21)
-            return MadLib.collect_vars(nominal, math.max(0, nominal * count), localize(card.ability.extra.rank, 'ranks'))
+            local four_count = 0
+            if G.playing_cards then
+                for _, card in ipairs(G.playing_cards) do
+                    if MadLib.joker_check_rank(v, card, '4') then four_count = four_count + 1 end
+                end
+            end
+            SMODS.scale_card(card, {
+                ref_table = card.ability.extra,
+                ref_value = "mult",
+                scalar_value = "mult_mod",
+                operation = function(ref_table, ref_value, initial, change)
+                    ref_table[ref_value] = four_count * (change or 1)
+                end,
+                no_message = true,
+            })
+            local current_mult = card.ability.extra.mult
+            return { vars = {card.ability.extra.mult_mod, localize(card.ability.extra.rank, 'ranks'), current_mult} }
         end,
         calculate = function(self, card, context)
             if context.joker_main then
-                local count = MadLib.loop_func(G.playing_cards, function(v)
-                    return MadLib.joker_check_rank(v, card, '4')
-                end)
-                if count > 0 then
-                    local nominal = math.min(MadLib.get_rank_nominal(card.ability.extra.rank or '4'), 21)
-                    return { mult = count * nominal }
+                local four_count = 0
+                if G.playing_cards then
+                    for _, card in ipairs(G.playing_cards) do
+                        if MadLib.joker_check_rank(v, card, '4') then four_count = four_count + 1 end
+                    end
+                end
+                SMODS.scale_card(card, {
+                        ref_table = card.ability.extra,
+                        ref_value = "mult",
+                        scalar_value = "mult_mod",
+                        operation = function(ref_table, ref_value, initial, change)
+                            ref_table[ref_value] = four_count * change
+                        end,
+                        no_message = true,
+                })
+                local total_mult = card.ability.extra.mult
+
+                if total_mult > 0 then
+                    return {
+                        mult = total_mult,
+                    }
                 end
             end
         end

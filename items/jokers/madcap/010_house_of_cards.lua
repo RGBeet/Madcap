@@ -35,7 +35,7 @@ return {
                 context.cardarea == G.jokers
                 and (context.before or context.forcetrigger)
             then
-                card.ability.chips = card.ability.chips + card.ability.chip_mod 
+                card.ability.extra.chips = card.ability.extra.chips + card.ability.extra.chip_mod
                 return {
                     message = localize('k_upgrade_ex'),
                     colour = G.C.CHIPS,
@@ -54,7 +54,7 @@ return {
                 if SMODS.pseudorandom_probability(card, 'house_of_cards', 1 + card.ability.immutable.increase, card.ability.immutable.odds) then
                     tell('Reset')
                     card.ability.immutable.increase = 0
-                    card.ability.chips = math.floor(card.ability.chips / 2)
+                    card.ability.extra.chips = math.floor(card.ability.extra.chips / 2)
                 else
                     return MadLib.get_safe_data(card)
                 end

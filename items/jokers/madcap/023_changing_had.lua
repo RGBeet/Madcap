@@ -11,7 +11,8 @@ return {
             immutable = { position = 1, changing = true }
         },
         loc_vars = function(self, info_queue, card)
-            return MadLib.collect_vars(MadLib.get_num_position(card.ability.immutable.position or 1), number_format(card.ability.extra.retriggers))
+            local total_repetitions = math.min(card.ability.extra.repetitions, 20)
+            return MadLib.collect_vars(MadLib.get_num_position(card.ability.immutable.position or 1), number_format(total_repetitions))
         end,
         calculate = function(self, card, context)
             if
@@ -20,10 +21,11 @@ return {
                 and (context.other_card == context.scoring_hand[card.ability.immutable.position]
                 or context.forcetrigger)
             then
+            local total_repetitions = math.min(card.ability.extra.repetitions, 20)
                 card.ability.immutable.changing = true
                 return {
                     message = localize('k_again_ex'),
-                    repetitions = lenient_bignum(card.ability.extra.repetitions),
+                    repetitions = total_repetitions,
                     card = context.other_card
                 }
             end

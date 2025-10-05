@@ -112,7 +112,7 @@ return {
             end
             -- Scoring
             if (context.joker_main or context.forcetrigger) and card.ability.extra.chips > 0 then
-                return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips, card, card.ability.extra.chips)
+                return { chips = card.ability.extra.chips }
             end
             -- End of round stuff
             if context.end_of_round and context.cardarea == G.jokers then

@@ -20,9 +20,8 @@ return {
             local lock = tag.ID
             if context.type == self.config.type then
                 tag:yep('+', G.C.PURPLE, function() return true end) -- Money
-                Madcap.Funcs.show_tag_effect_text("Mayhem Increased!")
-                Madcap.Funcs.ease_mayhem(mayhem)
                 tag.triggered = true
+                Madcap.Funcs.ease_mayhem(mayhem)
                 return true
             end
         end,

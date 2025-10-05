@@ -38,18 +38,13 @@ return {
             -- give the mult
             if
                 (context.joker_main or context.forcetrigger)
-                and MadLib.is_positive(card.ability.extra.mult)
+                and card.ability.extra.mult > 0
             then
                 return { mult = card.ability.extra.mult }
             end
 
             -- reset at end of ante
-            if
-                context.end_of_round
-                and (context.blind and context.blind.boss)
-                and not context.individual
-                and not context.repetition
-            then
+            if context.new_ante then
                 card.ability.extra.mult = 0
                 return {
                     message = localize('k_reset'),

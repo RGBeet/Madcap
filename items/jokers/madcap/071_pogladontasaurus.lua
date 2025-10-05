@@ -19,7 +19,6 @@ return {
                 if MadLib.is_rank(context.other_card, SMODS.Ranks[card.ability.extra.rank].id) then
                     card.ability.immutable.active = true
                     return {
-                        message = localize('k_again_ex'),
                         repetitions = math.min(card.ability.extra.retriggers, card.ability.immutable.max_retriggers),
                         card = card
                     }

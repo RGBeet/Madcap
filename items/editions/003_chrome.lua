@@ -24,20 +24,8 @@ return {
                 (context.main_scoring and context.cardarea == G.play)
                 and G.GAME.chips > 0
             then
-                card.ability.triggered = true
-                return {
-                    message = "...?",
-                    colour = G.C.PURPLE
-                }
+                return { xscore = self.config.x_score or 1 }
             end
-
-            if context.after and card.ability.triggered then
-                card.ability.triggered = nil -- not needed now
-                return { 
-                    xscore = self.config.x_score or 1,
-                }
-            end
-
         end
     }
 }
