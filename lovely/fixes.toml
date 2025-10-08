@@ -583,3 +583,26 @@ pattern = '''-- TARGET: effects before scoring starts'''
 position = 'after'
 match_indent = true
 payload = '''for i = 1, #G.GAME.tags do G.GAME.tags[i]:apply_to_run({type = 'rgmc_before'}) end'''
+
+# idk why this happens
+
+[[patches]]
+[patches.pattern]
+target = 'cardarea.lua'
+pattern = '''for name, parameter in pairs(SMODS.Scoring_Parameters) do
+                parameter.current = G.GAME.hands[text][name] or parameter.default_value
+                update_hand_text({immediate = true, nopulse = nil, delay = 0}, {[name] = parameter.current})
+            end
+            update_hand_text({immediate = true, nopulse = nil, delay = 0}, {handname=disp_text, level=G.GAME.hands[text].level, mult = G.GAME.hands[text].mult, chips = G.GAME.hands[text].chips})
+    end
+end'''
+position = 'at'
+match_indent = false
+payload = '''for name, parameter in pairs(SMODS.Scoring_Parameters) do
+                parameter.current = G.GAME.hands[text][name] or parameter.default_value
+                update_hand_text({immediate = true, nopulse = nil, delay = 0}, {[name] = parameter.current})
+            end
+            update_hand_text({immediate = true, nopulse = nil, delay = 0}, {handname=disp_text, level=G.GAME.hands[text].level, mult = G.GAME.hands[text].mult, chips = G.GAME.hands[text].chips})
+        end
+    end
+end'''

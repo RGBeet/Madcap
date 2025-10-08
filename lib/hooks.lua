@@ -413,6 +413,7 @@ local function get_nested(orig, path)
 end
 
 local uibox_blind_ref = create_UIBox_HUD_blind
+--[[
 function create_UIBox_HUD_blind()
 	local orig = uibox_blind_ref()
     local stake_sprite = get_stake_sprite(G.GAME.stake or 1, 0.5)
@@ -442,6 +443,7 @@ function create_UIBox_HUD_blind()
 
 	return orig
 end
+]]
 
 local edit_uibox_ref = MadLib.edit_uibox_contents
 function MadLib.edit_uibox_contents(contents, scale)
@@ -451,7 +453,7 @@ function MadLib.edit_uibox_contents(contents, scale)
 		contents.buttons[1].nodes[i].config.minw = contents.buttons[1].nodes[i].config.minw * 0.75
 		contents.buttons[1].nodes[i].config.minh = contents.buttons[1].nodes[i].config.minh * 0.6
 	end
-	contents.dollars_chips = nil
+	--contents.dollars_chips = nil
 	table.insert(contents.buttons[1].nodes,{n=G.UIT.R, config={id = 'hud_mayhem',align = "cm", padding = 0.05, emboss = 0.05, r = 0.1, colour = G.C.DYN_UI.BOSS_MAIN}, nodes={
 		{n=G.UIT.R, config={align = "cm", minh = 0.33, maxw = 1.35 }, nodes={
 			{n=G.UIT.T, config={text = localize('rgmc_mayhem'), scale = scale_mayhem, colour = G.C.UI.TEXT_LIGHT, shadow = true}},

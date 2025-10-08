@@ -1,38 +1,41 @@
 return {
 
 	-- jokers and shit
-	["Jokers"] 		= true,
-	["Unusual"] 	= true, -- rarities
-	["Gimmick"] 	= true,
-	["Chaotic"] 	= true,
+	["rarity_unusual"] 	= true, -- rarities
+	["rarity_gimmick"] 	= true,
+	["rarity_chaotic"] 	= true,
+	
+	["ranks_static"] 	= true, -- Any ranks of static value 10 or lower.
+	["ranks_dynamic"] 	= true, -- Ranks that lack a static value.
+	["ranks_high"] 		= true, -- Numbered ranks higher than 10
+	["ranks_uno"] 		= true, -- Ranks based on UNO Cards!?
+	
+	["suits_parallel"] 	= true, -- Goblets, Towers, Blooms, and Diamonds.
+	["suits_chaotic"] 	= true, -- Voids and Lanterns.
+	
+	["item_cosma"]		= true,
+	["item_spatia"]		= true,
+	["item_potentia"]	= true,
 
-	-- ranks and suits
-	["Static Ranks"] 	= true, -- Any ranks of static value 10 or lower.
-	["Dynamic Ranks"] 	= true, -- Ranks that lack a static value.
-	["High Ranks"] 		= true, -- Numbered ranks higher than 10
-	["UNO Ranks"] 		= true, -- Ranks based on UNO Cards!?
-	["Parallel Suits"] 	= true, -- Goblets, Towers, Blooms, and Diamonds.
-	["Chaotic Suits"] 	= true, -- Voids and Lanterns.
+	["mayhem"]			= true,
+	["subhands"]		= true,
+	
+	["blinds"]		= true,
+	["decks"] 		= true,
+	["boosters"]	= true,
+	["vouchers"]	= true,
+	["stakes"] 		= true, -- does nothing atm
 
-	-- new consumable types
-	["Cosma Tarots"]		= true,
-	["Sinister Cards"]		= true,
+	["enhancements"]	= true,
+	["editions"]		= true,
+	["seals"]			= true,
 
-	-- the following depend on Subhands or they will NOT work!
-	["Subhands"]			= true,	-- the Subhand system
-	["Spatia Cards"]		= true,
-	["Potentia Crystals"]	= true,
+	["tags"]		= true,
 
-	-- other
-	["Decks"] 		= true,
-	["Sleeves"] 	= true, -- false if CardSleeves is not installed.
-	["Partners"] 	= true, -- false if Partner API is not installed.
-	["Boosters"]	= true,
-	["Vouchers"]	= true,
-	["Tags"]	= true,
-	["Music"]		= true, 	-- the music which appears on madcap decks/stakes
-	["Mayhem"] 		= true, -- the Mayhem system
-	["Stakes"] 	= true, -- does nothing atm
+	["music"]		= true, -- the music which appears on madcap decks/stakes
+	["sleeves"] 	= true, -- false if CardSleeves is not installed.
+	["partners"] 	= true, -- false if Partner API is not installed.
 
-	["WIP Content"]	= true	-- content not yet finished. beware!!
+	["crossmod"]	= true,
+	["wip_stuff"]	= true	-- content not yet finished. beware!!
 }

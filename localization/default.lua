@@ -504,6 +504,12 @@ return {
                     "???"
                 },
             },
+            bl_rgmc_final_gauntlet = {
+                name = "Golden Gauntlet",
+                text = {
+                    "#1# / #2# Bosses Cleared"
+                },
+            },
         },
         Joker = {
             j_rgmc_thorium_joker = {

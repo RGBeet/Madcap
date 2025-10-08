@@ -1378,12 +1378,12 @@ function Madcap.Funcs.get_mayhem_data()
 		lanterns 		= { amount = lanterns, mult =  -1/100 },
 		modded_suits 	= { amount = modded_suits, mult = 1/100 },
 		base_suits		= { amount = base_suits, mult = -1/200 },
-		enhancements	= { amount = enhancements, mult = 1/10 },
-		editions		= { amount = editions, mult = 1/5 },
-		seals			= { amount = seals, mult = 1/20 },
-		card_offset		= { amount = card_offset, mult = 1/50 },
-		suit_offset		= { amount = suit_offset, mult = 1/20 },
-		jokers			= { amount = jokers, mult = 1/20 }
+		enhancements	= { amount = enhancements, mult = 1/20 },
+		editions		= { amount = editions, mult = 1/10 },
+		seals			= { amount = seals, mult = 1/40 },
+		card_offset		= { amount = card_offset, mult = 1/100 },
+		suit_offset		= { amount = suit_offset, mult = 1/40 },
+		jokers			= { amount = jokers, mult = 1/40 }
 	}
 
 end
@@ -4683,6 +4683,73 @@ G.FUNCS.can_buy_luxury = function(e)
     end
 end
 
+local hud_blind_ref = create_UIBox_HUD_blind
+function create_UIBox_HUD_blind()
+	local ret = hud_blind_ref()
+	if G.GAME.rgmc_bonus_blind and G.GAME.rgmc_bonus_blind.config then
+		print("TRYING TO ADD BONUS BLIND")
+		local bb = G.P_BLINDS[G.GAME.blind.original_blind] or G.P_BLINDS.bl_small
+
+		print(G.GAME.rgmc_bonus_blind)
+
+		local temp_blind = AnimatedSprite(0,0,1,1, G.ANIMATION_ATLAS[bb.atlas or 'blind_chips'], bb.pos)
+		temp_blind:define_draw_steps({
+      		{shader = 'dissolve', shadow_height = 0.05},
+      		{shader = 'dissolve'}
+		})
+		
+		G.E_MANAGER:add_event(Event({
+			trigger = 'immediate',
+			func = (function()
+			G.CONTROLLER:snap_to{node = temp_blind}
+				return true
+			end)
+		}))
+		
+		temp_blind.scale = 1
+		temp_blind.float = true
+		temp_blind.states.hover.can = true
+		temp_blind.states.drag.can = false
+		temp_blind.states.collide.can = true
+		temp_blind.config = {blind = bb, force_focus = true}
+		
+		temp_blind.hover = function()
+			if not G.CONTROLLER.dragging.target or G.CONTROLLER.using_touch then 
+				if not temp_blind.hovering and temp_blind.states.visible then
+					temp_blind.hovering = true
+					temp_blind.hover_tilt = 3
+					temp_blind:juice_up(0.05, 0.02)
+					play_sound('chips1', math.random()*0.1 + 0.55, 0.12)
+					temp_blind.config.h_popup = create_UIBox_blind_popup(bb, true)
+					temp_blind.config.h_popup_config ={align = 'cl', offset = {x=-0.1,y=0},parent = temp_blind}
+					Node.hover(temp_blind)
+					if temp_blind.children.alert then 
+					temp_blind.children.alert:remove()
+					temp_blind.children.alert = nil
+					temp_blind.config.blind.alerted = true
+					G:save_progress()
+					end
+				end
+			end
+		end
+
+		temp_blind.stop_hover = function() 
+			temp_blind.hovering = false
+			Node.stop_hover(temp_blind)
+			temp_blind.hover_tilt = 0
+		end
+
+		ret.nodes[2].nodes[2].nodes[1] = { n = G.UIT.C, config={ align = "cm", r = 0.1 }, nodes= {
+			{ n = G.UIT.O, config = { object = G.GAME.blind, draw_layer = 1 } },
+			{ n = G.UIT.O, config = { object = temp_blind, focus_with_object = true } },
+			}
+		}
+		--G.GAME.blind:change_dim(1,1)
+		--G.GAME.rgmc_bonus_blind:change_dim(1,1)
+	end
+	return ret
+end
+
 --
 function ease_lp(mod, instant)
 	print('EASE LP by' .. (mod < 0 and '' or '+') .. tostring(mod))
@@ -4937,39 +5004,300 @@ end)
               }
 ]]
 
+-- label = localize('ui_rgmc_ranks4'),
+
+-- CONFIG 
+
+local config_content = {
+	['mechanics'] = {
+		'mayhem',
+		'subhands',
+	},
+	['rarities'] = {
+		'rarity_unusual',
+		'rarity_gimmick',
+		'rarity_chaotic',
+	},
+	['ranks'] = {
+		'ranks_static',
+		'ranks_high',
+		'ranks_uno',
+	},
+	['suits'] = {
+		'suits_parallel',
+		'suits_chaotic',
+	},
+	['items'] = {
+		'items_cosma',
+		'items_spatia',
+		'items_potentia',
+	},
+	['tags'] = {
+		'tags',
+		'antags',
+	},
+	['modifiers'] = {
+		'enhancements',
+		'editions'
+	},
+	['other_features'] = {
+		'blinds',
+		'boosters',
+		'vouchers',
+		'stakes',
+	},
+	['misc'] = {
+		'music',
+		'jokers',
+		'crossmod',
+		'sleeves',
+		'partners',
+		'wip_stuff'
+	},
+}
+local config_order = {
+	'mechanics',
+	'rarities',
+	'ranks',
+	'suits',
+	'items',
+	'tags',
+	'modifiers',
+	'other_features',
+	'misc'
+}
+local function create_toggle_category(k)
+	local button_group = {}
+
+	MadLib.loop_func(config_content[k], function(v)
+		button_group[#button_group+1] = create_toggle{
+			label = v,
+			ref_table = MadcapConfig,
+			ref_value = v
+		}
+	end)
+
+	return { n = G.UIT.C, config = { align = 'cm' }, nodes = button_group }
+end
+local function create_toggle_settings()
+	local columns = 3
+	local page_nodes = {}
+	MadLib.loop_func(config_order, function(k)
+		page_nodes[#page_nodes+1] = create_toggle_category(k)
+	end)
+	return { n = G.UIT.R, config = { align = 'cm' }, nodes = {} }
+end
+
 SMODS.current_mod.config_tab = function()
-	return {
+	local _scale 	= 0.35
+	local _label 	= 0.2
+	local _box 		= 0.5
+
+	local _width1 		= 5
+	local _width2 		= 3
+	local _total_width 	= 8
+
+	local misc_nodes = {}
+
+	misc_nodes[#misc_nodes+1] = create_toggle{ label = "Music", align = 'cl', ref_table = MadcapConfig, ref_value = 'music',w = _width1, scale = _box, label_scale = _label, shadow = true }
+	misc_nodes[#misc_nodes+1] = create_toggle{ label = "Sleeves", align = 'cl',  ref_table = MadcapConfig, ref_value = 'sleeves', w = _width1, scale = _box, label_scale = _label, shadow = true }
+
+	if Partner_API then misc_nodes[#misc_nodes+1] = create_toggle{ label = "Partners", align = 'cl', ref_table = MadcapConfig, ref_value = 'partners', w = _width1, scale = _box, label_scale = _label, shadow = true } end
+	if CardSleeves then misc_nodes[#misc_nodes+1] = create_toggle{ label = "Crossmod", align = 'cl',  ref_table = MadcapConfig, ref_value = 'crossmod', w = _width1, scale = _box, label_scale = _label, shadow = true } end
+	misc_nodes[#misc_nodes+1] = create_toggle{ label = "WIP Content", align = 'cl', ref_table = MadcapConfig, ref_value = 'wip_stuff', w = _width1, scale = _box, label_scale = _label, shadow = true }
+
+	local content = {
 		n = G.UIT.ROOT,
 		config = { align = 'cm', padding = 0.05, emboss = 0.05, r = 0.1, colour = G.C.BLACK },
 		nodes = {
-			{ n = G.UIT.R,
-				config = { align = 'cm', minh = 1 },
-				nodes = {
-					{ n = G.UIT.T,
-						config = {
-							text = localize('ui_rgmc_requires_restart'),
-							colour = G.C.RED,
-							scale = 0.5
-						}
-					}
-				}
-			},
-			{ n = G.UIT.R,
-				config = { align = 'cm' },
+			{
+				n = G.UIT.R, 
+				config = { align = 'tl', w = _total_width*3 }, 
 				nodes = {
 					{
-						n = G.UIT.C, config = { align = 'cm' }, nodes = {
-							create_toggle {
-								label = localize('ui_rgmc_ranks4'),
-								ref_table = MadcapConfig,
-								ref_value = "UNO Ranks"
-							}
+						n = G.UIT.C, 
+						config = { align = 'tr', colour = darken(G.C.BLUE, 0.5), w = _total_width, padding = 0.05, }, 
+						nodes = {
+							{ n = G.UIT.T, config = {
+								align = 'tr,',
+								text = "Mechanics",
+								scale = _scale,
+								colour = G.C.UI.TEXT_LIGHT,
+								w = _width2,
+								shadow = true,
+							}},
+							{ n = G.UIT.C, config = { align = 'cr' }, nodes = {
+								create_toggle{ label = "Mayhem", align = 'cl', ref_table = MadcapConfig, ref_value = 'mayhem', w = _width1, scale = _box, label_scale = _label, shadow = true },
+								create_toggle{ label = "Subhands", align = 'cl', ref_table = MadcapConfig, ref_value = 'subhands', w = _width1, scale = _box, label_scale = _label, shadow = true },
+							}}
 						},
-					}
-				},
+					},
+					{
+						n = G.UIT.C, 
+						config = { align = 'tr', colour = darken(G.C.RED, 0.5), w = _total_width, padding = 0.05, }, 
+						nodes = {
+							{ n = G.UIT.T, config = {
+								align = 'tr,',
+								text = "Items",
+								scale = _scale,
+								colour = G.C.UI.TEXT_LIGHT,
+								w = _width2,
+								shadow = true,
+							}},
+							{ n = G.UIT.C, config = { align = 'cr' }, nodes = {
+								create_toggle{ label = "Cosma", align = 'cl', ref_table = MadcapConfig, ref_value = 'item_cosma', w = _width1, scale = _box, label_scale = _label, shadow = true },
+								create_toggle{ label = "Spatia", align = 'cl', ref_table = MadcapConfig, ref_value = 'item_spatia', w = _width1, scale = _box, label_scale = _label, shadow = true },
+								create_toggle{ label = "Potentia", align = 'cl', ref_table = MadcapConfig, ref_value = 'item_potentia', w = _width1, scale = _box, label_scale = _label, shadow = true },
+							}}
+						},
+					},
+					{
+						n = G.UIT.C, 
+						config = { align = 'tr', colour = darken(G.C.BLUE, 0.5), w = _total_width, padding = 0.05, }, 
+						nodes = {
+							{ n = G.UIT.T, config = {
+								align = 'tr,',
+								text = "Rarities",
+								scale = _scale,
+								colour = G.C.UI.TEXT_LIGHT,
+								w = _width2,
+								shadow = true,
+							}},
+							{ n = G.UIT.C, config = { align = 'cr' }, nodes = {
+								create_toggle{ label = "Unusual", align = 'cl',  ref_table = MadcapConfig, ref_value = 'rarity_unusual', w = _width1, scale = _box, label_scale = _label, shadow = true },
+								create_toggle{ label = "Gimmick", align = 'cl',  ref_table = MadcapConfig, ref_value = 'rarity_gimmick', w = _width1, scale = _box, label_scale = _label, shadow = true },
+								create_toggle{ label = "Chaotic", align = 'cl',  ref_table = MadcapConfig, ref_value = 'rarity_chaotic', w = _width1, scale = _box, label_scale = _label, shadow = true },
+							}}
+						},
+					},
+				}
+			},
+			{
+				n = G.UIT.R, 
+				config = { align = 'tr', w = _total_width*3, colour = darken(G.C.GREEN, 0.5) }, 
+				nodes = {
+					{
+						n = G.UIT.C, 
+						config = { align = 'tr', colour = darken(G.C.RED, 0.5), w = _total_width, padding = 0.05, }, 
+						nodes = {
+							{ n = G.UIT.T, config = {
+								align = 'tr,',
+								text = "Ranks",
+								scale = _scale,
+								colour = G.C.UI.TEXT_LIGHT,
+								w = _width2,
+								shadow = true,
+							}},
+							{ n = G.UIT.C, config = { align = 'cr' }, nodes = {
+								create_toggle{ label = "Static", align = 'cl',  ref_table = MadcapConfig, ref_value = 'ranks_static', w = _width1, scale = _box, label_scale = _label, shadow = true },
+								create_toggle{ label = "Dynamic", align = 'cl',  ref_table = MadcapConfig, ref_value = 'ranks_dynamic', w = _width1, scale = _box, label_scale = _label, shadow = true },
+								create_toggle{ label = "High", align = 'cl', ref_table = MadcapConfig, ref_value = 'ranks_high', w = _width1, scale = _box, label_scale = _label, shadow = true },
+								create_toggle{ label = "UNO", align = 'cl', ref_table = MadcapConfig, ref_value = 'ranks_uno',w = _width1, scale = _box, label_scale = _label, shadow = true },
+							}}
+						},
+					},
+					{
+						n = G.UIT.C, 
+						config = { align = 'tr', colour = darken(G.C.BLUE, 0.5), w = _total_width, padding = 0.05, }, 
+						nodes = {
+							{ n = G.UIT.T, config = {
+								align = 'tr,',
+								text = "Suits",
+								scale = _scale,
+								colour = G.C.UI.TEXT_LIGHT,
+								w = _width2,
+								shadow = true,
+							}},
+							{ n = G.UIT.C, config = { align = 'cr' }, nodes = {
+								create_toggle{ label = "Parallel",  align = 'cl', ref_table = MadcapConfig, ref_value = 'suits_parallel', w = _width1, scale = _box, label_scale = _label, shadow = true },
+								create_toggle{ label = "Chaotic",  align = 'cl', ref_table = MadcapConfig, ref_value = 'suits_chaotic', w = _width1, scale = _box, label_scale = _label, shadow = true },
+							}}
+						},
+					},
+					{
+						n = G.UIT.C, 
+						config = { align = 'tr', colour = darken(G.C.RED, 0.5), w = _total_width, padding = 0.05, }, 
+						nodes = {
+							{ n = G.UIT.T, config = {
+								align = 'tr,',
+								text = "Modifiers",
+								scale = _scale,
+								colour = G.C.UI.TEXT_LIGHT,
+								w = _width2,
+								shadow = true,
+							}},
+							{ n = G.UIT.C, config = { align = 'cr' }, nodes = {
+								create_toggle{ label = "Enhancements", align = 'cl', ref_table = MadcapConfig, ref_value = 'enhancements', w = _width1, scale = _box, label_scale = _label*0.6, shadow = true },
+								create_toggle{ label = "Editions",  align = 'cl', ref_table = MadcapConfig, ref_value = 'editions', w = _width1, scale = _box, label_scale = _label, shadow = true },
+								create_toggle{ label = "Seals",  align = 'cl', ref_table = MadcapConfig, ref_value = 'seals', w = _width1, scale = _box, label_scale = _label, shadow = true },
+							}}
+						},
+					},
+				}
+			},
+			{
+				n = G.UIT.R, 
+				config = { align = 'tr', w = _total_width*3, colour = darken(G.C.GREEN, 0.5) }, 
+				nodes = {
+					{
+						n = G.UIT.C, 
+						config = { align = 'tr', colour = darken(G.C.BLUE, 0.5), w = _total_width, padding = 0.05, }, 
+						nodes = {
+							{ n = G.UIT.T, config = {
+								align = 'tr,',
+								text = "Collectibles",
+								scale = _scale*0.8,
+								colour = G.C.UI.TEXT_LIGHT,
+								w = _width2,
+								shadow = true,
+							}},
+							{ n = G.UIT.C, config = { align = 'cr' }, nodes = {
+								create_toggle{ label = "Tags", align = 'cl', ref_table = MadcapConfig, ref_value = 'tags',w = _width1, scale = _box, label_scale = _label, shadow = true },
+								create_toggle{ label = "Boosters", align = 'cl',  ref_table = MadcapConfig, ref_value = 'boosters', w = _width1, scale = _box, label_scale = _label, shadow = true },
+								create_toggle{ label = "Vouchers", align = 'cl', ref_table = MadcapConfig, ref_value = 'vouchers', w = _width1, scale = _box, label_scale = _label, shadow = true },
+							}}
+						},
+					},
+					{
+						n = G.UIT.C, 
+						config = { align = 'tr', colour = darken(G.C.RED, 0.5), w = _total_width, padding = 0.05, }, 
+						nodes = {
+							{ n = G.UIT.T, config = {
+								align = 'tr,',
+								text = "Gameplay",
+								scale = _scale*0.8,
+								colour = G.C.UI.TEXT_LIGHT,
+								w = _width2,
+								shadow = true,
+							}},
+							{ n = G.UIT.C, config = { align = 'cr' }, nodes = {
+								create_toggle{ label = "Blinds", align = 'cl', ref_table = MadcapConfig, ref_value = 'blinds',w = _width1, scale = _box, label_scale = _label, shadow = true },
+								create_toggle{ label = "Decks", align = 'cl',  ref_table = MadcapConfig, ref_value = 'decks', w = _width1, scale = _box, label_scale = _label, shadow = true },
+								create_toggle{ label = "Stakes", align = 'cl', ref_table = MadcapConfig, ref_value = 'stakes', w = _width1, scale = _box, label_scale = _label, shadow = true },
+							}}
+						},
+					},
+					{
+						n = G.UIT.C, 
+						config = { align = 'tr', colour = darken(G.C.BLUE, 0.5), w = _total_width, padding = 0.05, }, 
+						nodes = {
+							{ n = G.UIT.T, config = {
+								align = 'tr,',
+								text = "Misc",
+								scale = _scale*0.8,
+								colour = G.C.UI.TEXT_LIGHT,
+								w = _width2,
+								shadow = true,
+							}},
+							{ n = G.UIT.C, config = { align = 'cr' }, nodes = misc_nodes or {} }
+						},
+					},
+				}
 			}
-		},
+		}
 	}
+
+	return content
 end
 
 ----------------------------------------------

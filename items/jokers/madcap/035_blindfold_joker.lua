@@ -35,7 +35,7 @@ return {
                 if card.ability.extra.x_mult - card.ability.extra.x_mult_penalty < 0.5 then
                     SMODS.destroy_cards(card, nil, nil, true)
                     return {
-                        message = "!!"
+                        message = "!!",
                         colour = G.C.MULT
                     }
                 else

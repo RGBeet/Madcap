@@ -82,7 +82,7 @@ position = 'at'
 payload = '''add_round_eval_row({
     name = 'bottom', 
     dollars = dollars, 
-    rgmc_luxury_pts = rgmc_luxury_pts, 
+    rgmc_luxury_pts = rgmc_total_lp, 
 })'''
 match_indent = true
 times = 1
@@ -115,9 +115,9 @@ pattern = '''if ret then
 position = 'after'
 payload = '''ret = G.GAME.tags[i]:apply_to_run({type = 'eval_luxury'})
 if ret then
-    add_round_eval_row({rgmc_luxury_pts = ret.rgmc_luxury_pts, bonus = true, name='tag'..i, pitch = pitch, condition = ret.condition, pos = ret.pos, tag = ret.tag})
+    add_round_eval_row({rgmc_luxury_pts = ret.rgmc_total_lp, bonus = true, name='tag'..i, pitch = pitch, condition = ret.condition, pos = ret.pos, tag = ret.tag})
     pitch = pitch + 0.06
-    rgmc_luxury_pts = rgmc_luxury_pts + ret.rgmc_luxury_pts
+    rgmc_total_lp = rgmc_total_lp + ret.rgmc_total_lp
 end'''
 match_indent = true
 
@@ -126,5 +126,5 @@ match_indent = true
 target = 'functions/state_events.lua'
 pattern = '''local dollars = 0'''
 position = 'after'
-payload = '''local rgmc_luxury_pts = 0'''
+payload = '''local rgmc_total_lp = 0'''
 match_indent = true
