@@ -29,8 +29,10 @@ return {
             return true
         end,
         set_blind = function(self, reset, silent)
-            G.GAME.blind.chips = Madcap.Funcs.get_sum_chips(self)
-            G.GAME.blind.chip_text = number_format(G.GAME.blind.chips)
+			Madcap.Funcs.build_up_blind_chips(Madcap.Funcs.get_ante_blind_chips(self))
+			print('SUMMING TIME!')
+			--local new_score = Madcap.Funcs.get_sum_chips(self)
+			delay(2.0)
             G.GAME.blind.triggered = true
             return true
         end,

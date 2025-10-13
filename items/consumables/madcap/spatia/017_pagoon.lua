@@ -20,7 +20,7 @@ return {
             return Madcap.Funcs.get_special_card_vars(self.config.set, (amt * self.config.xchips) + 1, (amt * self.config.xmult) + 1)
         end,
         can_use = function(self, card)
-            local amt = G.GAME.consumeable_usage
+            local amt = G.GAME.consumeable_usage_total
                 and Madcap.Lists.ConsumableSpatias[card.ability.set]
                 and G.GAME.consumeable_usage_total[Madcap.Lists.ConsumableSpatias[card.ability.set]]
                 or 0

@@ -1,3 +1,15 @@
+function Madcap.Funcs.GetMusic(_k, _select, _vol, _sync, _pitch)
+    return {
+		object_type = "Sound",
+		key = _k,
+		path = _k..'.ogg',
+		volume = _vol or 0.8,
+		select_music_track = _select,
+		sync = _sync or true,
+		pitch = _pitch,
+	}
+end
+
 local list = {
     Madcap.Funcs.GetMusic('music_madcap_play',function()
 	return G.GAME
@@ -48,7 +60,7 @@ local list = {
 					and (G.jokers.cards[i].config.center.rarity == "rgmc_unusual"
 					or G.jokers.cards[i].config.center.rarity == "rgmc_chaotic")
 				then
-					return 9999
+					return 2999
 				end
 			end
 		end
@@ -57,15 +69,21 @@ local list = {
     Madcap.Funcs.GetMusic('music_madcap_finisher',function()
 	return G.GAME
 		and G.GAME.modifiers.rgmc_deck
-		and Madcap.Funcs.is_playing_blind()
+		and ((Madcap.Funcs.is_playing_blind()
 		and Madcap.Funcs.get_boss_status() > 0
-		and Madcap.Funcs.is_finisher_ante(ante)
+		and Madcap.Funcs.is_finisher_ante(G.GAME.round_resets.ante))
+		or G.GAME.force_finisher_music)
 		and 18
 	end, 0.8, true),
 
     Madcap.Funcs.GetMusic('music_madcap_lunacy',function()
 	return G.GAME and G.GAME.rgmc_total_mayhem
 		and 2000
+	end, 0.8, false, 1.0),
+
+    Madcap.Funcs.GetMusic('music_madcap_chaotic_phase1',function()
+	return G.GAME and (G.GAME.rgmc_superboss == 1)
+		and 3000
 	end, 0.8, false, 1.0),
 }
 

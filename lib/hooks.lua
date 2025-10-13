@@ -104,6 +104,9 @@ end
 
 MadLib.SpecificRanks['rgmc_aesthetic'] = -92895
 
+-- Hexa & Binary Joker yoink.
+local get_id_use = false
+
 local card_get_id_ref = Card.get_id
 function Card:get_id()
 	if not get_id_use then
@@ -476,7 +479,7 @@ function create_UIBox_HUD()
     return orig
 end
 
-local blind_choice_ref = create_UIBox_blind_choice
+--[[
 function create_UIBox_blind_choice(type, run_info)
 	local blind = blind_choice_ref(type, run_info)
 	local extra = nil
@@ -511,7 +514,7 @@ function create_UIBox_blind_choice(type, run_info)
 
 	return blind
 end
-
+]]
 
 local card_open_ref = Card.open
 function Card:open()
@@ -587,4 +590,485 @@ function Card:stop_drag()
     --    G.deck:shuffle()
     -- end
     return c
+end
+
+local always_scores_ref = SMODS.always_scores
+function SMODS.always_scores(card)
+    if always_scores_ref(card) then return true end
+
+	-- cherry comes back and scores :)
+	if card.cherry_active then
+		card.cherry_active = nil -- get that shit OUTTA HERE
+		return true
+	end
+
+	return false
+end
+
+-- Add Remove Joker to contexts
+local sd = Card.start_dissolve
+function Card:start_dissolve(a,b,c,d)
+    --[[if G.GAME.MADCAP then
+        SMODS.calculate_context({ remove_joker = self })
+    end]]
+    return sd(self,a,b,c,d)
+end
+
+Madcap.CardReturnList = {
+	{ id = 'coil',
+		to 		= hand,
+		dir 	= 'down',
+		sort 	= true,
+	},
+	{ id = 'jade',
+		to 		= G.deck,
+		dir 	= 'down',
+		sort 	= true,
+	}
+}
+
+local draw_card_ref = draw_card
+function draw_card(from, to, percent, dir, sort, card, delay, mute, stay_flipped, vol, discarded_only)
+
+	-- Check if the card has any configs altering the card drawing
+	local _id = nil
+	for i=1, #Madcap.CardReturnList do
+		if card and card.ability[Madcap.CardReturnList[i].id..'_active'] then
+			_id = Madcap.CardReturnList[i]
+			break
+		end
+	end
+
+	if _rvals then
+		to 		= _rvals.to or to
+		dir 	= _rvals.dir or dir
+		sort 	= _rvals.sort or sort
+		card.ability[_rvals.id..'_active'] = nil
+		tell('Wow! Got a ' .. _rvals.id)
+    end
+
+    draw_card_ref(from, to, percent, dir, sort, card, delay, mute, stay_flipped, vol, discarded_only)
+end
+-- At end of round, check on Sinister Card timers
+local end_round_ref = end_round
+function end_round()
+	-- sinister card round tickers
+	--[[
+	if G.GAME.rgmc_sinister then
+		MadLib.loop_table(G.GAME.rgmc_sinister, function(k,v)
+			MadLib.simple_event(function()
+				local sin_table = G.GAME.rgmc_sinister[k]
+				sin_table.rounds = (G.GAME.rgmc_sinister.rounds or 1) - 1
+				if sin_table.rounds == 0 then -- rounds ended
+					if sin_table.money ~= nil then -- gain money
+						ease_dollars(sin_table.money)
+					elseif sin_table.consumeable ~= nil then -- gain consumeable slots
+						G.consumeables.config.card_limit = lenient_bignum(G.consumeables.config.card_limit + (sin_table.consume_slots or 1))
+					elseif sin_table.h_size ~= nil then -- gain consumeable slots
+						G.hand.config.card_limit = lenient_bignum(G.hand.config.card_limit + (sin_table.consume_slots or 1))
+					end
+					G.GAME.rgmc_sinister[k] = nil
+				end
+			end)
+			delay(2.0)
+		end)
+	end]]
+	end_round_ref() -- continue as usual
+end
+
+local ease_dollars_ref = ease_dollars
+function ease_dollars(mod, instant)
+	--tell('Easing moment')
+	if
+		G.GAME.modifiers.bankrupt_kill
+        and (to_big(G.GAME.dollars) + to_big(mod)) <= to_big(G.GAME.bankrupt_at)
+	then
+		MadLib.event({
+			func = function()
+				tell('You are now bankrupt.')
+				play_area_status_text("BANKRUPT!")
+			return true
+			end,
+			delay 	= 5.0,
+			trigger = 'after',
+		})
+		MadLib.event({
+			func = function()
+				if G.STAGE == G.STAGES.RUN then
+					G.STATE = G.STATES.GAME_OVER
+					G.STATE_COMPLETE = false
+				end
+			return true
+			end,
+			delay 	= 1.0,
+			trigger = 'after',
+		})
+	end
+
+	return ease_dollars_ref(mod, instant)
+end
+
+table.insert(SMODS.calculation_keys, "rgmc_luxury_pts")
+if SMODS.other_calculation_keys then
+    table.insert(SMODS.other_calculation_keys, "rgmc_luxury_pts")
+end
+
+-- Calculate individual effect fixing
+if SMODS and SMODS.calculate_individual_effect then
+	local cie = SMODS.calculate_individual_effect
+	function SMODS.calculate_individual_effect(effect, scored_card, key, amount, from_edition)
+		local ret = cie(effect, scored_card, key, amount, from_edition)
+
+		if -- squeezy cheese detection
+			MadLib.list_matches_one({'x_mult', 'xmult', 'x_mult_mod', 'xmult_mod'}, function(v)
+				return v == string.lower(key)
+			end) and amount ~= 1
+		then
+			MadLib.loop_func(SMODS.find_card('j_rgmc_squeezy_cheeze'), function(v)
+				v.ability.extra.xmult_store = lenient_bignum(to_big(v.ability.extra.xmult_store) + to_big(amount))
+
+				if v.ability.extra.xmult_store > 1 then
+				tell("New xmult_store is "..lenient_bignum(v.ability.extra.xmult_store))
+					local m = 0
+					while (v.ability.extra.xmult_store - 1) > 0 do
+						v.ability.extra.xmult_store = v.ability.extra.xmult_store - 1 -- go down bith
+						m = m + 1
+					end
+					local xm = 1 + v.ability.extra.xchip_mod * m
+					MadLib.simple_event(function()
+						play_sound("tarot2")
+						v:juice_up()
+						return true
+					end)
+					card_eval_status_text(v, "extra", nil, nil, nil, {
+						message = localize({
+							type = "variable",
+							key = "a_xchips",
+							vars = { number_format(xm) },
+						}),
+						colour = G.C.CHIPS,
+					})
+					hand_chips = mod_chips(to_big(hand_chips) * to_big(xm)) -- stupid way of doing x1.5 chips
+				end
+			end)
+		end
+		-- luxury points
+		if key == "rgmc_luxury_pts" then
+			amount = math.max(amount,0)
+			G.GAME.rgmc_luxury_pts = G.GAME.rgmc_luxury_pts + amount
+			text = "+£"..number_format(amount)
+			if from_edition then
+				card_eval_status_text(scored_card, 'jokers', nil, percent, nil, {message = text, colour = G.C.RGMC_LUXURY, sound = 'rgmc_kaching', edition = true})
+			else
+				card_eval_status_text(effect.message_card or effect.juice_card or scored_card or effect.card or effect.focus, 'extra', nil, percent, nil, {message = text, colour = { 0.8, 0.45, 0.85, 1 }, sound = 'rgmc_kaching', edition = true})
+			end
+			return true
+		end
+
+		if -- Squeezy (Partner)
+			MadLib.list_matches_one({'chips', 'chip_mod', 'chips_mod'}, function(v)
+				return key == string.lower(v)
+			end) and amount ~= 1
+		then
+			-- Squeezy (Partner)
+			if Partner_API then
+				if Madcap.Funcs.get_partner_key() == 'pnr_rgmc_squeezy' then
+					local _partner = G.GAME.selected_partner_card
+					_partner.ability.immutable.before_score = _partner.ability.immutable.before_score + amount
+					tell('+chips is now ' ..string(_partner.ability.immutable.before_score))
+				end
+			end
+		end
+		if ret then return ret end
+	end
+end
+
+-- Glass Michel better work.
+local shatter_ref = Card.shatter
+function Card:shatter()
+	if self.ability.glass_michel then
+		self:glass_michel_save()
+	else
+		print('shatter')
+		shatter_ref(self)
+	end
+end
+
+-- Setting the cost of the card, likely for the shop?
+local card_set_cost_ref = Card.set_cost
+function Card:set_cost()
+    local ret = card_set_cost_ref(self)
+
+    if self.ability.rgmc_engraved then
+        self.sell_cost = -1 -- bad luck!
+    end
+
+    if self.ability.rgmc_shielded then
+        self.sell_cost = math.floor(self.sell_cost / 2) -- stickers reduce sell value regardless
+    end
+
+    return ret
+end
+
+local get_new_boss_ref = get_new_boss
+function get_new_boss()
+	-- Some Madcap decks have set finishers
+	if
+		G.GAME.MADCAP
+		and G.GAME.deck_finishers 		-- has a deck finisher list
+		and G.GAME.round_resets.ante > 0	-- dont do it ante 0 or earlier :(
+		and G.GAME.round_resets.ante % G.GAME.win_ante == 0
+	then
+		local yes_please = G.GAME.round_resets.ante <= G.GAME.win_ante
+
+		if not yes_please then -- past ante 8
+			if SMODS.pseudorandom_probability(nil, 'finisher_blind', 1, 3) then
+				yes_please = true -- 1 in 3 chance to do the thing
+			end
+		end
+
+		if yes_please then
+			local eligible_bosses = {}
+
+			for _, v in pairs(G.GAME.deck_finishers) do -- might be more than one
+				eligible_bosses[v] = true
+			end
+
+			local _, boss = Madcap.Funcs.get_random_from_list(eligible_bosses)
+			return boss or "bl_final_vessel" -- evil
+		end
+	end
+
+	-- Pale Deck: The Force appears more often.
+	if G.GAME.modifiers.rgmc_pale then
+		if G.GAME.modifiers.rgmc_force_awakened then -- Force chance activated
+			return "bl_rgmc_force"
+		end
+	end
+
+	-- Punisher Tag: rerolls boss blind into finisher blind.
+	if G.GAME.force_finisher_blind then
+		G.GAME.force_finisher_blind = nil -- dont need this anymore
+
+		local blind, is_showdown = G.P_BLINDS[G.GAME.round_resets.blind_choices["Boss"]], false
+		if blind.boss and blind.boss.showdown then is_showdown = true end -- if showdown blind
+		local eligible_bosses = {}
+
+		for k, v in pairs(G.P_BLINDS) do
+			if v.boss and v.boss.showdown then eligible_bosses[k] = true end
+		end
+
+		for k, v in pairs(G.GAME.banned_keys) do
+			if eligible_bosses[k] then eligible_bosses[k] = nil end
+		end
+
+		-- TODO: showdowns reroll into specific superbosses or DX blinds?
+		return new_boss
+	end
+
+	-- if not punishing, just carry on as usual!
+	return get_new_boss_ref()
+end
+-- Used for Sangria Deck
+local deck_apply_to_run_ref = Back.apply_to_run
+function Back.apply_to_run(self)
+    deck_apply_to_run_ref(self)
+
+    if
+        self.effect.config.starting_suits
+        and not self.effect.config.starting_ranks 	-- No starting ranks, only affects suits
+    then
+        local size = #self.effect.config.starting_suits -- number of suits
+        local suits = self.effect.config.starting_suits -- the list of suits
+        local doubles = self.effect.config.starting_suits_doubles or false
+
+        local ranks = 13                -- number of starting ranks available (usually 13)
+        local deck_size = ranks * size  -- deck size
+
+        if doubles then
+            for i = #suits, 1, -1 do
+                suits[#suits+1] = suits[i]
+            end
+            table.sort(suits, cmp)
+            deck_size = deck_size * 2 -- double that shit
+        end
+
+        -- do the suit shit i guess
+        G.E_MANAGER:add_event(Event({
+            func = function()
+
+                -- modify existing cards
+                for i = #G.playing_cards, 1, -1 do
+                    if i > deck_size then
+						G.playing_cards[i]:remove()
+                    else
+                        local m = math.ceil(i/ranks)
+                        G.playing_cards[i]:change_suit(suits[m])
+                    end
+                end
+
+                if #G.playing_cards < deck_size then
+                    local difference = (#G.playing_cards - deck_size)
+                    for i = difference, 1, -1 do
+                        local m = math.ceil(#G.playing_cards/ranks)
+                        G.playing_card = (G.playing_card and G.playing_card + 1) or 1
+                        local _card = copy_card(G.playing_cards[i])
+                        --tell_stat('SUIT',suits[m])
+                        G.playing_cards[i]:change_suit(suits[m])
+                        _card:add_to_deck()
+                    end
+                end
+
+                return true
+            end
+        }))
+    elseif
+        self.effect.config.starting_suits		-- Specified starting suits and ranks
+        and self.effect.config.starting_ranks
+    then
+        local suit_size = #self.effect.config.starting_suits -- number of suits
+        local suit_list = self.effect.config.starting_suits -- the list of suits
+        local rank_size = #self.effect.config.starting_ranks -- number of ranks
+        local rank_list = self.effect.config.starting_ranks -- the list of ranks
+        local deck_size = suit_size * rank_size
+        local rank_index 	= 1
+        local suit_index 	= 1
+        local total 		= 0
+
+        local suit_index, rank_index, total = 1, 1, 0
+        G.E_MANAGER:add_event(Event({
+            func = function()
+                for i = 1,#G.playing_cards do
+                    local _rank, _suit = rank_list[rank_index], suit_list[suit_index]
+                    if i > deck_size then
+                        G.playing_cards[i]:remove()
+					else
+						assert(SMODS.change_base(G.playing_cards[i], _suit, _rank))
+						suit_index 	= suit_index + 1
+						total 		= total + 1
+						if suit_index > suit_size then
+							suit_index	= 1
+							rank_index	= rank_index + 1
+						end
+					end
+					if rank_index > rank_size then break end
+                end
+
+
+                for i = 1, (deck_size - total) do
+                    local _rank, _suit = rank_list[rank_index], suit_list[suit_index]
+					local _card = copy_card(G.playing_cards[1])
+					_card:add_to_deck()
+                    assert(SMODS.change_base(_card, _suit, _rank))
+                    G.deck.config.card_limit = G.deck.config.card_limit + 1
+                    table.insert(G.playing_cards, _card)
+                    G.deck:emplace(_card)
+
+					suit_index 	= suit_index + 1
+					total 		= total + 1
+
+					if suit_index > suit_size then
+						suit_index	= 1
+						rank_index	= rank_index + 1
+					end
+
+					if rank_index > rank_size then break end
+                end
+                return true
+            end
+        }))
+    end
+end
+
+-- Levelling up hands shenanigans
+local level_up_hand_ref = level_up_hand
+function level_up_hand(card, hand, instant, amount, context)
+
+	if to_big(amount or 1) > to_big(0) then -- actually levelling up the hand
+		if  -- Rocket Keychain: using specific Planet card levels up most played hand as well!
+			#SMODS.find_card('j_rgmc_rocket_keychain') > 0
+		then
+			-- loop thru
+			MadLib.loop_func(SMODS.find_card('j_rgmc_rocket_keychain'), function(v)
+				if hand == v.ability.extra.target_hand then
+					level_up_hand_ref(card, MadLib.get_most_played_hand(), instant, v.ability.extra.level_ups)
+				end
+			end)
+		end
+	end
+	level_up_hand_ref(card, hand, instant, amount)
+end
+
+
+local smods_change_base = SMODS.change_base
+function SMODS.change_base(card, suit, rank)
+	if not card then return nil end
+	-- immutable sticker
+	if card.ability.rgmc_immutable then
+		if suit ~= card.base.suit then
+			return SMODS.change_base(card, suit, rank)
+		else
+			return nil
+		end
+	end
+	local card = smods_change_base(card, suit, rank)
+	-- put shit here i guess idk
+    return card
+end
+
+--Used to mess around with poker hand stuff (e.g. Waveworx)
+local evaluate_poker_hand_ref = evaluate_poker_hand
+function evaluate_poker_hand(hand)
+    local results = evaluate_poker_hand_ref(hand)
+	local forced = false
+
+    -- Force poker hand.
+    if not forced then
+		-- Waveworx
+		if G.GAME.force_poker_hand then MadLib.force_poker_hand(results, G.GAME.force_poker_hand) end
+
+		-- Mulch
+		local mulch = next(SMODS.find_card('j_rgmc_mulch'))
+		if mulch then
+			mulch = SMODS.find_card('j_rgmc_mulch')[1]
+			local high_rank, low_rank = Madcap.Funcs.get_high_and_low(hand)
+			if
+				high_rank == (mulch.ability.extra.ranks[1] or '7')
+				and low_rank == (mulch.ability.extra.ranks[2] or '2')
+			then
+				MadLib.force_poker_hand(mulch.ability.extra.poker_hand or 'Straight')
+			end
+		end
+
+		-- Spider Solitaire
+		-- Mulch
+		local spider = next(SMODS.find_card('j_rgmc_spider_solitaire'))
+		if spider and results['Straight'][1] then
+			local cardtype = hand[1]:has_light_suit()
+				and 'light' or 'dark'
+			print('card type is ' .. cardtype)
+			for _, v in pairs(hand) do
+				if cardtype == 'light' then
+					if v:has_light_suit() then
+						print('light -> dark')
+						cardtype = 'dark'
+					else
+						cardtype = nil
+						break
+					end
+				else
+					if v:has_dark_suit() then
+						print('dark -> light')
+						cardtype = 'light'
+					else
+						cardtype = nil
+						break
+					end
+				end
+			end
+			if cardtype then results['Straight Flush'] = results['Straight'] end
+		end
+    end
+
+    return results
 end

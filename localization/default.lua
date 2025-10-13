@@ -510,6 +510,12 @@ return {
                     "#1# / #2# Bosses Cleared"
                 },
             },
+            bl_rgmc_final_id = {
+                name = "The Id",
+                text = {
+                    "#1# / #2# Bosses Cleared"
+                },
+            },
         },
         Joker = {
             j_rgmc_thorium_joker = {
@@ -5817,6 +5823,8 @@ return {
             k_left_lc       = "left",
             k_right_lc      = "right",
 
+            rgmc_debuff_multiblind = "Conflicts with current blind abilities!",
+
             -- idk
             rgmc_lobster_sub        = {
                 "With A Mornay Sauce",
@@ -5890,6 +5898,40 @@ return {
             rgmc_noak_flush                 = "Flush None",
             rgmc_infoak                     = "Infinitum",
             rgmc_infoak_flush               = "Fluxus Infinitum",
+        },
+        quips = {
+            lq_id_1 = {
+                "PATHETIC",
+                "AWFUL PERFORMANCE"
+            },
+            lq_id_2 = {
+                "IT SEEMS MY GAME",
+                "WAS TOO MUCH",
+                "TO COMPREHEND"
+            },
+            lq_id_3 = {
+                "AND I THOUGHT I",
+                "COULDN'T HATE YOU",
+                "ANY MORE"
+            },
+            lq_id_4 = {
+                "HATE!!!"
+            },
+            lq_endless_id_1 = {
+                "TOOK YOU LONG ENOUGH"
+            },
+            lq_endless_id_2 = {
+                "YOUR STRUGGLE WAS",
+                "MUSIC TO MY EARS"
+            },
+            lq_endless_id_3 = {
+                "YOU BORE ME TO",
+                "THE EDGE OF MY",
+                "FRAGILE PATIENCE"
+            },
+            lq_endless_id_4 = {
+                "GET A LIFE!!"
+            },
         },
 		labels = {
             rgmc_shielded           = "Shielded",

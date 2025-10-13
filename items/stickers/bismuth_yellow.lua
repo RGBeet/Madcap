@@ -1,4 +1,3 @@
-local fix_value = function(card) return math.max(1, (card.ability.extra.edit_factor or 1) * Madcap.Lists.BismuthValues.Yellow) end
 return {
     categories = {
         'Enhancements'
@@ -9,26 +8,19 @@ return {
         atlas   = 'stickers',
         pos     = MLIB.coords(2,2),
         badge_colour = HEX("3867DD"),
-        config  = { draw = 1 },
         loc_vars = function(self, info_queue, card)
-            return MadLib.collect_vars(fix_value(card))
+            return MadLib.collect_vars(number_format(math.max(1, Madcap.Lists.BismuthValues.Yellow)))
         end,
-        config = { extra = { edit_factor = 1 } },
-        should_apply = false,
         apply = function(self, card, val)
         end,
         bismuth = true,
         calculate = function(self, card, context)
             if
                 not context.repetition
-                and (
-                    (context.joker_main and context.cardarea == G.jokers)
-                    or (context.main_scoring and context.cardarea == G.play)
-                )
+                and ((context.joker_main and context.cardarea == G.jokers) or (context.main_scoring and context.cardarea == G.play))
             then
                 return {
-                    dollars = to_big(fix_value(card)),
-                    card = card,
+                    dollars = math.max(1, Madcap.Lists.BismuthValues.Yellow),
                     func = function() -- This is for timing purposes, this goes after the dollar modification
                         MadLib.event({
                             func = function()

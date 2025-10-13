@@ -24,6 +24,7 @@ end
 overwrite = true
 match_indent = true
 
+# Get colours for Total Mayhem state and Superboss Satte
 [[patches]]
 [patches.pattern]
 target = "functions/common_events.lua"
@@ -31,9 +32,20 @@ pattern = '''if state == G.STATES.TAROT_PACK then
         ease_background_colour{new_colour = G.C.PURPLE, special_colour = darken(G.C.BLACK, 0.2), contrast = 1.5}'''
 position = "before"
 payload = '''if G.GAME.rgmc_total_mayhem then
-  ease_background_colour{new_colour = G.C.DARK_EDITION, special_colour = darken(G.C.BLACK, 0.2), contrast = 1.5}
+  ease_background_colour{new_colour = G.C.PURPLE, special_colour = darken(G.C.BLACK, 0.2), contrast = 1.5}
   return
-end'''
+end
+
+local blind_key = G.GAME.blind and (G.GAME.blind.key or (G.GAME.blind.config and G.GAME.blind.config.blind and G.GAME.blind.config.blind.key))
+if blind_key == 'bl_rgmc_final_gauntlet' then
+  ease_background_colour{new_colour = G.C.GOLD, special_colour = darken(G.C.GOLD, 0.6), contrast = 2.0}
+  return
+end
+if G.GAME.rgmc_superboss then
+  ease_background_colour{new_colour = G.C.GOLD, special_colour = darken(G.C.BLACK, 0.2), contrast = 1.5}
+  return
+end
+'''
 match_indent = true
 
 # Extra Credit before but not as much; diff. ctx though becuase clashes AUGH

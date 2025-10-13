@@ -1,6 +1,5 @@
 function Madcap.Funcs.get_potentia_vars(sh,lvl)
 	local subhand = G.GAME.subhands and G.GAME.subhands[sh]
-	if not subhand then return end
 	local current_level = subhand and subhand.level 	or 1
 	local empower_level = subhand and subhand.empower 	or 0
     return {

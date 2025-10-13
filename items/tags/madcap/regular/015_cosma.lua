@@ -18,7 +18,7 @@ return {
             if context.type == "new_blind_choice" then
                 G.CONTROLLER.locks[lock] = true
                 tag:yep('+', G.C.ORANGE,function()
-                    Madcap.Funcs.open_booster_quick("rgmc_cosma")
+                    --?!?
                 end)
                 tag.triggered = true
                 return true

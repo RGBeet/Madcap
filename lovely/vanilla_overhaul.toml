@@ -1,0 +1,18 @@
+[manifest]
+version = "1.0.0"
+dump_lua = true
+priority = 1000
+
+# START OF RUN
+
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''elseif self.ability.name == 'Cloud 9' then loc_vars = {self.ability.extra, self.ability.extra*(self.ability.nine_tally or 0)}'''
+position = "at"
+payload = '''elseif self.ability.name == 'Cloud 9' then
+  local nines = MadLib.loop_func(G.playing_cards, function(v)
+  return MadLib.joker_check_rank(v, self, '9')
+end)
+  loc_vars = MadLib.collect_vars(self.ability.extra.dollars, localize(self.ability.extra.rank, 'ranks'), self.ability.extra.dollars * nines)'''
+match_indent = true

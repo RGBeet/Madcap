@@ -35,8 +35,8 @@ local atlases = {
 	create('vouchers', 		mis..'vouchers.png'),
 	crtsqr('ui_suits', 		mis..'ui_suits.png', 18),
 	crtsqr('ui_suits_hc', 	mis..'ui_suits_hc.png', 18),
-	crtbld('blinds', 		'blinds/bl_base.png', 21),
-	--crtbld'blinds_chaotic', 'blinds_chaotic.png', 21),
+	crtbld('blinds', 			'blinds/bl_base.png', 21),
+	crtbld('blinds_chaotic', 	'blinds/bl_chaotic.png', 21),
 	--crtsqr('stakes', 'stakes.png', 29),
 }
 
