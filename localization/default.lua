@@ -626,9 +626,9 @@ return {
                 name = "Blindfold Joker",
                 text = {
                     "{X:mult,C:white}X#1#{} Mult against {C:attention}Boss{} Blinds",
-                    "({C:inactive}Lose {X:mult,C:white}X#2#{C:inactive} Mult",
-                    "{C:inactive}when {C:attention}Blind{C:inactive} is {C:attention}skipped)",
-                    "{C:inactive}({C:attention}#3#{C:inactive})"
+                    "Loses {X:mult,C:white}X#2#{} Mult",
+                    "when {C:attention}blind{} is {C:attention}skipped)",
+                    "{C:inactive}(Currently {C:attention}#3#{C:inactive})"
                 },
             },
             j_rgmc_plentiful_ametrine = {
@@ -1551,7 +1551,7 @@ return {
                 name = "Gutterball",
                 text = {
                     "If played hand contains",
-                    "{C:attention}#1#{} or more unscoring cards",
+                    "{C:attention}#1#{} or more unscoring cards,",
                     "gain {C:money}$#2#",
                     "{C:inactive,s:0.8}(Watch that Gutterball!)"
                 },
@@ -1980,7 +1980,7 @@ return {
                     "whenever a {C:attention}non-face{} card",
                     "is discarded",
                     "Resets after playing a hand",
-                    "{C:inactive}(Currently {C:chips}+#2#{C:inactive} Mult)"
+                    "{C:inactive}(Currently {C:mult}+#2#{C:inactive} Mult)"
                 },
             },
             j_rgmc_daybreak = {

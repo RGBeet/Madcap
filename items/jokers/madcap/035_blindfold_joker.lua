@@ -52,7 +52,7 @@ return {
                 (context.joker_main and G.GAME.blind:get_type() == "Big")
                 or context.forcetrigger -- demicolon
             then
-                return MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiMult, card, card.ability.extra.x_mult)
+                return { xmult = card.ability.extra.x_mult }
             end
         end,
         demicoloncompat = true,

@@ -7,7 +7,12 @@ return {
         rarity  = 1,
         cost    = 5,
         calculate = function(self, card, context)
-            if (context.end_of_round and not context.game_over and context.cardarea == G.jokers) or context.forcetrigger then
+            if 
+                (context.end_of_round 
+                    and not context.game_over
+                    and G.GAME.current_round.hands_played == 0 
+                    and context.cardarea == G.jokers) 
+                or context.forcetrigger then
                 local new_card = MadLib.get_random_card("Tarot")
                 new_card:add_to_deck()
                 table.insert(G.consumeables, new_card)
