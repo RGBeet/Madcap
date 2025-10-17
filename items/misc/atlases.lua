@@ -132,7 +132,7 @@ if next(SMODS.find_mod("partner")) then
 end
 
 -- More Fluff
-if next(SMODS.find_mod("MoreFluff")) then
+if MadLib.mod_loaded('MoreFluff') then
 	local mf = 'more_fluff/mf_'
 	add_atlases({
 		create('mf_colours', 		mf..'colours.png'),

@@ -2296,7 +2296,7 @@ return {
             j_rgmc_mf_purpendicular = {
                 name = "Purpendicular",
                 text = {
-                    "{C:attention}+#1#{} consumeable slot",
+                    "{C:attention}+#1#{} consumable slot",
                     "Upon defeating {C:attention}Boss Blind{},",
                     "convert all held {C:tarot}Tarots{}",
                     "into their",
