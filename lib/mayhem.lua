@@ -28,11 +28,6 @@ end
 
 function Madcap.Funcs.ease_mayhem(_mod, _check, _silent, _instant)
 	_mod = _mod or 0
-
-	if G.GAME.mayhem + _mod > G.GAME.max_mayhem then _mod = G.GAME.max_mayhem - G.GAME.mayhem end
-	if G.GAME.mayhem + _mod < 0 then _mod = -G.GAME.mayhem end
-	G.GAME.mayhem = G.GAME.mayhem + _mod
-	--[[
     MadLib.simple_event(function()
         local round_UI = G.HUD:get_UIE_by_ID('mayhem_UI_count')
         local add_mayhem, lose_mayhem = to_big(_mod) > to_big(0), to_big(_mod) < to_big(0)
@@ -88,7 +83,6 @@ function Madcap.Funcs.ease_mayhem(_mod, _check, _silent, _instant)
         return true
     end, 0.5, 'immediate')
     return true
-	]]
 end
 
 function Madcap.Funcs.set_mayhem(_mod, _check, _silent,_instant)
@@ -378,7 +372,7 @@ function Madcap.Funcs.check_eval_card(card,i)
 
 	-- handle mayhem stuff
 	if card:is_void() then
-		local mayhem_gain = self:get_mayhem()
+		local mayhem_gain = card:get_mayhem()
 		local eval = {
 			message = '+' .. tostring(mayhem_gain) .. ' M!',
 			colour = G.C.RED,
@@ -388,7 +382,7 @@ function Madcap.Funcs.check_eval_card(card,i)
 		}
 		card_eval_status_text(card, "extra", nil, nil, nil, eval)
 	elseif card:is_lantern() then
-		local mayhem_loss = self:get_mayhem()
+		local mayhem_loss = card:get_mayhem()
 		local eval = {
 			message = tostring(mayhem_loss) .. ' M!',
 			colour = G.C.RED,

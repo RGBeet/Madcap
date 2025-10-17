@@ -41,7 +41,12 @@ return {
                         and card.ability.extra.chip_mod * 2
                         or  card.ability.extra.chip_mod
 
-                    return MadLib.get_detailed_upgrade_data(MadLib.ScoreKeys.AddChips, card, upgrade)
+                    card.ability.extra.chips = card.ability.extra.chips + upgrade
+                    return {
+                        message = localize('k_upgrade_ex'),
+                        colour = G.C.CHIPS,
+                        message_card = card
+                    }
                 end
             end
 

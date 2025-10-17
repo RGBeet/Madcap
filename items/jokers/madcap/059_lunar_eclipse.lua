@@ -20,7 +20,7 @@ return {
                 (context.cardarea == G.jokers and MadLib.context_has_subhand(context,'ml_sh_dark'))
                 or context.forcetrigger
             then
-                return MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiMult, card, card.ability.extra.x_mult)
+                return { xmult = card.ability.extra.x_mult, card = card }
             end
         end,
         demicoloncompat = true,

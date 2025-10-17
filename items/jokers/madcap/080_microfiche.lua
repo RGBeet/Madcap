@@ -24,13 +24,24 @@ return {
             return MadLib.collect_vars(card.ability.extra.xmult_mod, card.ability.extra.x_mult)
         end,
         calculate = function(self, card, context)
-            if context.cardarea == G.play and context.individual and context.other_card
+            if
+                context.cardarea == G.play
+                and context.individual
+                and context.other_card
+                and Madcap.Funcs.microfiche_check(context.other_card)
             then
-                if Madcap.Funcs.microfiche_check(context.other_card) then 
-                    return MadLib.get_simple_upgrade_data(MadLib.ScoreKeys.MultiMult, context.other_card, card.ability.extra.xmult_mod)
-                end
+                card.ability.extra.x_mult = card.ability.extra.x_mult + card.ability.extra.xmult_mod
+                return {
+                    message = localize('k_upgrade_ex'),
+                    colour  = G.C.MULT
+                }
             end
-            if (context.joker_main or context.forcetrigger) and card.ability.extra.x_mult > 1 then return MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiMult, card, card.ability.extra.x_mult) end
+            if (context.joker_main or context.forcetrigger) and card.ability.extra.x_mult > 1 then
+                return {
+                    xmult = card.ability.extra.x_mult,
+                    card = card
+                }
+            end
         end,
         in_pool = function(self, args) -- At least one owned card has a nominal of less than 2
             return MadLib.list_matches_one(G.playing_cards, function(v)

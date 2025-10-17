@@ -44,7 +44,7 @@ if not Cryptid then
 end
 
 -- MoreFluff compat
-if MoreFluff then
+if next(SMODS.find_mod("MoreFluff")) then
 	function Madcap.Funcs.get_enhancement_tarot_loc_vars(self, info_queue, card)
 		if not (self and card) then return  { vars = {} } end
 		MadLib.add_to_queue(G.P_CENTERS[self.config.mod_conv])
@@ -66,7 +66,7 @@ if MoreFluff then
 	end
 
 	function Madcap.Funcs.colour_can_use(self, card)
-		return self and self.config.val > 0 or false
+		return true
 	end
 
 	function Madcap.Funcs.colour_convert_suit(self, card, area, copier, suit)

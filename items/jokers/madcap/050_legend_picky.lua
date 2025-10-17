@@ -40,7 +40,7 @@ return {
                 }
             end
             if context.forcetrigger or (context.cardarea == G.jokers and context.joker_main) then
-                return MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiMult, card, card.ability.extra.x_mult)
+                return { xmult = card.ability.extra.x_mult, card = card }
             end
         end,
         perishable_compat = false,

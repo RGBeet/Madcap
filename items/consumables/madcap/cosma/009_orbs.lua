@@ -13,7 +13,7 @@ Madcap.Funcs.orb_compatible = function(card)
         or Madcap.Lists.MadcapUpgrades[enhancement] ~= nil
 end
 
-if next(SMODS.find_mod("MoreFluff")) then
+if MadLib.mod_loaded('MoreFluff') then
     Madcap.Lists.MadcapUpgrades['m_mf_monus']    = {'m_rgmc_magnet'}
     Madcap.Lists.MadcapUpgrades['m_mf_cult']     = {'m_rgmc_signal'}
     Madcap.Lists.MadcapUpgrades['m_mf_teal']     = {'m_rgmc_crystaltine'}

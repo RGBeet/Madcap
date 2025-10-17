@@ -8,7 +8,7 @@ return {
         key     = "pandora",
         atlas   = "tags",
         pos     = MLIB.coords(1,1),
-        config = { type 	= "new_blind_choice", extra = 1 },
+        config = { extra = 1 },
         loc_vars = function(self, info_queue)
             return MadLib.collect_vars(number_format(self.config.extra))
         end,
@@ -19,9 +19,11 @@ return {
         apply = function(self, tag, context)
             local lock = tag.ID
             if context.type == self.config.type then
-                tag:yep('+', G.C.PURPLE, function() return true end) -- Money
+                tag:yep('+', G.C.PURPLE, function()
+                    Madcap.Funcs.ease_mayhem(self.config.extra)
+                    return true 
+                end) -- Money
                 tag.triggered = true
-                Madcap.Funcs.ease_mayhem(mayhem)
                 return true
             end
         end,

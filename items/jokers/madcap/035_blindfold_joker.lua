@@ -52,7 +52,7 @@ return {
                 (context.joker_main and G.GAME.blind:get_type() == "Big")
                 or context.forcetrigger -- demicolon
             then
-                return { xmult = card.ability.extra.x_mult }
+                return { xmult = card.ability.extra.x_mult, card = card }
             end
         end,
         demicoloncompat = true,

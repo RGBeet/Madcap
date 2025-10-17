@@ -13,7 +13,9 @@ return {
 		cost      = 5,
 		config    = { val = 0, partial_rounds = 0, upgrade_rounds = 1, },
 		loc_vars  = Madcap.Funcs.get_colour_loc_vars(self, info_queue, card),
-		can_use   = Madcap.Funcs.colour_can_use(self,card),
+		can_use = function(self, card)
+			return #G.hand.cards > 1 and card.ability.val > 0
+		end,
 		use = function(self, card, area, copier)
 			for i=1, card.ability.val do
 				MadLib.simple_event(function()
@@ -38,6 +40,10 @@ return {
 					return true
 				end, 0.4, 'after')
 			end
+		end,
+		loc_vars  = function(self, info_queue, card)
+			local val, max = Madcap.Funcs.get_progress_bar(card.ability.partial_rounds, 	card.ability.upgrade_rounds)
+			return MadLib.collect_vars(card.ability.val, val, max, card.ability.upgrade_rounds)
 		end,
 		display_size 	= { w = 71, h = 87 },
 		pixel_size 		= { w = 71, h = 87 },

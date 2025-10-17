@@ -23,7 +23,7 @@ return {
                 and MadLib.has_suit_in_list(context.other_card, MadLib.SuitTypes.Dark))
                 or context.forcetrigger -- demicolon
             then
-                return MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiMult, card, card.ability.extra.x_mult)
+                return { xmult = card.ability.extra.x_mult, card = card }
             end
         end,
         demicoloncompat = true,

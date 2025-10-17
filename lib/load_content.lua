@@ -38,7 +38,33 @@ Madcap.Directories = {
 				d.unlocked          = d.unlocked or true
 				d.discovered        = d.discovered or true
 			end
-		}
+		},
+		['morefluff'] = {
+			pass = function()
+				return next(SMODS.find_mod("MoreFluff")) -- cryptid jokers are not loaded here
+			end,
+			func = function(d)
+				d.pools = { ['MadcapJoker'] = true }
+				d.blueprint_compat  = d.blueprint_compat or true
+				d.eternal_compat    = d.eternal_compat or true
+				d.perishable_compat = d.perishable_compat or true
+				d.unlocked          = d.unlocked or true
+				d.discovered        = d.discovered or true
+			end
+		},
+		['toga'] = {
+			pass = function()
+				return MadLib.mod_loaded('TOGAPack') -- cryptid jokers are not loaded here
+			end,
+			func = function(d)
+				d.pools = { ['MadcapJoker'] = true }
+				d.blueprint_compat  = d.blueprint_compat or true
+				d.eternal_compat    = d.eternal_compat or true
+				d.perishable_compat = d.perishable_compat or true
+				d.unlocked          = d.unlocked or true
+				d.discovered        = d.discovered or true
+			end
+		},
 	},
 	['consumables'] = {
 		['madcap'] = {
@@ -79,7 +105,7 @@ Madcap.Directories = {
 					return next(SMODS.find_mod("MoreFluff"))
 				end
 			},
-			['rotarots'] = {
+			['rotarot'] = {
 				pass = function()
 					return next(SMODS.find_mod("MoreFluff"))
 				end
@@ -302,7 +328,8 @@ local function loop_directories(tbl, path)
 	print(path)
 	MadLib.loop_table(tbl, function(key,value)
         if type(value) ~= "table" then return false end
-		if value.pass ~= nil and value.pass() == true then
+		local pass = value.pass and value.pass() or nil
+		if (pass ~= nil and pass ~= false) then
 			tell("Loading folder at: " .. table.concat(path, ".") .. (next(path) and "." or "") .. key)
 			local final_path = 'items/'
 			MadLib.loop_func(path, function(v,i)

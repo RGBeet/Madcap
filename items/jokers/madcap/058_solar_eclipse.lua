@@ -20,7 +20,7 @@ return {
                 (context.cardarea == G.jokers and MadLib.context_has_subhand(context,'ml_sh_light'))
                 or context.forcetrigger
             then
-                return MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiChips, card, card.ability.extra.x_chips)
+                return { xchips = card.ability.extra.x_chips, card = card }
             end
         end,
         in_pool = function(self, args) -- can play Light subhands

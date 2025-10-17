@@ -23,7 +23,7 @@ return {
                 and not MadLib.has_rank_in_list(context.other_card, MadLib.RankTypes.Base))
                 or context.forcetrigger -- demicolon compat
             then -- has to have custom rank and suit
-                return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddMult,card,card.ability.extra.mult)
+                return { mult = card.ability.extra.mult, card = card }
             end
         end,
         in_pool = function(self, args) -- Exotic suits/ranks enabled

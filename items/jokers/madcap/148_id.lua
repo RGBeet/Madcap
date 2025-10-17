@@ -81,7 +81,7 @@ return {
             
             -- The main part
             if context.joker_main or context.forcetrigger then
-                return MadLib.get_simple_score_data(MadLib.ScoreKeys.ExpMult, card, card.ability.extra.powmult)
+                return { emult = card.ability.extra.powmult, card = card }
             end
         end,       
         remove_from_deck = function(self, card, from_debuff)

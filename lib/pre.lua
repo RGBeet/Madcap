@@ -56,9 +56,9 @@ Madcap = {
 		},
 		BismuthValues = {
 			Red 	= 1.7, 	-- XMult
-			Blue 	= 50, 	-- Chips
+			Blue 	= 1.5, 	-- XChips
 			Green	= 1,	-- Repetitions
-			Purple 	= 1.4,	-- XScore
+			Purple 	= 1.5,	-- XScore
 			Yellow 	= 5		-- Money
 		},
 		RoshamboKeys = {
@@ -135,7 +135,7 @@ Madcap = {
 	},
 	Data = {
 		seed		= 'rgmc', 	-- primary seed for random stuff
-		devmode 	= false, 	-- When true, enables all the debug text and unfinished content.
+		devmode 	= true, 	-- When true, enables all the debug text and unfinished content.
 	},
 }
 

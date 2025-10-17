@@ -40,8 +40,12 @@ return {
                         MadLib.loop_func(v.cards, function(c,i)
                             MadLib.simple_event(function()
                                 local should_debuff = blind.config.left_side and (i < num) or (i > num)
-                                SMODS.debuff_card(c, should_debuff, 'rgmc_pendulum')
-                                if should_debuff then play_sound('timpani',pitch,0.6) end
+                                if should_debuff then 
+                                    play_sound('timpani', pitch, 0.6)
+                                    SMODS.debuff_card(c, true, 'rgmc_pendulum')
+                                else
+                                    SMODS.debuff_card(c, false, 'rgmc_pendulum')
+                                end
                                 c:juice_up(0.3, 0.3)
                                 return true
                             end,0.1,'after')

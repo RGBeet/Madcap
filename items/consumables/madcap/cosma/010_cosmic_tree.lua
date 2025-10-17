@@ -43,7 +43,7 @@ return {
             local suits, ranks 	= Madcap.Funcs.get_num_suits_and_ranks(G.playing_cards)
             local rank_cash 	= math.floor(#ranks/3) * card.ability.extra.dollars
             local suit_cash 	= math.floor(#suits/2) * card.ability.extra.dollars
-            ease_dollars(rank_cash + suit_cash)
+            ease_lp(rank_cash + suit_cash)
             Madcap.Funcs.set_last_cosma(self)
         end
     }

@@ -11,9 +11,14 @@ return {
 		key       = "cobalt_blue",
 		config    = { val = 0, partial_rounds = 0, upgrade_rounds = 1, },
 		cost      = 4,
-		can_use   = Madcap.Funcs.colour_can_use(self,card),
+		can_use = function(self, card)
+			return #G.hand.cards > 1 and card.ability.val > 0
+		end,
 		use       = Madcap.Funcs.colour_convert_suit(self, card, area, copier, 'rgmc_towers'),
-		loc_vars  = Madcap.Funcs.get_colour_loc_vars(self, info_queue, card),
+		loc_vars  = function(self, info_queue, card)
+			local val, max = Madcap.Funcs.get_progress_bar(card.ability.partial_rounds, 	card.ability.upgrade_rounds)
+			return MadLib.collect_vars(card.ability.val, val, max, card.ability.upgrade_rounds)
+		end,
 		display_size 	= { w = 71, h = 87 },
 		pixel_size 		= { w = 71, h = 87 },
     }

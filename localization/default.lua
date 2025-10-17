@@ -626,9 +626,9 @@ return {
                 name = "Blindfold Joker",
                 text = {
                     "{X:mult,C:white}X#1#{} Mult against {C:attention}Boss{} Blinds",
-                    "Loses {X:mult,C:white}X#2#{} Mult",
-                    "when {C:attention}blind{} is {C:attention}skipped)",
-                    "{C:inactive}(Currently {C:attention}#3#{C:inactive})"
+                    "({C:inactive}Lose {X:mult,C:white}X#2#{C:inactive} Mult",
+                    "{C:inactive}when {C:attention}Blind{C:inactive} is {C:attention}skipped)",
+                    "{C:inactive}({C:attention}#3#{C:inactive})"
                 },
             },
             j_rgmc_plentiful_ametrine = {
@@ -1136,9 +1136,9 @@ return {
                 text = {
                     {
                         "Upon {C:blue}playing{} or {C:red}discarding:",
-                        "{C:green}#1# in {} ({C:green}#2#{} chance to",
+                        "{C:green}#1# in #2#{} chance to",
                         "gain +#3# {C:attention}temporary{} {C:blue}hands{} or {C:red}discards",
-                        "{C:green}#2# in {} ({C:green}#3#{} chance for",
+                        "{C:green}#1# in #2#{} chance for",
                         "-#3# {C:blue}hands{} or {C:red}discards"
                     }
                 },
@@ -1524,6 +1524,22 @@ return {
                     }
                 },
             },
+            j_rgmc_lost = {
+                name = "The Lost",
+                text = {
+                    "Upon preventing death,",
+                    "{C:dark_edition}reset{} and {C:red}self-destruct{}",
+                    "{C:inactive}(Currently {C:attention}#1# {C:inactive}???)"
+                },
+            },
+            j_rgmc_found = {
+                name = "The Found",
+                text = {
+                    "{C:mult}+#1#{} Mult",
+                    "on {C:attention}first{} and",
+                    "{C:attention}last{} hands"
+                },
+            },
             j_rgmc_dino_cursor = {
                 name = "Dinosaur Cursor",
                 text = {
@@ -1551,7 +1567,7 @@ return {
                 name = "Gutterball",
                 text = {
                     "If played hand contains",
-                    "{C:attention}#1#{} or more unscoring cards,",
+                    "{C:attention}#1#{} or more unscoring cards",
                     "gain {C:money}$#2#",
                     "{C:inactive,s:0.8}(Watch that Gutterball!)"
                 },
@@ -1980,7 +1996,7 @@ return {
                     "whenever a {C:attention}non-face{} card",
                     "is discarded",
                     "Resets after playing a hand",
-                    "{C:inactive}(Currently {C:mult}+#2#{C:inactive} Mult)"
+                    "{C:inactive}(Currently {C:chips}+#2#{C:inactive} Mult)"
                 },
             },
             j_rgmc_daybreak = {
@@ -2224,7 +2240,7 @@ return {
                 },
             },
             j_rgmc_simple_simon = {
-                name = "Utah Teapot",
+                name = "Simple Simon",
                 text = {
                     "After playing {C:attention}final hand{},",
                     "give {C:blue}+#1#{} hand{C:inactive}(s)",
@@ -2265,6 +2281,66 @@ return {
                     "{C:attention}Spawned{} Jokers may",
                     "have {C:rgmc_bismuth}randomized{} values...",
                     "{C:inactive}(Get it?)"
+                },
+            },
+            j_rgmc_mf_colour_fun = {
+                name = "Colour Fun",
+                text = {
+                    "This Joker gains",
+                    "{C:chips}+#1#{} Chips upon",
+                    "using a {C:attention}#3#",
+                    "{C:colour}Colour{} card",
+                    "{C:inactive}(Currently {C:chips}+#2#{C:inactive} Chips)"
+                },
+            },
+            j_rgmc_mf_purpendicular = {
+                name = "Purpendicular",
+                text = {
+                    "{C:attention}+#1#{} consumeable slot",
+                    "Upon defeating {C:attention}Boss Blind{},",
+                    "convert all held {C:tarot}Tarots{}",
+                    "into their",
+                    "{C:rotarot,E:1,s:0.8}45 Degree Rotated Tarot",
+                    "counterpart"
+                },
+            },
+            j_rgmc_mf_wenge_william = {
+                name = "Wenge William",
+                text = {
+                    "{C:green}#1# in #2#{} chance",
+                    "to convert a",
+                    "random {C:colour}Colour{} card",
+                    "into {C:wenge}Wenge{}"
+                },
+            },
+            -- TOGA compat
+            j_rgmc_toga_helpbook = {
+                name = "Help Book",
+                text = {
+                    "On {C:attention}last{} hand of Blind,",
+                    "convert a random {C:attention}held{} card",
+                    "to {C:attention}#1#",
+                    "{C:inactive,S:0.8}(Enhancement changes at",
+                    "{C:inactive,S:0.8}end of {C:attention}Blind{C:inactive})"
+                },
+            },
+            j_rgmc_toga_rubber_duck = {
+                name = "Rubber Duck",
+                text = {
+                    "This Joker gains {C:mult}+#1#{} Mult",
+                    "If played hand scores fewer",
+                    "than {C:purple}#3#{} points,",
+                    "{C:inactive,S:0.8}(i.e. Score of last played hand)",
+                    "Otherwise, lose {C:mult}#1#{} Mult",
+                    "{C:inactive}(Currently {C:mult}+#2#{C:inactive} Mult)",
+                },
+            },
+            j_rgmc_toga_joker_311= {
+                name = "Joker 3.11",
+                text = {
+					"{C:attention}+#1#{} hand size",
+					"{C:planet}+#3#{} level{C:inactive}(s){} to all {C:attention}poker hands{}",
+					"{C:attention}#2#{} card selection limit",
                 },
             },
             -- Finity compat
@@ -4104,30 +4180,24 @@ return {
                 "{C:inactive}(Currently {C:attention}#1#{C:inactive}, {}[{C:attention}#2#{C:inactive}#3#{}]{C:inactive})",
                 },
             },
-            c_rgmc_fake_orange = {
-                name = "\"Orange\"",
+            c_rgmc_wenge = {
+                name = "Wenge",
                 text = {
-                "Create a {C:dark_edition}SPAM!{}",
+                "A random held card",
+                "gains {C:wenge}+#5#{} bonus chips",
                 "card for every {C:attention}#4#{}",
                 "rounds this has been held",
+                "{C:inactive}({C:wenge}+#6#{C:inactive} bonus chips)",
                 "{C:inactive}(Currently {C:attention}#1#{C:inactive}, {}[{C:attention}#2#{C:inactive}#3#{}]{C:inactive})",
                 },
             },
-            c_rgmc_imaginary = {
-                name = "Imaginary",
+            c_rgmc_dark_magenta = {
+                name = "Dark Magenta",
                 text = {
-                "??? for",
-                "every {C:attention}#4#{} rounds",
-                "this has been held",
-                "{C:inactive}(Currently {C:attention}#1#{C:inactive}, {}[{C:attention}#2#{C:inactive}#3#{}]{C:inactive})",
-                },
-            },
-            c_rgmc_atomic_tangerine = {
-                name = "Atomic Tangerine",
-                text = {
-                "Create an {C:rgmc_gimmick}Gimmick Tag{} for",
-                "every {C:attention}#4#{} rounds",
-                "this has been held",
+                "Earn {C:rgmc_luxury}£#5#{}",
+                "for every {C:attention}#4#{}",
+                "rounds this has been held",
+                "{C:inactive}({C:rgmc_luxury}+£#6#{C:inactive})",
                 "{C:inactive}(Currently {C:attention}#1#{C:inactive}, {}[{C:attention}#2#{C:inactive}#3#{}]{C:inactive})",
                 },
             },
@@ -5094,6 +5164,73 @@ return {
                     "counts as a {C:green}#3#{} of {C:green}#4#{}"
 				},
             },
+            -- bismuth
+			rgmc_bismuth_red = {
+				name = "{C:red}Red{} Frame",
+				text = {
+                    "{X:mult,C:white}X#1#{} Mult"
+				},
+			},
+			rgmc_bismuth_red_charged = {
+				name = "{C:rgmc_bismuth}Charged {C:red}Red{} Frame",
+				text = {
+                    "{X:mult,C:white}X#1#{} Mult",
+                    "per held {C:rgmc_bismuth}???{}"
+				},
+			},
+			rgmc_bismuth_yellow = {
+				name = "{C:gold}Gold{} Frame",
+				text = {
+                    "Earn {C:gold}#$1#",
+                    "when scored"
+				},
+			},
+			rgmc_bismuth_yellow_charged = {
+				name = "{C:rgmc_bismuth}Charged {C:yellow}Gold{} Frame",
+				text = {
+                    "Earn {C:rgmc_luxury}+£#1#",
+                    "when scored"
+				},
+			},
+			rgmc_bismuth_green = {
+				name = "{C:green}Green{} Frame",
+				text = {
+                    "Retrigger this",
+                    "card {C:attention}#1#{} time(s)"
+				},
+			},
+			rgmc_bismuth_green_charged = {
+				name = "{C:rgmc_bismuth}Charged {C:green}Green{} Frame",
+				text = {
+                    "Retrigger adjacent cards",
+                    "{C:attention}#1#{} time(s)"
+				},
+			},
+			rgmc_bismuth_blue = {
+				name = "{C:blue}Blue{} Frame",
+				text = {
+                    "{C:chips}+#1#{} Chips"
+				},
+			},
+			rgmc_bismuth_blue_charged = {
+				name = "{C:rgmc_bismuth}Charged {C:blue}Blue{} Frame",
+				text = {
+                    "Retrigger adjacent cards",
+                    "{C:attention}#1#{} time(s)"
+				},
+			},
+			rgmc_bismuth_purple = {
+				name = "{C:rgmc_xscore}Purple{} Frame",
+				text = {
+                    "{X:rgmc_xscore,C:white}X#1#{} Score",
+				},
+			},
+			rgmc_bismuth_purple_charged = {
+				name = "{C:rgmc_bismuth}Charged {C:rgmc_xscore}Purple{} Frame",
+				text = {
+                    "{X:rgmc_xscore,C:white}^#1#{} Score",
+				},
+			},
             -- info for cool ass cards
             rgmc_info_infinity = {
                 text = {
@@ -5367,39 +5504,6 @@ return {
 				name = "Positive",
 				text = {
                     "{C:attention}-1{} hand size"
-				},
-			},
-			rgmc_bismuth_red = {
-				name = "{C:red}Red{} Frame",
-				text = {
-                    "{C:mult}+#1#{} Mult"
-				},
-			},
-			rgmc_bismuth_yellow = {
-				name = "{C:gold}Gold{} Frame",
-				text = {
-                    "Earn {C:gold}#$1#{}",
-                    "when scored"
-				},
-			},
-			rgmc_bismuth_green = {
-				name = "{C:green}Green{} Frame",
-				text = {
-                    "Retrigger this",
-                    "card {C:attention}#1#{} time(s)"
-				},
-			},
-			rgmc_bismuth_blue = {
-				name = "{C:blue}Blue{} Frame",
-				text = {
-                    "{C:chips}+#1#{} Chips"
-				},
-			},
-			rgmc_bismuth_purple = {
-				name = "{C:purple}Purple{} Frame",
-				text = {
-                    "{X:rgmc_xscore, C:white}X#1#{} Score",
-                    "at {C:attention}end{} of scoring"
 				},
 			},
 			rgmc_clown = {
@@ -5898,40 +6002,6 @@ return {
             rgmc_noak_flush                 = "Flush None",
             rgmc_infoak                     = "Infinitum",
             rgmc_infoak_flush               = "Fluxus Infinitum",
-        },
-        quips = {
-            lq_id_1 = {
-                "PATHETIC",
-                "AWFUL PERFORMANCE"
-            },
-            lq_id_2 = {
-                "IT SEEMS MY GAME",
-                "WAS TOO MUCH",
-                "TO COMPREHEND"
-            },
-            lq_id_3 = {
-                "AND I THOUGHT I",
-                "COULDN'T HATE YOU",
-                "ANY MORE"
-            },
-            lq_id_4 = {
-                "HATE!!!"
-            },
-            lq_endless_id_1 = {
-                "TOOK YOU LONG ENOUGH"
-            },
-            lq_endless_id_2 = {
-                "YOUR STRUGGLE WAS",
-                "MUSIC TO MY EARS"
-            },
-            lq_endless_id_3 = {
-                "YOU BORE ME TO",
-                "THE EDGE OF MY",
-                "FRAGILE PATIENCE"
-            },
-            lq_endless_id_4 = {
-                "GET A LIFE!!"
-            },
         },
 		labels = {
             rgmc_shielded           = "Shielded",

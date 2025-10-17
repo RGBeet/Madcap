@@ -18,7 +18,7 @@ return {
                 number_format(card.ability.extra.retriggers),
                 {   
                     card.ability.extra.retriggers > 0 
-                        and MadLib.get_warning_colour(card.ability.extra.max_retriggers / card.ability.immutable.max_rounds)
+                        and MadLib.get_warning_colour(card.ability.extra.max_retriggers / card.ability.extra.max_retriggers)
                         or G.C.FILTER 
                 })
         end,
@@ -29,7 +29,17 @@ return {
                 and not context.blueprint)
                 or context.forcetrigger
             then
-                if (SMODS.has_no_rank(context.other_card) or context.forcetrigger) then
+                if card.ability.extra.retriggers > 0 and context.other_card then
+                    print("Hello!")
+                    card.ability.extra.retriggers = card.ability.extra.retriggers - 1
+                    return {
+                        repetitions = 1,
+                        card = context.other_card
+                    }
+                end
+                if (SMODS.has_no_rank(context.other_card)
+                        and context.scoring_hand and #context.scoring_hand == 1
+                    ) or context.forcetrigger then
                     card.ability.extra.retriggers = (card.ability.extra.max_retriggers or 4)
                     local eval = function(card) return (card.ability.extra.retriggers == 0) and (not G.RESET_JIGGLES) end
                     juice_card_until(card, eval, true)
@@ -37,9 +47,6 @@ return {
                         message = localize('k_active_ex'),
                         colour  = G.C.GREEN
                     }
-                elseif card.ability.extra.retriggers > 0 then
-                    card.ability.extra.retriggers = card.ability.extra.retriggers - 1
-                    return { repetitions = 1 }
                 end
             end
         end,

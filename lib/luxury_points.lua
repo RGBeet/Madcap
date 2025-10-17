@@ -33,7 +33,9 @@ function ease_lp(mod, instant)
           align = 'cm',
           })
         --Play a chip sound
-        play_sound('rgmc_kaching')
+        if mod > 0 then
+          play_sound('rgmc_kaching')
+        end
     end
     if instant then
         _mod(mod)

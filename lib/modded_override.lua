@@ -3,7 +3,7 @@ local big_juice = function(card)
 end
 
 -- TOGA'S Stuff
-if next(SMODS.find_mod("TOGAPack")) then
+if MadLib.mod_loaded('TOGAPack') then
 
     function Madcap.Funcs.vista_can_apply(card,ed)
         return card and card.edition and not card.edition[ed]

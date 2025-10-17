@@ -26,8 +26,7 @@ return {
         calculate = function(self, card, context)
             if (context.cardarea == G.jokers and context.joker_main) or context.forcetrigger then
                 play_sound('rgmc_spam_enter', 1, 1)
-                return MadLib.get_simple_score_data(MadLib.ScoreKeys.ExpMult, card,
-                    card.ability.extra.e_mult)
+                return { emult = (1+card.ability.extra.emult) * card.ability.extra.extra, card = card }
             end
         end,
         in_pool = function(self, args)

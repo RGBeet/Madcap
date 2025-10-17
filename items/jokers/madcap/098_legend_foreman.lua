@@ -25,7 +25,9 @@ return {
                     return true
                 end, 1.0, 'after')
             end
-            if context.cardarea == G.jokers and context.joker_main or context.forcetrigger then return MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiMult, card, card.ability.extra.x_mult) end
+            if context.cardarea == G.jokers and context.joker_main or context.forcetrigger then
+                return { xmult = card.ability.extra.x_mult, card = card }
+            end
         end,
         perishable_compat = false,
         demicoloncompat = true,

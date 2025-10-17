@@ -22,7 +22,7 @@ return {
                 and next(context.poker_hands[card.ability.extra.poker_hand]))
                 or context.forcetrigger
             then
-                return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips, card, card.ability.extra.chips)
+                return { chips = card.ability.extra.chips, card = card }
             end
         end,
         in_pool = function(self, args) -- can play at least 6 cards

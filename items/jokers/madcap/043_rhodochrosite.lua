@@ -50,20 +50,19 @@ return {
                         end
                     end
                     if active == card.ability.extra.suits[2] then
-                        return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddMult, card, card.ability.extra.mult)
+                        return { mult = card.ability.extra.mult, card = card }
                     elseif active == card.ability.extra.suits[3] then
-                        return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips, card, card.ability.extra.chips)
+                        return { chips = card.ability.extra.chips, card = card }
                     end
                 end
             end
 
             if context.forcetrigger then
-                MadLib.simple_event(function()
-                    return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddMult, card, card.ability.extra.mult)
-                end, 0.3, 'immediate')
-                MadLib.simple_event(function()
-                    return MadLib.get_simple_score_data(MadLib.ScoreKeys.AddChips, card, card.ability.extra.chips)
-                end, 0.3, 'immediate')
+                return {
+                    chips   = card.ability.extra.chips,
+                    mult    = card.ability.extra.mult,
+                    card    = card
+                }
             end
         end,
         demicoloncompat = true,

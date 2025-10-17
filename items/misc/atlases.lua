@@ -138,7 +138,16 @@ if next(SMODS.find_mod("MoreFluff")) then
 		create('mf_colours', 		mf..'colours.png'),
 		create('mf_lunacy', 		mf..'lunacy.png'),
 		create('mf_enhancements', 	mf..'enhancements.png'),
+		create('mf_jokers', 		mf..'jokers.png'),
 		crtsqr('mf_rotarots', 		mf..'rotarots.png', 107),
+	})
+end
+
+-- TOGA
+if MadLib.mod_loaded('TOGAPack') then
+	local t = 'toga/toga_'
+	add_atlases({
+		create('toga_jokers', 		t..'jokers.png'),
 	})
 end
 

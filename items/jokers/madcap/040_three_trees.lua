@@ -58,7 +58,7 @@ return {
                 (context.joker_main and card.ability.extra.active)
                 or context.forcetrigger
             then -- demicolon
-                return MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiMult, card, card.ability.extra.x_mult)
+                return { xmult = card.ability.extra.x_mult, card = card }
             end
         end,
         demicoloncompat = true,

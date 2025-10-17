@@ -12,24 +12,22 @@ return {
         eternal_compat      = false,
         perishable_compat   = false,
         config = {
-            new_cost = -15,
+            immutable = { new_cost = -15 },
             extra = { mult = 30 }
         },
         loc_vars = function(self, info_queue, card)
-            return MadLib.collect_vars(
-                number_format(card.ability.extra.mult),
-                number_format(card.ability.extra.sell_cost))
+            return MadLib.collect_vars(number_format(card.ability.extra.mult), number_format(math.abs(card.ability.immutable.new_cost)))
         end,
         calculate = function(self, card, context)
             if
                 context.forcetrigger or
-                (context.cardarea == G.jokers and context.joker_main)
+                (context.cardarea == G.jokers and context.j oker_main)
             then
                 return { mult = card.ability.extra.mult }
             end
         end,
         add_to_deck = function(self, card, from_debuff)
-            card.cost = card.ability.extra.sell_cost
+            card.cost = card.ability.immutable.new_cost
             card:set_cost()
         end,
         demicoloncompat = true

@@ -17,23 +17,12 @@ assert(SMODS.load_file("lib/superbosses.lua"))()
 assert(SMODS.load_file("lib/vanilla_override.lua"))()
 assert(SMODS.load_file("lib/modded_override.lua"))()
 
-assert(SMODS.load_file("lib/load_content.lua"))()
-assert(SMODS.load_file("lib/update.lua"))()
 assert(SMODS.load_file("lib/crossmod.lua"))()
-
+assert(SMODS.load_file("lib/update.lua"))()
 assert(SMODS.load_file("lib/temp_hands_discards.lua"))()
 assert(SMODS.load_file("lib/state_events.lua"))()
 assert(SMODS.load_file("lib/misc_functions.lua"))()
-
-Madcap.Lists.Quips = {
-    ["bl_rgmc_final_id"] = {
-        name            = "id",
-        card            = "j_rgmc_id",
-        quips_normal    = 4,
-        quips_endless   = 4,
-    }
-}
-
+assert(SMODS.load_file("lib/load_content.lua"))()
 
 ----------------------------------------------
 ------------MOD CODE END----------------------
