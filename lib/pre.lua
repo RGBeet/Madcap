@@ -347,7 +347,8 @@ Madcap.MayhemBlacklist = {
 	cry_hook_id				= false,
 	suit_nominal_original 	= false,
 	cry_prob				= false,
-	entr_times_played		= false
+	entr_times_played		= false,
+	value_mults				= false
 }
 
 -- Blacklisted because there would be no effect
@@ -441,6 +442,9 @@ Madcap.DefineExtras = {
 	['j_caino'] 			= { ['extra'] = mlibmv['MultiMult'] },
 	['j_triboulet'] 		= { ['extra'] = mlibmv['MultiMult'] },
 	['j_cry_soccer'] 		= { ['holygrail'] = mlibmv['Misc'] }, -- One For All
+	['c_emperor'] 			= { ['tarots'] = mlibmv['Misc'] },
+	['c_hermit'] 			= { ['extra'] = mlibmv['AddMoney'] },
+	['c_temperance'] 		= { ['extra'] = mlibmv['AddMoney'] },
 }
 
 SMODS.ConsumableType({
@@ -585,5 +589,65 @@ Madcap.CustomCashouts = {
 			return 99
 		end,
 	}
+}
 
+-- Taken from TOGA
+Madcap.Lists.ChipMultSwap = togabalatro.chipmultopswap or {
+	['chips'] 		= 'mult',
+	['h_chips'] 	= 'h_mult',
+	['chip_mod'] 	= 'mult_mod',
+	['mult'] 		= 'chips',
+	['h_mult'] 		= 'h_chips',
+	['mult_mod'] 	= 'chip_mod',
+	['x_chips'] 	= 'x_mult',
+	['xchips'] 		= 'xmult',
+	['Xchip_mod'] 	= 'Xmult_mod',
+	['x_mult'] 		= 'x_chips',
+	['xmult'] 		= 'xchips',
+	['Xmult'] 		= 'xchips',
+	['x_mult_mod'] 	= 'Xchip_mod',
+	['Xmult_mod'] 	= 'Xchip_mod',
+	-- Talisman.
+	['e_mult'] 		= 'e_chips',
+	['emult'] 		= 'echips',
+	['ee_mult'] 	= 'ee_chips',
+	['eemult'] 		= 'eechips',
+	['eee_mult'] 	= 'eee_chips',
+	['eeemult'] 	= 'eeechips',
+	['hypermult'] 	= 'hyperchips',
+	['hyper_mult'] 	= 'hyper_chips',
+	['e_chips'] 	= 'e_mult',
+	['echips'] 		= 'emult',
+	['ee_chips'] 	= 'ee_mult',
+	['eechips'] 	= 'eemult',
+	['eee_chips'] 	= 'eee_mult',
+	['eeechips'] 	= 'eeemult',
+	['hyperchips'] 		= 'hypermult',
+	['hyper_chips'] 	= 'hyper_mult',
+	['Emult_mod'] 		= 'Echip_mod',
+	['EEmult_mod'] 		= 'EEchip_mod',
+	['EEEmult_mod'] 	= 'EEEchip_mod',
+	['hypermult_mod'] 	= 'hyperchip_mod',
+	['Echip_mod'] 		= 'Emult_mod',
+	['EEchip_mod'] 		= 'EEmult_mod',
+	['EEEchip_mod'] 	= 'EEEmult_mod',
+	['hyperchip_mod'] 	= 'hypermult_mod',
+}
+
+Madcap.Lists.ChipModKeys = togabalatro.chipmodkeys or {
+	['chips'] = 'add', ['h_chips'] = 'add', ['chip_mod'] = 'add',
+	['x_chips'] = 'mult', ['xchips'] = 'mult', ['Xchip_mod'] = 'mult',
+	['e_chips'] = 'mult', ['echips'] = 'mult', ['Echip_mod'] = 'mult',
+	['ee_chips'] = 'mult', ['eechips'] = 'mult', ['EEchip_mod'] = 'mult',
+	['eee_chips'] = 'mult', ['eeechips'] = 'mult', ['EEEchip_mod'] = 'mult',
+	['hyperchips'] = 'mult', ['hyper_chips'] = 'mult', ['hyperchip_mod'] = 'mult',
+}
+
+Madcap.Lists.MultModKeys = togabalatro.multmodkeys or {
+	['mult'] = 'add', ['h_mult'] = 'add', ['mult_mod'] = 'add',
+	['x_mult'] = 'mult', ['xmult'] = 'mult', ['Xmult'] = 'mult', ['x_mult_mod'] = 'mult', ['Xmult_mod'] = 'mult',
+	['e_mult'] = 'mult', ['emult'] = 'mult', ['Emult_mod'] = 'mult',
+	['ee_mult'] = 'mult', ['eemult'] = 'mult', ['EEmult_mod'] = 'mult',
+	['eee_mult'] = 'mult', ['eeemult'] = 'mult', ['EEEmult_mod'] = 'mult',
+	['hypermult'] = 'mult', ['hyper_mult'] = 'mult', ['hypermult_mod'] = 'mult',
 }

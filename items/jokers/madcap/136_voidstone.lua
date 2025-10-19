@@ -15,7 +15,7 @@ return {
             extra = {  
                 suit        = 'rgmc_voids',
                 odds        = 4,
-                mayhem_mod  = 0.08
+                mayhem_mod  = 0.8
             }
         },
         loc_vars = function(self, info_queue, card)

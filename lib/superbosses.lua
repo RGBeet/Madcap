@@ -62,45 +62,10 @@ Madcap.Lists.AssistBosses = {
 	end,
 	['bl_pillar'] 	= Madcap.func_always_true,
 	['bl_flint'] 	= Madcap.func_always_true,
-	['bl_rgmc_keyhole'] 	= Madcap.func_always_true,
-	['bl_rgmc_bottle'] 		= function()
-		return true -- return if enough goblets
-	end,
-	['bl_rgmc_sword'] 		= function()
-		return true -- return if enough towers
-	end,
-	['bl_rgmc_axe'] 		= function()
-		return true -- return if enough blooms
-	end,
-	['bl_rgmc_rust'] 		= function()
-		return true -- return if enough daggers
-	end,
-	['bl_rgmc_ladder'] 		= function()
-		return true -- return if enough qualifying jokers
-	end,
-	['bl_rgmc_levy'] 	= function()
-		return true -- return if enough money
-	end,
-	['bl_rgmc_sum'] 		= Madcap.func_always_true,
-	['bl_rgmc_coil'] 		= Madcap.func_always_true,
-	['bl_rgmc_force'] 		= Madcap.func_always_true,
-	['bl_rgmc_halo'] 		= function()
-		return true -- return if enough qualifying jokers
-	end,
-	['bl_rgmc_spiral'] 		= function()
-		return true -- return if enough qualifying jokers
-	end,
-	['bl_rgmc_bowler'] 		= function()
-		return true -- return if enough qualifying jokers
-	end,
 }
-
 function get_new_assist_boss()
-	local picks = {}
-	MadLib.loop_table(Madcap.Lists.AssistBosses, function(k,v)
-		if v() then picks[#picks+1] = k end
-	end)
-	return pseudorandom_element(picks, pseudoseed("new_assist_boss"))
+
+	return 0
 end
 
 local set_blind_ref = Blind.set_blind
@@ -123,7 +88,7 @@ end
 
 local check_blind_key = function(k)
 	if k == nil then
-		--print('Key is NIL!')
+		print('Key is NIL!')
 		return
 	end
 	local s = G.P_BLINDS[k]
@@ -138,7 +103,7 @@ function Madcap.Funcs.get_ante_blind_chips(self)
         local bl = G.P_BLINDS[G.GAME.round_resets.blind_choices[key]]
         local blind_key = bl.key
         if blind_key ~= self.key then
-			values[#values+1] = get_blind_amount(G.GAME.round_resets.ante) * (bl.mult or 1)
+			values[#values+1] = SMODS.get_blind_amount(G.GAME.round_resets.ante) * (bl.mult or 1)
 		end
     end
 
@@ -175,8 +140,6 @@ end
 function Madcap.Funcs.assist_set_blind(k, self, reset, silent)
 	local s = check_blind_key(k)
 	if not s then return end
-	print("NAME: " .. s.name)
-	print("RESET IS " .. (reset and "TRUE" or "FALSE"))
 	if s.set_blind then
 		s:set_blind(reset or false, silent or false)
 	elseif s.name == "The Eye" and not reset then
@@ -188,21 +151,11 @@ function Madcap.Funcs.assist_set_blind(k, self, reset, silent)
 	elseif s.name == "The Fish" and not reset then
 		G.GAME.blind.prepped = nil
 	elseif s.name == "The Water" and not reset then
-		MadLib.event({
-			func = function()
-				G.GAME.blind.discards_sub = G.GAME.current_round.discards_left
-				ease_discard(-G.GAME.blind.discards_sub)
-				return true
-			end
-		})
+		G.GAME.blind.discards_sub = G.GAME.current_round.discards_left
+		ease_discard(-G.GAME.blind.discards_sub)
 	elseif s.name == "The Needle" and not reset then
-		MadLib.event({
-			func = function()
-				G.GAME.blind.hands_sub = G.GAME.round_resets.hands - 1
-				ease_hands_played(-(G.GAME.round_resets.hands-1))
-				return true
-			end
-		})
+		G.GAME.blind.hands_sub = G.GAME.round_resets.hands - 1
+		ease_hands_played(-G.GAME.blind.hands_sub)
 	elseif s.name == "The Manacle" and not reset then
 		G.hand:change_size(-1)
 	elseif s.name == "Amber Acorn" and not reset and #G.jokers.cards > 0 then
@@ -227,10 +180,6 @@ function Madcap.Funcs.assist_set_blind(k, self, reset, silent)
 				end
 			})
 		end
-	elseif s.name == "The Wall" and not reset then
-		Madcap.Funcs.build_up_blind_chips({ get_blind_amount(G.GAME.round_resets.ante) * 2 })
-	elseif s.name == "Violet Vessel" and not reset then
-		Madcap.Funcs.build_up_blind_chips({ get_blind_amount(G.GAME.round_resets.ante) * 3 })
 	end
 
 	local cardareas_to_check = { G.playing_cards, G.jokers }
@@ -241,6 +190,7 @@ function Madcap.Funcs.assist_set_blind(k, self, reset, silent)
 			--print('DEBUFF PASS IS ' .. (pass and 'TRUE' or 'FALSE') )
 		end)
 	end)
+
 end
 
 function Madcap.Funcs.assist_blind_defeat(k, self)
@@ -248,7 +198,7 @@ function Madcap.Funcs.assist_blind_defeat(k, self)
 	if not s then return end
 	if s.defeat then
 		s:defeat(true)
-	elseif s.name == "The Manacle" then
+	elseif s.name == "The Manacle" and not self.disabled then
 		G.hand:change_size(1)
 	end
 end
@@ -359,38 +309,6 @@ function Madcap.Funcs.assist_blind_calculate(k, self, card, context)
 		---print(k .. "!!!")
 		return s:calculate(self, card, context)
 	end
-	if k == "bl_serpent" then
-        if context.drawing_cards and (G.GAME.current_round.hands_played ~= 0 or G.GAME.current_round.discards_used ~= 0) then
-            return { cards_to_draw = 3 }
-        end
-	elseif k == "bl_pillar" then
-		if context.debuff_card and context.debuff_card.area ~= G.jokers and context.debuff_card.ability.played_this_ante then
-            return { debuff = true }
-        end
-	elseif k == "bl_fish" then
-        if context.setting_blind or context.hand_drawn then
-            card.prepped = nil
-        end
-	end
-
-	if context.setting_blind then
-		if k == "bl_needle" then
-            G.GAME.blind.hands_sub = G.GAME.round_resets.hands - 1
-            ease_hands_played(-G.GAME.blind.hands_sub)
-		elseif k == "bl_water" then
-			card.discards_sub = G.GAME.current_round.discards_left
-            ease_discard(-card.discards_sub)
-		elseif k == "bl_manacle" then
-            G.hand:change_size(-1)
-		elseif k == "bl_eye" then
-            card.hands = {}
-            for _, poker_hand in ipairs(G.handlist) do
-                card.hands[poker_hand] = false
-            end
-		elseif k == "bl_mouth" then
-            card.only_hand = false
-		end
-	end
 end
 
 function Madcap.Funcs.assist_blind_modify_hand(k, self, cards, poker_hands, text, mult, hand_chips)
@@ -415,13 +333,13 @@ end
 function Madcap.Funcs.assist_debuff_card(k, self, card, from_blind)
 	local s = check_blind_key(k)
 	if not s then return end
-	--print(k)
+	print(k)
 	if s.debuff.suit and card:is_suit(s.debuff.suit, true) then
 		card:set_debuff(true)
 		if card.debuff then card.debuffed_by_blind = true end
 		return true
 	end
-	if s.name == 'The Plant' and card:is_face(true) then
+	if s.debuff.is_face ==' face' and card:is_face(true) then
 		card:set_debuff(true)
 		if card.debuff then card.debuffed_by_blind = true end
 		return true
@@ -452,9 +370,7 @@ function Madcap.Funcs.assist_debuff_card(k, self, card, from_blind)
 		if card.debuff then card.debuffed_by_blind = true end
 		return true
 	end
-	if card.debuffed_by_blind then
-    	card:set_debuff(false)
-	end
+    card:set_debuff(false)
 	return false
 end
 
@@ -613,8 +529,6 @@ function Madcap.Funcs.multistage_boss_round_end(add)
 
     local reset = false
     local function _reset(anim)
-        Madcap.Funcs.assist_blind_defeat(G.GAME.rgmc_bonus_blind)
-
 		G.GAME.chips = 0
 		G.GAME.current_round.discards_left = math.max(0, G.GAME.round_resets.discards + G.GAME.round_bonus.discards)
 		G.GAME.current_round.hands_left = (math.max(1, G.GAME.round_resets.hands + G.GAME.round_bonus.next_hands))
@@ -658,7 +572,7 @@ function Madcap.Funcs.multistage_boss_round_end(add)
 		Madcap.Funcs.reset_assist_blind()
 
 		MadLib.simple_event(function()
-			Madcap.Funcs.assist_set_blind(G.GAME.rgmc_bonus_blind, G.GAME.blind, false, false)
+			Madcap.Funcs.assist_set_blind(G.GAME.rgmc_bonus_blind, G.GAME.blind, true, false)
 			Madcap.Funcs.recalculate_blind_ui()
 			return true
 		end, 0, 'after')
@@ -682,7 +596,7 @@ function Madcap.Funcs.golden_gauntlet_reset()
 			G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.06*G.SETTINGS.GAMESPEED, blockable = false, blocking = false, func = function()
 				play_sound('tarot2', 0.76, 0.4); _reset();return true end}))
 			play_sound('tarot2', 1, 0.4)
-			G.GAME.rgmc_bonus_blind = get_new_assist_boss()
+			G.GAME.rgmc_bonus_blind = get_new_boss()
 			Madcap.Funcs.reset_assist_blind()
 			return true
 		end

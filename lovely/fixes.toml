@@ -96,9 +96,6 @@ payload = '''if G.rgmc_flame_override and G.rgmc_flame_override['duration'] > 0 
   end'''
 match_indent = true
 
-
-
-
 # DISCARD HAND
 [[patches]]
 [patches.pattern]
@@ -562,16 +559,6 @@ payload = '''{
 [[patches]]
 [patches.pattern]
 target = 'functions/common_events.lua'
-pattern = '''(options or {}).ignore_showdown_check'''
-position = 'at'
-match_indent = true
-payload = '''(type(options) == 'boolean' and options)
-or (options or {}).ignore_showdown_check'''
-
-
-[[patches]]
-[patches.pattern]
-target = 'functions/common_events.lua'
 pattern = '''-- TARGET: effects before scoring starts'''
 position = 'after'
 match_indent = true
@@ -648,3 +635,5 @@ payload = '''
 end
 '''
 match_indent = true
+
+

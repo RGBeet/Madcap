@@ -857,7 +857,7 @@ end
 
 -- Has at least 1 card selected
 function Madcap.Funcs.consumable_highlight_check(self,card)
-	if not (self and card) then return false end
+	if not (G.hand and card) then return false end
 	return #G.hand.highlighted >= 1 and #G.hand.highlighted <= card.ability.max_highlighted
 end
 

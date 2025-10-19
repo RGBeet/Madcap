@@ -57,7 +57,7 @@ return {
         apply = function(self, back)
             Madcap.Funcs.init_deck('lunacy')
             G.GAME.rgmc_total_mayhem            = true
-            G.GAME.starting_params.add_mayhem   = 10
+            G.GAME.starting_params.add_mayhem   = 100
         end,
         calculate = function(self, card, context)
 

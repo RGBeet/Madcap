@@ -3,13 +3,13 @@ function Madcap.Funcs.get_mayhem()
 end
 
 function Madcap.Funcs.get_max_mayhem()
-	return G.GAME and G.GAME.max_mayhem or 10
+	return G.GAME and G.GAME.max_mayhem or 100
 end
 
 function Madcap.Funcs.get_mayhem_state()
 	local mayhem = (G.GAME.mayhem or 0)
 
-	local mayhem_state = 0
+	local mayham_state
 	if mayhem > 9 then
 		mayhem_state = 3
 	elseif mayhem >= 6 then
@@ -18,7 +18,8 @@ function Madcap.Funcs.get_mayhem_state()
 		mayhem_state = 1
 	end
 
-	return mayhem_state
+	-- Mayhem state added so you can mess around with it in a hook :)
+	return mayhem, mayhem_state
 end
 
 function Madcap.Funcs.read_mayhem()
@@ -56,7 +57,8 @@ function Madcap.Funcs.ease_mayhem(_mod, _check, _silent, _instant)
 
 		G.GAME.mayhem			= G.GAME.mayhem + _mod
 		local mayhem_state 		= Madcap.Funcs.get_mayhem_state(recalculate)
-		local sound 			= 'rgmc_mayhem_t' .. tostring(math.max(1,math.min(3,mayhem_state)))
+		local sound 			= 'rgmc_mayhem_t' .. tostring(math.max(1,math.min(3,math.floor(mayhem_state))))
+		if mayhem_state < 1 or mayhem_state > 3 then sound = 'rgmc_mayhem_t1' end
 
         --Play a SPOOKY noise sound
         if MadLib.is_animation_enabled() and not _silent then
@@ -98,7 +100,6 @@ function Madcap.Funcs.handle_glass_card_scoring(card)
 end
 
 function Madcap.Funcs.get_mayhem_data()
-
 	-- Get stuff from cards
 	local voids,lanterns,modded_suits, base_suits,enhancements,editions,seals = 0,0,0,0,0,0,0
 	local suits,ranks = {},{}
@@ -188,6 +189,9 @@ function Madcap.Funcs.blind_end_mayhem_check()
 
 	-- state 1: randomize values
 	if mayhem_state > 0 then
+		MadLib.loop_func({ G.playing_cards, G.jokers.cards, G.consumeables.cards }, function(w)
+
+		end)
 		MadLib.loop_func(G.playing_cards, function(v,i)
 			Madcap.Funcs.mayhemize(v, args, true)
 		end)
@@ -199,7 +203,7 @@ function Madcap.Funcs.blind_end_mayhem_check()
 end
 
 function Madcap.Funcs.get_mayhem_multiplier(mayhem)
-    local t = MadLib.clamp(mayhem / 10, 0, 1)
+    local t = MadLib.clamp(mayhem, 0, 1)
     -- Use an easing function to skew the curve toward the high end
     local eased = t ^ 2.2  -- You can adjust this exponent for fine-tuning
 	local min_mult = 1 / (8 ^ eased)
@@ -215,7 +219,7 @@ local mayhemize_funcs = {
 	['extra_choices'] 	= mfuncs.change_extra_choices,
 	['max_mayhem'] 		= function(_old,_new)
 		if _new == _old then return false end
-		G.GAME.max_mayhem = (G.GAME.max_mayhem or 10) + (_new - _old)
+		G.GAME.max_mayhem = (G.GAME.max_mayhem or 100) + (_new - _old)
 		return true
 	end,
 	['add_mayhem'] = function(_old,_new)
@@ -225,7 +229,7 @@ local mayhemize_funcs = {
 	end,
 	['rift_limit'] 		= function(_old,_new)
 		if _new == _old then return false end
-		G.GAME.rift_limit = (G.GAME.rift_limit or 10) + (_new - _old)
+		G.GAME.rift_limit = (G.GAME.rift_limit or 100) + (_new - _old)
 		return true
 	end,
 	['hand_size'] 		= mfuncs.change_hand_size,
@@ -240,69 +244,143 @@ local mayhemize_funcs = {
 	end
 }
 
-function Madcap.Funcs.can_mayhemize_value(_level,_type)
-	local level_check = _level <= mfuncs.get_mayhem_state()
+function Madcap.Funcs.can_mayhemize_value(val)
+	local data = Madcap.MayhemConversions[val]
+	return data ~= nil
+		and (data.level or 0) <= mfuncs.get_mayhem_state()
+end
 
-	return level_check
+function Madcap.Funcs.demayhemize_number(_card, _key)
+	if not _card.ability.altered_vals[_key] then return false end
+
+	if _card.ability.extra and _card.ability.extra[_key] then
+		_card.ability.extra[_key] = _card.ability.altered_vals[_key]
+	elseif card.ability[_key] then
+		_card.ability[_key] = _card.ability.altered_vals[_key]
+	else
+		return false
+	end
+
+	_card.ability.altered_vals[_key] = nil
+	return true
+end
+
+function Madcap.Funcs.mayhemize_rank(_card, _val, _args)
+	local all_ranks = MadLib.get_ranks_from_cards(G.playing_cards)
+	--todo: add blacklist? whitelist?
+	_card.ability.altered_vals 				= _card.ability.altered_vals or {}
+	_card.ability.altered_vals[args.key] 	= _card.ability.altered_vals[args.key] or MadLib.deep_copy(_target)
+    _target = pseudorandom_element(all_ranks, pseudoseed('mayhemize'))
+end
+
+function Madcap.Funcs.mayhemize_suit(_card, _val, _args)
+	local all_suits = MadLib.get_suits_from_cards(G.playing_cards)
+	--todo: add blacklist? whitelist?
+	_card.ability.altered_vals 				= _card.ability.altered_vals or {}
+	_card.ability.altered_vals[args.key] 	= _card.ability.altered_vals[args.key] or MadLib.deep_copy(_target)
+    _target = pseudorandom_element(all_suits, pseudoseed('mayhemize'))
+end
+
+function Madcap.Funcs.mayhemize_poker_hand(_card, _val, _args)
+	local all_hands = MadLib.get_list_matches(G.GAME.hands, function(v) return v.enabled end)
+	--todo: add blacklist? whitelist?
+	_card.ability.altered_vals 				= _card.ability.altered_vals or {}
+	_card.ability.altered_vals[args.key] 	= _card.ability.altered_vals[args.key] or MadLib.deep_copy(_target)
+    _target = pseudorandom_element(all_hands, pseudoseed('mayhemize'))
+end
+
+function Madcap.Funcs.get_mayhemized_value(_card, _min, _max)
+	local _center = (_min + _max)/2
+
+	if not SMODS.pseudorandom_probability(card, 'mayhemize', 1, 2) then
+		return MadLib.random_between(_min, _center, 2)
+	else
+		return MadLib.random_between(_center, _max, 2)
+	end
+end
+
+function Madcap.Funcs.mayhemize_number(_card, _args)
+
+	local _key = _args.key ~= 'extra' and string.lower(_args.key)
+
+	local _data = Madcap.DefineExtras[_card.config.center.key]
+		and Madcap.DefineExtras[_card.config.center.key][_args.key]
+		or Madcap.MayhemConversions[_key]
+
+	-- Check any potential issues?
+	local multiply_issue 	= (_data and _data.multiply and _args.value == 1) or false
+	local positive_issue	= (_data and not _data.negatives and _args.value <= 0) or false
+	if not _data or multiply_issue or positive_issue then
+		return _args.value
+	end
+
+	-- get mult
+	local _mult = -1
+	if _args.min and _args.max then
+		local nu_min, nu_max = MadLib.deep_copy(_args.min), MadLib.deep_copy(_args.max)
+		_mult = Madcap.Funcs.get_mayhemized_value(_card, nu_min, nu_max)
+	elseif _args.force then
+		_mult = _args.force
+	end
+
+	-- set old mult for later
+	_card.ability.value_mults 				= _card.ability.value_mults or {}
+	_card.ability.value_mults[_args.key]	= _card.ability.value_mults[_args.key]
+		and _card.ability.value_mults[_args.key] * _mult
+		or _mult
+
+	-- set value
+	local _value = (_args.value - (_data.multiply and 1 or 0)) * _mult
+
+
+	local must_round 	= (_data and _data.round or false)
+	_value = MadLib.round(_value, must_round and 0 or 2)
+
+	tell('Revised value from' .. number_format(_args.value) .. ' to ' .. number_format(_value))
+	if _data and _data.type and mayhemize_funcs[_data.type] then
+		tell('Doing extra funcs...')
+		mayhemize_funcs[_data.type](v,_table[k])
+	end
+
+	return _value, _args.key
 end
 
 function Madcap.Funcs.mayhemize_table(_card, _table, _args)
 	-- loop through the table
-	local success = false
+	tell('Mayhemizing table')
+	local _prefix = string.sub(_card.config.center.key,1,2)
+	local changed_values = {}
 	MadLib.loop_table(_table, function(k,v)
 		-- is this a blacklisted term?
-		if Madcap.MayhemBlacklist[k] == nil then -- not blacklisted
+		if
+			(Madcap.MayhemBlacklist[k] == nil
+				or Madcap.MayhemBlacklist[k] ~= false)
+			and Madcap.Funcs.can_mayhemize_value(k)
+		then
 			if type(v) == 'table' then -- we must go deeper
 				Madcap.Funcs.mayhemize_table(_card, v, _args)
-
 			elseif type(v) == 'number' then -- do the number
-				local _prefix = string.sub(_card.config.center.key,1,2)
-				local _type = (_prefix == 'j_') and 'joker'
-					or (_card.config.center.key == 'c_base' or _prefix == 'm_') and 'card'
-				local _xval
+				-- shows whether it's a joker or playing card (add consumable compat later?!)
+				_args.type = (_prefix == 'j_') and 'joker'
+					or (_card.config.center.key == 'c_base'
+					or _prefix == 'm_') and 'card'
 
-				local _key = k ~= 'extra' and k and string.lower(k)
-				local _data
-
-				if Madcap.DefineExtras[_card.config.center.key] then
-					--tell('Finding extra value...')
-					_data = Madcap.DefineExtras[_card.config.center.key][k]
-				else
-					_data = Madcap.MayhemConversions[_key]
-				end
-				_xval = (_data and _data.multiply)
-
-				if
-					not _data -- no data
-					or (not _xval and v == 0) 			-- additive value at 0.00
-					or (_xval and v == 1 or v == 0)		-- multiplying value at 1.00 (or 0.00)
-				then
-					return false
-				end -- don't bother if multiplying value and not set
-				--tell('Key ' .. k .. ' explored!')
-
-				local factor = (_data and _data.factor) or 1
-				local must_round = (_data and _data.round or false)
-				local nu_min, nu_max = MadLib.deep_copy(_args.min), MadLib.deep_copy(_args.max)
-				local center, half_range = (nu_min + nu_max) / 2, math.abs(nu_max - nu_min) / 2 * factor
-				nu_min, nu_max = center - half_range, center + half_range
-
-				local _mult = MadLib.random_between(nu_min, nu_max, 2)
-				--if _xval then tell('This is an multiplying value!') end
-
-				local _base = v - (_xval and 1 or 0)
-				_table[k] = MadLib.round((_base * _mult) + (_xval and 1 or 0), must_round and 0 or 2)
-
-				if _data and _data.type and mayhemize_funcs[_data.type] then
-					mayhemize_funcs[_data.type](v,_table[k])
-				end
-				success = true
-
-				--tell(tostring(k)..' is now '..tostring(_table[k])..' ('..tostring(v)..').')
-			end -- don't mess with bools and strings.
+				_args.value 	= MadLib.deep_copy(v)
+				_args.key		= k
+				_table[k] 		= Madcap.Funcs.mayhemize_number(_card, _args)
+			elseif type(v) == 'string' then -- do the string
+				--[[
+				if k == 'rank' then
+					_table[k] 	= Madcap.Funcs.mayhemize_rank(_card, _args)
+				elseif k == 'suit' then
+					_table[k] 	= Madcap.Funcs.mayhemize_suit(_card, _args)
+				elseif k == 'poker_hand' then
+					_table[k] 	= Madcap.Funcs.mayhemize_poker_hand(_card, _args)
+				end]]
+			end
 		end
 	end)
-	return success
+	return changed_values
 end
 
 -- Messes up the values of the targeted cards based on

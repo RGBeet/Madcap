@@ -31,7 +31,7 @@ return {
                 -- Acquire the chips/mult, convert to mayhem.
                 local chips, mult, changed = Madcap.Funcs.get_goldenhouse_chipmult(target)
                 if changed then
-                    local mayhem = (chips/20 + mult/4)
+                    local mayhem = (chips/20 + mult/4) * 5
                     MadLib.simple_event(function()
                         Madcap.Funcs.ease_mayhem(mayhem)
                         play_sound('rgmc_meow3', 1, 0.5)

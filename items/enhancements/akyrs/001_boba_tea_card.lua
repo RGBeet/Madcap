@@ -13,7 +13,7 @@ return {
         end,
         calculate = function(self, card, context)
             if context.cardarea == G.play and context.main_scoring then
-                return MadLib.get_simple_score_data(MadLib.ScoreKeys.MultiScore, card, card.ability.extra.x_score)
+                return { xscore = card.ability.extra.x_score, card = card }
             end
         end,
     }

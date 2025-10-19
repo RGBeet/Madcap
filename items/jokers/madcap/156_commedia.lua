@@ -21,7 +21,7 @@ return {
         calculate = function(self, card, context)
             if
                 context.forcetrigger or
-                (context.cardarea == G.jokers and context.j oker_main)
+                (context.cardarea == G.jokers and context.joker_main)
             then
                 return { mult = card.ability.extra.mult }
             end

@@ -15,29 +15,49 @@ return {
         key     = 'bismuth',
         atlas   = 'enhancements',
         pos     = MLIB.coords(0,3),
-        config  = { immutable = { sticker_type = 'red' } },
+        config  = { sticker_type = 'red', charged = false },
         no_rank             = true,
         no_suit             = true,
         always_scores       = true,
         replace_base_card   = true,
         loc_vars = function(self, info_queue, card)
+            if card.ability.sticker_type ~= nil then
+                local capitalized = string.upper(string.sub(card.ability.sticker_type, 1, 1)) .. string.sub(card.ability.sticker_type, 2)
+                info_queue[#info_queue+1] = {
+                    set = 'Other',
+                    key = 'rgmc_bismuth_' .. card.ability.sticker_type,
+                    vars = { number_format(Madcap.Lists.BismuthValues[capitalized]) }
+                }
+            end
             return { vars = { } }
         end,
         calculate = function(self, card, context)
-            if context.setting_blind then
-                local new_type = pseudorandom_element(Madcap.Lists.Bismuth, pseudoseed('rgmc_bismuth'))
-                if new_type ~= card.ability.immutable.sticker_type then
-                    card.ability.immutable.sticker_type = new_type
-                    card.ability['rgmc_bismuth_'..new_type] = true
-                    SMODS.Stickers['rgmc_bismuth_'..new_type]:apply(self,true)
-                    tell('New steal is ' .. new_type)
+            if context.hand_drawn then
+                if MadLib.list_matches_one(context.hand_drawn, function(v)
+                   return v == card
+                end) then
+                    local new_type = pseudorandom_element(Madcap.Lists.Bismuth, pseudoseed('bismuth'))
+                    --print('new type is '..new_type)
+                    card.ability.sticker_type = new_type
+                    return {
+                        message = "!"
+                    }
                 end
             end
-            if context.playing_card_end_of_round then
-                local old_type = card.ability.immutable.sticker_type
-                card.ability.immutable.sticker_type = nil
-                card.ability['rgmc_bismuth_'..old_type] = false
-                SMODS.Stickers['rgmc_bismuth_'..old_type]:apply(self,false)
+            if context.cardarea == G.play and context.main_scoring then
+                local ret = { chips = 20 }
+                if card.ability.sticker_type == 'red' then
+                    ret.xmult = Madcap.Lists.BismuthValues.Red
+                elseif card.ability.sticker_type == 'yellow' then
+                    ret.dollars = Madcap.Lists.BismuthValues.Yellow
+                elseif card.ability.sticker_type == 'green' then
+                    ret.repetitions = Madcap.Lists.BismuthValues.Green
+                elseif card.ability.sticker_type == 'blue' then
+                    ret.xchips = Madcap.Lists.BismuthValues.Blue
+                elseif card.ability.sticker_type == 'purple' then
+                    ret.xscore = Madcap.Lists.BismuthValues.Purple
+                end
+                return ret
             end
         end,
         draw = function(self, card, layer)

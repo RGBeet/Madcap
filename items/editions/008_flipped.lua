@@ -13,7 +13,7 @@ return {
             return G.GAME.edition_rate * self.weight
         end,
         loc_vars = function(self, info_queue)
-            local blind_base = get_blind_amount(G.GAME.round_resets and G.GAME.round_resets.ante or 1)
+            local blind_base = SMODS.get_blind_amount(G.GAME.round_resets and G.GAME.round_resets.ante or 1)
             return MadLib.collect_vars(blind_base * self.config.extra.factor)
         end,
         calculate = function(self, card, context)
@@ -21,7 +21,7 @@ return {
                 context.post_joker or
                 (context.main_scoring and context.cardarea == G.play)
             then
-            local blind_base = get_blind_amount(G.GAME.round_resets and G.GAME.round_resets.ante or 1)
+            local blind_base = SMODS.get_blind_amount(G.GAME.round_resets and G.GAME.round_resets.ante or 1)
                 return { ascore = blind_base * (self.config.extra.factor or 0.1) }
             end
         end,

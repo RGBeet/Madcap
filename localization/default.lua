@@ -128,8 +128,8 @@ return {
 			e_rgmc_iridescent = {
 				name = "Iridescent",
 				text = {
-					"Redistributes {C:chips}chips{} and {C:mult}mult",
-					"in a {C:chips}70{}-{C:mult}30{} split"
+					"Doubles {C:inactive}(most){} values",
+                    "{C:inactive}(e.g. chips, mult, numerator)"
 				},
 			},
 			e_rgmc_infernal = {
@@ -138,7 +138,9 @@ return {
 					"{X:rgmc_xscore,C:white}X#1#{} Score",
 					"{C:green}#2# in #3#{} chance to",
 					"burn up upon",
-                    "end of round"
+                    "end of round",
+                    "if {C:attention}triggered",
+                    "during {C:attention}Blind{}"
 				},
 			},
 			e_rgmc_chrome = {
@@ -153,17 +155,17 @@ return {
 					"Gives either {C:chips}+#1#{} Chips,",
 					"{C:mult}+#2#{} Mult, {X:mult,C:white}X#3#{} Mult,",
 					"{C:money}$#4#{}, {X:rgmc_xscore,C:white}X#5#{} Score,",
-					"or {X:money,C:white}X#6#{} Money",
+					"or {C:rgmc_luxury}£#6#",
 				},
 			},
 			e_rgmc_galactic = {
 				name = "Galactic",
 				text = {
-					"{C:chips}+#4#{} Chips",
-                    "{C:inactive}(Gives {X:planet,C:white}X0.5{C:inactive} chip value times",
-                    "{C:planet}level{} of {C:attention}last played{C:inactive} Poker Hand -",
-                    "{C:inactive}currently{C:attention} #1#{C:inactive})",
-                    "{C:inactive}({C:chips}#2#){C:inactive}/2) * {C:planet}#3#{C:inactive})",
+					"Gives {C:attention}0.5X{} of {C:chips}Chips{} & {C:mult}Mult",
+                    "of last {C:planet}last played poker hand",
+                    "{C:inactive}(Currently {C:planet}#1#{C:inactive} -",
+                    "{C:inactive}{C:chips}+#1#{C:inactive} Chips, {C:mult}+#2#{C:inactive} Mult)",
+                    ""
 				},
 			},
 			e_rgmc_abyssal = {
@@ -2296,11 +2298,11 @@ return {
             j_rgmc_mf_purpendicular = {
                 name = "Purpendicular",
                 text = {
-                    "{C:attention}+#1#{} consumable slot",
+                    "{C:attention}+#1#{} consumeable slot",
                     "Upon defeating {C:attention}Boss Blind{},",
                     "convert all held {C:tarot}Tarots{}",
                     "into their",
-                    "{C:rotarot,E:1,s:0.8}45 Degree Rotated Tarot",
+                    "{C:rotarot}45 Degree Rotated Tarot",
                     "counterpart"
                 },
             },
@@ -4985,6 +4987,111 @@ return {
 				},
 			},
         },
+		Stake = {
+			stake_rgmc_wager_t1 = {
+				name = "Crimson Wager",
+				text = {
+                    "Play on {C:cosmatarot}Madcap Mode",
+                    "{s:0.8}(There's more {s:0.8,C:attention,E:1}options{s:0.8}!)"
+                },
+			},
+			stake_rgmc_wager_t2 = {
+				name = "Jade Wager",
+				text = {
+                    "Cards can be {C:attention}Eternal{}",
+                    "{s:0.8}Applies all previous Stakes"
+                },
+			},
+			stake_rgmc_wager_t3 = {
+				name = "Ebony Wager",
+				text = {
+                    "Cards can be {C:attention}Perishable{}",
+                    "{s:0.8}Applies all previous Stakes"
+                },
+			},
+			stake_rgmc_wager_t4 = {
+				name = "Indigo Wager",
+				text = {
+                    "Cards can be {C:attention}Rental{}",
+                    "{s:0.8}Applies all previous Stakes"
+                },
+			},
+			stake_rgmc_wager_t5 = {
+				name = "Violet Wager",
+				text = {
+                    "Cards can be {C:attention}Faulty{}",
+                    "{s:0.8}Applies all previous Stakes"
+                },
+			},
+			stake_rgmc_wager_t5_plus = {
+				name = "Chartreuse Wager",
+				text = {
+                    "Cards can be {C:attention}Withering",
+                    "{s:0.8}Applies all previous Stakes"
+                },
+			},
+			stake_rgmc_wager_t6 = {
+				name = "Saffron Wager",
+				text = {
+                    "Cards can be {C:red}Impounded",
+                    "{s:0.8}Required score scales",
+                    "{s:0.8}faster for each {C:attention}Ante",
+                    "{s:0.6}Applies all previous Stakes"
+                },
+			},
+			stake_rgmc_wager_t7 = {
+				name = "Aurum Wager",
+				text = {
+                    "{C:red}Renovates{} the {C:attention}Shop{}",
+                    "{s:0.8}Applies all previous Stakes"
+                },
+			},
+			stake_rgmc_wager_t8 = {
+				name = "Tyrian Wager",
+				text = {
+                    "Boss Blinds have {C:attention}Assists{}",
+                    "{s:0.8}Applies all previous Stakes"
+                },
+			},
+			stake_rgmc_wager_t9 = {
+				name = "Platinum Wager",
+				text = {
+                    "After defeating Final Ante,",
+                    "Take on {C:rgmc_bismuth}The Gauntlet",
+                    "{s:0.8}Applies all previous Stakes"
+                },
+			},
+			stake_rgmc_wager_t9_plus = {
+				name = "Malachite Wager",
+				text = {
+                    "{C:pow}-0.1{} Pow",
+                    "{s:0.8}Applies all previous Stakes"
+                },
+			},
+			stake_rgmc_wager_t10 = {
+				name = "Iridium Wager",
+				text = {
+                    "Shops now have {C:red}Inflation{}",
+                    "{s:0.8}Applies all previous Stakes"
+                },
+			},
+			stake_rgmc_wager_t11 = {
+				name = "Vibranium Wager",
+				text = {
+                    "Shops now face {C:red}Shortages{}",
+                    "{s:0.8}Applies all previous Stakes"
+                },
+			},
+			stake_rgmc_wager_t12 = {
+				name = "Unobtainium Wager",
+				text = {
+                    "{C:rgmc_bismuth,E:1}?!?!?",
+                    "{s:0.8}Required score scales",
+                    "{s:0.8}faster for each {C:attention}Ante",
+                    "{s:0.8}Applies all previous Stakes"
+                },
+			},
+		},
         Other = {
 			p_rgmc_cosma_normal = {
 				name = "Cosma Pack",
@@ -5463,14 +5570,52 @@ return {
                 "Gain {C:money}$#1#{} at end of round"
             } },
 
-            -- Sticker descriptions
+            -- Slot 1 Stickers (Engraved, Perishable)
+			rgmc_engraved = { -- Removed upon countdown ending
+				name = "Engraved",
+				text = {
+                    "Gives {C:red}no{} {C:chips}chips{} or {C:mult}mult",
+                    "{C:inactive}({C:attention}#1#{C:inactive} rounds remaining)"
+				},
+			},
 			rgmc_shielded = {
 				name = "Shielded",
 				text = {
-                    "Cannot be {C:attention}debuffed{} or {C:attention}destroyed{}",
-                    "{C:inactive}({C:attention}#2#{C:inactive} remaining)"
+                    "Cannot be {C:attention}debuffed{} or {C:attention}destroyed{}"
 				},
 			},
+			rgmc_weakened = {
+				name = "Weakened",
+				text = {
+                    "Debuffed during {C:attention}Boss Blinds{}"
+				},
+			},
+			rgmc_unstable = {
+				name = "Unstable",
+				text = {
+                    "At end of {C:attention}Blind,",
+                    "{C:rgmc_mayhem}Mayhemize this card"
+				},
+			},
+
+            -- Slot 2
+			rgmc_unstable = {
+				name = "Unstable",
+				text = {
+                    "At end of {C:attention}Blind,",
+                    "{C:rgmc_mayhem}Mayhemize this card"
+				},
+			},
+
+			rgmc_clown = { -- From Catch the Clown!
+				name = "spr_clown",
+				text = {
+                    "{C:attention}IF{} caught {C:attention}THEN{}",
+                    "chips {C:chips}+= 60{}",
+				},
+			},
+
+            -- Stickers (Nutral.)
 			rgmc_painted = {
 				name = "Painted",
 				text = {
@@ -5479,40 +5624,31 @@ return {
                     "{C:inactive}(Cannot change Enhancements)"
 				},
 			},
+            -- Twinkling/Immutable conflict with eachother
 			rgmc_twinkling = {
 				name = "Twinkling",
 				text = {
                     "Upon removing sticker,",
-                    "Remove {C:dark_edition}edition{}",
-                    "{C:inactive}({C:attention}#2#{C:inactive} remaining)",
-				},
-			},
-			rgmc_engraved = {
-				name = "Engraved",
-				text = {
-                    "Gives {C:red}no{} {C:chips}chips{} or {C:mult}mult",
-                    "{C:inactive}({C:attention}#1#{C:inactive} round(s) remaining)"
+                    "Remove {C:dark_edition}Edition{}",
+                    "{C:inactive}({C:attention}#2#{C:inactive} rounds remaining)"
 				},
 			},
 			rgmc_immutable = {
 				name = "Immutable",
 				text = {
-                    "Cannot change {C:attention}rank{}"
+                    "Cannot change {C:attention}rank{} or {C:attention}suit",
+                    "{C:inactive}({C:attention}#2#{C:inactive} rounds remaining)"
 				},
 			},
+
+            -- Stickers (Negative)
 			rgmc_positive = {
 				name = "Positive",
 				text = {
                     "{C:attention}-1{} hand size"
 				},
 			},
-			rgmc_clown = {
-				name = "spr_clown",
-				text = {
-                    "{C:attention}IF{} caught {C:attention}THEN{}",
-                    "chips {C:chips}+= 60{}",
-				},
-			},
+
             -- Seal descriptions
             rgmc_patina_seal = {
 				name = "Patina Seal",

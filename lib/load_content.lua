@@ -122,6 +122,18 @@ Madcap.Directories = {
 			return true
 		end
 	},
+	['stakes'] = {
+		['madcap'] = {
+			pass = function()
+				return true
+			end
+		},
+		['pacdam'] = {
+			pass = function()
+				return next(SMODS.find_mod("Pacdam"))
+			end
+		}
+	},
 	['vouchers']	= {
 		['madcap'] = {
 			pass = function()
@@ -194,8 +206,7 @@ Madcap.Directories = {
 				return true
 			end,
 			func = function(d)
-				d.pools = { ['MadcapJoker'] = true }
-				if not d.boss then d.boss	= { min = 1 } end
+				d.boss 		= d.boss or { min = 1, max = 10}
 			end
 		},
 		['showdown'] = {
@@ -203,8 +214,7 @@ Madcap.Directories = {
 				return true
 			end,
 			func = function(d)
-				d.pools = { ['MadcapJoker'] = true }
-				if not d.boss then d.boss	= { showdown = true, min = 8 } end
+				d.boss 		= d.boss or { showdown = true, min = 1, max = 10}
 			end
 		},
 		--TODO: add DX blinds?

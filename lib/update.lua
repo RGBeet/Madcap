@@ -37,6 +37,17 @@ end
 rgmc_spam_dt = 0
 Madcap.Rainbow = {G.C.RED, G.C.ORANGE, G.C.GOLD, G.C.GREEN, G.C.BLUE, G.C.PURPLE}
 
+local get_hexes = function(hexes)
+	local h = {}
+	MadLib.loop_func(hexes, function(v) h[#h+1] = HEX(v) end)
+	return h
+end
+
+local stake_colors = function(color)
+	local main_color = HEX(color)
+	return { main_colour, G.C.RED }
+end
+
 -- Animated Colors
 Madcap.C = {
 	MAYHEM    	= { colours = { HEX('75188F'), HEX('3A188F') } },
@@ -53,6 +64,18 @@ Madcap.C = {
 	DARK      	= { colours = { HEX('BC5090'), HEX('00202E') } },
 	SINISTER  	= { colours = { HEX('78322A'), HEX('677F93') } },
 	BISMUTH  	= { colours = { G.C.RED, G.C.GOLD, G.C.GREEN, G.C.BLUE, G.C.PURPLE }, cycle = 0.5 },
+	--[[CRIMSON  	= { colours = stake_colors('E54D47') },
+	JADE 		= { colours = stake_colors('00B171'), },
+	EBONY  		= { colours = stake_colors('586355'), },
+	INDIGO  	= { colours = stake_colors('5A63B1'), },
+	VIOLET  	= { colours = stake_colors('A85CFF'), },
+	SAFFRON  	= { colours = stake_colors('FFDBA1'), },
+	AURUM  		= { colours = stake_colors('F1BF3A'), },
+	TYRIAN  	= { colours = stake_colors('8D2061'), },
+	PLATINUM  	= { colours = stake_colors('E0DFDD'), },
+	IRIDIUM  	= { colours = stake_colors('686763'), },
+	VIBRANIUM  	= { colours = stake_colors('44E8B1'), },
+	UNOBTANIUM  = { colours = stake_colors('993AB4'), },]]
 }
 MadLib.loop_table(Madcap.C, function(k,v)
 	SMODS.Gradient{

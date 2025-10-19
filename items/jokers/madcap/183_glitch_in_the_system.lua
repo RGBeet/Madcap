@@ -14,7 +14,7 @@ return {
         rarity  = 'rgmc_unusual',
         cost    = 20,
         config = { 
-            extra = { max_mayhem  = 5 },
+            extra = { max_mayhem  = 50 },
         },
         loc_vars = function(self, info_queue, card)
             return MadLib.collect_vars(number_format(card.ability.extra.max_mayhem))

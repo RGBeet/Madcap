@@ -7,7 +7,6 @@ function Game:init_game_object()
     return ret
 end
 
-
 --Init stuff at the start of the game
 local gigo = Game.init_game_object
 function Game:init_game_object()
@@ -293,30 +292,47 @@ function MadLib.is_shop_area(area)
     or area == (G.shop_booster or {})
 end
 
+
+
+function Card:set_faulty(_faulty)
+    self.ability.rental = _faulty
+end
+
+local set_shop_stickers_ref =  MadLib.set_shop_stickers
+function MadLib.set_shop_stickers(card)
+    card = set_shop_stickers_ref(card)
+
+    -- Faulty
+    if 
+        G.GAME.modifiers.rgmc_enable_faulty_in_shop 
+        and pseudorandom((area == G.pack_cards and 'packssjr' or 'ssjr') .. G.GAME.round_resets.ante) > 0.7 
+        and not SMODS.Stickers["faulty"].should_apply
+    then
+        card:set_faulty(true)
+    end
+
+    return card
+end
+
 local old_create_card = create_card
 function create_card(_type, area, legendary, _rarity, skip_materialize, soulable, forced_key, key_append)
 
-	if G.GAME.rgmc_glitch_enabled then
-		_type = Madcap.Funcs.get_random_set('glitch_in_the_system', Madcap.Lists.RandomPoolBlacklist, MadLib.is_shop_area(area) and 1 or 2)
-		print("Glitch Enabled! Type is")
-		print(_type)
-	end
-
-	if 
-		next(SMODS.find_card("j_rgmc_happy_stick_joker")) 
-		and MadLib.list_matches_one(SMODS.find_card("j_rgmc_happy_stick_joker"), function(v)
-		return SMODS.pseudorandom_probability(v, 'happy_stick_joker', 1, v.ability.extra.odds)
-	end) then
-		_type = Madcap.Funcs.get_random_set('happy_stick_joker', Madcap.Lists.RandomPoolBlacklist, 2)
+	if not forced_key then
+		if G.GAME.rgmc_glitch_enabled then
+			_type = Madcap.Funcs.get_random_set('glitch_in_the_system', Madcap.Lists.RandomPoolBlacklist, MadLib.is_shop_area(area) and 1 or 2)
+		elseif next(SMODS.find_card("j_rgmc_happy_stick_joker")) 
+			and MadLib.list_matches_one(SMODS.find_card("j_rgmc_happy_stick_joker"), function(v)
+			return SMODS.pseudorandom_probability(v, 'happy_stick_joker', 1, v.ability.extra.odds)
+		end) then
+			_type = Madcap.Funcs.get_random_set('happy_stick_joker', Madcap.Lists.RandomPoolBlacklist, 2)
+		end
 	end
 
 	local card = old_create_card(_type, area, legendary, _rarity, skip_materialize, soulable, forced_key, key_append)
-	-- Mayhemize.
+
 	if G.GAME.mayhem then
 		local mayhem_state	= mfuncs.get_mayhem_state()
-		if mayhem_state > 0 then
-			card = Madcap.Funcs.mayhemize(card)
-		end
+		if mayhem_state > 0 then card = Madcap.Funcs.mayhemize(card) end
 	end
 
 	return card
@@ -719,16 +735,15 @@ if SMODS and SMODS.calculate_individual_effect then
 	function SMODS.calculate_individual_effect(effect, scored_card, key, amount, from_edition)
 		local ret = cie(effect, scored_card, key, amount, from_edition)
 
-		if -- squeezy cheese detection
+		if
 			MadLib.list_matches_one({'x_mult', 'xmult', 'x_mult_mod', 'xmult_mod'}, function(v)
 				return v == string.lower(key)
 			end) and amount ~= 1
 		then
 			MadLib.loop_func(SMODS.find_card('j_rgmc_squeezy_cheeze'), function(v)
 				v.ability.extra.xmult_store = lenient_bignum(to_big(v.ability.extra.xmult_store) + to_big(amount))
-
 				if v.ability.extra.xmult_store > 1 then
-				tell("New xmult_store is "..lenient_bignum(v.ability.extra.xmult_store))
+					--tell("New xmult_store is "..lenient_bignum(v.ability.extra.xmult_store))
 					local m = 0
 					while (v.ability.extra.xmult_store - 1) > 0 do
 						v.ability.extra.xmult_store = v.ability.extra.xmult_store - 1 -- go down bith
@@ -752,9 +767,9 @@ if SMODS and SMODS.calculate_individual_effect then
 				end
 			end)
 		end
-		-- luxury points
-		if key == "rgmc_luxury_pts" then
-			amount = math.max(amount,0)
+
+		if key == "rgmc_luxury_pts" then -- TODO: check if this works?
+			amount = math.max(amount, 0)
 			G.GAME.rgmc_luxury_pts = G.GAME.rgmc_luxury_pts + amount
 			text = "+£"..number_format(amount)
 			if from_edition then
@@ -764,8 +779,15 @@ if SMODS and SMODS.calculate_individual_effect then
 			end
 			return true
 		end
+		if ret then return ret end
+	end
+end
 
-		if -- Squeezy (Partner)
+if Partner_API then
+	local cie_partner = SMODS.calculate_individual_effect
+	function SMODS.calculate_individual_effect(effect, scored_card, key, amount, from_edition)
+		local ret = cie_partner(effect, scored_card, key, amount, from_edition)
+		if -- Squeezy (Partner) TODO: Add this to uhhh Partner hook
 			MadLib.list_matches_one({'chips', 'chip_mod', 'chips_mod'}, function(v)
 				return key == string.lower(v)
 			end) and amount ~= 1
@@ -886,17 +908,14 @@ function Back.apply_to_run(self)
         local deck_size = ranks * size  -- deck size
 
         if doubles then
-            for i = #suits, 1, -1 do
-                suits[#suits+1] = suits[i]
-            end
+            for i = #suits, 1, -1 do suits[#suits+1] = suits[i] end
             table.sort(suits, cmp)
             deck_size = deck_size * 2 -- double that shit
         end
 
         -- do the suit shit i guess
-        G.E_MANAGER:add_event(Event({
+        MadLib.event({
             func = function()
-
                 -- modify existing cards
                 for i = #G.playing_cards, 1, -1 do
                     if i > deck_size then
@@ -906,7 +925,6 @@ function Back.apply_to_run(self)
                         G.playing_cards[i]:change_suit(suits[m])
                     end
                 end
-
                 if #G.playing_cards < deck_size then
                     local difference = (#G.playing_cards - deck_size)
                     for i = difference, 1, -1 do
@@ -918,10 +936,9 @@ function Back.apply_to_run(self)
                         _card:add_to_deck()
                     end
                 end
-
                 return true
             end
-        }))
+        })
     elseif
         self.effect.config.starting_suits		-- Specified starting suits and ranks
         and self.effect.config.starting_ranks
@@ -936,7 +953,7 @@ function Back.apply_to_run(self)
         local total 		= 0
 
         local suit_index, rank_index, total = 1, 1, 0
-        G.E_MANAGER:add_event(Event({
+        MadLib.event({
             func = function()
                 for i = 1,#G.playing_cards do
                     local _rank, _suit = rank_list[rank_index], suit_list[suit_index]
@@ -976,29 +993,21 @@ function Back.apply_to_run(self)
                 end
                 return true
             end
-        }))
+        })
     end
 end
 
--- Levelling up hands shenanigans
 local level_up_hand_ref = level_up_hand
 function level_up_hand(card, hand, instant, amount, context)
-
 	if to_big(amount or 1) > to_big(0) then -- actually levelling up the hand
-		if  -- Rocket Keychain: using specific Planet card levels up most played hand as well!
-			#SMODS.find_card('j_rgmc_rocket_keychain') > 0
-		then
-			-- loop thru
-			MadLib.loop_func(SMODS.find_card('j_rgmc_rocket_keychain'), function(v)
-				if hand == v.ability.extra.target_hand then
-					level_up_hand_ref(card, MadLib.get_most_played_hand(), instant, v.ability.extra.level_ups)
-				end
-			end)
-		end
+		-- Rocket Keychain: level up a random hand
+		MadLib.loop_joker_effect('j_rgmc_rocket_keychain', function(v)
+			if hand ~= v.ability.extra.target_hand then return end
+			level_up_hand_ref(card, MadLib.get_most_played_hand(), instant, v.ability.extra.level_ups)
+		end)
 	end
 	level_up_hand_ref(card, hand, instant, amount)
 end
-
 
 local smods_change_base = SMODS.change_base
 function SMODS.change_base(card, suit, rank)
@@ -1050,7 +1059,7 @@ function evaluate_poker_hand(hand)
 			for _, v in pairs(hand) do
 				if cardtype == 'light' then
 					if v:has_light_suit() then
-						print('light -> dark')
+						--print('light -> dark')
 						cardtype = 'dark'
 					else
 						cardtype = nil
@@ -1058,7 +1067,7 @@ function evaluate_poker_hand(hand)
 					end
 				else
 					if v:has_dark_suit() then
-						print('dark -> light')
+						--print('dark -> light')
 						cardtype = 'light'
 					else
 						cardtype = nil
@@ -1071,4 +1080,46 @@ function evaluate_poker_hand(hand)
     end
 
     return results
+end
+
+local get_blind_amount_stake_ref = get_blind_amount
+function get_blind_amount(ante)
+	if G.GAME.modifiers.rgmc_stake then
+		local scale = G.GAME.modifiers.scaling or 1
+		print('RGMC STAKE!')
+		local amounts = {
+			400,
+			850 + 150*scale,
+			1800 + 700*scale,
+			2800 + 3600*scale,
+			20000 + 5500*scale*math.log(scale + 1.5),
+			17000 + 9500*(scale+1)*(0.45*scale),
+			15000 + 27000*(scale+1)*((scale/3.8)^2),
+			65000 * (scale+1.2)^2 * (scale/6.5)^2
+		}
+
+		if ante < 1 then return 300 end
+		if ante <= 8 then
+			local base = amounts[ante]
+			return base - base % (10 ^ math.floor(math.log10(base) - 1))
+		end
+		-- smoother long-term scaling
+		local a = amounts[8]
+		local b = amounts[8] / amounts[7]
+		local c = ante - 8
+		local d = 1.1 + 0.18 * c
+
+		-- controlled exponential with damping
+		local growth = (b + (b * 0.85 * c)^d) ^ (c ^ 0.85)
+
+		-- mild logarithmic damping past ante 20
+		local damp = 1 + math.log((c / 6) + 1) / 4
+		local amount = math.floor(a * growth * damp)
+		amount = amount - amount % (10 ^ math.floor(math.log10(amount) - 1))
+
+		if (amount ~= amount) or amount > 1e300 then amount = 1e300 end
+
+		return amount
+	end
+    return get_blind_amount_stake_ref(ante)
 end

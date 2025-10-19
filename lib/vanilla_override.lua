@@ -530,3 +530,41 @@ SMODS.Joker:take_ownership('triboulet', {
         end
     end
 }, true)
+
+MadLib.loop_func({
+   'c_magician',
+   'c_empress',
+   'c_heirophant', -- what the fuck
+   'c_lovers',
+   'c_chariot',
+   'c_devil',
+   'c_tower',
+   'c_justice',
+}, function(v)
+    tell('Take ownership of ' .. v)
+    SMODS.Consumable:take_ownership(v, {
+        loc_vars = function(self, info_queue, card)
+        info_queue[#info_queue + 1] = G.P_CENTERS[card.ability.mod_conv]
+            return MadLib.collect_vars( card.ability.max_highlighted, localize { type = 'name_text', set = 'Enhanced', key = card.ability.mod_conv })
+        end,
+        can_use = function(self, card)
+            return MadLib.can_use_transform_tarot(card)
+        end
+    })
+end)
+
+MadLib.loop_func({
+   'c_strength',
+   'c_hanged_man',
+   'c_death',
+}, function(v)
+    tell('Take ownership of ' .. v)
+    SMODS.Consumable:take_ownership(v, {
+        loc_vars = function(self, info_queue, card)
+            return MadLib.collect_vars( card.ability.max_highlighted)
+        end,
+        can_use = function(self, card)
+            return MadLib.can_use_transform_tarot(card)
+        end
+    })
+end)

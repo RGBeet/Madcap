@@ -10,7 +10,7 @@ return {
         rarity  = 'rgmc_unusual',
         cost    = 15,
         config  = {
-            extra = { mayhem = 2, odds = 9 }
+            extra = { mayhem = 20, odds = 9 }
         },
         loc_vars = function(self, info_queue, card)
             local numer, denom = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'happy_stick_joker')

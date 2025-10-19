@@ -33,6 +33,8 @@ local atlases = {
 	create('stickers', 		mis..'stickers.png'),
 	create('boosters', 		mis..'boosters.png'),
 	create('vouchers', 		mis..'vouchers.png'),
+	crtsqr('stakes', 			mis..'stakes.png', 29),
+	create('stake_stickers', 	mis..'stake_stickers.png'),
 	crtsqr('ui_suits', 		mis..'ui_suits.png', 18),
 	crtsqr('ui_suits_hc', 	mis..'ui_suits_hc.png', 18),
 	crtbld('blinds', 			'blinds/bl_base.png', 21),
@@ -132,7 +134,7 @@ if next(SMODS.find_mod("partner")) then
 end
 
 -- More Fluff
-if MadLib.mod_loaded('MoreFluff') then
+if next(SMODS.find_mod("MoreFluff")) then
 	local mf = 'more_fluff/mf_'
 	add_atlases({
 		create('mf_colours', 		mf..'colours.png'),
