@@ -338,7 +338,7 @@ function Madcap.Funcs.calculate_potentia_bonus(empower_level, cards)
 end
 
 function Madcap.Funcs.calculate_chips_mult(hand, subhands, cards)
-	local level		= hand.level or 1
+	local level		= hand.level or 0
 	local chips 	= hand.chips or 0
 	local mult 		= hand.mult or 0
 
@@ -356,18 +356,31 @@ function Madcap.Funcs.calculate_chips_mult(hand, subhands, cards)
 		end)
 	end)
 
-	-- If hand level was changed, change chips and mult
 	local diff = level - hand.level
+	tell(number_format(hand.level) .. ' - ' .. number_format(level) .. ' = ' .. number_format(diff) .. '.')
+	-- If hand level was changed, change chips and mult
 	if diff ~= 0 then
-		chips 	= chips + (diff * hand.l_chips)
-		mult 	= mult + (diff * hand.l_mult)
+		local current_level = hand.level 
+		for i=1, math.abs(diff) do
+			current_level = current_level - 1
+			if current_level > 0 then
+				--tell('CHIP SUBTRACT')
+				chips 	= chips + (diff * hand.l_chips)
+				mult 	= mult + (diff * hand.l_mult)
+			else
+				--tell('DIV BY 2!')
+				chips	= chips * 0.75
+				mult	= mult * 0.75
+			end
+		end
 	end
 
-	MadLib.loop_func(subhands, function(sh)
-		local sh_mult 	= sh.mult + (sh_mod * sh.x_mult)
-		local sh_chips 	= sh.chips + (sh_mod * sh.x_chips)
+	MadLib.loop_func(subhands, function(v)
+		local sh = G.GAME.subhands[v]
+		local sh_mult 	= sh.mult + (sh_mod * sh.l_mult)
+		local sh_chips 	= sh.chips + (sh_mod * sh.l_chips)
 		if sh.empower > 0 then
-			local pt_level 	= sh.empower + pt_mod 
+			local pt_level 	= sh.empower + pt_mod
 			local pt_bonus 	= Madcap.Funcs.calculate_potentia_bonus(pt_level, cards)
 			sh_mult 	= sh_mult * pt_bonus
 			sh_chips 	= sh_chips * pt_bonus
@@ -383,7 +396,7 @@ function Madcap.Funcs.calculate_chips_mult(hand, subhands, cards)
 	}
 
 	tell('Returning Lv.' .. number_format(level) .. ' with ' .. number_format(chips) .. ' Chips and ' .. number_format(mult) .. ' Mult.')
-	return level, math.max(chips, 0), math.max(mult, 0), data
+	return level, MadLib.round(math.max(chips, 0), 2), MadLib.round(math.max(mult, 0), 2), data
 end
 
 function Madcap.Funcs.hand_display_mod(hand, text, disp_text, poker_hands, scoring_hand)
