@@ -31,7 +31,7 @@ return {
                 end, 0, 'after')
             end
 
-            if -- upgrade!
+            if
                 context.cardarea == G.jokers
                 and (context.before or context.forcetrigger)
             then
@@ -43,20 +43,35 @@ return {
                 }
             end
 
-            if  -- the cards :)
-                context.joker_main -- playing the hand
+            if
+                context.joker_main
                 and to_big(card.ability.extra.chips) > to_big(0)
             then
                 return { chips = to_big(card.ability.extra.chips) }
             end
 
-            if context.end_of_round and context.game_over == false and context.main_eval and not context.blueprint then
+            -- End of round
+            if 
+                context.end_of_round 
+                and context.game_over == false
+                and context.main_eval 
+                and not context.blueprint 
+            then
                 if SMODS.pseudorandom_probability(card, 'house_of_cards', 1 + card.ability.immutable.increase, card.ability.immutable.odds) then
-                    tell('Reset')
+                    local new_chips = math.floor(card.ability.extra.chips / 2)
                     card.ability.immutable.increase = 0
-                    card.ability.extra.chips = math.floor(card.ability.extra.chips / 2)
+                    card.ability.extra.chips = new_chips
+                    return {
+                        message = number_format(new_chips),
+                        colour = G.C.FILTER,
+                        message_card = card
+                    }
                 else
-                    return MadLib.get_safe_data(card)
+                    return {
+                        message = localize('k_safe_ex'),
+                        colour = G.C.GREEN,
+                        message_card = card
+                    }
                 end
             end
         end,

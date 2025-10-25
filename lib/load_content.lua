@@ -108,6 +108,9 @@ Madcap.Directories = {
 			['rotarot'] = {
 				pass = function()
 					return next(SMODS.find_mod("MoreFluff"))
+				end,
+				func = function(d)
+					d.display_size = { w = 106, h = 106 }
 				end
 			},
 		}

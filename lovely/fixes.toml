@@ -636,4 +636,15 @@ end
 '''
 match_indent = true
 
-
+[[patches]]
+[patches.pattern]
+target = "game.lua"
+pattern = "G.playing_cards = {}"
+position = "before"
+payload = '''self.impound = CardArea(
+        G.discard.T.x, G.discard.T.y,
+        G.discard.T.w, G.discard.T.h,
+        { type = "discard", card_limit = 1e308 }
+    )
+'''
+match_indent = true

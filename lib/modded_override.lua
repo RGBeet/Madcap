@@ -1606,6 +1606,38 @@ end
 -- More Fluff
 if next(SMODS.find_mod("MoreFluff")) then
 
+    -- Simplified Joker - Invisible/Stereo compat
+    SMODS.Joker:take_ownership('mf_simplified', {
+        config = { extra = {mult = 4} },
+        loc_vars = function(self, info_queue, center)
+            return { vars = { center.ability.extra.mult } }
+        end,
+        calculate = function(self, card, context)
+            if
+                context.other_joker
+                and context.other_joker.config.center.rarity == 1
+                and context.other_joker.ability.set == "Joker"
+            then
+                local amt = context.other_joker:get_quantity_value()
+                if amt > 0 then
+                    MadLib.event({
+                        func = function()
+                        context.other_joker:juice_up(0.5, 0.5)
+                        return true
+                        end
+                    })
+                    return {
+                        message = localize{type = 'variable', key = 'a_mult', vars = { card.ability.extra.mult * amt } },
+                        mult_mod = card.ability.extra.mult * amt
+                    }
+                end
+            end
+            if context.forcetrigger then
+                return { mult = card.ability.extra.mult * card:get_quantity_value() }
+            end
+        end
+    }, true)
+
     -- Rose-Tinted Glasses
     SMODS.Joker:take_ownership('mf_rosetinted', {
         config = { extra = { rank = '2' } },
@@ -1621,15 +1653,20 @@ if next(SMODS.find_mod("MoreFluff")) then
                 and G.GAME.current_round.hands_played == 0)
                 or context.forcetrigger
             then
-                MadLib.event({
-                    func = function()
-                        add_tag(Tag('tag_double'))
-                        play_sound('generic1', 0.9 + math.random()*0.1, 0.8)
-                        play_sound('holo1', 1.2 + math.random()*0.1, 0.4)
-                        return true
-                    end
-                })
-                if not context.forcetrigger then return true end
+                local amt = context.forcetrigger and card:get_quantity_value()
+                    or context.full_hand[1]:get_quantity_value()
+                -- Invisible does not count it
+                for i=1, amt do
+                    MadLib.event({
+                        func = function()
+                            add_tag(Tag('tag_double'))
+                            play_sound('generic1', 0.9 + math.random()*0.1, 0.8)
+                            play_sound('holo1', 1.2 + math.random()*0.1, 0.4)
+                            return true
+                        end
+                    })
+                end
+                if not context.forcetrigger and amt > 0 then return true end
             end
         end
     }, true)

@@ -2489,6 +2489,14 @@ return {
                     "{E:1,s:1.3}?????"
                 }
             },
+            j_raised_fist = {
+                name = "Raised Fist",
+                text = {
+                    "Adds {C:attention}#1#X{} the rank",
+                    "of {C:attention}lowest{} ranked card",
+                    "held in hand to Mult",
+                },
+            },
             -- More Fluff revisions
             j_mf_rosetinted = {
                 name = "Rose-Tinted Glasses",
@@ -4998,28 +5006,31 @@ return {
 			stake_rgmc_wager_t2 = {
 				name = "Jade Wager",
 				text = {
-                    "Cards can be {C:attention}Eternal{}",
+                    "Cards can be {C:attention}???{}",
+                    "{C:attention}???{}, and {C:attention}???{}",
                     "{s:0.8}Applies all previous Stakes"
                 },
 			},
 			stake_rgmc_wager_t3 = {
 				name = "Ebony Wager",
 				text = {
-                    "Cards can be {C:attention}Perishable{}",
+                    "Cards can be {C:attention}???{}",
+                    "{C:attention}???{}, and {C:attention}???{}",
                     "{s:0.8}Applies all previous Stakes"
                 },
 			},
 			stake_rgmc_wager_t4 = {
 				name = "Indigo Wager",
 				text = {
-                    "Cards can be {C:attention}Rental{}",
+                    "Cards can be {C:attention}???{}",
+                    "{C:attention}???{}, and {C:attention}???{}",
                     "{s:0.8}Applies all previous Stakes"
                 },
 			},
 			stake_rgmc_wager_t5 = {
 				name = "Violet Wager",
 				text = {
-                    "Cards can be {C:attention}Faulty{}",
+                    "Cards can be {C:red}Impounded",
                     "{s:0.8}Applies all previous Stakes"
                 },
 			},
@@ -5033,7 +5044,7 @@ return {
 			stake_rgmc_wager_t6 = {
 				name = "Saffron Wager",
 				text = {
-                    "Cards can be {C:red}Impounded",
+                    "{C:red}Renovates{} the {C:attention}Shop{}",
                     "{s:0.8}Required score scales",
                     "{s:0.8}faster for each {C:attention}Ante",
                     "{s:0.6}Applies all previous Stakes"
@@ -5042,7 +5053,8 @@ return {
 			stake_rgmc_wager_t7 = {
 				name = "Aurum Wager",
 				text = {
-                    "{C:red}Renovates{} the {C:attention}Shop{}",
+                    "Cards can be {C:attention}???{}",
+                    "{C:attention}???{}, and {C:attention}???{}",
                     "{s:0.8}Applies all previous Stakes"
                 },
 			},
@@ -5089,6 +5101,18 @@ return {
                     "{s:0.8}Required score scales",
                     "{s:0.8}faster for each {C:attention}Ante",
                     "{s:0.8}Applies all previous Stakes"
+                },
+			},
+			stake_rgmc_wager_t13 = {
+				name = "Neutronium Wager",
+				text = {
+                    "{C:rgmc_bismuth,E:1}?!?!?",
+                },
+			},
+			stake_rgmc_wager_t14 = {
+				name = "Dark Matter Wager",
+				text = {
+                    "{C:rgmc_bismuth,E:1}?!?!?",
                 },
 			},
 		},
@@ -5570,12 +5594,22 @@ return {
                 "Gain {C:money}$#1#{} at end of round"
             } },
 
-            -- Slot 1 Stickers (Engraved, Perishable)
+            -- Slot [A] Stickers (Engraved, Perishable)
 			rgmc_engraved = { -- Removed upon countdown ending
 				name = "Engraved",
 				text = {
                     "Gives {C:red}no{} {C:chips}chips{} or {C:mult}mult",
                     "{C:inactive}({C:attention}#1#{C:inactive} rounds remaining)"
+				},
+			},
+			rgmc_faulty = {
+				name = "Faulty",
+				text = {
+                    "Upon trigger attempt:",
+                    "{C:green}#1# in #2#{} chance",
+                    "to not trigger",
+                    "{C:green}#1# in #3#{} chance",
+                    "to retrigger"
 				},
 			},
 			rgmc_shielded = {
@@ -5587,7 +5621,14 @@ return {
 			rgmc_weakened = {
 				name = "Weakened",
 				text = {
-                    "Debuffed during {C:attention}Boss Blinds{}"
+                    "Will not trigger during {C:attention}Boss Blinds{}"
+				},
+			},
+			rgmc_weakened_active = {
+				name = "Weakened (Active)",
+				text = {
+                    "Will not trigger during {C:attention}Boss Blinds{}",
+                    "{C:inactive}(Currently {C:red}active{C:inactive}!)"
 				},
 			},
 			rgmc_unstable = {
@@ -5598,33 +5639,180 @@ return {
 				},
 			},
 
-            -- Slot 2
-			rgmc_unstable = {
-				name = "Unstable",
+            -- Slot [B] (Rental?)
+			rgmc_delayed = {
+				name = "Delayed",
 				text = {
-                    "At end of {C:attention}Blind,",
-                    "{C:rgmc_mayhem}Mayhemize this card"
+                    "If triggered, activate",
+                    "at {C:attention}end{} of scoring"
+				},
+			},
+			rgmc_toxic = {
+				name = "Toxic",
+				text = {
+                    "Prevents {C:attention}adjacent{} cards",
+                    "from triggering"
+				},
+			},
+			rgmc_irate = {
+				name = "Irate",
+				text = {
+                    "{C:red}+#1#X{} blind size",
+                    "when triggered"
+				},
+			},
+            rgmc_diluted = {
+				name = "Diluted",
+				text = {
+                    "{C:potentiacrystal}-1{} Potentia to",
+                    "all played {C:spatiaplanet}Subhands",
+                    "when held in hand"
 				},
 			},
 
-			rgmc_clown = { -- From Catch the Clown!
-				name = "spr_clown",
+            --- Slot [C]
+            -- Positive
+            rgmc_positive = {
+				name = "Positive",
 				text = {
-                    "{C:attention}IF{} caught {C:attention}THEN{}",
-                    "chips {C:chips}+= 60{}",
+                    "{C:attention}-#1#{} Joker Slot{C:inactive}(s)"
+				},
+			},
+            rgmc_positive_consumable = {
+				name = "Positive",
+				text = {
+                    "{C:attention}-#1#{} consumable Slot{C:inactive}(s)"
+				},
+			},
+            rgmc_positive_card = {
+				name = "Positive",
+				text = {
+                    "{C:attention}-#1#{} hand size"
+				},
+			},
+            -- Negative
+            rgmc_negative = {
+				name = "Negative",
+				text = {
+                    "{C:attention}+#1#{} Joker Slot{C:inactive}(s)"
+				},
+			},
+            rgmc_negative_consumable = {
+				name = "Negative",
+				text = {
+                    "{C:attention}+#1#{} consumable Slot{C:inactive}(s)"
+				},
+			},
+            rgmc_negative_card = {
+				name = "Positive",
+				text = {
+                    "{C:attention}+#1#{} hand size"
+				},
+			},
+            -- Invisible
+            rgmc_invisible = {
+				name = "Invisible",
+				text = {
+                    "Not counted as a {C:attention}Joker",
+                    "by other items"
+				},
+			},
+            rgmc_invisible_consumable = {
+				name = "Invisible",
+				text = {
+                    "Not counted as a {C:attention}consumable",
+                    "by other items"
+				},
+			},
+            rgmc_invisible_card = {
+				name = "Invisible",
+				text = {
+                    "Not counted as a {C:attention}card",
+                    "by other items"
+				},
+			},
+            -- Stereo
+            rgmc_stereo = {
+				name = "Stereo",
+				text = {
+                    "This {C:attention}Joker{} is",
+                    "counted {C:attention}twice",
+                    "by other items"
+				},
+			},
+            rgmc_stereo_consumable = {
+				name = "Stereo",
+				text = {
+                    "This {C:attention}consumable{} is",
+                    "counted {C:attention}twice",
+                    "by other items"
+				},
+			},
+            rgmc_stereo_card = {
+				name = "Stereo",
+				text = {
+                    "This {C:attention}card{} is",
+                    "counted {C:attention}twice",
+                    "by other items"
+
+				},
+			},
+            -- Lucky
+            rgmc_lucky = {
+				name = "Lucky",
+				text = {
+                    "{C:green}+#1#{} Numerator",
+                    "for all probabilities"
+				},
+			},
+            rgmc_lucky_card = {
+				name = "Lucky",
+				text = {
+                    "{C:green}+#1#{} Numerator",
+                    "for all probabilities",
+                    "while {C:attention}held{} in hand"
+				},
+			},
+            rgmc_unlucky = {
+				name = "Unlucky",
+				text = {
+                    "{C:red}+#1#{} Denominator",
+                    "for all probabilities"
+				},
+			},
+            rgmc_unlucky_card = {
+				name = "Unlucky",
+				text = {
+                    "{C:red}+#1#{} Denominator",
+                    "for all probabilities",
+                    "while {C:attention}held{} in hand"
+				},
+			},
+            rgmc_slashed = {
+				name = "Slashed",
+				text = {
+                    "{C:attention}-1{} level to",
+                    "all played {C:planet}Poker Hands{}",
+                    "when held in hand"
+				},
+			},
+            rgmc_chained = {
+				name = "Chained",
+				text = {
+                    "{C:attention}-1{} level to",
+                    "all played {C:spatiaplanet}Subhands",
+                    "when held in hand"
+				},
+			},
+            rgmc_shichi = {
+				name = "Shichi",
+				text = {
+                    "First probability roll",
+                    "is {C:green,E:1}guaranteed{} each {C:attention}Blind",
 				},
 			},
 
-            -- Stickers (Nutral.)
-			rgmc_painted = {
-				name = "Painted",
-				text = {
-                    "Gains a random, immutable {C:attention}Enhancement{}",
-                    "at start of {C:attention}Blind",
-                    "{C:inactive}(Cannot change Enhancements)"
-				},
-			},
-            -- Twinkling/Immutable conflict with eachother
+            --- Slot [D]
 			rgmc_twinkling = {
 				name = "Twinkling",
 				text = {
@@ -5640,12 +5828,113 @@ return {
                     "{C:inactive}({C:attention}#2#{C:inactive} rounds remaining)"
 				},
 			},
-
-            -- Stickers (Negative)
-			rgmc_positive = {
-				name = "Positive",
+			rgmc_painted = {
+				name = "Painted",
 				text = {
-                    "{C:attention}-1{} hand size"
+                    "Gains a random, immutable {C:attention}Enhancement{}",
+                    "at start of {C:attention}Blind",
+                    "{C:inactive}(Cannot change Enhancements)",
+				},
+			},
+            rgmc_coronated = {
+				name = "Coronated",
+				text = {
+                    "Upon drawing cards,",
+                    "randomly select one",
+                    "{C:attention}Coronated{} card",
+                    "and {C:attention}draw it first",
+                    "{C:inactive}King me!"
+				},
+			},
+			rgmc_no_hearts = {
+				name = "No Hearts",
+				text = {
+                    "If scored hand",
+                    "contains {C:hearts}Hearts{},",
+                    "{C:red}debuff{} this card",
+                    "for the entire {C:attention}Blind",
+				},
+			},
+			rgmc_no_spades = {
+				name = "No Spades",
+				text = {
+                    "If scored hand",
+                    "contains {C:spades}Spades{},",
+                    "{C:red}debuff{} this card",
+                    "for the entire {C:attention}Blind",
+				},
+			},
+			rgmc_no_diamonds = {
+				name = "No Diamonds",
+				text = {
+                    "If scored hand",
+                    "contains {C:diamonds}Diamonds{},",
+                    "{C:red}debuff{} this card",
+                    "for the entire {C:attention}Blind",
+				},
+			},
+			rgmc_no_clubs = {
+				name = "No Clubs",
+				text = {
+                    "If scored hand",
+                    "contains {C:clubs}Clubs{},",
+                    "{C:red}debuff{} this card",
+                    "for the entire {C:attention}Blind",
+				},
+			},
+			rgmc_no_goblets = {
+				name = "No Goblets",
+				text = {
+                    "If scored hand",
+                    "contains {C:rgmc_goblets}Goblets{},",
+                    "{C:red}debuff{} this card",
+                    "for the entire {C:attention}Blind",
+				},
+			},
+			rgmc_no_towers = {
+				name = "No Towers",
+				text = {
+                    "If scored hand",
+                    "contains {C:rgmc_towers}Towers{},",
+                    "{C:red}debuff{} this card",
+                    "for the entire {C:attention}Blind",
+				},
+			},
+			rgmc_no_blooms = {
+				name = "No Blooms",
+				text = {
+                    "If scored hand",
+                    "contains {C:rgmc_blooms}Blooms{},",
+                    "{C:red}debuff{} this card",
+                    "for the entire {C:attention}Blind",
+				},
+			},
+			rgmc_no_daggers = {
+				name = "No Daggers",
+				text = {
+                    "If scored hand",
+                    "contains {C:rgmc_daggers}Daggers{},",
+                    "{C:red}debuff{} this card",
+                    "for the entire {C:attention}Blind",
+				},
+			},
+
+            -- Slot [E]
+			rgmc_clown = { -- From Catch the Clown!
+				name = "spr_clown",
+				text = {
+                    "{C:attention}IF{} caught {C:attention}THEN{}",
+                    "chips {C:chips}+= 60{}",
+				},
+			},
+
+            -- Slot [F]
+            rgmc_unity = {
+				name = "Unity",
+				text = {
+                    "When this card is {C:attention}altered{},",
+                    "modify all {C:attention}Unity{} cards",
+                    "in the {C:attention}same{} manner"
 				},
 			},
 
@@ -6140,22 +6429,30 @@ return {
             rgmc_infoak_flush               = "Fluxus Infinitum",
         },
 		labels = {
-            rgmc_shielded           = "Shielded",
-            rgmc_painted            = "Painted",
-            rgmc_twinkling          = "Twinkling",
-            rgmc_engraved           = "Engraved",
-            rgmc_immutable          = "Immutable",
-            rgmc_rand               = "Rand",
-            rgmc_spatial            = "Spatial",
-            rgmc_transient          = "Transient",
-            rgmc_flippant           = "Flippant",
-            rgmc_entropic           = "Entropic",
-            rgmc_bismuth_red        = "Red (Bismuth)",
-            rgmc_bismuth_yellow     = "Yellow (Bismuth)",
-            rgmc_bismuth_green      = "Green (Bismuth)",
-            rgmc_bismuth_blue       = "Blue (Bismuth)",
-            rgmc_bismuth_purple     = "Purple (Bismuth)",
-            rgmc_clown              = "Clowned",
+            rgmc_engraved            = "Engraved",
+            rgmc_faulty              = "Faulty",
+			rgmc_shielded            = "Shielded",
+			rgmc_weakened            = "Weakened",
+			rgmc_unstable            = "Unstable",
+			rgmc_delayed             = "Delayed",
+			rgmc_toxic               = "Toxic",
+			rgmc_irate               = "Irate",
+            rgmc_positive            = "Positive",
+            rgmc_negative            = "Negative",
+            rgmc_invisible           = "Invisible",
+            rgmc_stereo              = "Stereo",
+            rgmc_lucky               = "Lucky!",
+            rgmc_unlucky             = "Unlucky",
+			rgmc_twinkling           = "Twinkling",
+			rgmc_immutable           = "Immutable",
+			rgmc_painted             = "Painted",
+            rgmc_clown               = "[spr_clown]",
+            rgmc_slashed             = "Slashed",
+            rgmc_chained             = "Chained",
+            rgmc_diluted             = "Diluted",
+            rgmc_shichi              = "Shichi",
+            rgmc_coronated           = "Coronated",
+            rgmc_unity               = "Unity",
 
 			rgmc_iridescent          = "Iridescent",
 			rgmc_infernal            = "Infernal",

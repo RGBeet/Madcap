@@ -57,23 +57,12 @@ end
 
 local add_to_deck_ref = Card.add_to_deck
 function Card:add_to_deck(from_debuff)
-	print("ADD TO DECK!")
-	if (not self.added_to_deck) and not from_debuff then
-		if self.added_to_deck and self.ability and self.ability.rgmc_positive and G.hand then
-			G.hand.config.card_limit = G.hand.config.card_limit - 1
-		end
-	end
 	add_to_deck_ref(self, from_debuff)
 	Madcap.Funcs.update_global_joker_counts()
 end
 
 local remove_from_deck_ref = Card.remove_from_deck
 function Card:remove_from_deck(from_debuff)
-	if self.added_to_deck and self.ability and self.ability.rgmc_positive and G.hand and not from_debuff then
-		if self.added_to_deck and self.ability and self.ability.rgmc_positive and G.hand then
-			G.hand.config.card_limit = G.hand.config.card_limit + 1
-		end
-	end
 	remove_from_deck_ref(self, from_debuff)
 	Madcap.Funcs.update_global_joker_counts()
 end
@@ -285,6 +274,12 @@ function Madcap.Funcs.get_random_set(seed, blacklist, min_number)
 	return set
 end
 
+Madcap.Funcs.has_major_sticker = function(self)
+	return self.ability.rgmc_shichi
+		or self.ability.rgmc_coronated
+		or self.ability.rgmc_unity
+end
+
 function MadLib.is_shop_area(area)
 	--print('area is' .. area.key)
 	return area == (G.shop_jokers or {})
@@ -292,10 +287,154 @@ function MadLib.is_shop_area(area)
     or area == (G.shop_booster or {})
 end
 
+local is_g1_card = function(self)
+	return self.ability.eternal
+		or self.ability.perishable
+		or self.ability.rgmc_faulty
+		or self.ability.rgmc_engraved
+		or self.ability.rgmc_shielded
+		or self.ability.rgmc_weakened
+		or self.ability.rgmc_unstable
+end
+
+function Card:rgmc_set_faulty(a)
+	self.ability.rgmc_faulty = not is_g1_card(self)
+		and a
+end
+
+function Card:rgmc_set_engraved(a)
+	self.ability.rgmc_engraved = not is_g1_card(self)
+		and a
+end
+
+function Card:rgmc_set_shielded(a)
+	self.ability.rgmc_shielded = not is_g1_card(self)
+		and a
+end
+
+function Card:rgmc_set_weakened(a)
+	self.ability.rgmc_weakened = not is_g1_card(self)
+		and a
+end
+
+function Card:rgmc_set_unstable(a)
+	self.ability.rgmc_unstable = not is_g1_card(self)
+		and a
+end
+
+local is_g2_card = function(self)
+	return self.ability.rgmc_positive
+		or self.ability.rgmc_negative
+		or self.ability.rgmc_invisible
+		or self.ability.rgmc_stereo
+		or self.ability.rgmc_lucky
+		or self.ability.rgmc_unlucky
+		or self.ability.rgmc_slashed
+		or self.ability.rgmc_chained
+		or self.ability.rgmc_shichi
+end
+
+function Card:rgmc_set_positive(a)
+	self.ability.rgmc_positive = not is_g2_card(self)
+		and a
+end
+
+function Card:rgmc_set_negative(a)
+	self.ability.rgmc_negative = not is_g2_card(self)
+		and a
+end
+
+function Card:rgmc_set_invisible(a)
+	self.ability.rgmc_invisible = not is_g2_card(self)
+		and a
+end
+
+function Card:rgmc_set_stereo(a)
+	self.ability.rgmc_stereo = not is_g2_card(self)
+		and a
+end
+
+function Card:rgmc_set_lucky(a)
+	self.ability.rgmc_lucky = not is_g2_card(self)
+		and a
+end
+
+function Card:rgmc_set_unlucky(a)
+	self.ability.rgmc_unlucky = not is_g2_card(self)
+		and a
+end
 
 
-function Card:set_faulty(_faulty)
-    self.ability.rental = _faulty
+local is_g3_card = function(self)
+	return self.ability.rental
+		or self.ability.rgmc_delayed
+		or self.ability.rgmc_toxic
+		or self.ability.rgmc_irate
+		or self.ability.rgmc_dliuted
+end
+
+function Card:rgmc_set_delayed(a)
+	self.ability.rgmc_delayed = not is_g3_card(self)
+		and a
+end
+
+function Card:rgmc_set_toxic(a)
+	self.ability.rgmc_toxic = not is_g3_card(self)
+		and a
+end
+
+function Card:rgmc_set_irate(a)
+	self.ability.rgmc_irate = not is_g3_card(self)
+		and a
+end
+
+function Card:rgmc_set_shichi(a)
+	self.ability.rgmc_shichi = not (is_g2_card(self) or Madcap.Funcs.has_major_sticker(self))
+		and a
+end
+
+function Card:rgmc_set_slashed(a)
+	self.ability.rgmc_slashed = not is_g2_card(self)
+		and a
+end
+
+function Card:rgmc_set_chained(a)
+	self.ability.rgmc_chained = not is_g2_card(self)
+		and a
+end
+
+function Card:rgmc_set_diluted(a)
+	self.ability.rgmc_diluted = not is_g3_card(self)
+		and a
+end
+
+
+local is_g4_card = function(self)
+	return self.ability.rgmc_painted
+		or self.ability.rgmc_twinkling
+		or self.ability.rgmc_immutable
+		or self.ability.rgmc_coronated
+end
+
+
+function Card:rgmc_set_coronated(a)
+	self.ability.rgmc_coronated = not (is_g4_card(self) or Madcap.Funcs.has_major_sticker(self))
+		and a
+end
+
+function Card:rgmc_set_painted(a)
+	self.ability.rgmc_painted = not is_g4_card(self)
+		and a
+end
+
+function Card:rgmc_set_twinkling(a)
+	self.ability.rgmc_twinkling = not is_g4_card(self)
+		and a
+end
+
+function Card:rgmc_set_immutable(a)
+	self.ability.rgmc_immutable = not is_g4_card(self)
+		and a
 end
 
 local set_shop_stickers_ref =  MadLib.set_shop_stickers
@@ -305,10 +444,125 @@ function MadLib.set_shop_stickers(card)
     -- Faulty
     if 
         G.GAME.modifiers.rgmc_enable_faulty_in_shop 
-        and pseudorandom((area == G.pack_cards and 'packssjr' or 'ssjr') .. G.GAME.round_resets.ante) > 0.7 
-        and not SMODS.Stickers["faulty"].should_apply
+        and pseudorandom((area == G.pack_cards and 'packssjr' or 'ssjr') .. G.GAME.round_resets.ante) > 0.8
+        and not SMODS.Stickers["rgmc_faulty"].should_apply
     then
-        card:set_faulty(true)
+        card:rgmc_set_faulty(true)
+    end
+
+    if G.GAME.modifiers.madcap_stickers then
+
+		if
+			pseudorandom((area == G.pack_cards and 'packssjr' or 'ssjr') .. G.GAME.round_resets.ante) > 0.8
+			and not SMODS.Stickers["rgmc_negative"].should_apply
+		then
+			card:rgmc_set_negative(true)
+		end
+
+        if
+			pseudorandom((area == G.pack_cards and 'packssjr' or 'ssjr') .. G.GAME.round_resets.ante) > 0.8
+			and not SMODS.Stickers["rgmc_positive"].should_apply
+		then
+			card:rgmc_set_positive(true)
+		end
+
+        if
+			pseudorandom((area == G.pack_cards and 'packssjr' or 'ssjr') .. G.GAME.round_resets.ante) > 0.8
+			and not SMODS.Stickers["rgmc_shielded"].should_apply
+		then
+			card:rgmc_set_shielded(true)
+		end
+
+        if
+			pseudorandom((area == G.pack_cards and 'packssjr' or 'ssjr') .. G.GAME.round_resets.ante) > 0.8
+			and not SMODS.Stickers["rgmc_weakened"].should_apply
+		then
+			card:rgmc_set_weakened(true)
+		end
+
+        if
+			pseudorandom((area == G.pack_cards and 'packssjr' or 'ssjr') .. G.GAME.round_resets.ante) > 0.8
+			and not SMODS.Stickers["rgmc_invisible"].should_apply
+		then
+			card:rgmc_set_invisible(true)
+		end
+
+        if
+			pseudorandom((area == G.pack_cards and 'packssjr' or 'ssjr') .. G.GAME.round_resets.ante) > 0.8
+			and not SMODS.Stickers["rgmc_stereo"].should_apply
+		then
+			card:rgmc_set_stereo(true)
+		end
+
+		if
+			pseudorandom((area == G.pack_cards and 'packssjr' or 'ssjr') .. G.GAME.round_resets.ante) > 0.8
+			and not SMODS.Stickers["rgmc_lucky"].should_apply
+		then
+			card:rgmc_set_lucky(true)
+		end
+
+		if
+			pseudorandom((area == G.pack_cards and 'packssjr' or 'ssjr') .. G.GAME.round_resets.ante) > 0.8
+			and not SMODS.Stickers["rgmc_unlucky"].should_apply
+		then
+			card:rgmc_set_unlucky(true)
+		end
+
+		if
+			pseudorandom((area == G.pack_cards and 'packssjr' or 'ssjr') .. G.GAME.round_resets.ante) > 0.8
+			and not SMODS.Stickers["rgmc_delayed"].should_apply
+		then
+			card:rgmc_set_delayed(true)
+		end
+
+		if
+			pseudorandom((area == G.pack_cards and 'packssjr' or 'ssjr') .. G.GAME.round_resets.ante) > 0.8
+			and not SMODS.Stickers["rgmc_toxic"].should_apply
+		then
+			card:rgmc_set_toxic(true)
+		end
+
+		if
+			pseudorandom((area == G.pack_cards and 'packssjr' or 'ssjr') .. G.GAME.round_resets.ante) > 0.8
+			and not SMODS.Stickers["rgmc_irate"].should_apply
+		then
+			card:rgmc_set_irate(true)
+		end
+
+		if
+			pseudorandom((area == G.pack_cards and 'packssjr' or 'ssjr') .. G.GAME.round_resets.ante) > 0.8
+			and not SMODS.Stickers["rgmc_shichi"].should_apply
+		then
+			card:rgmc_set_shichi(true)
+		end
+
+		if
+			pseudorandom((area == G.pack_cards and 'packssjr' or 'ssjr') .. G.GAME.round_resets.ante) > 0.8
+			and not SMODS.Stickers["rgmc_coronated"].should_apply
+		then
+			card:rgmc_set_coronated(true)
+		end
+
+		if
+			pseudorandom((area == G.pack_cards and 'packssjr' or 'ssjr') .. G.GAME.round_resets.ante) > 0.5
+			and not SMODS.Stickers["rgmc_slashed"].should_apply
+		then
+			card:rgmc_set_slashed(true)
+		end
+
+		if
+			pseudorandom((area == G.pack_cards and 'packssjr' or 'ssjr') .. G.GAME.round_resets.ante) > 0.8
+			and not SMODS.Stickers["rgmc_chained"].should_apply
+		then
+			card:rgmc_set_chained(true)
+		end
+
+		if
+			pseudorandom((area == G.pack_cards and 'packssjr' or 'ssjr') .. G.GAME.round_resets.ante) > 0.8
+			and not SMODS.Stickers["rgmc_diluted"].should_apply
+		then
+			card:rgmc_set_diluted(true)
+		end
     end
 
     return card
@@ -660,7 +914,7 @@ function draw_card(from, to, percent, dir, sort, card, delay, mute, stay_flipped
 		dir 	= _rvals.dir or dir
 		sort 	= _rvals.sort or sort
 		card.ability[_rvals.id..'_active'] = nil
-		tell('Wow! Got a ' .. _rvals.id)
+		--tell('Wow! Got a ' .. _rvals.id)
     end
 
     draw_card_ref(from, to, percent, dir, sort, card, delay, mute, stay_flipped, vol, discarded_only)
@@ -668,28 +922,71 @@ end
 -- At end of round, check on Sinister Card timers
 local end_round_ref = end_round
 function end_round()
-	-- sinister card round tickers
-	--[[
-	if G.GAME.rgmc_sinister then
-		MadLib.loop_table(G.GAME.rgmc_sinister, function(k,v)
-			MadLib.simple_event(function()
-				local sin_table = G.GAME.rgmc_sinister[k]
-				sin_table.rounds = (G.GAME.rgmc_sinister.rounds or 1) - 1
-				if sin_table.rounds == 0 then -- rounds ended
-					if sin_table.money ~= nil then -- gain money
-						ease_dollars(sin_table.money)
-					elseif sin_table.consumeable ~= nil then -- gain consumeable slots
-						G.consumeables.config.card_limit = lenient_bignum(G.consumeables.config.card_limit + (sin_table.consume_slots or 1))
-					elseif sin_table.h_size ~= nil then -- gain consumeable slots
-						G.hand.config.card_limit = lenient_bignum(G.hand.config.card_limit + (sin_table.consume_slots or 1))
-					end
-					G.GAME.rgmc_sinister[k] = nil
-				end
-			end)
-			delay(2.0)
-		end)
-	end]]
 	end_round_ref() -- continue as usual
+end
+
+function Card:rgmc_is_temporary()
+	return self.ability.rgmc_temporary
+end
+
+Madcap.Lists.EndOfRoundDebuffs = {
+	'rgmc_weakened'
+}
+
+if not Entropy then
+	local end_round_temp_ref = end_round
+	function end_round()
+		end_round_temp_ref()
+		G.GAME.round_resets.path_toggled = nil
+		local remove_temp = {}
+		MadLib.loop_func({
+			G.jokers,
+			G.hand,
+			G.consumeables,
+			G.discard,
+			G.deck
+		}, function(list)
+			MadLib.loop_func(list.cards, function(card)
+                if card:rgmc_is_temporary() then
+                    if
+						card.area ~= G.hand
+						and card.area ~= G.play
+						and card.area ~= G.jokers
+						and card.area ~= G.consumeables
+					then
+						card.states.visible = false
+					end
+                    card:remove_from_deck()
+                    card:start_dissolve()
+                    if card.ability.temporary then remove_temp[#remove_temp + 1] = card end
+                end
+				local pitch = 0
+                MadLib.loop_func(Madcap.Lists.EndOfRoundDebuffs, function(v)
+					if
+						not (card.ability.debuff_sources
+						and card.ability.debuff_sources[v])
+					then
+						return
+					end
+					pitch = pitch + 0.06
+					MadLib.simple_event(function()
+						SMODS.debuff_card(card, false, v)
+						card:juice_up(0.3, 0.3)
+						play_sound('rgmc_revert', 1 + pitch)
+						return true
+					end, 0.7, 'after')
+				end)
+			end)
+		end)
+		if #remove_temp > 0 then
+			SMODS.calculate_context({
+				remove_playing_cards = true,
+				removed = remove_temp
+			})
+		end
+	end
+else
+	print('chicken jockey!')
 end
 
 local ease_dollars_ref = ease_dollars
@@ -1086,19 +1383,18 @@ local get_blind_amount_stake_ref = get_blind_amount
 function get_blind_amount(ante)
 	if G.GAME.modifiers.rgmc_stake then
 		local scale = G.GAME.modifiers.scaling or 1
-		print('RGMC STAKE!')
 		local amounts = {
-			400,
-			850 + 150*scale,
-			1800 + 700*scale,
-			2800 + 3600*scale,
-			20000 + 5500*scale*math.log(scale + 1.5),
-			17000 + 9500*(scale+1)*(0.45*scale),
-			15000 + 27000*(scale+1)*((scale/3.8)^2),
-			65000 * (scale+1.2)^2 * (scale/6.5)^2
+			350,
+			700 + 150*scale,
+			1400 + 700*scale,
+			2100 + 3600*scale,
+			15000 + 5500*scale*math.log(scale + 1.5),
+			12000 + 9500*(scale+1)*(0.45*scale),
+			10000 + 27000*(scale+1)*((scale/3.8)^2),
+			50000 * (scale+1.2)^2 * (scale/6.5)^2
 		}
 
-		if ante < 1 then return 300 end
+		if ante < 1 then return amounts[1] end
 		if ante <= 8 then
 			local base = amounts[ante]
 			return base - base % (10 ^ math.floor(math.log10(base) - 1))
@@ -1123,3 +1419,134 @@ function get_blind_amount(ante)
 	end
     return get_blind_amount_stake_ref(ante)
 end
+
+
+--[[
+	Faulty and Weakness prevent triggering when activated
+]]
+
+function Card:cannot_trigger()
+	return self.faulty_trigger
+		or self.ability.rgmc_weakened_active
+end
+
+-- Jokers
+local joker_calc_old = Card.calculate_joker -- preventing joker triggers
+function Card:calculate_joker(context)
+	if self and not self:cannot_trigger() then
+		return joker_calc_old(self, context)
+	end
+end
+
+-- Playing cards
+local score_card_old = SMODS.score_card
+function SMODS.score_card(card, context)
+	if card and not card:cannot_trigger() then
+		return score_card_old(card, context)
+	end
+end
+
+-- Also deal with editions
+local calculate_edition_ref = Card.calculate_edition
+function Card:calculate_edition(context)
+	if self:cannot_trigger() then return end
+	return calculate_edition_ref(self, context)
+end
+
+
+--[[
+	This is intended for anything which counts Jokers.
+	For example, Joker Stencil would not count a card
+	if it has Invisible.
+]]
+local get_quantity_value_ref = Card.get_quantity_value
+function Card:get_quantity_value()
+	if self.ability and self.ability.rgmc_invisible then return 0 end
+	local ret = get_quantity_value_ref(self)
+	if self.ability and self.ability.rgmc_stereo then ret = ret * 2 end
+	return ret
+end
+
+
+--[[
+	Flipped cards cannot be debuffed if the Streemerz Joker is owned
+	Shielded cannot be debuffed (it's literally the sticker's job)
+	Painted prevents debuffing because I think it's funny
+]]
+local set_debuff_ref = Card.set_debuff
+function Card:set_debuff(should_debuff)
+    if
+		(self.edition and self.edition.rgmc_flipped and next(SMODS.find_card('j_rgmc_streemerz'))) -- Streemerz
+		and not self.ability.rgmc_shielded 	-- shielded cannot be debuffed
+		and not self.ability.rgmc_engraved 	-- this would be too easy
+		and not self.ability.rgmc_painted 	-- painted cannot be debuffed because paint is cool
+	then
+		return
+	end
+	set_debuff_ref(self, should_debuff)
+end
+
+--[[
+	Flipped cards cannot be killed if the Streemerz Joker is owned
+	Shielded cannot be killed (it's literally the sticker's job)
+	Twinkling prevents death because "plot armor" (idk probably something related to editions)
+]]
+local start_dissolve_ref = Card.start_dissolve
+function Card:start_dissolve(...)
+    if
+		(self.edition and self.edition.rgmc_flipped and next(SMODS.find_card('j_rgmc_streemerz'))) -- Streemerz
+	 	or (self.ability.rgmc_shielded
+		or self.ability.rgmc_twinkling)
+	then
+		print("Piss off")
+        return
+    end
+
+    return start_dissolve_ref(self, ...)
+end
+
+-- sum is decided here. haha
+local get_nominal_ref = Card.get_nominal
+function Card:get_nominal(mod)
+    if self.base.value == 'rgmc_sum' then
+        tell('Sum Card found?! Wowie!')
+        return Madcap.Funcs.get_hand_sigma(G.play.cards) -- returns sum of hand cards
+    else -- carry on!
+        return get_nominal_ref(self,mod)
+    end
+end
+
+local get_pareidolia_ref = MadLib.get_pareidolia
+function MadLib.get_pareidolia(card)
+	if not Card:get_quantity_value() == 0 then return false end
+    return get_pareidolia_ref(card)
+end
+
+local is_face_hook = Card.is_face
+function Card:is_face(...)
+	-- Invisible = no face!
+	if not Card:get_quantity_value() == 0 then return false end
+    return is_face_hook(self, ...)
+end
+
+	-- sinister card round tickers
+	--[[
+	if G.GAME.rgmc_sinister then
+		MadLib.loop_table(G.GAME.rgmc_sinister, function(k,v)
+			MadLib.simple_event(function()
+				local sin_table = G.GAME.rgmc_sinister[k]
+				sin_table.rounds = (G.GAME.rgmc_sinister.rounds or 1) - 1
+				if sin_table.rounds == 0 then -- rounds ended
+					if sin_table.money ~= nil then -- gain money
+						ease_dollars(sin_table.money)
+					elseif sin_table.consumeable ~= nil then -- gain consumeable slots
+						G.consumeables.config.card_limit = lenient_bignum(G.consumeables.config.card_limit + (sin_table.consume_slots or 1))
+					elseif sin_table.h_size ~= nil then -- gain consumeable slots
+						G.hand.config.card_limit = lenient_bignum(G.hand.config.card_limit + (sin_table.consume_slots or 1))
+					end
+					G.GAME.rgmc_sinister[k] = nil
+				end
+			end)
+			delay(2.0)
+		end)
+	end]]

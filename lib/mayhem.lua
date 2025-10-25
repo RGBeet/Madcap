@@ -39,7 +39,7 @@ function Madcap.Funcs.ease_mayhem(_mod, _check, _silent, _instant)
 		if (G.GAME.mayhem + _mod) > G.GAME.max_mayhem then
         	_mod = _mod - (G.GAME.mayhem + _mod - G.GAME.max_mayhem)
         end
-		if _mod == 0 then return end
+		if _mod == 0 then return true end
 
 		if round_UI then
             G.HUD:recalculate()

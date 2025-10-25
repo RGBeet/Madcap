@@ -1,5 +1,14 @@
 -- Used strictly by SMODS.calculate_main_scoring
 function Madcap.Funcs.alter_score_order(card,scoring_hand,context,in_scoring)
+	if not scoring_hand then return end
+
+	-- Stereo
+	local quantity = card:get_quantity_value()
+	if quantity >= 2 then -- always score twice
+		for i = 1, quantity-1 do
+			SMODS.score_card(card, context)
+		end
+	end
 
     -- CONTINUUM: Scored 8s repeat all cards before it
     if
@@ -174,10 +183,6 @@ function Card:set_temp_sticker(id,bool,tally)
 	SMODS.Stickers[id]:apply(self,bool)
 end
 
-function Card:set_rgmc_immutable(bool)
-    self.ability['rgmc_immutable'] = bool or (self.ability['rgmc_immutable'] and not self.ability['rgmc_immutable']) or true
-end
-
 -- Enables/disables special suits (cups/shields)
 function Madcap.Funcs.set_special_suits(x)
     if G.GAME then G.GAME.Exotic = (x or false) end
@@ -306,46 +311,6 @@ function Madcap.Funcs.activate_edition(self, tag, context)
 		end
 		return applied
 	end
-end
-
--- Some stickers prevent debuffs
-local set_debuff_ref = Card.set_debuff
-function Card:set_debuff(should_debuff)
-    if
-		(self.edition and self.edition.rgmc_flipped and next(SMODS.find_card('j_rgmc_streemerz'))) -- Streemerz
-		and not self.ability.shielded 		-- shielded cannot be debuffed
-		and not self.ability.engraved       -- this would be too easy
-		and not self.ability.painted 		-- painted cannot be debuffed because paint is cool
-	then
-		return
-	end
-	set_debuff_ref(self, should_debuff)
-end
-
--- Some stickers prevent death
-local start_dissolve_ref = Card.start_dissolve
-function Card:start_dissolve(...)
-    if
-		(self.edition and self.edition.rgmc_flipped and next(SMODS.find_card('j_rgmc_streemerz'))) -- Streemerz
-	 	or (self.ability.shielded 			-- shielded cannot be killed
-		or self.ability.twinkling) 		-- twinkling cannot be killed, because plot armor
-	then
-		print("Piss off")
-        return
-    end
-
-    return start_dissolve_ref(self, ...)
-end
-
--- sum is decided here. haha
-local get_nominal_ref = Card.get_nominal
-function Card:get_nominal(mod)
-    if self.base.value == 'rgmc_sum' then
-        tell('Sum Card found?! Wowie!')
-        return Madcap.Funcs.get_hand_sigma(G.play.cards) -- returns sum of hand cards
-    else -- carry on!
-        return get_nominal_ref(self,mod)
-    end
 end
 
 -- Adds Cherry Seals to hand
@@ -626,28 +591,6 @@ function Madcap.Funcs.card_in_list(_card,_list)
     end)
 end
 
-function Madcap.Funcs.get_simple_downgrade_data(t,card,val,bypass_safety)
-    local final_val = not bypass_safety and
-        (card.ability.extra[t.key] - val > 0 and val or card.ability.extra[t.key])
-        or val
-
-    if not bypass_safety and (card.ability.extra[t.key] - val) <= 0 then
-        final_val = card.ability.extra[t.key]
-    end
-
-    card.ability.extra[t.key] = card.ability.extra[t.key] - final_val
-
-    return {
-        message = localize({
-            type    = "variable",
-            key     = t.key,
-            colour      = t.colour,
-            vars    = { number_format(final_val) },
-            card    = card
-        }),
-    }
-end
-
 function Madcap.Funcs.banana_context(context)
 	return context.end_of_round and context.game_over == false and context.main_eval and not context.blueprint
 end
@@ -864,9 +807,13 @@ end
 local calculate_chips_ref = MadLib.calculate_chips
 function MadLib.calculate_chips(value, args)
 	local old_value = calculate_chips_ref(value, args)
+	
+	return old_value
 end
 
 local calculate_mult_ref = MadLib.calculate_mult
 function MadLib.calculate_mult(value, args)
 	local old_value = calculate_mult_ref(value, args)
+	
+	return old_value
 end

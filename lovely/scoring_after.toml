@@ -227,3 +227,36 @@ payload = '''{n=G.UIT.O, config = {object = G.GAME.rgmc_bonus_blind, draw_layer 
 match_indent = true
 times = 1
 
+# INVISIBLE and STEREO - if card is counted as 0/2 cards, reflect that
+
+# Playing cards counted 2
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = "if splashed and not unsplashed then table.insert(final_scoring_hand, G.play.cards[i]) end"
+position = "at"
+payload = '''if splashed and not unsplashed and G.play.cards[i]:can_score_card() then
+    table.insert(final_scoring_hand, G.play.cards[i])
+end'''
+match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = '''mult = mod_mult(G.GAME.hands[text].mult)
+hand_chips = mod_chips(G.GAME.hands[text].chips)
+total_score = G.GAME.chips'''
+position = "at"
+payload = ""
+times = 1
+match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = '''mult = mod_mult(G.GAME.hands[text].mult)
+        hand_chips = mod_chips(G.GAME.hands[text].chips)'''
+position = "at"
+payload = '''_, hand_chips, mult = Madcap.Funcs.calculate_chips_mult(G.GAME.hands[text], MadLib.get_subhands(scoring_hand), scoring_hand)'''
+times = 1
+match_indent = true

@@ -218,7 +218,7 @@ function Madcap.Funcs.empower_subhand(card, hand, instant, amount, context)
         })
 
 		if MadLib.is_animation_enabled()  then
-			local nu_chips, nu_mult = mfuncs.calculate_empower_bonus(hand)
+			local nu_chips, nu_mult = 0, 0
 			update_hand_text({ sound = 'rgmc_empower', volume = 0.7, pitch = 0.8, delay = 2.0 }, {
 				handname = localize(hand),
 				level    = lenient_bignum(empower_level),
@@ -279,6 +279,7 @@ end
 -- Add subhand context with scoring hand context.
 local eval_card_ref = eval_card
 function eval_card(card, context)
+    context.look_at_card = card
 	if context.scoring_hand then context.subhands = MadLib.get_subhands(context.scoring_hand) end
 	local ret, post_trig = eval_card_ref(card, context)
 	return ret, post_trig

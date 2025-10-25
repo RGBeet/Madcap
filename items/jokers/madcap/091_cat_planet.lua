@@ -35,7 +35,7 @@ return {
                     MadLib.simple_event(function()
                         Madcap.Funcs.ease_mayhem(mayhem)
                         play_sound('rgmc_meow3', 1, 0.5)
-                        card_eval_status_text(context_blueprint_card or self, 'extra', nil, nil, nil, {
+                        card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {
                             message = "+" .. number_format(mayhem),
                             colour = G.C.RGMC_UNUSUAL
                         })

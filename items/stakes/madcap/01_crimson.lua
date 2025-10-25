@@ -19,8 +19,9 @@ return {
         sticker_atlas   = "stake_stickers",
         sticker_pos     = { x = 0, y = 0 },
         modifiers = function()
-            G.GAME.modifiers.scaling    = 1     -- ???
-            G.GAME.modifiers.rgmc_stake = true  -- you are doing a madcap stake
+            G.GAME.modifiers.scaling            = 1     -- ???
+            G.GAME.modifiers.rgmc_stake         = true  -- you are doing a madcap stake
+            G.GAME.modifiers.madcap_stickers    = true  -- you are doing a madcap stake
             
             -- Madcap fixes
             G.GAME.starting_params.vouchers_in_shop     = G.GAME.starting_params.vouchers_in_shop + 1
