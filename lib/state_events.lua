@@ -315,6 +315,12 @@ function Madcap.Funcs.get_modded_hand_level(card)
 	local mod = 0
 	if card.ability then
 		if card.ability.rgmc_slashed then mod = mod - 1 end
+		if 
+			card.ability.extra
+			and card.ability.extra.level_mod 
+		then 
+			mod = mod + card.ability.extra.level_mod
+		end
 	end
 	--print('MOD IS ' .. number_format(mod) .. '.')
 	return mod
@@ -329,8 +335,6 @@ function Madcap.Funcs.get_modded_subhand_levels(card, sh, pt)
 	return sh_mod, pt_mod
 end
 
-
-
 -- Gives the main value of the Potentia - relies on poker hand size
 function Madcap.Funcs.calculate_potentia_bonus(empower_level, cards)
 	local card_bonus = math.max(1, #(cards or {}) - (G.GAME.subhand_minimum or 5) + 1)
@@ -338,6 +342,7 @@ function Madcap.Funcs.calculate_potentia_bonus(empower_level, cards)
 end
 
 function Madcap.Funcs.calculate_chips_mult(hand, subhands, cards)
+
 	local level		= hand.level or 0
 	local chips 	= hand.chips or 0
 	local mult 		= hand.mult or 0
@@ -359,8 +364,10 @@ function Madcap.Funcs.calculate_chips_mult(hand, subhands, cards)
 	local diff = level - hand.level
 	tell(number_format(hand.level) .. ' - ' .. number_format(level) .. ' = ' .. number_format(diff) .. '.')
 	-- If hand level was changed, change chips and mult
+
+	--[[
 	if diff ~= 0 then
-		local current_level = hand.level 
+		local current_level = math.max(level, hand.level) 
 		for i=1, math.abs(diff) do
 			current_level = current_level - 1
 			if current_level > 0 then
@@ -371,6 +378,25 @@ function Madcap.Funcs.calculate_chips_mult(hand, subhands, cards)
 				--tell('DIV BY 2!')
 				chips	= chips * 0.75
 				mult	= mult * 0.75
+			end
+		end
+	end]]
+
+	if diff ~= 0 then
+		local current_level = nil
+		if diff > 0 then
+			current_level = level
+			while current_level > 1 do
+				current_level = current_level - 1
+				chips 	= chips + hand.l_chips
+				mult 	= mult + hand.l_mult
+			end
+		elseif diff < 0 then
+			current_level = hand_level
+			while current_level > 1 do
+				current_level = current_level - 1
+				chips 	= chips - hand.l_chips
+				mult 	= mult - hand.l_mult
 			end
 		end
 	end

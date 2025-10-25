@@ -2337,12 +2337,19 @@ return {
                     "{C:inactive}(Currently {C:mult}+#2#{C:inactive} Mult)",
                 },
             },
-            j_rgmc_toga_joker_311= {
+            j_rgmc_toga_joker_311 = {
                 name = "Joker 3.11",
                 text = {
 					"{C:attention}+#1#{} hand size",
 					"{C:planet}+#3#{} level{C:inactive}(s){} to all {C:attention}poker hands{}",
 					"{C:attention}#2#{} card selection limit",
+                },
+            },
+            j_rgmc_toga_mute_joker = {
+                name = "This Goes Hard On Mute",
+                text = {
+					"This Goes Hard On Mute",
+                    "{C:inactive,s:0.8}(Currently {X:mult,C:white}X#1#{C:inactive,s:0.8} Mult)"
                 },
             },
             -- Finity compat

@@ -83,6 +83,14 @@ local list = {
 	end, 0.8, false, 1.0),
 }
 
+-- The horrible song
+if MadLib.mod_loaded('TOGAPack') then
+	list[#list+1] = Madcap.Funcs.GetMusic('music_the_absolute_worst_song_that_plays_on_loop_whenever_you_get_a_specific_joker', function()
+	return next(find_joker('j_rgmc_toga_mute_joker'))
+		and 9001
+	end, 0.8, false, 1.0)
+end
+
 return {
     name = "Music",
     init = function() print("Music!") end,
