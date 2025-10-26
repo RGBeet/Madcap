@@ -113,6 +113,16 @@ Madcap.Directories = {
 					d.display_size = { w = 106, h = 106 }
 				end
 			},
+		},
+		['crossmod'] = {
+			['rotumbral'] = {
+				pass = function()
+					return next(SMODS.find_mod("MoreFluff"))
+				end,
+				func = function(d)
+					d.display_size = { w = 95, h = 71 }
+				end
+			},
 		}
 	},
 	['boosters']	= {

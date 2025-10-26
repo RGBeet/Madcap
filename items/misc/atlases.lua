@@ -162,6 +162,10 @@ if next(SMODS.find_mod("Cryptid")) then
 	})
 end
 
+add_atlases({
+	create('crossmod_rotumbrals', 'crossmod/rotumbrals.png', 95, 71)
+})
+
 return {
     name = "Atlases",
     init = function() print("Atlases!") end,

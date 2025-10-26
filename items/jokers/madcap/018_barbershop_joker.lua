@@ -38,12 +38,11 @@ return {
                 and card.ability.extra.scored
                 and not G.GAME.current_round.rgmc_barbershop.changed -- only switch it ONCE!
             then
-                local barber = G.GAME.current_round.rgmc_barbershop
-                barber.changed  = true
-                barber.index    = barber.index + 1
-                if barber.index > #barber.order then barber.index = 1 end
-                barber.suit = barber.order[barber.index]
-                tell('Barbershop Changed to ' .. number_format(barber.suit))
+                local data = G.GAME.current_round.rgmc_barbershop
+                data.changed  = true
+                data.index    = data.index + 1
+                if data.index > #data.order then data.index = 1 end
+                data.suit = data.order[data.index]
                 card.ability.extra.scored = false
                 return {
                     message = 'Two Bits!',

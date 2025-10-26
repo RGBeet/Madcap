@@ -19,7 +19,7 @@ return {
         end,
         calculate = function(self, card, context)
             -- Reset if played hand does not contain a 2
-            if MadLib.list_matches_all(context.full_hand, function(v)
+            if context.before and MadLib.list_matches_all(context.full_hand, function(v)
                 return not MadLib.is_rank(v, SMODS.Ranks[card.ability.extra.rank or '2'].id) 
             end) then 
                 card.ability.extra.chips = 0
@@ -37,7 +37,8 @@ return {
                 return {
                     message = localize('k_upgrade_ex'),
                     colour = G.C.CHIPS,
-                    message_card = card
+                    message_card = card,
+                    sound = pseudorandom('cuica')*3 < 2 and 'rgmc_cuica1' or 'rgmc_cuica2'
                 }
             end
             -- Give the chips

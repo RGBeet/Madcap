@@ -4113,6 +4113,203 @@ return {
                 }
 			},
         },
+        Rotumbral = {
+			c_rgmc_rot_umbral_graduate = {
+				name = "Graduate?!",
+                text = {
+                    "Copies the next",
+                    "{C:rgmc_rotumbral_g,X:rgmc_rotumbral_p} 90-Degree  Rotated  Umbral {} card",
+                    "used during this run",
+                    "{s:0.8,C:rgmc_rotumbral_g,X:rgmc_rotumbral_p} Graduate?! {s:0.8} excluded",
+                }
+			},
+			c_rgmc_rot_umbral_realist = {
+				name = "Realist?!",
+                text = {
+                    "???"
+                }
+			},
+			c_rgmc_rot_umbral_tribal = {
+				name = "Tribal?!",
+                text = {
+                    "Create a {C:spatiaplanet}Spatia Planet{}",
+                    "for the selected {C:attention}poker hand",
+                }
+			},
+			c_rgmc_rot_umbral_gambit = {
+				name = "Gambit?!",
+                text = {
+                    "Converts up to {C:attention}#1#{} random cards",
+                    "in hand into a",
+                    "random {C:attention}Special{} rank"
+                }
+			},
+			c_rgmc_rot_umbral_kingpin = {
+				name = "Kingpin?!",
+                text = {
+                    "Apply {C:rgmc_coronated}Coronated{} sticker",
+                    "and random {C:attention}Seal",
+                    "to {C:attention}#1#{} random cards",
+                    "then bring them",
+                    "to your hand"
+                }
+			},
+			c_rgmc_rot_umbral_tea_time = {
+				name = "Tea Time?!",
+                text = {
+                    "Enhances {C:attention}#1#",
+                    "random cards in deck",
+                    "to {C:attention}random Tea Cards{}",
+                }
+			},
+			c_rgmc_rot_umbral_break_up = {
+				name = "Break Up?!",
+                text = {
+                    "Splits {C:attention}#1#{} random cards",
+                    "into {C:attention}Pure Suit{} and {C:attention}Rank{} cards",
+                    "{C:green}#2# in #3#{} chance",
+                    "for generated {C:attention}Pure{} cards",
+                    "to gain a {C:attention}random{} seal"
+                }
+			},
+			c_rgmc_rot_umbral_public_transport = {
+				name = "Public Transport?!",
+                text = {
+                    "???"
+                }
+			},
+			c_rgmc_rot_umbral_corruption = {
+				name = "Corruption?!",
+                text = {
+                    "???"
+                }
+			},
+			c_rgmc_rot_umbral_fomo = {
+				name = "Fear of Missing Out?!",
+                text = {
+                    "Creates a {C:attention}random{}",
+                    "previously {C:attention}unpurchased Joker{}",
+                    "that has appeared in the {C:attention}Shop{},",
+                    "then sets money to {C:money}$0{}"
+                }
+			},
+			c_rgmc_rot_umbral_misfortune = {
+				name = "Misfortune?!",
+                text = {
+                    "???"
+                }
+			},
+			c_rgmc_rot_umbral_book_smart = {
+				name = "Book Smart?!",
+                text = {
+                    "Create up to {C:attention}#1#{} random",
+                    "{C:rgmc_rotumbral_g,X:rgmc_rotumbral_p} 90-Degree Rotated Umbral {} cards",
+                    "{C:inactive}(Must have room){}"
+                }
+			},
+			c_rgmc_rot_umbral_prisoner = {
+				name = "Prisoner?!",
+                text = {
+                    "???"
+                }
+			},
+			c_rgmc_rot_umbral_overgrowth = {
+				name = "Overgrowth?!",
+                text = {
+                    "???"
+                }
+			},
+			c_rgmc_rot_umbral_intrusive_thoughts = {
+				name = "Instrusive Thoughts?!",
+                text = {
+                    {
+                        "Multiply all Joker and consumable values",
+                        "by {X:dark_edition,C:white}X#1#{}",
+                        "but {C:green}fixed 1 in 2{} chance to",
+                        "{C:rgmc_evil}destroy{} all held {C:red}Jokers{},",
+                        "{C:red}consumeables{}, and {C:red}cards{}"
+                    }
+                }
+			},
+			c_rgmc_rot_umbral_weeping_angel = {
+				name = "Weeping Angel?!",
+                text = {
+                    "???"
+                }
+			},
+			c_rgmc_rot_umbral_bunker = {
+				name = "Bunker?!",
+                text = {
+                    "???"
+                }
+			},
+			c_rgmc_rot_umbral_rock = {
+				name = "Rock?!",
+                text = {
+                    "???"
+                }
+			},
+			c_rgmc_rot_umbral_crust = {
+				name = "Crust?!",
+                text = {
+                    "Give {C:attention}permanent{} bonus of {X:mult,C:white} X#1# {} Mult",
+                    "to {C:attention}all {C:rgmc_blooms}Bloom{} cards in hand",
+                }
+			},
+			c_rgmc_rot_umbral_mantle = {
+				name = "Mantle?!",
+                text = {
+                    "Give {C:attention}permanent{} bonus of {X:chips,C:white} X#1# {} Chips",
+                    "to {C:attention}all {C:rgmc_goblets}Goblet{} cards in hand",
+                }
+			},
+			c_rgmc_rot_umbral_core = {
+				name = "Core?!",
+                text = {
+                    "Give {C:attention}permanent{} bonus of {C:money}+$#1#{}",
+                    "to {C:attention}all {C:rgmc_towers}Tower{} cards in hand",
+                }
+			},
+			c_rgmc_rot_umbral_atmosphere = {
+				name = "Atmosphere?!",
+                text = {
+                    "Give {C:attention}permanent{} bonus of {C:purple}+#1#{} Score",
+                    "to {C:attention}all {C:rgmc_daggers}Dagger{} cards in hands",
+                    "{C:inactive}(Next use will give {C:purple}+#2#{C:inactive} Score)"
+                }
+			},
+			c_rgmc_rot_umbral_nyctophobia = {
+				name = "Nyctophobia?!",
+                text = {
+                    "Creates {C:attention}#1# {}random",
+                    "{C:dark_edition}Negative {}consumable{C:inactive}(s)",
+                }
+			},
+			c_rgmc_rot_umbral_puzzle = {
+				name = "Puzzle?!",
+                text = {
+                    "???"
+                }
+			},
+			c_rgmc_rot_umbral_electrify = {
+				name = "Electrify?!",
+                text = {
+                    "???"
+                }
+			},
+			c_rgmc_rot_umbral_d1 = {
+				name = "D1?!",
+                text = {
+                    "???"
+                }
+			},
+			c_rgmc_rot_umbral_free_will = {
+				name = "Free Will?!",
+                text = {
+                    "{C:blue}+#1#{} play limit",
+                }
+			},
+        },
         Colour = {
             c_rgmc_carnation_pink = {
                 name = "Carnation Pink",
@@ -5037,21 +5234,21 @@ return {
 			stake_rgmc_wager_t5 = {
 				name = "Violet Wager",
 				text = {
-                    "Cards can be {C:red}Impounded",
+                    "Cards can be {C:rgmc_violet}Impounded",
                     "{s:0.8}Applies all previous Stakes"
                 },
 			},
 			stake_rgmc_wager_t5_plus = {
 				name = "Chartreuse Wager",
 				text = {
-                    "Cards can be {C:attention}Withering",
+                    "Cards can be {C:rgmc_chartreuse}Withering",
                     "{s:0.8}Applies all previous Stakes"
                 },
 			},
 			stake_rgmc_wager_t6 = {
 				name = "Saffron Wager",
 				text = {
-                    "{C:red}Renovates{} the {C:attention}Shop{}",
+                    "{X:rgmc_saffron,C:white}Renovates{} the {C:attention}Shop{}",
                     "{s:0.8}Required score scales",
                     "{s:0.8}faster for each {C:attention}Ante",
                     "{s:0.6}Applies all previous Stakes"
@@ -5068,7 +5265,7 @@ return {
 			stake_rgmc_wager_t8 = {
 				name = "Tyrian Wager",
 				text = {
-                    "Boss Blinds have {C:attention}Assists{}",
+                    "Boss Blinds have {C:rgmc_tyrian}Assists{}",
                     "{s:0.8}Applies all previous Stakes"
                 },
 			},
@@ -5076,7 +5273,7 @@ return {
 				name = "Platinum Wager",
 				text = {
                     "After defeating Final Ante,",
-                    "Take on {C:rgmc_bismuth}The Gauntlet",
+                    "Take on {C:rgmc_platinum}The Gauntlet",
                     "{s:0.8}Applies all previous Stakes"
                 },
 			},
@@ -5090,21 +5287,21 @@ return {
 			stake_rgmc_wager_t10 = {
 				name = "Iridium Wager",
 				text = {
-                    "Shops now have {C:red}Inflation{}",
+                    "Shops now have {C:rgmc_iridium}Inflation{}",
                     "{s:0.8}Applies all previous Stakes"
                 },
 			},
 			stake_rgmc_wager_t11 = {
 				name = "Vibranium Wager",
 				text = {
-                    "Shops now face {C:red}Shortages{}",
+                    "Shops now face {C:rgmc_vibranium}Shortages{}",
                     "{s:0.8}Applies all previous Stakes"
                 },
 			},
 			stake_rgmc_wager_t12 = {
 				name = "Unobtainium Wager",
 				text = {
-                    "{C:rgmc_bismuth,E:1}?!?!?",
+                    "{C:rgmc_unobtainium,E:1}?!?!?",
                     "{s:0.8}Required score scales",
                     "{s:0.8}faster for each {C:attention}Ante",
                     "{s:0.8}Applies all previous Stakes"
@@ -5113,13 +5310,13 @@ return {
 			stake_rgmc_wager_t13 = {
 				name = "Neutronium Wager",
 				text = {
-                    "{C:rgmc_bismuth,E:1}?!?!?",
+                    "{C:rgmc_neutronium,E:1}?!?!?",
                 },
 			},
 			stake_rgmc_wager_t14 = {
-				name = "Dark Matter Wager",
+				name = "Red Matter Wager",
 				text = {
-                    "{C:rgmc_bismuth,E:1}?!?!?",
+                    "{C:rgmc_red_matter,E:1}?!?!?",
                 },
 			},
 		},
@@ -6204,11 +6401,16 @@ return {
         },
 		dictionary = {
             rgmc_patina_seal         = "Patina Seal",
-            rgmc_cuprum_seal         = "Cuprum Seal",
+            rgmc_bronze_seal         = "Cuprum Seal",
             rgmc_ether_seal          = "Ether Seal",
             rgmc_umber_seal          = "Umber Seal",
             rgmc_jade_seal           = "Jade Seal",
             rgmc_cherry_seal         = "Cherry Seal",
+
+            
+            b_rotumbral_cards        = "90 Degree Rotated Umbral Cards",
+            k_rotumbral              = "90 Degree Rotated Umbral Card",
+            k_rotumbral_pack         = "90 Degree Rotated Umbral Pack",
 
             -- editions
 			rgmc_iridescent          = "Iridescent",
@@ -6472,7 +6674,7 @@ return {
 			rgmc_flipped             = "Flipped",
 
 			rgmc_patina_seal    = "Patina Seal",
-			rgmc_cuprum_seal    = "Cuprum Seal",
+			rgmc_bronze_seal    = "Cuprum Seal",
 			rgmc_jade_seal      = "Jade Seal",
 			rgmc_umber_seal     = "Umber Seal",
 			rgmc_ether_seal     = "Ether Seal",

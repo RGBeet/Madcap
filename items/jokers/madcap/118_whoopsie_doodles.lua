@@ -21,7 +21,10 @@ return {
                 { MadLib.get_warning_colour(card.ability.extra.rounds_remaining / card.ability.immutable.max_rounds) })
         end,
         calculate = function(self, card, context)
-            if context.joker_main then  
+            if 
+                context.joker_main 
+                or context.forcetrigger 
+            then  
                 return {
                     xchips = card.ability.extra.x_chips,
                     xmult = card.ability.extra.x_mult

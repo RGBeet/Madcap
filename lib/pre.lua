@@ -460,22 +460,10 @@ SMODS.ConsumableType({
 })
 
 SMODS.ConsumableType({
-    key = "AntiSpectral",
-    primary_colour = HEX("DF463F"),
-    secondary_colour = HEX("A9463B"),
-    collection_rows = { 5, 6 },
-    shop_rate = 0.0, -- only seen in evil boosters
-    loc_txt = {},
-    default = "c_strength",
-    can_stack = true,
-    can_divide = true,
-})
-
-SMODS.ConsumableType({
     key = "SpatiaPlanet",
     primary_colour = HEX("5024FF"),
     secondary_colour = HEX("2600C1"),
-    collection_rows = { 5, 6 },
+    collection_rows = { 4, 2 },
     shop_rate = 0.75,
     --loc_txt = {},
     default = "c_rgmc_rocket",
@@ -487,13 +475,31 @@ SMODS.ConsumableType({
     key = "PotentiaCrystal",
     primary_colour = HEX("917ECC"),
     secondary_colour = HEX("FEA600"),
-    collection_rows = { 5, 6 },
+    collection_rows = { 3, 2 },
     shop_rate = 0.25,
     --loc_txt = {},
     default = "c_rgmc_diamatine",
     can_stack = true,
     can_divide = true,
 })
+
+-- 90 degree rotated umbrals
+if 
+	SMODS.find_mod("aikoyorisshenanigans")
+	and SMODS.find_mod("MoreFluff")
+then
+	SMODS.ConsumableType({
+		key = "Rotumbral",
+		primary_colour = HEX("b5d852"),
+		secondary_colour = HEX("ff759a"),
+		collection_rows = { 4, 5 },
+		shop_rate = 3,
+		default = "c_rgmc_rot_umbral_graduate",
+		can_stack = true,
+		can_divide = true,
+	})
+end
+
 
 SMODS.ObjectType({
 	object_type = "ObjectType",

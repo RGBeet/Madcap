@@ -1,0 +1,26 @@
+[manifest]
+version = "1.0.0"
+dump_lua = true
+priority = 1000
+
+[[patches]]
+[patches.pattern]
+target = "globals.lua"
+pattern = """        RENTAL = HEX('b18f43'),"""
+position = "after"
+payload = """RGMC_ROTUMBRAL_G = HEX("b5d852"),
+RGMC_ROTUMBRAL_P = HEX("ff759a"),
+"""
+overwrite = true
+match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = "functions/misc_functions.lua"
+pattern = """  return G.ARGS.LOC_COLOURS[_c] or _default or G.C.UI.TEXT_DARK"""
+position = "before"
+payload = """G.ARGS.LOC_COLOURS.rgmc_rotumbral_g = G.C.RGMC_ROTUMBRAL_G
+G.ARGS.LOC_COLOURS.rgmc_rotumbral_p = G.C.RGMC_ROTUMBRAL_P
+"""
+overwrite = true
+match_indent = true
