@@ -476,14 +476,23 @@ SMODS.ConsumableType({
     primary_colour = HEX("917ECC"),
     secondary_colour = HEX("FEA600"),
     collection_rows = { 3, 2 },
-    shop_rate = 0.25,
+    shop_rate = 0.10,
     --loc_txt = {},
     default = "c_rgmc_diamatine",
     can_stack = true,
     can_divide = true,
 })
 
+SMODS.ConsumableType{
+    key = "MiscRGMC",
+    shop_rate = 0,
+    primary_colour = HEX("F23D88"),
+    secondary_colour = HEX("B72E67"),
+}
+
 -- 90 degree rotated umbrals
+
+--[[
 if 
 	SMODS.find_mod("aikoyorisshenanigans")
 	and SMODS.find_mod("MoreFluff")
@@ -498,7 +507,7 @@ then
 		can_stack = true,
 		can_divide = true,
 	})
-end
+end]]
 
 
 SMODS.ObjectType({

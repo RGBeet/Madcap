@@ -316,7 +316,7 @@ function Madcap.Funcs.get_modded_hand_level(card)
 	if card.ability then
 		if card.ability.rgmc_slashed then mod = mod - 1 end
 		if 
-			card.ability.extra
+			type(card.ability.extra) == 'table'
 			and card.ability.extra.level_mod 
 		then 
 			mod = mod + card.ability.extra.level_mod
@@ -392,7 +392,7 @@ function Madcap.Funcs.calculate_chips_mult(hand, subhands, cards)
 				mult 	= mult + hand.l_mult
 			end
 		elseif diff < 0 then
-			current_level = hand_level
+			current_level = hand.level
 			while current_level > 1 do
 				current_level = current_level - 1
 				chips 	= chips - hand.l_chips

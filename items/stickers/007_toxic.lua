@@ -1,3 +1,5 @@
+-- Prevents adjacent consumables from being used?
+
 function MadLib.get_adjacent_cards(card)
     if not (card and card.area) then return end
     local index = -1

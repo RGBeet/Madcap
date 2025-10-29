@@ -150,6 +150,7 @@ if MadLib.mod_loaded('TOGAPack') then
 	local t = 'toga/toga_'
 	add_atlases({
 		create('toga_jokers', 		t..'jokers.png'),
+		create('toga_mail', 		t..'mail.png', 95, 71),
 	})
 end
 

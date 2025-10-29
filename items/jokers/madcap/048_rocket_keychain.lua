@@ -29,6 +29,9 @@ return {
                 -- get most played poker hand
             end
         end,
+        add_to_deck = function(self, card, from_debuff)
+            card.ability.extra.target_hand = MadLib.get_random_poker_hand()
+        end,
         demicoloncompat = false, -- TODO: add level up most played poker hand
     }
 }

@@ -16,11 +16,26 @@ return {
             info_queue[#info_queue+1] = { set = "CosmaTarot", key = "c_rgmc_aversion" }
         end,
         apply = function(self, tag, context)
-            local lock = tag.ID
             if context.type == "new_blind_choice" then
+                local lock = tag.ID
                 G.CONTROLLER.locks[lock] = true
-                tag:yep('+', G.C.ORANGE,function()
-                    Madcap.Funcs.open_booster_quick("rgmc_cosma")
+                tag:yep("+", G.C.SECONDARY_SET.Spectral, function()
+                    local key = "p_rgmc_cogito"
+                    local card = Card(
+                        G.play.T.x + G.play.T.w / 2 - G.CARD_W * 1.27 / 2,
+                        G.play.T.y + G.play.T.h / 2 - G.CARD_H * 1.27 / 2,
+                        G.CARD_W * 1.27,
+                        G.CARD_H * 1.27,
+                        G.P_CARDS.empty,
+                        G.P_CENTERS[key],
+                        { bypass_discovery_center = true, bypass_discovery_ui = true }
+                    )
+                    card.cost = 0
+                    card.from_tag = true
+                    G.FUNCS.use_card({ config = { ref_table = card } })
+                    card:start_materialize()
+                    G.CONTROLLER.locks[lock] = nil
+                    return true
                 end)
                 tag.triggered = true
                 return true

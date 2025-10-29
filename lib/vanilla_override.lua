@@ -687,14 +687,14 @@ SMODS.Joker:take_ownership('drivers_license', {
     config = { extra = { xmult = 3, driver_amount = 16 } },
     loc_vars = function(self, info_queue, card)
         local driver_tally, modified = MadLib.get_card_count(G.playing_cards, function(v)
-            return next(SMODS.get_enhancements(playing_card))
+            return next(SMODS.get_enhancements(v))
         end)
         return { vars = { card.ability.extra.xmult, card.ability.extra.driver_amount, driver_tally } }
     end,
     calculate = function(self, card, context)
         if context.joker_main then
             local driver_tally = MadLib.get_card_count(G.playing_cards, function(v)
-                return next(SMODS.get_enhancements(playing_card))
+                return next(SMODS.get_enhancements(v))
             end)
             if driver_tally >= card.ability.extra.driver_amount then
                 return {

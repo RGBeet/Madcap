@@ -7,7 +7,7 @@ return {
         cost    = 3,
         pos     = MLIB.coords(5,1),
         config = {
-            extra = { seals = 1 },
+            extra = { seals = 1, chip_mod = 10 },
             immutable = { max_seals = 10 }
         },
         loc_vars = function(self, info_queue, card)
@@ -16,14 +16,13 @@ return {
         end,
         calculate = function(self, card, context)
             if
-                (context.discard
+                (context.pre_discard
                 and G.GAME.current_round.discards_used == 0)
                 or (context.forcetrigger and G.hand.cards)
             then -- first discard = apply bronze seal and 15 bonus chips
                 local area = context.forcetrigger and G.hand.cards or G.hand.highlighted or {}
                 local n, max = 0, math.min(card.ability.extra.seals, card.ability.immutable.max_seals)
                 local targets = {}
-
                 for i=1, #area do
                     if not area[i].seal then
                         n = n + 1
@@ -33,11 +32,13 @@ return {
                 end
                 MadLib.loop_func(targets, function(v)
                     MadLib.simple_event(function()
-                        v:set_seal('rgmc_cuprum_seal', true)
+                        v:set_seal('rgmc_bronze', true)
+                        v.ability.perma_bonus = v.ability.perma_bonus + (card.ability.extra.chip_mod or 10)
                         v:juice_up(0.3,0.3)
+                        card_eval_status_text(v, 'extra', nil, nil, nil, {message = localize('k_upgrade_ex')})
                         play_sound('tarot2', 1.2, 0.4)
                         return true
-                    end, 0.4, 'immediate')
+                    end, 0.8, 'immediate')
                 end)
             end
         end,

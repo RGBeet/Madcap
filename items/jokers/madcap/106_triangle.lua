@@ -30,10 +30,11 @@ return {
                     end
                     if context.forcetrigger then card.ability.immutable.cards = 3 end
                     if card.ability.immutable.cards == 3 then
-                        local eval = function(card) return card.ability.immutable.card == 0 and (not G.RESET_JIGGLES) end
+                        local eval = function(card) return card.ability.immutable.cards == 0 and (not G.RESET_JIGGLES) end
                         juice_card_until(card, eval, true)
                     end
                 else -- retriggers the next card
+                    tell('Trigger the TRIANGLE!')
                     card.ability.immutable.cards = 0
                     return { repetitions = card.ability.extra.repetitions }
                 end

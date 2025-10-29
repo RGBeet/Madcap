@@ -817,3 +817,17 @@ function MadLib.calculate_mult(value, args)
 	
 	return old_value
 end
+
+Madcap.Lists.SpamJokers = {
+	'j_rgmc_spam',
+	'j_rgmc_spam_and_sauasge',
+	'j_rgmc_empty_can',
+	'j_rgpd_green_eggs_and_spam',
+	'j_rgmc_lobster_thermidor',
+}
+
+function Card:is_spam_joker()
+	return MadLib.list_matches_one(Madcap.Lists.SpamJokers, function(v)
+		return self.config.center.key == v
+	end)
+end

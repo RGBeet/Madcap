@@ -16,7 +16,7 @@ return {
         end,
         apply = function(self, tag, context)
             if context.type == "ml_before_scoring" then
-                SMODS.calculate_effect({ mult = self.config.extra.chips }, tag)
+                SMODS.calculate_effect({ chips = self.config.extra.chips }, tag)
             end
             if context.type == "eval" then -- Disappear at end of blind
                 tag:yep("X", G.C.CHIPS, function() return true end)

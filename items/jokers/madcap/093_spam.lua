@@ -49,7 +49,6 @@ return {
                     identifier = 'spam'
                 }
                 if result then
-                    G.GAME.spams_eaten = (G.GAME.spams_eaten or 0) + 1
                     MadLib.event({
                         func = function()
                             play_sound('tarot1')

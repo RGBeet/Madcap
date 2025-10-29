@@ -17,9 +17,6 @@ return {
             return MadLib.collect_vars(G.GAME and card.ability.rgmc_shielded_tally or 4)
         end,
         calculate = function(self, card, context)
-            if context.end_of_round and not context.repetition and not context.individual then
-                card:calculate_rgmc_shielded()
-            end
         end,
         should_apply = false,
         apply = function(self, card, val)

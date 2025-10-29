@@ -11,7 +11,8 @@ return {
         cost    = 9,
         config = { extra = { x_chips = 1.4 } },
         loc_vars = function(self, info_queue, card)
-            return MadLib.collect_vars(number_format(card.ability.extra.x_chips))
+            local _numer, _denom = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'high_speed_steel')
+            return MadLib.collect_vars(_numer, _denom, number_format(card.ability.extra.x_chips))
         end,
         calculate = function(self, card, context)
             if 

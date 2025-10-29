@@ -35,7 +35,6 @@ return {
             -- End of round
             if Madcap.Funcs.banana_context(context) then
                 if SMODS.pseudorandom_probability(card, 'spam_and_sausage', 1, card.ability.extra.odds) then
-                    G.GAME.spams_eaten = (G.GAME.spams_eaten or 0) + 1
                     MadLib.event({
                         func = function()
                             play_sound('tarot1')

@@ -1426,8 +1426,18 @@ return {
                 name = "Liberty Bell",
                 text = {
                     "Upon playing first {C:red}Discard{},",
-                    "apply a {C:rgmc_cuprum}Cuprum Seal{} to",
-                    "{C:attention}first discarded card{}",
+                    "apply a {C:rgmc_cuprum}Cuprum Seal{}",
+                    "and {C:chips}+#1#{} permanent bonus chips",
+                    "to {C:attention}first discarded card{}",
+                },
+            },
+            j_rgmc_liberty_bell_alt = { -- 2+ cards
+                name = "Liberty Bell",
+                text = {
+                    "Upon playing first {C:red}Discard{},",
+                    "apply a {C:rgmc_cuprum}Cuprum Seal{}",
+                    "and {C:chips}+#1#{} permanent bonus chips",
+                    "to {C:attention}first #2# discarded cards{}",
                 },
             },
             j_rgmc_chicken_jokey = {
@@ -2100,11 +2110,11 @@ return {
             j_rgmc_wario_de_mambo = {
                 name = "Wario de Mambo",
                 text = {
-                    "Earn {C:rgmc_luxury}£#1#{} if",
+                    "Earn {C:rgmc_luxury}£#5#{} if",
                     "the following {C:attention}poker hands{}",
                     "are played {C:attention}in order{}:",
-                    "{C:planet}#2#{}, {C:planet}#3#{},",
-                    "{C:planet}#4#{}, {C:planet}#5#{}"
+                    "{V:1}#1#{}, {V:2}#2#{},",
+                    "{V:3}#3#{}, {V:4}#4#{}"
                 },
             },
             j_rgmc_high_speed_steel = {
@@ -2350,6 +2360,16 @@ return {
                 text = {
 					"This Goes Hard On Mute",
                     "{C:inactive,s:0.8}(Currently {X:mult,C:white}X#1#{C:inactive,s:0.8} Mult)"
+                },
+            },
+            j_rgmc_toga_aol = {
+                name = "AOL",
+                text = {
+                    "{C:green}#1# in #2#{} chance to",
+                    "receive an {C:attention}Email",
+					"Upon {C:attention}cashing out",
+                    "{C:inactive,s:0.8}(Currently {C:attention,s:0.8}#3#{C:inactive,s:0.8} {C:red,s:0.8}unread{C:inactive,s:0.8} emails",
+                    "{C:inactive,s:0.8}and {C:attention,s:0.8}#4#{C:inactive,s:0.8} {C:blue,s:0.8}read{C:inactive,s:0.8} emails)",
                 },
             },
             -- Finity compat
@@ -3306,6 +3326,15 @@ return {
                     "{C:chips}+#4#{} chips",
                 },
             },
+        },
+        MiscRGMC = {
+            c_rgmc_toga_mail = {
+                name = "Mail",
+                text = {
+                    "{C:attention}+1{} consumable slot",
+                    "Contains {C:attention}#1#{}"
+                },
+            }
         },
         SpatiaPlanet = {
             c_rgmc_rocket = {
@@ -6400,6 +6429,8 @@ return {
             c_rgmc_rocket_man       = "Rocket Man",
         },
 		dictionary = {
+			b_read_mail = "READ",
+
             rgmc_patina_seal         = "Patina Seal",
             rgmc_bronze_seal         = "Cuprum Seal",
             rgmc_ether_seal          = "Ether Seal",
@@ -6435,6 +6466,7 @@ return {
 			rgmc_ace_ex              = "Ace!",
 			rgmc_cjokey_ex           = "Chicken Jockey!",
 			rgmc_inactive            = "Inactive",
+			k_yeah_ex                = "Yeah!",
 
 			-- temp hand/discard
 			k_t_hands_plus           = "+#1# Temp. Hands",
@@ -6540,6 +6572,8 @@ return {
 			b_antispectral_cards     = "Sinister Cards",
 			k_potentiacrystal        = "Potentia Crystal",
 			b_potentiacrystal_cards  = "Potentia Crystals",
+			k_miscrgmc               = "Misc. Card (Madcap)",
+			b_miscrgmc_cards         = "Misc. Cards (Madcap)",
 
 			k_rgmc_cosma_pack    = "Cosma Pack",
 			k_rgmc_spatia_pack   = "Spatia Pack", -- includes potentia crystals too?!

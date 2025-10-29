@@ -39,11 +39,11 @@ return {
             G.booster_pack_sparkles:fade(1, 0)
         end,
         create_card = function(self, card, i)
-            local aversion_enabled  = i%2 == 0 and not G.GAME.banned_keys['c_rgmc_aversion']
-            local sleeping_ships_enabled = i%2 == 1 and not G.GAME.banned_keys['c_rgmc_sleeping_ships']
-            local soul_enabled = not G.GAME.banned_keys['c_soul']
+            local aversion_enabled          = i%2 == 0 and not G.GAME.banned_keys['c_rgmc_aversion']
+            local sleeping_ships_enabled    = i%2 == 1 and not G.GAME.banned_keys['c_rgmc_sleeping_ships']
+            local soul_enabled              = not G.GAME.banned_keys['c_soul']
 
-            return (aversion_enabled and create_card("CosmaTarot", G.pack_cards, nil, nil, true, true, "c_cry_gateway"))
+            return (aversion_enabled and create_card("CosmaTarot", G.pack_cards, nil, nil, true, true, "c_rgmc_aversion"))
                 or (sleeping_ships_enabled and create_card("CosmaTarot", G.pack_cards, nil, nil, true, true, "c_rgmc_sleeping_ships"))
                 or (soul_enabled and create_card("Spectral", G.pack_cards, nil, nil, true, true, "c_soul"))
                 or create_card("CosmaTarot", G.pack_cards, nil, nil, true, true)
@@ -56,7 +56,7 @@ return {
                 local sleeping_ships_enabled = i%2 == 1 and not G.GAME.banned_keys['c_rgmc_sleeping_ships']
                 local soul_enabled = not G.GAME.banned_keys['c_soul']
 
-                local ccard = (aversion_enabled and create_card("CosmaTarot", G.consumeables, nil, nil, true, true, "c_cry_gateway"))
+                local ccard = (aversion_enabled and create_card("CosmaTarot", G.consumeables, nil, nil, true, true, "c_rgmc_aversion"))
                     or (sleeping_ships_enabled and create_card("CosmaTarot", G.consumeables, nil, nil, true, true, "c_rgmc_sleeping_ships"))
                     or (soul_enabled and create_card("Spectral", G.consumeables, nil, nil, true, true, "c_soul"))
                     or create_card("CosmaTarot", G.consumeables, nil, nil, true, true)

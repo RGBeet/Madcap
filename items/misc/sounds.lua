@@ -68,6 +68,11 @@ Madcap.Funcs.LoadSounds({
     MadLib.keypath_simple('mustard2',ext),
     MadLib.keypath_simple('mustard3',ext),
     MadLib.keypath_simple('mustard4',ext),
+    MadLib.keypath_simple('aol_welcome',ext),
+    MadLib.keypath_simple('aol_mail',ext),
+    MadLib.keypath_simple('aol_goodbye',ext),
+    MadLib.keypath_simple('door_open',ext),
+    MadLib.keypath_simple('aol_im',ext),
 }, list)
 
 return {

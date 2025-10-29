@@ -25,6 +25,7 @@ return {
             -- Gimme numerator
             if 
                 context.mod_probability 
+                and context.numerator
                 and not context.blueprint 
                 and not context.repetition 
             then

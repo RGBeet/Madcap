@@ -188,11 +188,22 @@ local card_shuffle_ref = CardArea.shuffle
 function CardArea:shuffle(_seed)
 	card_shuffle_ref(self,_seed)
 	local pos = 1
+
+	local coronated 		= {}
+	local coronated_jokers	= 1
+
 	while pos < #self.cards do
 		local card = self.cards[pos]
 		if not card.sort_marked then
 			card.sort_marked = true
 			local rolls = 0
+			if card.ability and card.ability.rgmc_coronated then
+				if not (self == G.jokers or G.consumeables) then
+					coronated[#coronated+1] = card
+				else
+					coronated_jokers = coronated_jokers + 1
+				end
+			end
 			if card.seal and card.seal == 'rgmc_patina' then
 				--tell('Patina Seal')
 				while pos < math.min(#self.cards / 2,#self.cards) do pos = move_forwards(pos, self.cards) end
@@ -229,6 +240,29 @@ function CardArea:shuffle(_seed)
 		end
 		pos = pos + 1
 	end
+
+	-- Coronated sticker Jokers
+	if #coronated > 0 then
+		for h = 1, coronated_jokers do
+			local pick = pseudorandom_element(coronated, pseudoseed('rgmc_coronated'))
+			local pos = -1
+			for i=1,#self.cards do if self.cards[i] == pick then pos = i; break; end end
+			if pos > 0 then
+				while pos < #self.cards do
+					if self.cards[pos+1].ability.rgmc_coronated then break; end
+					pos = move_forwards(pos, self.cards)
+				end
+			end
+			-- remove it!
+			for i=1,#coronated do
+				if coronated[i] == pick then
+					table.remove(coronated,i)
+					break
+				end
+			end
+		end
+	end
+
 	MadLib.loop_func(self.cards, function(v)
 		if not v then return end
 		v.sort_marked = nil 
@@ -415,7 +449,6 @@ local is_g4_card = function(self)
 		or self.ability.rgmc_immutable
 		or self.ability.rgmc_coronated
 end
-
 
 function Card:rgmc_set_coronated(a)
 	self.ability.rgmc_coronated = not (is_g4_card(self) or Madcap.Funcs.has_major_sticker(self))
@@ -1119,11 +1152,11 @@ function Card:set_cost()
     local ret = card_set_cost_ref(self)
 
     if self.ability.rgmc_engraved then
-        self.sell_cost = -1 -- bad luck!
+        self.sell_cost = 0 -- bad luck!
     end
 
     if self.ability.rgmc_shielded then
-        self.sell_cost = math.floor(self.sell_cost / 2) -- stickers reduce sell value regardless
+        self.sell_cost = math.floor(self.sell_cost * 2)
     end
 
     return ret
@@ -1493,16 +1526,32 @@ end
 ]]
 local start_dissolve_ref = Card.start_dissolve
 function Card:start_dissolve(...)
-    if
-		(self.edition and self.edition.rgmc_flipped and next(SMODS.find_card('j_rgmc_streemerz'))) -- Streemerz
-	 	or (self.ability.rgmc_shielded
-		or self.ability.rgmc_twinkling)
-	then
-		print("Piss off")
-        return
+	if not self:is_sold() then -- do not do sold
+		if
+			(self.edition and self.edition.rgmc_flipped and next(SMODS.find_card('j_rgmc_streemerz'))) -- Streemerz
+			or (self.ability.rgmc_shielded
+			or self.ability.rgmc_twinkling)
+		then
+			--print("Piss off")
+			return
+		end
     end
 
     return start_dissolve_ref(self, ...)
+end
+
+local card_remove_ref = Card.remove
+function Card:remove()
+	if
+		not self:is_sold()
+		and (self.area == G.jokers or self.area == G.consumeables)
+	then
+		if self:is_spam_joker()  then
+			play_sound('rgmc_spam_remove' .. math.random(1,3), 0.60 + math.random(1,4) * 0.15)
+			G.GAME.spams_killed = (G.GAME.spams_killed or 0) + 1
+		end
+	end
+	return card_remove_ref(self)
 end
 
 -- sum is decided here. haha
@@ -1550,3 +1599,87 @@ end
 			delay(2.0)
 		end)
 	end]]
+
+-- Wenomechainasama
+
+
+function Card:rgmc_in_joker_area(bypass_debuff)
+	return G.jokers and self.area == G.jokers and (not bypass_debuff and not self.debuff or true)
+end
+
+function Madcap.Funcs.get_sell_button(card, rgs)
+	args = args or {}
+	return {n=G.UIT.C, config={align = "cr"}, nodes={
+    	{n=G.UIT.C, config={ref_table = card, align = "cr",padding = 0.1, r=0.08, minw = 1.25, hover = true, shadow = true, colour = G.C.UI.BACKGROUND_INACTIVE, one_press = true, button = 'sell_card', func = 'can_sell_card', handy_insta_action = 'sell'}, nodes={
+            {n=G.UIT.B, config = {w=0.1,h=0.6}},
+            {n=G.UIT.C, config={align = "tm"}, nodes={
+            	{n=G.UIT.R, config={align = "cm", maxw = 1.25}, nodes={
+                	{n=G.UIT.T, config={text = localize('b_sell'),colour = G.C.UI.TEXT_LIGHT, scale = 0.4, shadow = true}}
+            	}},
+                {n=G.UIT.R, config={align = "cm"}, nodes={
+                  	{n=G.UIT.T, config={text = localize(args.currency or '$'),colour = G.C.WHITE, scale = 0.4, shadow = true}},
+                  	{n=G.UIT.T, config={ref_table = card, ref_value = 'sell_cost_label',colour = G.C.WHITE, scale = 0.55, shadow = true}}
+                }}
+            }}
+        }},
+    }}
+end
+
+G.FUNCS.rgmc_can_read_mail = function(e)
+    if e.config.ref_table.ability.immutable.unread > 0 then
+        e.config.colour = G.C.BLUE
+        e.config.button = "rgmc_read_mail"
+    else
+        e.config.colour = G.C.UI.BACKGROUND_INACTIVE
+        e.config.button = nil
+    end
+end
+
+G.FUNCS.rgmc_read_mail = function(e)
+    e.config.ref_table.ability.immutable.unread = e.config.ref_table.ability.immutable.unread - 1
+    e.config.ref_table.ability.immutable.read = e.config.ref_table.ability.immutable.read + 1
+    Madcap.Funcs.play_sound_random('rgmc_aol_im')
+    
+    local mail = create_card(nil, G.consumeables, nil, nil, nil, nil, 'c_rgmc_toga_mail')
+	mail.ability.extra.center = Madcap.Funcs.get_random_consumable('aol')
+	
+    table.insert(G.consumeables, mail)
+    G.consumeables:emplace(mail)
+	if e.config.ref_table.ability.immutable.unread == 0 then
+	 	e.config.ref_table:highlight(false) -- no more highlight!
+	end
+	delay(0.5)
+end
+
+local G_UIDEF_use_and_sell_buttons_ref = G.UIDEF.use_and_sell_buttons
+function G.UIDEF.use_and_sell_buttons(card)
+	local ret = G_UIDEF_use_and_sell_buttons_ref(card)
+
+	if card:rgmc_in_joker_area() then
+		if card.config.center.key == "j_rgmc_toga_aol" then
+			local mail_read = {n=G.UIT.C, config={align = "cr"}, nodes={
+            	{n=G.UIT.C, config={ref_table = card, align = "cr", padding = 0.1, r=0.08, minw = 1.25, hover = true, shadow = true, colour = G.C.UI.BACKGROUND_INACTIVE, button = 'rgmc_read_mail', func = 'rgmc_can_read_mail'}, nodes={
+              		{n=G.UIT.B, config = {w=0.1,h=0.6}},
+              		{n=G.UIT.C, config={align = "tm"}, nodes={
+                		{n=G.UIT.R, config={align = "cr", maxw = 1.25}, nodes={
+                  			{n=G.UIT.T, config={text = localize('b_read_mail'), colour = G.C.UI.TEXT_LIGHT, scale = 0.4, shadow = true}}
+                		}},
+                		{n=G.UIT.R, config={align = "cr"}, nodes={
+                  			{n=G.UIT.T, config={text = '(', colour = G.C.WHITE, scale = 0.4, shadow = true}},
+                  			{n=G.UIT.T, config={ref_table = card.ability.immutable, ref_value = 'unread', colour = G.C.WHITE, scale = 0.4, shadow = true}},
+                  			{n=G.UIT.T, config={text = ')', colour = G.C.WHITE, scale = 0.4, shadow = true}}
+                		}}
+              		}}
+            	}},
+          	}}
+        	return { n=G.UIT.ROOT, config = {padding = 0, colour = G.C.CLEAR}, nodes={
+              	{n=G.UIT.C, config={padding = 0, align = 'cl'}, nodes={
+                	{n=G.UIT.R, config={align = 'cl'}, nodes={ Madcap.Funcs.get_sell_button(card) }},
+                	{n=G.UIT.R, config={align = 'cl'}, nodes={ mail_read }},
+              }},
+          }}
+		end
+	end
+
+	return ret
+end
