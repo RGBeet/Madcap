@@ -57,9 +57,10 @@ SMODS.Consumable({
     no_collection   = true,
     config = { extra = { center = nil } },
     loc_vars = function (self, info_queue, card)
-        local center_type = SMODS.ConsumableType[card.ability.extra.center]
+        local center_type = SMODS.ConsumableType[card.ability.extra.center and card.ability.extra.center.set or 'Tarot']
+        local key = card.ability.extra.center and card.ability.extra.center.key or 'c_fool'
         local colour = center_type and center_type.secondary_colour or G.C.RED
-        return MadLib.collect_vars_colours(MadLib.localize_name_text(card.ability.extra.center.set, card.ability.extra.center.key), { colour })
+        return MadLib.collect_vars_colours(MadLib.localize_name_text(center_type, key), { colour })
     end,
     can_use = function(self, card)
         return true

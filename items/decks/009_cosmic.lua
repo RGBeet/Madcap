@@ -10,12 +10,12 @@ return {
         pos     = MLIB.coords(2,1),
         config = { 
             vouchers = { 'v_rgmc_cosma_merchant' }, 
-            consumables = { 'c_rgmc_demise' } 
+            consumable = 'c_rgmc_demise' 
         },
         loc_vars = function(self, info_queue, back)
             return {
                 vars = { localize { type = 'name_text', key = self.config.vouchers[1], set = 'Voucher' },
-                localize { type = 'name_text', key = self.confiG.consumeables[1], set = 'CosmaTarot' }
+                localize { type = 'name_text', key = self.config.consumable[1], set = 'CosmaTarot' }
                 }
             }
         end,
