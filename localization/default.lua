@@ -54,25 +54,44 @@ return {
 			b_rgmc_cosmic = {
 				name = "Cosmic Deck",
 				text = {
-					"???"
+					"Start with {C:cosmatarot,T:v_rgmc_cosma_merchant}#1#",
+                    "and {C:cosmatarot,T:c_rgmc_demise}#2#",
 				},
 			},
 			b_rgmc_spatial = {
 				name = "Spatial Deck",
 				text = {
-					"???"
+					"Start with {C:spatiaplanet,T:v_rgmc_bright_bulb}#1#",
+                    "and {C:spatiaplanet,T:v_rgmc_blacklight}#2#",
+                    "All {C:attention}subhands{} start",
+                    "at Level {C:spatiaplanet}2"
 				},
 			},
 			b_rgmc_beetroot = {
 				name = "Beetroot Deck",
 				text = {
-					"???"
+					"{C:purple}Madcap{}-specific content appears",
+                    "{C:attention}3X{} more often",
+                    "{C:inactive,s:0.8}(Jokers, blinds, etc.)"
 				},
 			},
 			b_rgmc_argentum = {
 				name = "Argentum Deck",
 				text = {
-					"???"
+					"Start with {C:rgmc_luxury}£#1#{}",
+                    "Earn {C:rgmc_luxury}£#2#{} at",
+                    "end of Boss Blind"
+				},
+			},
+			b_rgmc_fuchsia = {
+				name = "Fuchsia Deck",
+				text = {
+					"Start with {C:purple}+#1#{} temp hands",
+                    "and discards each",
+                    "Gain {C:purple}+#2#{} temp hand or discard",
+                    "upon {C:attention}rerolling{} in shop",
+                    "or {C:attention}skipping{} blind",
+                    "{C:blue}#3#{} hands, {C:red}#4#{} discards"
 				},
 			},
 			b_rgmc_mayhem = {
@@ -6433,6 +6452,7 @@ return {
 			b_luxury_shoppe_1        = "To Luxury",
 			b_luxury_shoppe_2        = "Shoppe",
 			ph_luxury                = "For the worthy",
+            ph_luxury_bonus          = "Luxury Bonus!",
 
             rgmc_patina_seal         = "Patina Seal",
             rgmc_bronze_seal         = "Cuprum Seal",

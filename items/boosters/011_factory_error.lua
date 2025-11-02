@@ -28,7 +28,9 @@ return {
             return MadLib.collect_vars(cfg.choose, cfg.extra)
         end,
         ease_background_colour = function(self)
-            Madcap.Funcs.booster_ease_bg(self, G.C.GREEN, G.C.BLACK)
+            local c = darken(G.C.BLUE,0.5)
+            ease_colour(G.C.DYN_UI.MAIN, c)
+            ease_background_colour{new_colour = c, special_colour = G.C.BLACK, contrast = 2}
         end,
         particles = function(self)
             G.booster_pack_sparkles = Particles(1, 1, 0, 0, {

@@ -9,7 +9,7 @@ return {
         atlas   = "cosma",
         pos 	= MLIB.coords(1,3),
         cost 	= 6,
-        config	= { extra = 1, jokers = 1 },
+        config	= { extra = 10, jokers = 1 },
         loc_vars = function(self, info_queue, card)
             return MadLib.collect_vars(number_format(card.ability.extra))
         end,

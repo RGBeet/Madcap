@@ -56,8 +56,9 @@ return {
         end,
         apply = function(self, back)
             Madcap.Funcs.init_deck('lunacy')
-            G.GAME.rgmc_total_mayhem            = true
-            G.GAME.starting_params.add_mayhem   = 100
+            G.GAME.rgmc_total_mayhem                = true
+            G.GAME.starting_params.add_mayhem       = 100
+            G.GAME.modifiers.boss_luxury_points     = self.config.lp_boss_bonus
         end,
         calculate = function(self, card, context)
 

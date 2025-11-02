@@ -3,17 +3,29 @@ version = "1.0.0"
 dump_lua = true
 priority = 500
 
-# Save with action
+# Add dynamic colour
 [[patches]]
 [patches.pattern]
 target = "functions/common_events.lua"
 pattern = '''elseif G.GAME.blind then 
         G.GAME.blind:change_colour()'''
 position = "after"
-payload =  '''elseif G.STATES.RGMC_LUXURY_SHOPPE then 
-         ease_colour(G.C.DYN_UI.MAIN, G.C.PURPLE)'''
+payload =  '''elseif state == G.STATES.RGMC_LUXURY_SHOPPE then 
+    ease_colour(G.C.DYN_UI.MAIN, G.C.GOLD)'''
 overwrite = true
 match_indent = true
+
+# Add background
+[[patches]]
+[patches.pattern]
+target = 'functions/common_events.lua'
+pattern = '''elseif state == G.STATES.PLANET_PACK then
+        ease_background_colour{new_colour = G.C.BLACK, contrast = 3}'''
+position = 'after'
+payload = '''elseif state == G.STATES.RGMC_LUXURY_SHOPPE then
+		ease_background_colour{new_colour = G.C.BLACK, contrast = 3}'''
+match_indent = true
+
 
 # Edit next round button in Shop
 [[patches]]

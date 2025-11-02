@@ -19,7 +19,7 @@ return {
                     end)
                     tag.triggered = true
                     return {
-                        rgmc_luxury_pts = tag.config.luxury_points,
+                        rgmc_lp = tag.config.luxury_points,
                         condition = localize('ph_defeat_the_boss'),
                         pos = tag.pos,
                         tag = tag

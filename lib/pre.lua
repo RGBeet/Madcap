@@ -509,7 +509,6 @@ then
 	})
 end]]
 
-
 SMODS.ObjectType({
 	object_type = "ObjectType",
 	key 	= "MadcapJoker",

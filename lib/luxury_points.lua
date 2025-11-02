@@ -35,7 +35,7 @@ function ease_lp(mod, instant)
         --Play a chip sound
         if mod > 0 then
           play_sound('rgmc_kaching')
-        else
+        elseif mod ~= 0 then
           play_sound('rgmc_kaching_evil')
         end
     end
@@ -55,7 +55,7 @@ end
 -- different one for luxury points
 G.FUNCS.can_buy_luxury = function(e)
 	local lp_cost = cash_to_lp(e.config.ref_table.cost)
-    if lp_cost > G.GAME.rgmc_luxury_pts and lp_cost > 0 then
+    if (G.GAME.rgmc_luxury_pts - lp_cost) <= 0 then
         e.config.colour = G.C.UI.BACKGROUND_INACTIVE
         e.config.button = nil
     else
@@ -71,9 +71,24 @@ G.FUNCS.can_buy_luxury = function(e)
     end
 end
 
+G.FUNCS.can_buy_and_use_luxury = function(e)
+	local lp_cost = cash_to_lp(e.config.ref_table.cost)
+    if (G.GAME.rgmc_luxury_pts - lp_cost) <= 0 then
+        e.UIBox.states.visible = false
+        e.config.colour = G.C.UI.BACKGROUND_INACTIVE
+        e.config.button = nil
+    else
+        if e.config.ref_table.highlighted then
+          e.UIBox.states.visible = true
+        end
+        e.config.colour = G.C.SECONDARY_SET.Voucher
+        e.config.button = 'buy_from_shop_luxury'
+    end
+end
+
 G.FUNCS.can_open_luxury = function(e)
 	local lp_cost = cash_to_lp(e.config.ref_table.cost)
-    if lp_cost > G.GAME.rgmc_luxury_pts and lp_cost > 0 then
+    if (G.GAME.rgmc_luxury_pts - lp_cost) <= 0 then
         e.config.colour = G.C.UI.BACKGROUND_INACTIVE
         e.config.button = nil
     else
@@ -84,7 +99,7 @@ end
 
 G.FUNCS.can_redeem_luxury = function(e)
 	local lp_cost = cash_to_lp(e.config.ref_table.cost)
-    if lp_cost > G.GAME.rgmc_luxury_pts and lp_cost > 0 then
+    if (G.GAME.rgmc_luxury_pts - lp_cost) <= 0 then
         e.config.colour = G.C.UI.BACKGROUND_INACTIVE
         e.config.button = nil
     else
@@ -279,18 +294,19 @@ function Madcap.Funcs.create_card_for_luxury_shoppe(area)
     
     -- need to preserve order to leave RNG unchanged
     local rates = {
-        { type = 'Joker', val = G.GAME.joker_rate},
-        { type = 'Tarot', val = G.GAME.tarot_rate},
-        { type = 'Planet', val = G.GAME.planet_rate},
-        { type = Madcap.Funcs.get_shop_playing_card_type(), val = G.GAME.playing_card_rate},
-        { type = 'Spectral', val = G.GAME.spectral_rate },
-        { type = 'CosmaTarot', val = G.GAME.cosma_rate * 1.5 },
+        { type = 'Joker', val = G.GAME.joker_rate },
+        { type = 'Tarot', val = 0 },
+        { type = 'Planet', val = 0 },
+        { type = Madcap.Funcs.get_shop_playing_card_type(), val = 1 + G.GAME.playing_card_rate},
+        { type = 'Spectral', val = G.GAME.spectral_rate * 2 },
+        { type = 'CosmaTarot', val = G.GAME.cosma_rate * 2 },
         { type = 'MadcapJoker', val = G.GAME.madcap_content_rate }
     }
 
     local subhands_enabled = true
     if subhands_enabled then
         table.insert(rates, { type = 'SpatiaPlanet', val = G.GAME.spatia_rate * 1.5 })
+        table.insert(rates, { type = 'PotentiaCrystal', val = G.GAME.potentia_rate * 2 })
     end
     
     for _, v in ipairs(SMODS.ConsumableType.ctype_buffer) do
@@ -410,7 +426,7 @@ G.FUNCS.reroll_luxury_shoppe = function(e)
 function Game:update_luxury_shoppe(dt)
     if not G.STATE_COMPLETE then
         stop_use()
-        ease_background_colour_blind(G.STATES.SHOP)
+        ease_background_colour_blind(G.STATES.RGMC_LUXURY_SHOPPE)
         local shop_exists = not not G.shop
         G.shop = G.shop or UIBox{
             definition = G.UIDEF.luxury_shoppe(),
@@ -648,6 +664,10 @@ end
 function Madcap.Funcs.edit_shop_ui_t3(card)
     local what_do     = 'buy_from_shop'
     local check       = 'can_buy_and_use'
+    
+    if is_luxury then 
+        check = check .. '_luxury'
+    end
     
     return {n=G.UIT.ROOT, config = {id = 'buy_and_use', ref_table = card, minh = 1.1, padding = 0.1, align = 'cr', colour = G.C.RED, shadow = true, r = 0.08, minw = 1.1, func = check, one_press = true, button = what_do, hover = true, focus_args = {type = 'none'}}, nodes={
         {n=G.UIT.B, config = {w=0.1,h=0.6}},

@@ -850,3 +850,27 @@ function Madcap.Funcs.get_weighted_choice(choices)
         end
     end
 end
+
+function Madcap.Funcs.get_cash_out_definition(config,scale)
+	local all_nodes = {}
+
+	local payouts = {}
+	if config.dollars ~= 0 then
+		payouts[#payouts + 1] = { n=G.UIT.T, config={text = localize('$') .. format_ui_value(config.dollars), scale = 1.2 * scale, colour = G.C.WHITE, shadow = true, juice = true }}
+	end
+	if config.rgmc_lp ~= 0 then
+		if next(payouts) then separator = ", " end
+		payouts[#payouts + 1] = { n=G.UIT.T, config={text = separator .. localize('£') .. format_ui_value(config.rgmc_lp), scale = 1.2*scale, colour = G.C.WHITE, shadow = true, juice = true }}
+	end
+	if not next(payouts) then
+		payouts[#payouts + 1] = {n=G.UIT.T, config={text = "!", scale = 1.2 * scale, colour = G.C.WHITE, shadow = true, juice = true}}
+	end
+
+	return {n=G.UIT.ROOT, config={align = 'cm', colour = G.C.CLEAR}, nodes={
+        {n=G.UIT.R, config={id = 'cash_out_button', align = "cm", padding = 0.1, minw = 7, r = 0.15, colour = G.C.ORANGE, shadow = true, hover = true, one_press = true, button = 'cash_out', focus_args = {snap_to = true}}, nodes=payouts}}}
+end
+
+function Madcap.Funcs.subhands_in_effect()
+
+
+end

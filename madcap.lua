@@ -13,6 +13,7 @@ assert(SMODS.load_file("lib/impound.lua"))()
 assert(SMODS.load_file("lib/luxury_points.lua"))()
 assert(SMODS.load_file("lib/temp_hands_discards.lua"))()
 assert(SMODS.load_file("lib/superbosses.lua"))()
+assert(SMODS.load_file("lib/pools.lua"))()
 
 
 assert(SMODS.load_file("lib/vanilla_override.lua"))()

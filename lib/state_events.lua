@@ -22,7 +22,7 @@ function Madcap.Funcs.run_start()
     local madcap_vals = {
 		mayhem				= 0,
 		mayhem_state		= 0,
-		max_mayhem			= G.GAME.starting_params.add_max_mayhem or 10,
+		max_mayhem			= G.GAME.starting_params.add_max_mayhem or 100,
 		rgmc_luxury_pts		= G.GAME.starting_params.rgmc_luxury_pts or 0,
 		dead_jokers			= {},
 		missed_jokers		= {},
@@ -30,8 +30,8 @@ function Madcap.Funcs.run_start()
         boss_blinds         = 0,        -- number of boss blinds defeated
         showdown_blinds     = 0,        -- number of showdown blinds defeated
         x_value             = 10,       -- value of x cards (linked to wisteria chimes)
-        temporary_hands     = 0,        -- hands you get when you run out
-        temporary_discards  = 0,        -- discards you get when you run out
+        temporary_hands     = G.GAME.starting_params.temp_hands or 0, -- hands you get when you run out
+        temporary_discards  = G.GAME.starting_params.temp_discards or 0, -- discards you get when you run out
 		max_temp_hands		= 5,
         max_temp_discards	= 5,
         last_enhancement    = nil,      -- used for chrome edition and ??? enhancement
@@ -48,10 +48,10 @@ function Madcap.Funcs.run_start()
 		potentias_used		= 0
     }
 	MadLib.loop_table(madcap_vals, function(k,v) G.GAME[k] = v end)
-
+	
 	-- Silently add mayhem if deck starts with more mayhem
 	if G.GAME.starting_params.add_mayhem then
-		Madcap.Funcs.ease_mayhem(G.GAME.starting_params.add_mayhem, true, false, true)
+		Madcap.Funcs.ease_mayhem(G.GAME.starting_params.add_mayhem, true, true, true)
 		Madcap.Funcs.read_mayhem()
 	end
 

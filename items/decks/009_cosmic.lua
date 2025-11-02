@@ -15,7 +15,7 @@ return {
         loc_vars = function(self, info_queue, back)
             return {
                 vars = { localize { type = 'name_text', key = self.config.vouchers[1], set = 'Voucher' },
-                localize { type = 'name_text', key = self.config.consumable[1], set = 'CosmaTarot' }
+                localize { type = 'name_text', key = self.config.consumable, set = 'CosmaTarot' }
                 }
             }
         end,

@@ -63,7 +63,7 @@ target = 'functions/button_callbacks.lua'
 pattern = '''ease_dollars(G.GAME.current_round.dollars)'''
 position = 'after'
 payload = '''
-ease_lp(G.GAME.current_round.rgmc_luxury_pts or 0)
+ease_lp(G.GAME.current_round.rgmc_lp or 0)
 '''
 match_indent = true
 times = 1
@@ -74,7 +74,7 @@ target = 'functions/button_callbacks.lua'
 pattern = '''G.GAME.previous_round.dollars = G.GAME.dollars'''
 position = 'after'
 payload = '''
-G.GAME.previous_round.rgmc_luxury_pts = G.GAME.rgmc_luxury_pts
+G.GAME.previous_round.rgmc_lp = G.GAME.rgmc_luxury_pts
 '''
 match_indent = true
 times = 1

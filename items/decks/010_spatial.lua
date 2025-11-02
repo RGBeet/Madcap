@@ -11,8 +11,8 @@ return {
         pos     = MLIB.coords(2,2),
         config = {
             vouchers = { 
-                'v_rgmc_day_and_night',
-                'v_rgmc_ebb_and_flow'
+                'v_rgmc_bright_bulb',
+                'v_rgmc_blacklight'
             }, 
         },
         loc_vars = function(self, info_queue, back)
