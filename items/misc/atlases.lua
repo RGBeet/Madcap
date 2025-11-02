@@ -4,6 +4,7 @@ local mis	= 'misc/'
 local create = MadLib.create_atlas
 local crtsqr = MadLib.create_square_atlas
 local crtbld = MadLib.create_blind_atlas
+local crtanim = MadLib.create_anim_atlas
 
 local atlases = {
 	-- the faithful M:
@@ -39,6 +40,7 @@ local atlases = {
 	crtsqr('ui_suits_hc', 	mis..'ui_suits_hc.png', 18),
 	crtbld('blinds', 			'blinds/bl_base.png', 21),
 	crtbld('blinds_chaotic', 	'blinds/bl_chaotic.png', 21),
+	crtanim('luxury_shoppe_sign', 	mis..'luxury_shoppe_sign.png', 4, 113, 57),
 	--crtsqr('stakes', 'stakes.png', 29),
 }
 

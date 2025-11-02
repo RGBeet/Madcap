@@ -6430,6 +6430,9 @@ return {
         },
 		dictionary = {
 			b_read_mail = "READ",
+			b_luxury_shoppe_1        = "To Luxury",
+			b_luxury_shoppe_2        = "Shoppe",
+			ph_luxury                = "For the worthy",
 
             rgmc_patina_seal         = "Patina Seal",
             rgmc_bronze_seal         = "Cuprum Seal",

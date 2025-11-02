@@ -22,7 +22,7 @@ local list = {
 
     Madcap.Funcs.GetMusic('music_madcap_shop',function()
 	return can_play_madcap_music()
-		and G.shop
+		and G.STATE == G.STATES.SHOP
 		and 3
 	end, 0.8, true),
 
@@ -47,6 +47,12 @@ local list = {
     Madcap.Funcs.GetMusic('music_madcap_boss',function()
 	return can_play_madcap_music()
 		and Madcap.Funcs.get_boss_status() > 0 -- regular boss blind
+		and 6
+	end, 0.8, true),
+
+    Madcap.Funcs.GetMusic('music_madcap_luxuryshoppe',function()
+	return can_play_madcap_music()
+		and G.STATE == G.STATES.RGMC_LUXURY_SHOPPE
 		and 6
 	end, 0.8, true),
 

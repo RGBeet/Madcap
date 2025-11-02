@@ -700,22 +700,8 @@ function reset_castle_card()
     G.GAME.current_round.rgmc_barbershop.suit = G.GAME.current_round.rgmc_barbershop.order[index]
 end
 
-
-
 function Madcap.Funcs.mod_blind_box(blind_type, ax, original)
     return original
-end
-
-local function get_nested(orig, path)
-    local current = orig
-    for _, i in ipairs(path) do
-        if current and current.nodes and current.nodes[i] then
-            current = current.nodes[i]
-        else
-            return nil -- invalid path
-        end
-    end
-    return current
 end
 
 local uibox_blind_ref = create_UIBox_HUD_blind

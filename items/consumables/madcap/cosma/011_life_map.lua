@@ -1,21 +1,3 @@
-function Madcap.Funcs.get_weighted_choice(choices)
-    if not choices then return nil end
-    -- Step 1: total weight
-    local total_weight = 0
-    for _, entry in ipairs(choices) do
-        total_weight = total_weight + entry.weight
-    end
-    -- Step 2: random roll
-    local roll = math.random(total_weight)
-    -- Step 3: find which entry it lands on
-    local cumulative = 0
-    for _, entry in ipairs(choices) do
-        cumulative = cumulative + entry.weight
-        if roll <= cumulative then
-            return entry.value
-        end
-    end
-end
 Madcap.LifeMapOdds = {
     [1] = 3,
     [2] = 5,

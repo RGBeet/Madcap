@@ -260,45 +260,6 @@ payload = '''
 		return G.HUD_blind:get_UIE_by_ID(id)
 	end'''
 
-# Replaces the UI if the card uses LUXURY POINTS
-[[patches]]
-[patches.pattern]
-target = "functions/UI_definitions.lua"
-pattern = '''local t1 = {
-              n=G.UIT.ROOT, config = {minw = 0.6, align = 'tm', colour = darken(G.C.BLACK, 0.2), shadow = true, r = 0.05, padding = 0.05, minh = 1}, nodes={
-                  {n=G.UIT.R, config={align = "cm", colour = lighten(G.C.BLACK, 0.1), r = 0.1, minw = 1, minh = 0.55, emboss = 0.05, padding = 0.03}, nodes={
-                    {n=G.UIT.O, config={object = DynaText({string = {{prefix = localize('$'), ref_table = card, ref_value = 'cost'}}, colours = {G.C.MONEY},shadow = true, silent = true, bump = true, pop_in = 0, scale = 0.5})}},
-                  }}
-              }}'''
-position = "after"
-match_indent = true
-payload = '''
-if Madcap.Funcs.uses_lp(card) then
-  t1 = {
-    n=G.UIT.ROOT, config = {minw = 0.6, align = 'tm', colour = darken(G.C.RGMC_LUXURY, 0.2), shadow = true, r = 0.05, padding = 0.05, minh = 1}, nodes={
-      {n=G.UIT.R, config={align = "cm", colour = lighten(G.C.BLACK, 0.1), r = 0.1, minw = 1, minh = 0.55, emboss = 0.05, padding = 0.03}, nodes={
-        {n=G.UIT.O, config={object = DynaText({string = localize('£')..number_format(card:calc_lp()), colours = { G.C.RGMC_LUXURY },shadow = true, silent = true, bump = true, pop_in = 0, scale = 0.5})}},
-      }}
-    }
-  }
-end'''
-
-# Luxury Points buy!
-[[patches]]
-[patches.pattern]
-target = "functions/UI_definitions.lua"
-pattern = '''}} or {
-            n=G.UIT.ROOT, config = {ref_table = card, minw = 1.1, maxw = 1.3, padding = 0.1, align = 'bm', colour = G.C.GOLD, shadow = true, r = 0.08, minh = 0.94, func = 'can_buy', one_press = true, button = 'buy_from_shop', hover = true}, nodes={
-                {n=G.UIT.T, config={text = localize('b_buy'),colour = G.C.WHITE, scale = 0.5}}
-            }}'''
-position = "before"
-match_indent = true
-payload = '''}} or Madcap.Funcs.uses_lp(card) and {
-            n=G.UIT.ROOT, config = {ref_table = card, minw = 1.1, maxw = 1.3, padding = 0.1, align = 'bm', colour = G.C.RGMC_LUXURY, shadow = true, r = 0.08, minh = 0.94, func = 'can_buy_luxury', one_press = true, button = 'buy_from_shop', hover = true}, nodes={
-                {n=G.UIT.T, config={text = localize('b_buy'),colour = G.C.WHITE, scale = 0.5}}'''
-
-
-
 # Ease luxury points - two patches, one if Paya is installed
 [[patches]]
 [patches.pattern]
@@ -378,49 +339,6 @@ payload = '''
     vals[#vals + 1] = {}
 '''
 match_indent = true
-
-# Adds Luxury slot to the shop
-[[patches]]
-[patches.pattern]
-target = 'game.lua'
-match_indent = true
-pattern = '''for i = 1, #G.GAME.tags do
-    G.GAME.tags[i]:apply_to_run({type = 'voucher_add'})
-end'''
-position = 'after'
-payload = '''
--- luxury stuff
-if G.GAME.rgmc_luxury_pts > 0 then
-  local luxury_slots = math.floor((G.GAME.rgmc_luxury_pts+5)/10)
-  for i=1, luxury_slots do
-    local card = SMODS.create_card {
-      set = "Joker",
-      rarity = "Rare",
-      area = G.shop_jokers,
-      key_append = "vremade_uta"
-    }
-    card.states.visible = false
-    card:set_cost()
-    card.ability.force_lp = true
-    tell('force LP!')
-    G.shop_jokers:emplace(card)
-    create_shop_card_ui(card, 'Joker', G.shop_jokers)
-    MadLib.simple_event(function()
-      card:start_materialize()
-      return true
-    end, 2.5, 'after')
-    MadLib.simple_event(function()
-      play_sound('rgmc_luxury_slot')
-      card:juice_up(0.3,0.3)
-      return true
-    end, 2.5, 'after')
-  end
-end
-SMODS.calculate_context{ rgmc_luxury_check = G.GAME.rgmc_luxury_pts }
-for i = 1, #G.GAME.tags do
-  G.GAME.tags[i]:apply_to_run({type = 'luxury_add'})
-end
-'''
 
 # Add Void and Lantern info to compatible cards
 [[patches]]
@@ -622,3 +540,85 @@ payload = '''self.impound = CardArea(
     )
 '''
 match_indent = true
+
+# Luxury points
+
+
+# Replaces the UI if the card uses LUXURY POINTS
+[[patches]]
+[patches.pattern]
+target = "functions/UI_definitions.lua"
+pattern = '''local t1 = {
+              n=G.UIT.ROOT, config = {minw = 0.6, align = 'tm', colour = darken(G.C.BLACK, 0.2), shadow = true, r = 0.05, padding = 0.05, minh = 1}, nodes={
+                  {n=G.UIT.R, config={align = "cm", colour = lighten(G.C.BLACK, 0.1), r = 0.1, minw = 1, minh = 0.55, emboss = 0.05, padding = 0.03}, nodes={
+                    {n=G.UIT.O, config={object = DynaText({string = {{prefix = localize('$'), ref_table = card, ref_value = 'cost'}}, colours = {G.C.MONEY},shadow = true, silent = true, bump = true, pop_in = 0, scale = 0.5})}},
+                  }}
+              }}'''
+position = "at"
+match_indent = true
+payload = '''local t1 = Madcap.Funcs.edit_shop_ui_t1(card)'''
+
+[[patches]]
+[patches.pattern]
+target = "functions/UI_definitions.lua"
+pattern = '''local t2 = card.ability.set == 'Voucher' and {
+            n=G.UIT.ROOT, config = {ref_table = card, minw = 1.1, maxw = 1.3, padding = 0.1, align = 'bm', colour = G.C.GREEN, shadow = true, r = 0.08, minh = 0.94, func = 'can_redeem', one_press = true, button = 'redeem_from_shop', hover = true}, nodes={
+                {n=G.UIT.T, config={text = localize('b_redeem'),colour = G.C.WHITE, scale = 0.4}}
+            }} or card.ability.set == 'Booster' and {
+            n=G.UIT.ROOT, config = {ref_table = card, minw = 1.1, maxw = 1.3, padding = 0.1, align = 'bm', colour = G.C.GREEN, shadow = true, r = 0.08, minh = 0.94, func = 'can_open', one_press = true, button = 'open_booster', hover = true}, nodes={
+                {n=G.UIT.T, config={text = localize('b_open'),colour = G.C.WHITE, scale = 0.5}}
+            }} or {
+            n=G.UIT.ROOT, config = {ref_table = card, minw = 1.1, maxw = 1.3, padding = 0.1, align = 'bm', colour = G.C.GOLD, shadow = true, r = 0.08, minh = 0.94, func = 'can_buy', one_press = true, button = 'buy_from_shop', hover = true}, nodes={
+                {n=G.UIT.T, config={text = localize('b_buy'),colour = G.C.WHITE, scale = 0.5}}
+            }}'''
+position = "at"
+match_indent = true
+payload = '''local t2 = Madcap.Funcs.edit_shop_ui_t2(card)'''
+
+[[patches]]
+[patches.pattern]
+target = "functions/UI_definitions.lua"
+pattern = '''local t3 = {
+            n=G.UIT.ROOT, config = {id = 'buy_and_use', ref_table = card, minh = 1.1, padding = 0.1, align = 'cr', colour = G.C.RED, shadow = true, r = 0.08, minw = 1.1, func = 'can_buy_and_use', one_press = true, button = 'buy_from_shop', hover = true, focus_args = {type = 'none'}}, nodes={
+              {n=G.UIT.B, config = {w=0.1,h=0.6}},
+              {n=G.UIT.C, config = {align = 'cm'}, nodes={
+                {n=G.UIT.R, config = {align = 'cm', maxw = 1}, nodes={
+                  {n=G.UIT.T, config={text = localize('b_buy'),colour = G.C.WHITE, scale = 0.5}}
+                }},
+                {n=G.UIT.R, config = {align = 'cm', maxw = 1}, nodes={
+                  {n=G.UIT.T, config={text = localize('b_and_use'),colour = G.C.WHITE, scale = 0.3}}
+                }},
+              }} 
+            }}'''
+position = "at"
+match_indent = true
+payload = '''local t3 = Madcap.Funcs.edit_shop_ui_t3(card)'''
+
+# Boosters
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''if self.cost > 0 then 
+            G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.2, func = function()
+                inc_career_stat('c_shop_dollars_spent', self.cost)
+                self:juice_up()
+            return true end }))
+            ease_dollars(-self.cost) 
+       else
+           delay(0.2)
+       end'''
+position = "at"
+match_indent = true
+payload = '''Madcap.Funcs.handle_booster_cost(self)'''
+
+# Vouchers?
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''if self.cost ~= 0 then
+            ease_dollars(-self.cost)
+            inc_career_stat('c_shop_dollars_spent', self.cost)
+        end'''
+position = "at"
+match_indent = true
+payload = '''Madcap.Funcs.handle_voucher_cost(self)'''
