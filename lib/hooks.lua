@@ -25,9 +25,9 @@ function Game:init_game_object()
 	G.dead_jokers   = {}
 
     G.madcap_content_rate   = 0
-    G.spatia_rate       = 0
-    G.cosma_rate        = 0
-    G.potentia_boost    = 0
+    G.spatia_rate       	= 0
+    G.cosma_rate        	= 0
+    G.potentia_rate    		= 0
     
 	Madcap.Funcs.update_global_joker_counts()
     return G

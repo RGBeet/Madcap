@@ -16,7 +16,7 @@ return {
         end,
         redeem 	= function(self)
             MadLib.simple_event(function()
-                G.GAME.potentia_boost = self.config.extra
+                G.GAME.potentia_rate = self.config.extra
                 return true
             end)
         end,

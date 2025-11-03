@@ -8,10 +8,10 @@ return {
         rarity      = 4,
         cost        = 17,
         config =  {
-            extra = { bonus_suit = MadcapConfig['New Suits'] and 'rgmc_towers' or 'Clubs' }
+            extra = { bonus_suit = MadcapConfig['New Suits'] and 'rgmc_towers' or 'Clubs', bonus_value = 2 }
         },
         loc_vars = function(self, info_queue, card)
-            return MadLib.collect_vars_colours(localize(card.ability.extra.bonus_suit, 'suits_plural'), card.ability.extra.xmult_mod, card.ability.extra.x_mult, { G.C.SUITS[card.ability.extra.bonus_suit] })
+            return MadLib.collect_vars_colours(localize(card.ability.extra.bonus_suit, 'suits_plural'), card.ability.extra.bonus_value, { G.C.SUITS[card.ability.extra.bonus_suit] })
         end,
         add_to_deck = function(self, card, from_debuff)
             -- Make the Bobby Khan noise (it's a reference to the source material.)
@@ -29,25 +29,41 @@ return {
                 MadLib.loop_func(scored_light_cards, function (v) v.bobby_khan = true end)
             end
 
-            if (context.cardarea == G.play and (context.other_card and context.other_card.bobby_khan)) or context.forcetrigger then
-                local target = not context.forcetrigger
-                    and context.other_card
-                    or pseudoshuffle(MadLib.get_list_matches(G.hand.cards, function(v)
-                        return MadLib.has_suit_in_list(v, MadLib.SuitTypes.Light)
-                    end), pseudoseed('rgmc_bobby_khan'))[1]
-
-                local dark_cards = MadLib.get_list_matches(G.hand.cards, function(v) for _,k in pairs(MadLib.SuitTypes.Dark) do if v:is_suit(k) then return true end; end end)
-                local value = not MadLib.has_rank_in_list(MadLib.RankTypes.Irregular)
-                    and target.base.nominal
-                    or 10 -- fallback
-                value = math.floor(MadLib.clamp(value,0,50) / #dark_cards)
-                MadLib.simple_event(function()
-                    target:start_dissolve({G.C.RED}, nil, 1.6)
-                    return true
-                end, 1.0, 'after')
+            if context.final_scoring_step then
+                local value = 0
+                local marked_cards = MadLib.get_list_matches(context.scoring_hand, function(v)
+                    if v.bobby_khan then
+                        value = value + not MadLib.has_rank_in_list(v, MadLib.RankTypes.Irregular) and v.base.nominal or 10 -- fallback
+                    else
+                        return false
+                    end
+                end)
+                SMODS.destroy_cards(marked_cards, nil, nil, true)
+                local dark_cards = MadLib.get_list_matches(G.hand.cards, function(v) for _,k in pairs(MadLib.SuitTypes.Dark) do if v:is_suit(k) then return true end; end; end)
+                value = value / #dark_cards
                 MadLib.loop_func(dark_cards, function (v)
                     MadLib.simple_event(function()
-                        delay(0.1)
+                        v.ability.perma_bonus = (v.ability.perma_bonus or 0) + (v:is_suit(card.ability.extra.bonus_suit) and (value * 2) or value)
+                        v:juice_up(0.5, 0.5)
+                        play_sound("timpani")
+                        return true
+                    end, 1.0, 'after')
+                end)
+            end
+
+            if context.forcetrigger then
+                local held_light_cards = MadLib.get_list_matches(G.hand.cards, function (v)
+                    for _,k in pairs(MadLib.SuitTypes.Light) do
+                        if v:is_suit(k) then return true end
+                    end
+                    return false
+                end)
+                local random_hand_card = pseudorandom_element(held_light_cards, pseudoseed('bobby_khan'))
+                local dark_cards = MadLib.get_list_matches(G.hand.cards, function(v) for _,k in pairs(MadLib.SuitTypes.Dark) do if v:is_suit(k) then return true end; end; end)
+                local value = (MadLib.has_rank_in_list(random_hand_card, MadLib.RankTypes.Irregular) and random_hand_card.base.nominal or 10) / #dark_cards
+                SMODS.destroy_cards(random_hand_card, nil, nil, true)
+                MadLib.loop_func(dark_cards, function (v)
+                    MadLib.simple_event(function()
                         v.ability.perma_bonus = (v.ability.perma_bonus or 0) + (v:is_suit(card.ability.extra.bonus_suit) and (value * 2) or value)
                         v:juice_up(0.5, 0.5)
                         play_sound("timpani")

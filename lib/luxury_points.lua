@@ -303,10 +303,10 @@ function Madcap.Funcs.create_card_for_luxury_shoppe(area)
         { type = 'MadcapJoker', val = G.GAME.madcap_content_rate }
     }
 
-    local subhands_enabled = true
+    local subhands_enabled = Madcap.Funcs.subhands_in_effect()
     if subhands_enabled then
-        table.insert(rates, { type = 'SpatiaPlanet', val = G.GAME.spatia_rate * 1.5 })
-        table.insert(rates, { type = 'PotentiaCrystal', val = G.GAME.potentia_rate * 2 })
+        table.insert(rates, { type = 'SpatiaPlanet', val = (G.GAME.spatia_rate * 1.5) + 1 })
+        table.insert(rates, { type = 'PotentiaCrystal', val = (G.GAME.potentia_rate or 0) * 2 + 1 })
     end
     
     for _, v in ipairs(SMODS.ConsumableType.ctype_buffer) do

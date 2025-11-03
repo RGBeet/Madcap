@@ -854,7 +854,7 @@ end
 function Madcap.Funcs.get_cash_out_definition(config,scale)
 	local all_nodes = {}
 
-	local payouts = {}
+	local payouts = { { n=G.UIT.T, config={text = localize('b_cash_out') .. ':', scale = 1.2 * scale, colour = G.C.WHITE, shadow = true, juice = true } } }
 	if config.dollars ~= 0 then
 		payouts[#payouts + 1] = { n=G.UIT.T, config={text = localize('$') .. format_ui_value(config.dollars), scale = 1.2 * scale, colour = G.C.WHITE, shadow = true, juice = true }}
 	end
@@ -871,6 +871,7 @@ function Madcap.Funcs.get_cash_out_definition(config,scale)
 end
 
 function Madcap.Funcs.subhands_in_effect()
-
-
+	return MadLib.list_matches_one(G.GAME.subhands, function(v)
+		return v.enabled
+	end)
 end
