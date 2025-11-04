@@ -24,20 +24,6 @@ return {
                     }
                 end
             end
-            -- pick new rank
-            if  (context.after and card.ability.immutable.active) or (context.end_of_round and context.cardarea == G.jokers) or context.forcetrigger then
-                local pick = MadLib.shuffle_sort_list(G.playing_cards, 1, function(v)  return true end)
-                card.ability.immutable.active = false
-                if pick then card.ability.extra.rank = pick[1].base.id end
-                return { -- new rank
-                    message = "!",
-                    card    = card,
-                    func    = function()
-                        play_sound('rgmc_pogladontasaurus', 1, 0.5)
-                        return true
-                    end
-                }
-            end
         end,
         demicoloncompat = false, -- TODO: add later
     }

@@ -1,5 +1,27 @@
+Madcap.Lists.LuxuryRarities = {
+    { value = 2, weight = 4 },
+    { value = 3, weight = 6 },
+    { value = 'rgmc_unusual', weight = 2 },
+    { value = 4, weight = 1 },
+}
+
+Madcap.Lists.LuxurySets = {
+    { value = 'Spectral', weight = 4 },
+    { value = 'CosmaTarot', weight = 6 },
+    { value = 'SpatiPlanet', weight = 2 },
+    { value = 'PotentiaCrystal', weight = 1 },
+}
+
+if AKRYS then
+    table.insert(Madcap.Lists.LuxurySets, { value = 'Umbral', weight = 4 })
+end
+
+if MoreFluff then
+    table.insert(Madcap.Lists.LuxurySets, { value = 'Rotarot', weight = 4 })
+end
+
 local function create_luxury_item(_area)
-    local nubby = pseudorandom('luxury_normal1', 1, 100)
+    local nubby         = pseudorandom('luxury_normal1', 1, 100)
 
     --[[
         Possible items:
@@ -9,15 +31,21 @@ local function create_luxury_item(_area)
         - Voucher (5%)
     ]]
             
-            if nubby <= 60 then
-                
-            elseif nubby <= 85 then
-
-            elseif nubby <= 90 then -- Voucher
+    if nubby <= 60 then -- Joker
+        local r = Madcap.Funcs.get_weighted_choice(Madcap.Lists.LuxuryRarities)
+        local e = pseudorandom('luxury_normal1', 1, 2) < 2
+        SMODS.add_card({ 
+            set         = 'Joker',
+            rarity      = r,
+            edition     = e and poll_edition('wheel_of_fortune', nil, true, true) or nil,
+            no_edition  = not e or nil
+        })
+    elseif nubby <= 85 then -- Consumable
+    elseif nubby <= 90 then -- Voucher
             
-            else -- Playing Card
+    else -- Playing Card
             
-            end
+    end
     
 end
 

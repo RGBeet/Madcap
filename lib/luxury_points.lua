@@ -351,6 +351,9 @@ function Madcap.Funcs.create_card_for_luxury_shoppe(area)
         end
         check_rate = check_rate + v.val
     end
+
+    -- fallback
+    return create_card('Joker', area, nil, nil, nil, nil, nil, 'sho')
 end
 
 -- Calculates the Luxury Shoppe reroll coste (in Luxury Points)

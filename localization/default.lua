@@ -1070,8 +1070,7 @@ return {
                 name = "Pogladontasaurus",
                 text = {
                     "Retriggers held {C:attention}#1#{}s",
-                    "{C:attention}#2#{} time(s)",
-                    "{C:inactive}(Rank changes each round){}"
+                    "{C:attention}#2#{} times",
                 },
             },
             j_rgmc_joker_in_binary = {
@@ -1597,9 +1596,9 @@ return {
             j_rgmc_gutterball = {
                 name = "Gutterball",
                 text = {
-                    "If played hand contains",
-                    "{C:attention}#1#{} or more unscoring cards",
-                    "gain {C:money}$#2#",
+                    "Scored {C:attention}#1#s{}, {C:attention}#2#s{}, and {C:attention}#3#s{}",
+                    "{C:attention}retrigger{} the next scoring card",
+                    "{C:attention}#4#{} time{C:inactive}(s)",
                     "{C:inactive,s:0.8}(Watch that Gutterball!)"
                 },
             },
@@ -1932,7 +1931,19 @@ return {
                         "At end of {C:attention}Boss Blind{},",
                         "{C:rgmc_evil}destroy{} Joker to the #2#",
                         "If {C:red}no{} Joker is destroyed,",
-                        "lose {C:dark_edition}-1{} Joker slot " 
+                        "lose {C:dark_edition}-1{} Joker Slot" 
+                    },
+                },
+            },
+            j_rgmc_superego = {
+                name = "The Superego",
+                text = {
+                    { 
+                        "{X:rgmc_echips,C:white}^#1#{} Chips" 
+                    },
+                    { 
+                        "Must play most {C:rgmc_bismuth}optimal{}",
+                        "available Poker Hand (currently {C:attention}#2#{})"
                     },
                 },
             },

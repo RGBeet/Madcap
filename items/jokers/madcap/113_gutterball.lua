@@ -8,32 +8,38 @@ return {
         key     = 'gutterball',
         atlas   = 'jokers',
         pos     = MLIB.coords(11,2),
-        rarity  = 1,
+        rarity  = 2,
         cost    = 6,
         config = {
-            extra = { dollars = 3 },
-            immutable = { unscored = 3 }
+            extra = { ranks = { '3', '6', '10' }, repetitions = 1 },
         },
         loc_vars = function(self, info_queue, card)
-            return MadLib.collect_vars(card.ability.immutable.unscored, card.ability.extra.dollars)
+            return MadLib.collect_vars(localize(card.ability.extra.ranks[1] or '3', 'ranks'),
+                localize(card.ability.extra.ranks[2] or '6', 'ranks'),
+                localize(card.ability.extra.ranks[3] or '10', 'ranks'),
+                card.ability.extra.repetitions)
         end,
         calculate = function(self, card, context)
+
             if 
-                (context.joker_main and (#(context.full_hand or {}) - #(context.scoring_hand or {})) >= card.ability.immutable.unscored)
-                or context.forcetrigger
+                context.other_card
+                and context.scoring_hand
             then
-                G.GAME.dollar_buffer = (G.GAME.dollar_buffer or 0) + card.ability.extra.dollars
-                return {
-                    dollars = card.ability.extra.dollars,
-                    func = function()
-                        MadLib.event({
-                            func = function()
-                                G.GAME.dollar_buffer = 0
-                                return true
-                            end
-                        })
+                local pos = 0
+                for i=1,#context.scoring_hand do
+                    if context.scoring_hand[i] == context.other_card then
+                        pos = i
+                        break
                     end
-                }
+                end
+                if pos > 1 then
+                    local target = context.scoring_hand[pos-1]
+                    if MadLib.list_matches_one(card.ability.extra.ranks, function(v) 
+                        return MadLib.is_rank(target, SMODS.Ranks[v].id)
+                    end) then
+                        return { repetitions = card.ability.extra.repetitions or 1 }
+                    end
+                end
             end
         end,
         demicoloncompat = true
