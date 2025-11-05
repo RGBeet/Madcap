@@ -1207,18 +1207,34 @@ function get_new_boss()
 	-- if not punishing, just carry on as usual!
 	return get_new_boss_ref()
 end
--- Used for Sangria Deck
-local deck_apply_to_run_ref = Back.apply_to_run
-function Back.apply_to_run(self)
-    deck_apply_to_run_ref(self)
 
-    if
-        self.effect.config.starting_suits
-        and not self.effect.config.starting_ranks 	-- No starting ranks, only affects suits
-    then
-        local size = #self.effect.config.starting_suits -- number of suits
-        local suits = self.effect.config.starting_suits -- the list of suits
-        local doubles = self.effect.config.starting_suits_doubles or false
+function Madcap.Funcs.add_to_deck_at_start(data)
+	local amt = data.times or 1
+	MadLib.event({
+		func = function()
+			for i=1,amt do
+				MadLib.loop_func(data.add_ranks, function(r)
+					MadLib.loop_func(data.add_suits, function(s)
+						local _card = SMODS.create_card({ 
+							set = "Base",
+							rank = r,
+							suit = s 
+						})
+						table.insert(G.playing_cards, _card)
+						G.deck:emplace(_card)
+					end)
+				end)
+			end
+			return true
+		end
+	})
+end
+
+function Madcap.Funcs.set_deck_at_start(data)
+	if data.starting_suits and not data.starting_ranks then -- Suits, but NOT ranks (e.g. Checkered, Sangria, Merlot)
+        local size 		= #data.starting_suits -- number of suits
+        local suits 	= data.starting_suits -- the list of suits
+        local doubles 	= data.starting_suits_doubles or false
 
         local ranks = 13                -- number of starting ranks available (usually 13)
         local deck_size = ranks * size  -- deck size
@@ -1229,7 +1245,6 @@ function Back.apply_to_run(self)
             deck_size = deck_size * 2 -- double that shit
         end
 
-        -- do the suit shit i guess
         MadLib.event({
             func = function()
                 -- modify existing cards
@@ -1247,7 +1262,6 @@ function Back.apply_to_run(self)
                         local m = math.ceil(#G.playing_cards/ranks)
                         G.playing_card = (G.playing_card and G.playing_card + 1) or 1
                         local _card = copy_card(G.playing_cards[i])
-                        --tell_stat('SUIT',suits[m])
                         G.playing_cards[i]:change_suit(suits[m])
                         _card:add_to_deck()
                     end
@@ -1255,19 +1269,12 @@ function Back.apply_to_run(self)
                 return true
             end
         })
-    elseif
-        self.effect.config.starting_suits		-- Specified starting suits and ranks
-        and self.effect.config.starting_ranks
-    then
-        local suit_size = #self.effect.config.starting_suits -- number of suits
-        local suit_list = self.effect.config.starting_suits -- the list of suits
-        local rank_size = #self.effect.config.starting_ranks -- number of ranks
-        local rank_list = self.effect.config.starting_ranks -- the list of ranks
+	elseif data.starting_suits and data.starting_ranks then -- Suits AND Ranks (e.g. Hexing)
+        local suit_size = #data.starting_suits -- number of suits
+        local suit_list = data.starting_suits -- the list of suits
+        local rank_size = #data.starting_ranks -- number of ranks
+        local rank_list = data.starting_ranks -- the list of ranks
         local deck_size = suit_size * rank_size
-        local rank_index 	= 1
-        local suit_index 	= 1
-        local total 		= 0
-
         local suit_index, rank_index, total = 1, 1, 0
         MadLib.event({
             func = function()
@@ -1310,7 +1317,42 @@ function Back.apply_to_run(self)
                 return true
             end
         })
-    end
+	end
+end
+
+local deck_apply_to_run_ref = Back.apply_to_run
+function Back.apply_to_run(self)
+    deck_apply_to_run_ref(self)
+
+	G.GAME.starting_params.subhand_req = 5
+
+	if self.effect.config.hand_play_limit then
+		MadLib.event({
+			func = function()
+				SMODS.change_play_limit(self.effect.config.hand_play_limit)
+				return true
+			end
+		})
+	end
+
+	if self.effect.config.hand_discard_limit then
+		MadLib.event({
+			func = function()
+				SMODS.change_discard_limit(self.effect.config.hand_discard_limit)
+				return true
+			end
+		})
+	end
+	
+	if self.effect.config.subhand_req then
+		G.GAME.starting_params.subhand_req = G.GAME.starting_params.subhand_req + self.effect.config.subhand_req
+		--tell('Subhand Req: ' .. number_format(G.GAME.starting_params.subhand_req))
+	end
+
+	Madcap.Funcs.set_deck_at_start({
+		starting_suits = self.effect.config.starting_suits,
+		starting_ranks = self.effect.config.starting_ranks
+	})
 end
 
 local level_up_hand_ref = level_up_hand

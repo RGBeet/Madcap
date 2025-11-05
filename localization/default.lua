@@ -1,3 +1,98 @@
+local deck_text = {
+    hexing = {
+        "Start run with base suits",
+        "plus {V:1}#1#{} and {V:2}#2#{}",
+        "Removes ranks {C:attention}2{} through {C:attention}5"
+    },
+    two_suit = {
+		"Start run with",
+        "{C:attention}#3# {V:1}#1#",
+		"and {C:attention}#3# {V:2}#2#",
+        "in deck"
+    },
+    two_suit_dd = {
+		"Converts all {C:rgmc_light}Light{} suits",
+        "into {V:1}#1#",
+		"and all {C:rgmc_dark}Dark{} suits",
+        "into {V:2}#2#"
+    },
+    micro = {
+		"{C:attention}#1#{} hand size",
+		"{C:blue}#2#{} play limit",
+		"{C:attention}X#3#{} blind size"
+    },
+    giga = {
+		"{C:attention}+#1#{} hand size",
+		"{C:blue}+#2#{} play limit",
+		"{C:attention}X#3#{} blind size"
+    },
+    cosmic = {
+		"Start with {C:cosmatarot,T:v_rgmc_cosma_merchant}#1#",
+        "and {C:cosmatarot,T:c_rgmc_demise}#2#",
+    },
+    spatial = {
+		"Start with {C:cosmatarot,T:v_rgmc_cosma_merchant}#1#",
+        "and {C:cosmatarot,T:c_rgmc_demise}#2#",
+    },
+    beetroot = {
+	    "{C:purple}Madcap{}-specific content appears",
+        "{C:attention}3X{} more often",
+        "{C:inactive,s:0.8}(Jokers, blinds, etc.)"
+    },
+    argentum = {
+		"Start with {C:rgmc_luxury}£#1#{}",
+        "Earn {C:rgmc_luxury}£#2#{} at",
+        "end of Boss Blind"
+    },
+    fuchsia = {
+	    "Start with {C:purple}+#1#{} temp hands",
+        "and discards each",
+        "Gain {C:purple}+#2#{} temp hand or discard",
+        "upon {C:attention}rerolling{} in shop",
+        "or {C:attention}skipping{} blind",
+        "{C:blue}#3#{} hands, {C:red}#4#{} discards"
+    },
+    mayhem = {
+		"Start with {C:attention}+#1# {C:rgmc_mayhem}Mayhem{}",
+        "{C:rgmc_mayhem}Mayhem{} increases and decreases",
+        "{C:attention}X#2#{} as fast{}",
+        "{C:rgmc_voids}Void{} cards appear",
+        "{C:attention}#3#X{} as often"
+    },
+    mayhem_vl = {
+		"{C:rgmc_voids}Voids{} and {C:rgmc_lanterns}Lanterns{}",
+        "appear {C:attention}"
+    },
+    cross = {
+	    "Scored cards are {C:attention}",
+        "\"permanently\" debuffed{}",
+		"Held cards at end of round",
+        "are {C:green}reset{}",
+		"{C:attention}+#1#{} hand size"
+    },
+    capital = {
+        "Start with {C:money}$#1#{}",
+		"{C:attention}Bosses{} reward {X:money,C:white}X#2#{} Money",
+		"{C:attention}Blinds{} and {C:attention}Shops{}",
+		"cost {C:money}$#3#{}/{C:money}$#4#{} to enter",
+		"If you reach {C:red}$#5#{}, you {C:red}lose{}!"
+    },
+    communist = {
+        "{C:money}Money{}? {C:attention}No{}, comrade.",
+        "All items are {C:money}free{}, but greed",
+        "is swiftly {C:attention}punished{}",
+    }
+}
+
+-- add actual function later
+local function concat_text(ct,list)
+    local ret = MadLib.deep_copy(ct)
+    MadLib.loop_func(text, function(v)
+        ret[#ret+1] = v
+    end)
+    return ret
+end
+
 return {
 	descriptions = {
 		Mod = {
@@ -11,98 +106,47 @@ return {
         Back = {
 			b_rgmc_hexing = {
 				name = "Hexing Deck",
-				text = {
-					"Start with {C:attention}Special{} suits",
-					"Removes ranks {C:attention}2{} through {C:attention}5{}"
-				},
+				text = deck_text.hexing
 			},
 			b_rgmc_sangria = {
 				name = "Sangria Deck",
-				text = {
-					"Start run with",
-                    "{C:attention}26 {C:rgmc_goblets}Goblets",
-					"and {C:attention} 26 {rgmc_towers}Towers{}",
-                    "in deck"
-				},
+				text = deck_text.two_suit
 			},
 			b_rgmc_merlot = {
 				name = "Merlot Deck",
-				text = {
-					"Start run with",
-                    "{C:attention}26 {C:rgmc_blooms}Blooms",
-					"and {C:attention} 26 {rgmc_daggers}Daggers{}",
-                    "in deck",
-				},
+				text = deck_text.two_suit
 			},
 			b_rgmc_micro = {
 				name = "Micro Deck",
-				text = {
-					"{C:attention}#1#{} hand size",
-					"{C:blue}#2#{} play limit",
-					"{C:attention}X#3#{} blind size"
-				},
+				text = deck_text.micro
 			},
 			b_rgmc_giga = {
 				name = "Giga Deck",
-				text = {
-					"{C:attention}+1#{} hand size",
-					"{C:attention}+1#{} play limit",
-					"{C:attention}X#3#{} blind size",
-                    "Must play at least {C:attention}2{} cards"
-				},
+				text = deck_text.giga
 			},
 			b_rgmc_cosmic = {
 				name = "Cosmic Deck",
-				text = {
-					"Start with {C:cosmatarot,T:v_rgmc_cosma_merchant}#1#",
-                    "and {C:cosmatarot,T:c_rgmc_demise}#2#",
-				},
+				text = deck_text.cosmic
 			},
 			b_rgmc_spatial = {
 				name = "Spatial Deck",
-				text = {
-					"Start with {C:spatiaplanet,T:v_rgmc_bright_bulb}#1#",
-                    "and {C:spatiaplanet,T:v_rgmc_blacklight}#2#",
-                    "All {C:attention}subhands{} start",
-                    "at Level {C:spatiaplanet}2"
-				},
+				text = deck_text.spatial
 			},
 			b_rgmc_beetroot = {
 				name = "Beetroot Deck",
-				text = {
-					"{C:purple}Madcap{}-specific content appears",
-                    "{C:attention}3X{} more often",
-                    "{C:inactive,s:0.8}(Jokers, blinds, etc.)"
-				},
+				text = deck_text.beetroot
 			},
 			b_rgmc_argentum = {
 				name = "Argentum Deck",
-				text = {
-					"Start with {C:rgmc_luxury}£#1#{}",
-                    "Earn {C:rgmc_luxury}£#2#{} at",
-                    "end of Boss Blind"
-				},
+				text = deck_text.argentum
 			},
 			b_rgmc_fuchsia = {
 				name = "Fuchsia Deck",
-				text = {
-					"Start with {C:purple}+#1#{} temp hands",
-                    "and discards each",
-                    "Gain {C:purple}+#2#{} temp hand or discard",
-                    "upon {C:attention}rerolling{} in shop",
-                    "or {C:attention}skipping{} blind",
-                    "{C:blue}#3#{} hands, {C:red}#4#{} discards"
-				},
+				text = deck_text.fuchsia
 			},
 			b_rgmc_mayhem = {
 				name = "Deck of Mayhem",
-				text = {
-					"Start with {C:attention}#1# {C:rgmc_mayhem}Mayhem{}",
-                    "{C:rgmc_mayhem}Mayhem{} increases and decreases",
-                    "{C:attention}X#2#{} as fast{}",
-                    "{C:rgmc_voids}Void{} cards appear",
-                    "#3#X as often"
-				},
+				text = deck_text.mayhem
 			},
 			b_rgmc_lunacy = {
 				name = "Deck of Lunacy",
@@ -116,31 +160,15 @@ return {
 			},
 			b_rgmc_cross = {
 				name = "Cross Deck",
-				text = {
-					"Scored cards are {C:attention}",
-                    "\"permanently\" debuffed{}",
-					"Held cards at end of round",
-                    "are {C:green}reset{}",
-					"{C:attention}+#1#{} hand size"
-				},
+				text = deck_text.cross
 			},
 			b_rgmc_capital = {
 				name = "Capital Deck",
-				text = {
-                    "Start with {C:money}$#1#{}",
-					"{C:attention}Bosses{} reward {X:money,C:white}X#2#{} Money",
-					"{C:attention}Blinds{} and {C:attention}Shops{}",
-					"cost {C:money}$#3#{}/{C:money}$#4#{} to enter",
-					"If you reach {C:red}$#5#{}, you {C:red}lose{}!"
-				},
+				text = deck_text.capital
 			},
 			b_rgmc_communist = {
 				name = "Communist Deck",
-				text = {
-                    "{C:money}Money{}? {C:attention}No{}, comrade.",
-                    "All items are {C:money}free{}, but greed",
-                    "is swiftly {C:attention}punished{}",
-				},
+				text = deck_text.communist
 			},
         },
         Edition = {
@@ -180,20 +208,19 @@ return {
 			e_rgmc_galactic = {
 				name = "Galactic",
 				text = {
-					"Gives {C:attention}0.5X{} of {C:chips}Chips{} & {C:mult}Mult",
+					"Gives base {C:chips}Chips{} & {C:mult}Mult",
                     "of last {C:planet}last played poker hand",
                     "{C:inactive}(Currently {C:planet}#1#{C:inactive} -",
-                    "{C:inactive}{C:chips}+#1#{C:inactive} Chips, {C:mult}+#2#{C:inactive} Mult)",
+                    "{C:inactive}{C:chips}+#2#{C:inactive} Chips, {C:mult}+#3#{C:inactive} Mult)",
                     ""
 				},
 			},
 			e_rgmc_abyssal = {
 				name = "Abyssal",
 				text = {
-                    "{X:mult,C:white}X#1#{} Mult",
-                    "{C:inactive}(Gives {X:mult,C:white}X#2#{C:inactive} Mult",
-                    "{C:inactive}per {C:rgmc_mayhem}Mayhem{C:inactive})",
-				},
+                    "{C:rgmc_mayhem}+#1#{} Mayhem",
+                    "at {C:attention}start of hand"
+                }
 			},
 			e_rgmc_luxury = {
 				name = "Luxury",
@@ -3661,69 +3688,81 @@ return {
 		Sleeve = {
 			sleeve_rgmc_hexing_sleeve = {
 				name = "Hexing Sleeve",
-				text = {
-					"W.I.P.",
-				},
+				text = deck_text.hexing
 			},
-			sleeve_rgmc_hexing_sleeve_alt = {
+			sleeve_rgmc_hexing_sleeve_dd = { -- (Hexing + Hexing)
 				name = "Hexing Sleeve +",
 				text = {
-					"W.I.P.",
+					"Readds ranks {C:attention}2{} through {C:attention}5{}",
+                    "Converts {C:attention}excluded{} suits",
+                    "into {C:attention}included{} suits",
+                    "{C:inactive,s:0.6}({C:rgmc_voids,s:0.6}Voids{C:inactive,s:0.6} and {C:rgmc_lanterns,s:0.6}Lanterns{C:inactive,s:0.6} not included)"
+				},
+			},
+			sleeve_rgmc_hexing_sleeve_ad = { -- (Hexing + Abandoned)
+				name = "Hexing Sleeve +",
+				text = {
+                    "Start run with base suits",
+                    "plus {V:1}#1#{} and {V:2}#2#{}",
+                    "Removes {C:attention}2s{}"
 				},
 			},
 			sleeve_rgmc_sangria_sleeve = {
 				name = "Sangria Sleeve",
-				text = {
-					"W.I.P.",
-				},
+				text = deck_text.two_suit
 			},
-			sleeve_rgmc_sangria_sleeve_alt = {
+			sleeve_rgmc_sangria_sleeve_dd = { -- (Sangria + Sangria)
+				name = "Sangria Sleeve +",
+				text = deck_text.two_suit_dd
+			},
+			sleeve_rgmc_sangria_sleeve_pl = { -- (Merlot/Hexing + Sangria)
 				name = "Sangria Sleeve +",
 				text = {
-					"W.I.P.",
-				},
+                    "Add {C:attention}#3# {V:1}#1#",
+                    "and {C:attention}#3# {V:2}#2#",
+                    "to deck",
+                    "{V:1}#1#{} and {V:2}#2#{} appear",
+                    "approximately {C:attention}2X{} more often"
+                }
 			},
 			sleeve_rgmc_micro_sleeve = {
 				name = "Micro Sleeve",
-				text = {
-					"W.I.P.",
-				},
+				text = deck_text.micro
 			},
-			sleeve_rgmc_micro_sleeve_alt = {
+			sleeve_rgmc_micro_sleeve_dd = {
 				name = "Micro Sleeve +",
-				text = {
-					"W.I.P.",
-				},
+				text = deck_text.micro
 			},
 			sleeve_rgmc_mayhem_sleeve = {
 				name = "Sleeve of Mayhem",
-				text = {
-					"W.I.P.",
-				},
+				text = deck_text.mayhem
 			},
 			sleeve_rgmc_mayhem_sleeve_alt = {
 				name = "Sleeve of Mayhem +",
-				text = {
-					"W.I.P.",
-				},
+				text = deck_text.mayhem_vl
 			},
 			sleeve_rgmc_capital_sleeve = {
 				name = "Capital Sleeve",
-				text = {
-					"W.I.P.",
-				},
+				text = deck_text.capital
 			},
 			sleeve_rgmc_capital_sleeve_alt = {
 				name = "Capital Sleeve +",
 				text = {
-					"W.I.P.",
+					"Takes {C:money}#1#{} from",
+                    "all earnings",
+                    "{C:green}#2# in #3#{} chance to",
+                    "{C:attention}receive{} 1.5X of all",
+                    "{C:attention}lost earnings{C:inactive}(currently {C:money}$#4#{C:inactive})"
 				},
 			},
 			sleeve_rgmc_cross_sleeve = {
 				name = "Cross Sleeve",
 				text = {
-					"W.I.P.",
-				},
+                    "{C:green}#1# in #2#{} chance scored cards",
+                    "are {C:red}crossed{}",
+                    "Resets held {C:red}crossed{} cards",
+                    "at end of {C:attention}Blind"
+                }
 			},
 			sleeve_rgmc_cross_sleeve_alt = {
 				name = "Cross Sleeve +",
@@ -3733,27 +3772,19 @@ return {
 			},
 			sleeve_rgmc_merlot_sleeve = {
 				name = "Merlot Sleeve",
-				text = {
-					"W.I.P.",
-				},
+				text = deck_text.two_suit
 			},
 			sleeve_rgmc_merlot_sleeve_alt = {
 				name = "Merlot Sleeve +",
-				text = {
-					"W.I.P.",
-				},
+				text = deck_text.two_suit_dd
 			},
 			sleeve_rgmc_giga_sleeve = {
 				name = "Giga Sleeve",
-				text = {
-					"W.I.P.",
-				},
+				text = deck_text.giga
 			},
 			sleeve_rgmc_giga_sleeve_alt = {
 				name = "Giga Sleeve +",
-				text = {
-					"W.I.P.",
-				},
+				text = deck_text.giga
 			},
 			sleeve_rgmc_mad_sleeve = {
 				name = "Mad Sleeve",

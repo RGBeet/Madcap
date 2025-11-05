@@ -1,9 +1,11 @@
-function Madcap.Funcs.get_galactic_chips()
-    local poker_hand 	= G.GAME.last_played_hand or 'High Card'
-    local hand_chips 	= G.GAME and G.GAME.hands[poker_hand].chips or 5
-    local hand_level 	= G.GAME and G.GAME.hands[poker_hand].level or 1
-    local total 		= math.floor(hand_chips / 2) * hand_level
-    return total, poker_hand, hand_chips, hand_level
+function Madcap.Funcs.get_hand_data(hand)
+    hand = hand or G.GAME.last_played_hand or 'High Card'
+    return {
+        hand    = hand,
+        chips   = G.GAME and to_big(G.GAME.hands[hand].chips or 5),
+        mult    = G.GAME and to_big(G.GAME.hands[hand].mult or 1),
+        level 	= G.GAME and to_big(G.GAME.hands[hand].level or 1)
+    }
 end
 
 return {
@@ -26,21 +28,19 @@ return {
             return G.GAME.edition_rate * self.weight
         end,
         loc_vars = function(self, info_queue)
-            local total
-            local poker_hand
-            local hand_chips
-            local hand_level
-            total, poker_hand, hand_chips, hand_level = Madcap.Funcs.get_galactic_chips()
-            return MadLib.collect_vars(poker_hand, number_format(hand_chips), number_format(hand_level), number_format(total))
+            local data = Madcap.Funcs.get_hand_data()
+            return MadLib.collect_vars(data.hand, data.level, data.chips, data.mult)
         end,
         calculate = function(self, card, context)
             if 
                 context.post_joker or
                 (context.main_scoring and context.cardarea == G.play) 
             then
-                -- get the data for the last played poker hand
-                local total = Madcap.Funcs.get_galactic_chips()
-                return { chips = total }
+                local data = Madcap.Funcs.get_hand_data()
+                return { 
+                    chips   = data.chips,
+                    mult    = data.mult,
+                }
             end
         end,
     }

@@ -368,3 +368,10 @@ if AKYRS_CROSSMOD then
 		end)
 	end
 end
+
+if CardSleeves then
+
+
+
+
+end

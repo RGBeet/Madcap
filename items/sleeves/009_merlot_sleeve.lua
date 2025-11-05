@@ -7,7 +7,7 @@ return {
     data = {
         object_type = "Sleeve",
         atlas   = 'sleeves',
-        pos     = MLIB.coord(1,3),
+        pos     = MLIB.coords(1,3),
 		key = "merlot_sleeve",
 		name = "Merlot Sleeve",
 		config = { },

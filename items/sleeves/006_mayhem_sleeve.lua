@@ -7,7 +7,7 @@ return {
     data = {
         object_type = "Sleeve",
         atlas   = 'sleeves',
-        pos     = MLIB.coord(1,0),
+        pos     = MLIB.coords(1,0),
 		key = "mayhem_sleeve",
 		name = "Mayhem Sleeve",
 		config = { },
@@ -21,7 +21,5 @@ return {
 		apply = function(self) -- Start of the run
 			G.GAME.modifiers.rgmc_deck = true
 		end,
-		calculate = function(self, sleeve, context)
-		end
     }
 }

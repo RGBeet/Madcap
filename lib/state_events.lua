@@ -3,7 +3,7 @@ function Madcap.Funcs.run_start()
     tell('Run Start')
 
     G.GAME.subhands = {}
-    G.GAME.subhand_minimum = (G.GAME.subhand_minimum or 5)
+    G.GAME.subhand_minimum = G.GAME.starting_params.play_limit
 	G.GAME.dead_jokers = {}
     G.GAME.temp = {}
 

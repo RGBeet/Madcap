@@ -35,7 +35,6 @@ end
 Madcap = {
 	Funcs 		= { },
 	JokerLists 	= { },
-	DeckFuncs 	= { }, -- deck functions
 	Orders = {
 		Blind		= 0,
 		Booster		= 0,
@@ -664,4 +663,60 @@ Madcap.Lists.MultModKeys = togabalatro.multmodkeys or {
 	['ee_mult'] = 'mult', ['eemult'] = 'mult', ['EEmult_mod'] = 'mult',
 	['eee_mult'] = 'mult', ['eeemult'] = 'mult', ['EEEmult_mod'] = 'mult',
 	['hypermult'] = 'mult', ['hyper_mult'] = 'mult', ['hypermult_mod'] = 'mult',
+}
+
+Madcap.MicroDeckList = { -- 4 cards or less!
+    ['High Card']           = 1,
+    ['Pair']                = 2,
+    ['Three of a Kind']     = 3,
+    ['Two Pair']            = 4,
+    ['Four of a Kind']      = 4,
+}
+
+Madcap.DeckConfigs = {
+	micro = {
+		base 		= { hand_size = -2, hand_play_limit = -1, ante_scaling = 0.5, subhand_req = -1 },
+		sleeve_plus	= { hand_size = -1, hand_play_limit = -1, ante_scaling = 0.8, subhand_req = -1 },
+		sleeve		= { hand_size = -1, hand_play_limit = -1, ante_scaling = 0.6, subhand_req = -1 }
+	},
+	hexing = { -- deal with this shit in sleeves
+		base = {
+			starting_suits = { 'Hearts', 'Spades', 'Diamonds', 'Clubs', 'rgmc_goblets', 'rgmc_towers' },
+        	starting_ranks = { '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace' }	
+		},
+	},
+	sangria = {
+		base = {
+            starting_suits = {'rgmc_goblets','rgmc_towers'}, -- new suits!
+            starting_suits_doubles = true -- 2 of each suit/rank combo
+		},
+	},
+	merlot = {
+		base = {
+            starting_suits = {'rgmc_blooms','rgmc_daggers'}, -- new suits!
+            starting_suits_doubles = true -- 2 of each suit/rank combo
+		},
+	}
+}
+
+Madcap.DeckFuncs = {
+	micro = {
+		apply = function(self, back)
+            Madcap.Funcs.init_deck('hexing', { finishers = { 'bl_rgmc_final_chimes' }})
+			if G.GAME.hands['Straight Flush'].visible then
+				for k, v in pairs(Madcap.MicroDeckList) do
+					if G.GAME.hands[k] then G.GAME.hands[k].visible = (v <= G.GAME.starting_params.play_limit) end
+				end
+			end
+        end,
+	},
+	sangria = {
+		apply = function(self)
+            Madcap.Funcs.init_deck('sangria', {
+                finishers       = { 'bl_rgmc_final_moon' } -- force Macchiato Moon
+            })
+            G.GAME.Exotic = true -- Exotic Suits show up!
+            Madcap.Funcs.set_subhand('light',true)
+        end
+	}
 }
