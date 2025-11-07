@@ -1349,10 +1349,12 @@ function Back.apply_to_run(self)
 		--tell('Subhand Req: ' .. number_format(G.GAME.starting_params.subhand_req))
 	end
 
+	--[[
 	Madcap.Funcs.set_deck_at_start({
 		starting_suits = self.effect.config.starting_suits,
 		starting_ranks = self.effect.config.starting_ranks
 	})
+	]]
 end
 
 local level_up_hand_ref = level_up_hand

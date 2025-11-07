@@ -3778,6 +3778,16 @@ return {
 				name = "Merlot Sleeve +",
 				text = deck_text.two_suit_dd
 			},
+			sleeve_rgmc_merlot_sleeve_pl = {
+				name = "Merlot Sleeve +",
+				text = {
+                    "Add {C:attention}#3# {V:1}#1#",
+                    "and {C:attention}#3# {V:2}#2#",
+                    "to deck",
+                    "{V:1}#1#{} and {V:2}#2#{} appear",
+                    "approximately {C:attention}2X{} more often"
+                }
+			},
 			sleeve_rgmc_giga_sleeve = {
 				name = "Giga Sleeve",
 				text = deck_text.giga
