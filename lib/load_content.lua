@@ -259,10 +259,10 @@ local function load_folder(folder)
 			if MadcapConfig[curr_obj.name] == nil then
 				MadcapConfig[curr_obj.name] = true
 				Madcap.enabled[curr_obj.name] = true
-				tell("Loading current object "..namey)
+				--tell("Loading current object "..namey)
 			end
 			if MadcapConfig[curr_obj.name] then
-				tell("Succesfully loaded " .. namey)
+				--tell("Succesfully loaded " .. namey)
 				if curr_obj.init then
 					curr_obj:init()
 				end
@@ -313,9 +313,9 @@ Madcap.ItemData = {
 
 local function load_items(path,func)
 	local files = NFS.getDirectoryItems(mod_path..path)
-	tell('File path is '.. path)
+	--tell('File path is '.. path)
 	MadLib.loop_func(files, function(file)
-		tell('File is '..file)
+		--tell('File is '..file)
 		local f, err = SMODS.load_file(path..file)
 		if err then
 			tell_error(err)
@@ -344,7 +344,7 @@ local function load_items(path,func)
 		if data.object_type then
 			local dot = data.object_type
 			if func then func(data) end
-			tell('Attempting to load item '..(item.data and item.data.key or 'UNKNOWN')..'.')
+			--tell('Attempting to load item '..(item.data and item.data.key or 'UNKNOWN')..'.')
 			if SMODS[dot] then 
 				SMODS[dot](data)
 			elseif Madcap.ItemData[dot] then
@@ -356,13 +356,13 @@ end
 
 local function loop_directories(tbl, path)
     path = path or {}
-    tell('Loading Directories')
+    --tell('Loading Directories')
 	print(path)
 	MadLib.loop_table(tbl, function(key,value)
         if type(value) ~= "table" then return false end
 		local pass = value.pass and value.pass() or nil
 		if (pass ~= nil and pass ~= false) then
-			tell("Loading folder at: " .. table.concat(path, ".") .. (next(path) and "." or "") .. key)
+			--tell("Loading folder at: " .. table.concat(path, ".") .. (next(path) and "." or "") .. key)
 			local final_path = 'items/'
 			MadLib.loop_func(path, function(v,i)
 				final_path = final_path .. v .. '/'

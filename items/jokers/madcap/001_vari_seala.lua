@@ -11,7 +11,7 @@ return {
         },
         loc_vars = function(self, info_queue, card)
             local _numer, _denom = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'vari_seala')
-            return MadLib.collect_vars(math.max(0,number_format(_denom - _numer)), number_format(_denom))
+            return MadLib.collect_vars(math.max(0,number_format(_numer)), number_format(_denom))
         end,
         calculate = function(self, card, context)
             if

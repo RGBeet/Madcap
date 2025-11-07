@@ -343,9 +343,9 @@ end
 
 function Madcap.Funcs.calculate_chips_mult(hand, subhands, cards)
 
-	local level		= hand.level or 0
-	local chips 	= hand.chips or 0
-	local mult 		= hand.mult or 0
+	local level		= to_big(hand.level or 0)
+	local chips 	= to_big(hand.chips or 0)
+	local mult 		= to_big(hand.mult or 0)
 
 	chips 	= MadLib.calculate_chips(chips)
 	mult 	= MadLib.calculate_mult(mult)
@@ -383,15 +383,16 @@ function Madcap.Funcs.calculate_chips_mult(hand, subhands, cards)
 	end]]
 
 	if diff ~= 0 then
+		local compare = MadLib.compare_numbers(diff,0)
 		local current_level = nil
-		if diff > 0 then
+		if compare == 1 then
 			current_level = level
 			while current_level > 1 do
 				current_level = current_level - 1
 				chips 	= chips + hand.l_chips
 				mult 	= mult + hand.l_mult
 			end
-		elseif diff < 0 then
+		elseif compare == -1 then
 			current_level = hand.level
 			while current_level > 1 do
 				current_level = current_level - 1
