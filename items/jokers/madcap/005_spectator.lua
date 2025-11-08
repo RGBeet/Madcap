@@ -35,7 +35,7 @@ return {
 
                 MadLib.loop_func(context.scoring_hand, function(v) v.not_spectator = nil end)
 
-                card.ability.extra.mult = cards * card.ability.extra.mult_mod or 0
+                card.ability.extra.mult = MadLib.multiply(cards, card.ability.extra.mult_mod or 0)
             end
 
             if

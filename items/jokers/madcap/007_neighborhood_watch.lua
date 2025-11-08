@@ -20,7 +20,7 @@ return {
             return vars
         end,
         calc_dollar_bonus = function(self, card)
-            if to_big(card.ability.extra.money) > to_big(0) then
+            if MadLib.compare_numbers(card.ability.extra.money, 0) then
                 return lenient_bignum(card.ability.extra.money)
             end
         end,
@@ -40,8 +40,8 @@ return {
                 if context.other_card.debuff then -- don't count debuffed cards haha
                     return MadLib.get_debuff_data(card)
                 else
-                    card.ability.extra.money = lenient_bignum(to_big(card.ability.extra.money) + card.ability.extra.money_mod)
-                    card_eval_status_text(card, "extra", nil, nil, nil, { message = localize("k_upgrade_ex") })
+                    card.ability.extra.money = MadLib.add(card.ability.extra.money, card.ability.extra.money_mod)
+                    card_eval_status_text(card, "extra", nil, nil, nil, { message = "Edwin!" })
                     return nil, true
                 end
             end

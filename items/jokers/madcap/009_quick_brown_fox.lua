@@ -16,7 +16,7 @@ return {
                 (context.forcetrigger or (context.cardarea == G.jokers and context.joker_main))
                 and G.GAME.ante.unique_ranks > 0
             then
-                return { chips = (G.GAME and G.GAME.ante.unique_ranks or 0) * card.ability.extra.chips } 
+                return { chips = Madlib.multiply((G.GAME and G.GAME.ante.unique_ranks or 0), card.ability.extra.chips) } 
             end
         end,
         demicoloncompat = true,

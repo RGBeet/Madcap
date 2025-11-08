@@ -18,7 +18,7 @@ return {
                     return MadLib.is_rank(context.other_card, SMODS.Ranks[c].id) 
                 end)
             then
-                return { mult = card.ability.extra.mult }
+                return { mult = lenient_bignum(card.ability.extra.mult) }
             end
         end,
         demicoloncompat = true,
