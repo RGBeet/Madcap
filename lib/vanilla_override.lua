@@ -50,7 +50,7 @@ end
 
 -- Includes all ranks considered Odd by MadLib.
 function MadLib.has_odd_rank(card)
-    print(MadLib.RankTypes.Odd)
+    --print(MadLib.RankTypes.Odd)
     return not SMODS.has_no_rank(card)
         and MadLib.list_matches_one(MadLib.RankTypes.Odd, function(v) 
             return MadLib.is_rank(card,MadLib.rank_to_id(v))
@@ -59,7 +59,7 @@ end
 
 -- Ditto, but with Even ranks.
 function MadLib.has_even_rank(card)
-    print(MadLib.RankTypes.Even)
+    --print(MadLib.RankTypes.Even)
     return not SMODS.has_no_rank(card)
         and MadLib.list_matches_one(MadLib.RankTypes.Even, function(v) 
             return MadLib.is_rank(card,SMODS.Ranks[v].id)
@@ -68,7 +68,7 @@ end
 
 -- Ditto, but with Fibonacci ranks.
 function MadLib.has_fib_rank(card)
-    print(MadLib.RankTypes.Fibonacci)
+    --print(MadLib.RankTypes.Fibonacci)
     return not SMODS.has_no_rank(card)
         and MadLib.list_matches_one(MadLib.RankTypes.Fibonacci, function(v) 
             return MadLib.is_rank(card,SMODS.Ranks[v].id)
@@ -77,7 +77,7 @@ end
 
 -- Ditto, but with Base ranks.
 function MadLib.is_base_rank(card)
-    print(MadLib.RankTypes.Base)
+    --print(MadLib.RankTypes.Base)
     return not SMODS.has_no_rank(card)
         and MadLib.list_matches_one(MadLib.RankTypes.Base, function(v)
             return card.base.value == v

@@ -34,7 +34,7 @@ return {
             -- End of round
             if Madcap.Funcs.banana_context(context) then
                 local numerator, denominator = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'bluenana', true)
-                numerator = (1 + (card.ability.immutable.numer_factor or 0))
+                numerator = MadLib.add(numerator, card.ability.numer_factor or 0)
                 local result = pseudorandom('bluenana') < numerator / denominator
                 SMODS.post_prob = SMODS.post_prob or {}
                 SMODS.post_prob[#SMODS.post_prob+1] = {

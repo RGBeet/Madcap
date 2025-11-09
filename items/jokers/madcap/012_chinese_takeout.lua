@@ -8,7 +8,8 @@ return {
         cost    = 5,
         config =  {
             extra = {
-                rounds_remaining = 8,
+                rounds      = 8,
+                max_rounds  = 8,
                 effects = {
                     20,     -- +chips
                     4,      -- +mult
@@ -34,8 +35,9 @@ return {
                 key = str,
                 vars = { card.ability.extra.effects[card.ability.immutable.mode] }
             }
-            return MadLib.collect_vars(number_format(card.ability.extra.rounds_remaining),
-                number_format(card.ability.extra.effects[card.ability.immutable.mode]))
+            return MadLib.collect_vars_colours(
+                number_format(card.ability.extra.rounds),
+                { MadLib.get_warning_colour(card.ability.extra.rounds / card.ability.extra.max_rounds)})
         end,
         calculate = function(self, card, context)
 
