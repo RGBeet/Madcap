@@ -768,10 +768,10 @@ if JokerDisplay then
     jod['j_rgmc_conspiracy_wizard'] = {
         text = {
             { text = "+" },
-            { ref_table = "card.ability.extra", ref_value = "chips", retrigger_type = "mult" }
+            { ref_table = "card.ability.extra", ref_value = "chips", retrigger_type = "mult" },
             { text = " / " },
             { text = "+" },
-            { ref_table = "card.ability.extra", ref_value = "mult", retrigger_type = "mult" }
+            { ref_table = "card.ability.extra", ref_value = "mult", retrigger_type = "mult" },
         },
         reminder_text = {
             { text = "(" },
