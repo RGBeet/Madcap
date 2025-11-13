@@ -31,8 +31,8 @@ local deck_text = {
         "and {C:cosmatarot,T:c_rgmc_demise}#2#",
     },
     spatial = {
-		"Start with {C:cosmatarot,T:v_rgmc_cosma_merchant}#1#",
-        "and {C:cosmatarot,T:c_rgmc_demise}#2#",
+		"Start with {C:cosmatarot,T:v_rgmc_bright_bulb}#1#",
+        "and {C:cosmatarot,T:v_rgmc_blacklight}#2#",
     },
     beetroot = {
 	    "{C:purple}Madcap{}-specific content appears",
@@ -4908,21 +4908,21 @@ return {
             tag_rgmc_galactic = {
                 name = "Galactic Tag",
 				text = {
-					"Next base edition shop",
+					"Next base edition shop Joker",
 					"becomes {C:dark_edition}Galactic{}",
 				},
             },
             tag_rgmc_abyssal = {
                 name = "Abyssal Tag",
 				text = {
-					"Next base edition shop",
+					"Next base edition shop Joker",
 					"becomes {C:dark_edition}Abyssal{}",
 				},
             },
             tag_rgmc_luxury = {
                 name = "Luxury Tag",
 				text = {
-					"Next base edition shop",
+					"Next base edition shop Joker",
 					"becomes {C:dark_edition}Luxury{}",
 				},
             },

@@ -605,6 +605,8 @@ Madcap.CustomCashouts = {
 }
 
 -- Taken from TOGA
+local togabalatro = togabalatro or {}
+
 Madcap.Lists.ChipMultSwap = togabalatro.chipmultopswap or {
 	['chips'] 		= 'mult',
 	['h_chips'] 	= 'h_mult',
