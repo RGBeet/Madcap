@@ -31,8 +31,8 @@ local deck_text = {
         "and {C:cosmatarot,T:c_rgmc_demise}#2#",
     },
     spatial = {
-		"Start with {C:cosmatarot,T:v_rgmc_cosma_merchant}#1#",
-        "and {C:cosmatarot,T:c_rgmc_demise}#2#",
+		"Start with {C:cosmatarot,T:v_rgmc_bright_bulb}#1#",
+        "and {C:cosmatarot,T:v_rgmc_blacklight}#2#",
     },
     beetroot = {
 	    "{C:purple}Madcap{}-specific content appears",
