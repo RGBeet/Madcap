@@ -4908,21 +4908,21 @@ return {
             tag_rgmc_galactic = {
                 name = "Galactic Tag",
 				text = {
-					"Next base edition shop",
+					"Next base edition shop Joker",
 					"becomes {C:dark_edition}Galactic{}",
 				},
             },
             tag_rgmc_abyssal = {
                 name = "Abyssal Tag",
 				text = {
-					"Next base edition shop",
+					"Next base edition shop Joker",
 					"becomes {C:dark_edition}Abyssal{}",
 				},
             },
             tag_rgmc_luxury = {
                 name = "Luxury Tag",
 				text = {
-					"Next base edition shop",
+					"Next base edition shop Joker",
 					"becomes {C:dark_edition}Luxury{}",
 				},
             },
