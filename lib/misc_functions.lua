@@ -18,7 +18,7 @@ function Madcap.Funcs.alter_score_order(card,scoring_hand,context,in_scoring)
     then -- 1 or more continuums
 
         local repeats = #SMODS.find_card('j_rgmc_continuum')
-        local index, selection, cutoff = 1, nil, nil
+        local index, selection = 1, nil
 
         -- Score cards again until the original card is reached
 
@@ -26,7 +26,6 @@ function Madcap.Funcs.alter_score_order(card,scoring_hand,context,in_scoring)
 
         for i=1, repeats do
             index = 1 -- go to start
-            cutoff = #scoring_hand
             while
                 index <= #scoring_hand   -- haven't gone through the whole thing
             do

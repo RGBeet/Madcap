@@ -37,7 +37,7 @@ return {
                 and not context.blueprint
                 and not context.forcetrigger
             then
-                if MadLib.is_card(context.other_card, SMODS.Ranks[G.GAME.current_round.rgmc_wizard_card.rank].id) then -- u got the rank (prioritizes over suit)
+                if MadLib.is_rank(context.other_card, SMODS.Ranks[G.GAME.current_round.rgmc_wizard_card.rank].id) then -- u got the rank (prioritizes over suit)
                     G.GAME.current_round.rgmc_wizard_card.rank_discovered = true
                     return { chips = card.ability.extra.chips }
                 end

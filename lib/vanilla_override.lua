@@ -192,6 +192,25 @@ SMODS.Joker:take_ownership('even_steven', {
     end
 }, true)
 
+
+--[[
+
+
+]]
+
+SMODS.Joker:take_ownership('lusty_joker', {
+    key = "lusty_joker",
+    config = { extra = { s_mult = 3, suit = 'Hearts' }, },
+    calculate = function(self, card, context)
+        if context.individual and context.cardarea == G.play and
+            context.other_card:is_suit(card.ability.extra.suit) then
+            return {
+                mult = card.ability.extra.s_mult
+            }
+        end
+    end
+}, true)
+
 --[[
     The following Jokers have been reworked to incorporate MadLib's quantum rank stuff. 
 ]]

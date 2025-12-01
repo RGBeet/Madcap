@@ -2,7 +2,7 @@ local goblets = {
     object_type = "Suit",
     key         = 'goblets',
     card_key    = 'GOB',
-    hidden = not Madcap.Data.devmode,
+    hidden      = true,
 
     lc_atlas = 'ns_br_lc',
     hc_atlas = 'ns_br_lc',
@@ -28,7 +28,7 @@ local towers = {
     object_type = "Suit",
     key         = 'towers',
     card_key    = 'TOW',
-    hidden = not Madcap.Data.devmode,
+    hidden      = true,
 
     lc_atlas = 'ns_br_lc',
     hc_atlas = 'ns_br_lc',
@@ -54,7 +54,7 @@ local blooms = {
     object_type = "Suit",
     key         = 'blooms',
     card_key    = 'BLO',
-    hidden = not Madcap.Data.devmode,
+    hidden      = true,
 
     lc_atlas = 'ns_br_lc',
     hc_atlas = 'ns_br_lc',
@@ -80,7 +80,7 @@ local daggers = {
     object_type = "Suit",
     key         = 'daggers',
     card_key    = 'DAG',
-    hidden = not Madcap.Data.devmode,
+    hidden      = true,
 
     lc_atlas = 'ns_br_lc',
     hc_atlas = 'ns_br_lc',
@@ -106,7 +106,7 @@ local voids = {
     object_type = "Suit",
     key         = 'voids',
     card_key    = 'VOI',
-    hidden = not Madcap.Data.devmode,
+    hidden      = true,
 
     lc_atlas = 'ns_br_lc',
     hc_atlas = 'ns_br_lc',
@@ -132,7 +132,7 @@ local lanterns = {
     object_type = "Suit",
     key = 'lanterns',
     card_key = 'LAN',
-    hidden = not Madcap.Data.devmode,
+    hidden      = true,
 
     lc_atlas = 'ns_br_lc',
     hc_atlas = 'ns_br_lc',
