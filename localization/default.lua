@@ -1658,10 +1658,10 @@ return {
             j_rgmc_magical_die_of_judgement = {
                 name = "Magical Die of Judgement",
                 text = {
-                    "Rolls a {C:attention}D6{}",
-                    "with values from",
-                    "{C:attention}#1#{} through {C:attention}#2#",
-                    "{C:mult}+(#3# × [D6]){} Mult"
+                    "Roll a {C:attention}D6{} with values",
+                    "between {C:attention}#1#{} and {C:attention}#2#",
+                    "{C:attention}+X#3#{} rolled value",
+                    "{C:inactive}({C:mult}+#4#~#5#{C:inactive} Mult)"
                 },
             },
             j_rgmc_whoopsie_doodles = {

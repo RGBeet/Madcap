@@ -719,5 +719,14 @@ Madcap.DeckFuncs = {
             G.GAME.Exotic = true -- Exotic Suits show up!
             Madcap.Funcs.set_subhand('light',true)
         end
+	},
+	merlot = {
+		apply = function(self)
+            Madcap.Funcs.init_deck('merlot', {
+                finishers       = { 'bl_rgmc_final_moon' } -- force Macchiato Moon
+            })
+            G.GAME.Exotic = true -- Exotic Suits show up!
+            Madcap.Funcs.set_subhand('dark',true)
+        end
 	}
 }
