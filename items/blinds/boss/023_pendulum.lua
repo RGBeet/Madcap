@@ -2,7 +2,7 @@ function Madcap.Funcs.pendulum_end(self, silent)
     MadLib.loop_func({ G.jokers, G.hand }, function(v,_)
         if v and (#v.cards > 0) then
             MadLib.flip_cards(v.cards, function(c)
-                c:set_debuff(false)
+                SMODS.debuff_card(c, false, 'rgmc_pendulum')
             end, nil, function(c)
                 c:juice_up(0.3, 0.3)
             end)
@@ -14,13 +14,13 @@ end
 return {
     data = {
         object_type = 'Blind',
-        key     = 'pendulum',
-        atlas   = "blinds",
-        pos     = MLIB.coords(29),
-        min_ante = 3,
+        key         = 'pendulum',
+        atlas       = "blinds",
+        pos         = MLIB.coords(29),
+        min_ante    = 3,
         boss_colour = HEX('1F6570'),
-        config = { left_side = false },
-        in_pool = function(self)
+        config      = { left_side = false },
+        in_pool     = function(self)
             return (G.jokers and #G.jokers.cards > 1) or Madcap.Data.devmode
         end,
         calculate = function (self, blind, context)
@@ -36,10 +36,16 @@ return {
                 local pitch = 1.00
                 MadLib.loop_func({ G.jokers, G.hand }, function(v)
                     if v and (#v.cards > 0) then
-                        local num = math.ceil(math.max(2, #v.cards)/2)
+                        local num = math.ceil(#v.cards/2)
                         MadLib.loop_func(v.cards, function(c,i)
+                            print(tostring(#v.cards-i) .. ' > ' .. tostring(num))
+                            local should_debuff = nil
+                            if not blind.config.left_side then
+                                should_debuff = (i+1) <= num
+                            else
+                                should_debuff = (i+1) > num
+                            end
                             MadLib.simple_event(function()
-                                local should_debuff = blind.config.left_side and (i < num) or (i > num)
                                 if should_debuff then 
                                     play_sound('timpani', pitch, 0.6)
                                     SMODS.debuff_card(c, true, 'rgmc_pendulum')
@@ -56,7 +62,7 @@ return {
                 end)
             end
         end,
-        defeat  = Madcap.Funcs.pendulum_end(self, silent),
-        disable = Madcap.Funcs.pendulum_end(self, silent),
+        defeat  = Madcap.Funcs.pendulum_end,
+        disable = Madcap.Funcs.pendulum_end,
     }
 }

@@ -4750,7 +4750,7 @@ return {
                 name = "Punisher Tag",
 				text = {
                     "Gain {C:money}$#1#{}, but make the",
-                    "next {Cattention}Boss Blind {C:dark_edition}SUPER HARD!{}",
+                    "next {C:attention}Boss Blind {C:dark_edition}SUPER HARD!{}",
                     "{C:inactive}(=#2# hand(s), no discards){}"
 				},
             },
@@ -4959,7 +4959,7 @@ return {
                 name = "Ransom AnTag",
 				text = {
                     "Lose {C:money}$#1#{}, but",
-                    "make the next {Cattention}Boss Blind{}",
+                    "make the next {C:attention}Boss Blind{}",
                     "{C:dark_edition}\"SUPER EASY\"{}",
                     "{C:inactive}(+#2# hand size(s){}"
 				},

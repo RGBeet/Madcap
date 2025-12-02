@@ -10,6 +10,9 @@ return {
         in_pool = function(self)
             return Madcap.Data.devmode
         end,
+        set_blind = function(self, reset, silent)
+            print(MadLib.RankTypes.Fibonacci)
+        end,
         recalc_debuff = function(self, card, from_blind)
             if card.area ~= G.jokers and not G.GAME.blind.disabled then
                 if
