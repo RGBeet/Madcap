@@ -491,8 +491,7 @@ if JokerDisplay then
         },
         text_config = { colour = G.C.WHITE },
         calc_function = function(card)
-            card.joker_display_values.count = card.ability.extra.seals or 1
-            card.joker_display_values.active_text = localize(G.GAME.current_round.hands_played == 0 and 'k_active' or 'k_inactive')
+            card.joker_display_values.active_text   = localize(G.GAME.current_round.hands_played == 0 and 'k_active' or 'k_inactive')
         end,
         style_function = function(card, text, reminder_text, extra)
             if reminder_text and reminder_text.children[1] then

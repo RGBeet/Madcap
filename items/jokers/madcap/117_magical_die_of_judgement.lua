@@ -6,7 +6,7 @@ return {
         object_type = "Joker",
         key     = 'magical_die_of_judgement',
         atlas   = 'jokers',
-        pos     = MLIB.coords(11,7),
+        pos     = MLIB.coords(11,6),
         rarity  = 1,
         cost    = 3,
         config = {
@@ -22,7 +22,7 @@ return {
                 -- Increasing the base numerator increases 1-6 to 2-7 and so forth.
                 local numer = SMODS.get_probability_vars(card, 1, 6, 'magical_die_of_judgement')
                 local multiplier = numer * pseudorandom('magical_die_of_judgement', numer, numer + 5)
-                return { xmult = card.ability.extra.mult * multiplier }
+                return { mult = card.ability.extra.mult * multiplier }
             end
         end,
         demicoloncompat = true

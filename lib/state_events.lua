@@ -236,13 +236,13 @@ function Madcap.Funcs.record_hand_before(scoring_hand,text)
 
         if G.GAME.ante.ranks[_rank] == 0 then
             G.GAME.ante.unique_ranks = G.GAME.ante.unique_ranks + 1
-			tell('There are now ' .. tostring(G.GAME.ante.unique_ranks) .. ' unique ranks recorded.')
+			--tell('There are now ' .. tostring(G.GAME.ante.unique_ranks) .. ' unique ranks recorded.')
         end
 
         -- suit type stuff
         if G.GAME.ante.suits[_suit] == 0 then
             G.GAME.ante.unique_suits = G.GAME.ante.unique_suits + 1
-			tell('There are now ' .. tostring(G.GAME.ante.unique_suits) .. ' unique suits recorded.')
+			--tell('There are now ' .. tostring(G.GAME.ante.unique_suits) .. ' unique suits recorded.')
         end
 
         G.GAME.ante.ranks[_rank]	= (G.GAME.ante.ranks[_rank] or 0) + 1

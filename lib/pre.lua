@@ -605,7 +605,8 @@ Madcap.CustomCashouts = {
 }
 
 -- Taken from TOGA
-Madcap.Lists.ChipMultSwap = togabalatro.chipmultopswap or {
+local cm_ref = togabalatro or {}
+Madcap.Lists.ChipMultSwap = cm_ref['chipmultopswap'] or {
 	['chips'] 		= 'mult',
 	['h_chips'] 	= 'h_mult',
 	['chip_mod'] 	= 'mult_mod',
@@ -647,7 +648,7 @@ Madcap.Lists.ChipMultSwap = togabalatro.chipmultopswap or {
 	['hyperchip_mod'] 	= 'hypermult_mod',
 }
 
-Madcap.Lists.ChipModKeys = togabalatro.chipmodkeys or {
+Madcap.Lists.ChipModKeys = cm_ref['chipmodkeys'] or {
 	['chips'] = 'add', ['h_chips'] = 'add', ['chip_mod'] = 'add',
 	['x_chips'] = 'mult', ['xchips'] = 'mult', ['Xchip_mod'] = 'mult',
 	['e_chips'] = 'mult', ['echips'] = 'mult', ['Echip_mod'] = 'mult',
@@ -656,7 +657,7 @@ Madcap.Lists.ChipModKeys = togabalatro.chipmodkeys or {
 	['hyperchips'] = 'mult', ['hyper_chips'] = 'mult', ['hyperchip_mod'] = 'mult',
 }
 
-Madcap.Lists.MultModKeys = togabalatro.multmodkeys or {
+Madcap.Lists.MultModKeys = cm_ref['multmodkeys'] or {
 	['mult'] = 'add', ['h_mult'] = 'add', ['mult_mod'] = 'add',
 	['x_mult'] = 'mult', ['xmult'] = 'mult', ['Xmult'] = 'mult', ['x_mult_mod'] = 'mult', ['Xmult_mod'] = 'mult',
 	['e_mult'] = 'mult', ['emult'] = 'mult', ['Emult_mod'] = 'mult',
