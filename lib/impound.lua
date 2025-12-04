@@ -5,13 +5,15 @@ function Madcap.Funcs.impound_cards(cards)
     end
     local count = #cards
     local it = 1
-
-    SMODS.calculate_context({ impoundin_cards = true, cards = cards })
+    SMODS.calculate_context({ impounding_cards = true, cards = cards })
     MadLib.loop_func(cards, function(v)
-        draw_card(G.play,G.discard, it * 100 / count, 'down', false, v)
+        if v.area and v.area == G.deck then
+            G.deck.config.card_limit = G.deck.config.card_limit - 1
+            print("The deck")
+        end
+        draw_card(v.area, G.impound, nil, nil, nil, v)
         it = it + 1
     end)
-    
     return true
 end
 

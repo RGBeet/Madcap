@@ -11,7 +11,9 @@ pattern = '''elseif G.GAME.blind then
         G.GAME.blind:change_colour()'''
 position = "after"
 payload =  '''elseif state == G.STATES.RGMC_LUXURY_SHOPPE then 
-    ease_colour(G.C.DYN_UI.MAIN, G.C.GOLD)'''
+    ease_colour(G.C.DYN_UI.MAIN, G.C.GOLD)
+    elseif state == G.STATES.RGMC_LUXURY_SHOPPE then 
+    ease_colour(G.C.DYN_UI.MAIN, G.C.YELLOW)'''
 overwrite = true
 match_indent = true
 
@@ -23,7 +25,9 @@ pattern = '''elseif state == G.STATES.PLANET_PACK then
         ease_background_colour{new_colour = G.C.BLACK, contrast = 3}'''
 position = 'after'
 payload = '''elseif state == G.STATES.RGMC_LUXURY_SHOPPE then
-		ease_background_colour{new_colour = G.C.BLACK, contrast = 3}'''
+		ease_background_colour{new_colour = G.C.BLACK, contrast = 3}
+    elseif state == G.STATES.RGMC_LUXURY_SHOPPE then
+		ease_background_colour{new_colour = G.C.BLACK, special_colour = G.C.YELLOW, contrast = 3}'''
 match_indent = true
 
 
@@ -46,6 +50,7 @@ payload =  '''Madcap.Funcs.get_next_round_button(),'''
 overwrite = true
 match_indent = true
 
+# Add Impound Center update
 [[patches]]
 [patches.pattern]
 target = "game.lua"
@@ -55,6 +60,10 @@ pattern = '''if self.STATE == self.STATES.PLANET_PACK then
 '''
 position = "after"
 payload =  '''
+
+if self.STATE == self.STATES.RGMC_IMPOUND_SHOP then
+    self:update_impound_shop(dt)
+end
 
 if self.STATE == self.STATES.RGMC_LUXURY_SHOPPE then
     self:update_luxury_shoppe(dt)

@@ -45,7 +45,8 @@ function Madcap.Funcs.run_start()
             play    = {},   -- highlighted and played
             ante    = 0
         },
-		potentias_used		= 0
+		potentias_used		= 0,
+		shops_visited		= {}
     }
 	MadLib.loop_table(madcap_vals, function(k,v) G.GAME[k] = v end)
 	
@@ -83,6 +84,18 @@ function Madcap.Funcs.blind_end()
     -- end of blind
     tell('Blind End')
 
+	if G.GAME.modifiers.rgmc_enable_card_impounding and G.impound then
+		local number = 1
+		for i=1, number do
+			local possible_targets = G.deck.cards
+			local target = pseudorandom_element(possible_targets, pseudoseed('impound' .. tostring(G.GAME.round_resets.ante)))
+			MadLib.simple_event(function()
+				Madcap.Funcs.impound_card(target)
+				return true
+			end, 0.1, 'after')
+		end
+	end
+
 	-- Remove round
 	if G.GAME.rgmc_sinister then
 		MadLib.loop_table(G.GAME.rgmc_sinister, function(k,v)
@@ -117,6 +130,8 @@ function Madcap.Funcs.blind_end()
     if G.GAME.punisher_mode then
         G.GAME.punisher_mode = false
     end
+
+	G.GAME.shops_visited = {}
 
 end
 

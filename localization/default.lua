@@ -6506,6 +6506,9 @@ return {
 			ph_luxury                = "For the worthy",
             ph_luxury_bonus          = "Luxury Bonus!",
 
+			b_impound_shop_1         = "To Impound",
+			b_impound_shop_2         = "Center",
+
             rgmc_patina_seal         = "Patina Seal",
             rgmc_bronze_seal         = "Cuprum Seal",
             rgmc_ether_seal          = "Ether Seal",

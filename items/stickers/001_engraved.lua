@@ -15,8 +15,8 @@ return {
         calculate = function(self, card, context)
             if (context.joker_main and context.cardarea == G.jokers) or (context.main_scoring and context.cardarea == G.play) then
                 return {
-                    message = localize{ type='variable', key='a_xmult', vars={0} },
-                    x_mult = 0,
+                    message = localize{ type = 'variable', key = 'a_xmult', vars = { 0.25 } },
+                    x_mult = 0.25,
                     colour = G.C.RED,
                 }
             end
