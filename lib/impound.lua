@@ -7,11 +7,20 @@ function Madcap.Funcs.impound_cards(cards)
     local it = 1
     SMODS.calculate_context({ impounding_cards = true, cards = cards })
     MadLib.loop_func(cards, function(v)
-        if v.area and v.area == G.deck then
-            G.deck.config.card_limit = G.deck.config.card_limit - 1
-            print("The deck")
-        end
-        draw_card(v.area, G.impound, nil, nil, nil, v)
+        local area = v.area
+        MadLib.event({
+            trigger = 'after',
+            delay = 0.1,
+            func = function()
+                local c1 = area:remove_card(v)
+                local c2 = copy_card(c1, nil, nil, nil, false)
+                c1:remove()
+                c1 = nil
+                draw_card(area, G.impound, nil, nil, nil, c2)
+                return true
+            end
+        })
+        
         it = it + 1
     end)
     return true

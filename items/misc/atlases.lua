@@ -41,6 +41,7 @@ local atlases = {
 	crtbld('blinds', 			'blinds/bl_base.png', 21),
 	crtbld('blinds_chaotic', 	'blinds/bl_chaotic.png', 21),
 	crtanim('luxury_shoppe_sign', 	mis..'luxury_shoppe_sign.png', 4, 113, 57),
+	crtanim('impound_shop_sign', 	mis..'impound_shop_sign.png', 4, 113, 57),
 	--crtsqr('stakes', 'stakes.png', 29),
 }
 
