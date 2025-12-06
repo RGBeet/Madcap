@@ -1741,3 +1741,10 @@ function G.UIDEF.use_and_sell_buttons(card)
 
 	return ret
 end
+
+local poker_hands_info_ref = G.FUNCS.get_poker_hand_info
+G.FUNCS.get_poker_hand_info = function(_cards)
+	print('Get Poker Hand Info')
+	G.GAME.current_subhands = nil
+	return poker_hands_info_ref(_cards)
+end

@@ -17,7 +17,7 @@ return {
         end,
         calculate = function(self, card, context)
             if
-                (context.cardarea == G.jokers
+                (context.joker_main and context.cardarea == G.jokers
                     and MadLib.context_has_subhand(context, card.ability.extra.subhand or 'ml_sh_spectrum'))
                 or context.forcetrigger
             then

@@ -18,7 +18,7 @@
         end,
         calculate = function(self, card, context)
             if
-                (context.cardarea == G.hand and context.other_card and not context.end_of_round) -- held cards
+                (context.cardarea == G.hand and not context.end_of_round) -- held cards
                 or context.forcetrigger
             then
                 if MadLib.is_rank(context.other_card, card.ability.extra.rank) then

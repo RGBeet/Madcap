@@ -7,7 +7,7 @@ return {
         cost    = 4,
         pos     = MLIB.coords(5,6),
         config =  {
-            extra = { odds = 4, odds2 = 3 }
+            extra = { odds = 4 }
         },
         loc_vars = function(self, info_queue, card)
             local _numer, _denom    = SMODS.get_probability_vars(card, 1, card.ability.extra.odds)

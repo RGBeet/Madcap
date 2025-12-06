@@ -1,6 +1,6 @@
 return {
     categories = {
-        'Score Mechanic',
+        'Subhands',
     },
     data = {
         object_type = "Joker",
@@ -17,11 +17,14 @@ return {
         end,
         calculate = function(self, card, context)
             if
-                (context.cardarea == G.jokers and MadLib.context_has_subhand(context,'ml_sh_dark'))
+                (context.joker_main and context.cardarea == G.jokers and MadLib.context_has_subhand(context,'ml_sh_dark'))
                 or context.forcetrigger
             then
                 return { xmult = card.ability.extra.x_mult, card = card }
             end
+        end,
+        in_pool = function(self, args) -- can play Light subhands
+            return G.GAME.subhands and G.GAME.subhands['ml_sh_dark']
         end,
         demicoloncompat = true,
     }

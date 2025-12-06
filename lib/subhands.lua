@@ -47,7 +47,12 @@ SubHands = {
         l_mult     = 0.05,
         l_chips    = 0.05,
         check_hand = function(hand) -- at least 5 unique enhancements (+ voucher unlocked)
-            return MadLib.get_suit_count(hand) >= (G.GAME.subhand_minimum or 5) -- wip
+            local num_suits = 0
+            MadLib.loop_table(MadLib.get_suits_from_cards(hand), function(k,v)
+                if v < 1 then return end
+                num_suits = num_suits+1
+            end)
+            return num_suits >= (G.GAME.subhand_minimum or 5) -- wip
         end,
     },
     High = {
@@ -159,15 +164,18 @@ end
 
 -- Gets a list of all
 function MadLib.get_subhands(_cards)
-    local subhand_list = {}
-    MadLib.loop_table(SubHands, function(k,v)
-        if not (G.GAME.subhands[v.name] and G.GAME.subhands[v.name].enabled) then return false end
-        local result = v.check_hand(_cards)
-        if not result then return false end
-        subhand_list[#subhand_list+1] = v.name
-        return true
-    end)
-    return subhand_list
+    if G.GAME.current_subhands == nil then
+        local subhand_list = {}
+        MadLib.loop_table(SubHands, function(k,v)
+            if not (G.GAME.subhands[v.name] and G.GAME.subhands[v.name].enabled) then return false end
+            local result = v.check_hand(_cards)
+            if not result then return false end
+            subhand_list[#subhand_list+1] = v.name
+            return true
+        end)
+        G.GAME.current_subhands = subhand_list
+    end
+    return G.GAME.current_subhands
 end
 
 -- Checks if the list has the desired subhand
