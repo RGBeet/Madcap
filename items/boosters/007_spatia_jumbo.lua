@@ -1,7 +1,3 @@
-function Madcap.Funcs.get_spatia_pack_potentia()
-	return math.ceil(math.random()*100) <= 10
-end
-
 return {
     categories = {
         'Boosters',
@@ -10,13 +6,13 @@ return {
     },
     data = {
         object_type = 'Booster',
-        key     = "spatia_normal1",
+        key     = "spatia_jumbo",
         weight  = 1,
         kind    = 'SpatiaPlanet',
-        cost    = 4,
+        cost    = 8,
         atlas   = 'boosters',
-        pos     = MLIB.coords(2,0),
-        config      = { extra = 3, choose = 1 },
+        pos     = MLIB.coords(2,2),
+        config      = { extra = 5, choose = 1 },
         group_key   = 'k_rgmc_spatia_pack',
         draw_hand   = true,
         loc_vars = function(self, info_queue, card)
@@ -49,7 +45,7 @@ return {
                     area = G.pack_cards,
                     skip_materialize = true,
                     soulable = true,
-                    key_append = "spatia_normal"
+                    key_append = "spatia_jumbo"
                 }
             return _card
 		end,
@@ -60,7 +56,7 @@ return {
                     area = G.consumeables,
                     skip_materialize = true,
                     soulable = true,
-                    key_append = "spatia_normal"
+                    key_append = "spatia_jumbo"
                 }
 			cc:set_edition({ negative = true }, true)
 			cc:add_to_deck()

@@ -10,7 +10,7 @@ return {
         kind    = 'CosmaTarot',
         cost    = 6,
         atlas   = 'boosters',
-        pos     = MLIB.coords(0,1),
+        pos     = MLIB.coords(0,2),
         config      = { extra = 5, choose = 1 },
         group_key   = 'k_rgmc_cosma_pack',
         draw_hand   = true,

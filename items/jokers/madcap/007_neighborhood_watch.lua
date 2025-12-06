@@ -20,7 +20,7 @@ return {
             return vars
         end,
         calc_dollar_bonus = function(self, card)
-            if MadLib.compare_numbers(card.ability.extra.money, 0) then
+            if MadLib.is_positive_number(card.ability.extra.money) then
                 return lenient_bignum(card.ability.extra.money)
             end
         end,

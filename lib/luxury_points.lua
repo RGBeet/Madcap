@@ -7,22 +7,6 @@ function Card:calc_lp()
 	return cash_to_lp(self.cost)
 end
 
-
-local toggle_shop_ref = G.FUNCS.toggle_shop
-function G.FUNCS.toggle_shop(e)
-    if 
-        G.STATE == G.STATES.RGMC_IMPOUND_SHOP
-        and G.shop_jokers 
-        and G.impound 
-    then
-        MadLib.loop_func(G.shop_jokers.cards, function(v)
-            draw_card(G.shop_jokers, G.impound, nil, nil, nil, v)
-        end)
-    end
-    print("There are now " .. tostring(#G.impound.cards) .. " cards.")
-    toggle_shop_ref(e)
-end
-
 function ease_lp(mod, instant)
     local function _mod(mod)
         local dollar_UI = G.HUD:get_UIE_by_ID('luxury_text_UI')
@@ -131,35 +115,16 @@ function Madcap.Funcs.uses_lp(card)
     return card.ability.force_lp
 end
 
+function Madcap.Funcs.luxury_shoppe_enabled()
+    if G.GAME.rgmc_luxury_pts and G.GAME.rgmc_luxury_pts > 5 then
+        return true
+    end
+    return false
+end
+
 --[[
     The LUXURY SHOPPE
 ]]
-
-
-G.STATES.RGMC_LUXURY_SHOPPE = 241
-G.STATES.RGMC_IMPOUND_SHOP  = 242
-
-local get_shop_state_ref = MadLib.get_shop_state
-function MadLib.get_shop_state()
-    local ret = get_shop_state_ref()
-    return ret or G.STATE == G.STATES.RGMC_LUXURY_SHOPPE
-end
-
-local get_hide_hand_area_ref = MadLib.get_hide_hand_area
-function MadLib.get_hide_hand_area()
-    local ret = get_hide_hand_area_ref()
-    return ret 
-        or G.STATE == G.STATES.RGMC_LUXURY_SHOPPE
-        or G.STATE == G.STATES.RGMC_IMPOUND_SHOP
-end
-
-local get_card_setting_ability_ref = MadLib.get_card_setting_ability
-function MadLib.get_card_setting_ability()
-    local ret = get_card_setting_ability_ref()
-    return ret 
-        and G.STATE ~= G.STATES.RGMC_LUXURY_SHOPPE
-        and G.STATE ~= G.STATES.RGMC_IMPOUND_SHOP
-end
 
 G.FUNCS.can_reroll_luxury_shoppe = function(e)
     if G.GAME.rgmc_luxury_pts - 2 < 0 then 
@@ -257,87 +222,6 @@ function G.UIDEF.luxury_shoppe()
                       shop_booster,
                     }}
                   }
-        }}, false)
-    }}
-    return t
-end
-
-
--- Luxury Shoppe definition
-function G.UIDEF.impound_shop()
-    G.shop_jokers = CardArea(
-        G.hand.T.x+0,
-        G.hand.T.y+G.ROOM.T.y + 9,
-        4.9*G.CARD_W,
-        0.95*G.CARD_H, 
-        {card_limit = 5, type = 'shop', highlight_limit = 1, card_w = (1.27/4)*G.CARD_W})
-
-    local shop_sign = AnimatedSprite(0,0, 4.4, 2.2, G.ANIMATION_ATLAS['rgmc_impound_shop_sign'])
-    shop_sign:define_draw_steps({
-      {shader = 'dissolve', shadow_height = 0.05},
-      {shader = 'dissolve'}
-    })
-    G.SHOP_SIGN = UIBox{
-        definition = 
-            {n=G.UIT.ROOT, config = {colour = G.C.DYN_UI.MAIN, emboss = 0.05, align = 'cm', r = 0.1, padding = 0.1}, nodes={
-                {n=G.UIT.R, config={align = "cm", padding = 0.1, minw = 4.72, minh = 3.1, colour = G.C.DYN_UI.DARK, r = 0.1}, nodes={
-                    {n=G.UIT.R, config={align = "cm"}, nodes={
-                        {n=G.UIT.O, config={object = shop_sign}}
-                    }},
-                    {n=G.UIT.R, config={align = "cm"}, nodes={
-                        {n=G.UIT.O, config={object = DynaText({string = {localize('ph_luxury')}, colours = {lighten(G.C.GOLD, 0.3)},shadow = true, rotate = true, float = true, bump = true, scale = 0.5, spacing = 1, pop_in = 1.5, maxw = 4.3})}}
-                    }},
-                }},
-            }},
-        config = {
-            align="cm",
-            offset = {x=0,y=-15},
-            major = G.HUD:get_UIE_by_ID('row_blind'),
-            bond = 'Weak'
-        }
-    }
-    
-    MadLib.event({
-      trigger = 'immediate',
-      func = (function()
-          G.SHOP_SIGN.alignment.offset.y = 0
-          return true
-      end)
-    })
-    
-    local can_reroll = false
-    local reroll_button = {n=G.UIT.R, config={align = "cm", minw = 2.8 * 0.6, minh = 1.6, r=0.15,colour = G.C.RGMC_LUXURY, button = 'reroll_impound_shop', func = 'can_reroll', hover = true, shadow = true}, nodes = {
-        {n=G.UIT.R, config={align = "cm", padding = 0.07, focus_args = {button = 'x', orientation = 'cr'}, func = 'set_button_pip'}, nodes={
-            {n=G.UIT.R, config={align = "cm", maxw = 1.3}, nodes={
-                {n=G.UIT.T, config={text = localize('k_reroll'), scale = 0.4, colour = G.C.WHITE, shadow = true}},
-            }},
-            {n=G.UIT.R, config={align = "cm", maxw = 1.3, minw = 1}, nodes={
-                {n=G.UIT.T, config={text = localize('£'), scale = 0.7, colour = G.C.WHITE, shadow = true}},
-                {n=G.UIT.T, config={ref_table = G.GAME.current_round, ref_value = 'reroll_cost', scale = 0.75, colour = G.C.WHITE, shadow = true}},
-            }}
-        }}
-    }}
-
-    local next_round_button = Madcap.Funcs.get_next_round_button()
-
-    local shop_jokers = {n=G.UIT.C, config={align = "cm", padding = 0.2, r=0.2, colour = G.C.L_BLACK, emboss = 0.05, minw = 8.2}, nodes={
-      {n=G.UIT.O, config={object = G.shop_jokers}},
-    }}
-
-    local t = {n=G.UIT.ROOT, config = {align = 'cl', colour = G.C.CLEAR}, nodes={
-        UIBox_dyn_container({
-            {n=G.UIT.C, config={align = "cm", padding = 0.1, emboss = 0.05, r = 0.1, colour = G.C.DYN_UI.BOSS_MAIN}, nodes={
-                {n=G.UIT.R, config={align = "cm", padding = 0.05}, nodes={
-                    {n=G.UIT.C, config={align = "cm", padding = 0.1}, nodes={
-                        next_round_button,
-                        can_reroll and reroll_button or nil,
-                    }},
-                }},
-                {n=G.UIT.R, config={align = "cm", minh = 0.2}, nodes={}},
-                {n=G.UIT.R, config={align = "cm", padding = 0.1}, nodes={
-                    shop_jokers,
-                }}
-            }
         }}, false)
     }}
     return t
@@ -458,11 +342,6 @@ function Madcap.Funcs.create_card_for_luxury_shoppe(area)
     return card
 end
 
-function Madcap.Funcs.create_card_for_impound_shop(area)
-    local card = pseudorandom_element(G.impound.cards, pseudoseed('impound'))
-    return card
-end
-
 -- Calculates the Luxury Shoppe reroll coste (in Luxury Points)
 function Madcap.Funcs.calculate_luxury_shoppe_reroll_cost(skip_increment)
     if G.GAME.current_round.free_rerolls < 0 then G.GAME.current_round.free_rerolls = 0 end
@@ -532,62 +411,6 @@ G.FUNCS.reroll_luxury_shoppe = function(e)
     MadLib.event({ func = function() save_run(); return true end })
 end
 
-G.FUNCS.reroll_impound = function(e) 
-    stop_use()
-    G.CONTROLLER.locks.shop_reroll = true
-    if G.CONTROLLER:save_cardarea_focus('shop_jokers') then G.CONTROLLER.interrupt.focus = true end
-
-    local reroll_cost = G.GAME.current_round.reroll_cost
-    if G.GAME.current_round.reroll_cost > 0 then 
-      inc_career_stat('c_shop_dollars_spent', G.GAME.current_round.reroll_cost)
-      inc_career_stat('c_shop_rerolls', 1)
-      ease_dollars(-G.GAME.current_round.reroll_cost)
-    end
-    
-    MadLib.event({
-        trigger = 'immediate',
-        func = function()
-            local final_free = G.GAME.current_round.free_rerolls > 0
-            G.GAME.current_round.free_rerolls = math.max(G.GAME.current_round.free_rerolls - 1, 0)
-            G.GAME.round_scores.times_rerolled.amt = G.GAME.round_scores.times_rerolled.amt + 1
-
-            calculate_reroll_cost(final_free)
-            for i = #G.shop_jokers.cards,1, -1 do
-                draw_card(G.shop_jokers, G.impound, nil, nil, nil, G.impound.cards[i])
-            end
-
-            play_sound('coin2')
-            play_sound('other1')
-          
-         
-            local num = math.min(#G.impound.cards, 5)
-            pseudoshuffle(G.impound.cards, pseudoseed('impound'))
-            for i = 1, num do
-                draw_card(G.impound, G.shop_jokers, nil, nil, nil, G.impound.cards[i])
-            end
-            return true
-        end
-    })
-    
-    MadLib.event({
-        trigger = 'after',
-        delay = 0.3,
-        func = function()
-        MadLib.event({
-            func = function()
-                G.CONTROLLER.interrupt.focus = false
-                G.CONTROLLER.locks.shop_reroll = false
-                G.CONTROLLER:recall_cardarea_focus('shop_jokers')
-                SMODS.calculate_context({reroll_shop = true, cost = reroll_cost})
-                return true
-            end
-            })
-            return true
-        end
-    })
-    MadLib.event({ func = function() save_run(); return true end})
-end
-
 -- Updates the Luxury Shoppe in real-time.
 function Game:update_luxury_shoppe(dt)
     if not G.STATE_COMPLETE then
@@ -640,19 +463,14 @@ function Game:update_luxury_shoppe(dt)
                                         G.load_shop_booster = nil
                                     else
                                         for i=1, G.GAME.starting_params.boosters_in_shop + (G.GAME.modifiers.extra_boosters or 0) do
-                                            G.GAME.current_round.used_packs = G.GAME.current_round.used_packs or {}
-                                            if not G.GAME.current_round.used_packs[i] then
-                                                G.GAME.current_round.used_packs[i] = get_pack('shop_pack').key
-                                            end
-                                            if G.GAME.current_round.used_packs[i] ~= 'USED' then 
-                                                local card = Card(G.shop_booster.T.x + G.shop_booster.T.w/2,
-                                                G.shop_booster.T.y, G.CARD_W*1.27, G.CARD_H*1.27, G.P_CARDS.empty, G.P_CENTERS[G.GAME.current_round.used_packs[i]], {bypass_discovery_center = true, bypass_discovery_ui = true})
-                                                create_shop_card_ui(card, 'Booster', G.shop_booster)
-                                                card.ability.booster_pos = i
-                                                card:start_materialize()
-                                                card.ability.force_lp = true
-                                                G.shop_booster:emplace(card)
-                                            end
+                                            local pack = get_pack('shop_pack', 'booster_luxury').key
+                                            local card = Card(G.shop_booster.T.x + G.shop_booster.T.w/2,
+                                                G.shop_booster.T.y, G.CARD_W*1.27, G.CARD_H*1.27, G.P_CARDS.empty, G.P_CENTERS[pack], {bypass_discovery_center = true, bypass_discovery_ui = true})
+                                            create_shop_card_ui(card, 'Booster', G.shop_booster)
+                                            card.ability.booster_pos = i
+                                            card:start_materialize()
+                                            card.ability.force_lp = true
+                                            G.shop_booster:emplace(card)
                                         end
                                     end
                                 end
@@ -669,74 +487,6 @@ function Game:update_luxury_shoppe(dt)
         G.STATE_COMPLETE = true
     end  
     if self.buttons then self.buttons:remove(); self.buttons = nil end          
-end
-
--- Updates the Impound Center in real-time.
-function Game:update_impound_shop(dt)
-    if not G.STATE_COMPLETE then
-        stop_use()
-        ease_background_colour_blind(G.STATES.RGMC_IMPOUND_SHOP)
-        local shop_exists = not not G.shop
-        G.shop = G.shop or UIBox{
-            definition = G.UIDEF.impound_shop(),
-            config = {align='tmi', offset = {x=0,y=G.ROOM.T.y+11},major = G.hand, bond = 'Weak'}
-        }
-        MadLib.event({
-            func = function()
-                G.shop.alignment.offset.y = -5.3
-                G.shop.alignment.offset.x = 0
-                MadLib.event({
-                    trigger = 'after',
-                    delay = 0.2,
-                    blockable = false,
-                    func = function()
-                        if math.abs(G.shop.T.y - G.shop.VT.y) < 3 then
-                            G.ROOM.jiggle = G.ROOM.jiggle + 3
-                            play_sound('cardFan2')
-                            local nosave_shop = nil
-                                if not shop_exists then
-                                    -- Load the Jokers
-                                    if G.load_shop_jokers then 
-                                        nosave_shop = true
-                                        G.shop_jokers:load(G.load_shop_jokers)
-                                        for _, v in ipairs(G.shop_jokers.cards) do
-                                            create_shop_card_ui(v)
-                                        end
-                                        G.load_shop_jokers = nil
-                                    else
-                                        local num = math.min(#G.impound.cards, 5)
-                                        pseudoshuffle(G.impound.cards, pseudoseed('impound'))
-                                        for i = 1, num do
-                                            draw_card(G.impound, G.shop_jokers, nil, nil, nil, G.impound.cards[i])
-                                            create_shop_card_ui(G.impound.cards[i])
-                                        end
-                                    end
-                                end
-                            if not nosave_shop then SMODS.calculate_context({starting_shop = true}) end
-                            G.CONTROLLER:snap_to({node = G.shop:get_UIE_by_ID('next_round_button')})
-                            if not nosave_shop then G.E_MANAGER:add_event(Event({ func = function() save_run(); return true end})) end
-                            return true
-                        end
-                    end
-                })
-                return true
-            end
-        })
-        G.STATE_COMPLETE = true
-    end  
-    if self.buttons then self.buttons:remove(); self.buttons = nil end          
-end
-
--- Continue updating at the right part.
-local update_check_state_ref = MadLib.update_check_state
-function MadLib.update_check_state(g,dt)
-    update_check_state_ref(g)
-    if g.state == g.STATES.RGMC_LUXURY_SHOPPE then
-        g:update_luxury_shoppe(dt)
-    end
-    if g.state == g.STATES.RGMC_IMPOUND_SHOP then
-        g:update_impound_shop(dt)
-    end
 end
 
 -- Reset before loading shop contents.
@@ -800,195 +550,8 @@ G.FUNCS.goto_luxury_shoppe = function(e)
     end
 end
 
--- Goes from regular Shop to Luxury Shoppe
-G.FUNCS.goto_impound_shop = function(e)
-    stop_use()
-    G.CONTROLLER.locks.toggle_shop = true
-        if G.shop then 
-            SMODS.calculate_context({ending_shop = true})
-            MadLib.event({
-                trigger = 'immediate',
-                func = function()
-                    G.shop.alignment.offset.y = G.ROOM.T.y + 29
-                    G.SHOP_SIGN.alignment.offset.y = -15
-                    return true
-                end
-            })
-            MadLib.event({
-                trigger = 'after',
-              delay = 0.5,
-              func = function()
-                  G.shop:remove()
-                  G.shop = nil
-                  G.SHOP_SIGN:remove()
-                  G.SHOP_SIGN = nil
-                  G.STATE_COMPLETE = false
-                  G.STATE = G.STATES.RGMC_IMPOUND_SHOP
-                  G.CONTROLLER.locks.toggle_shop = nil
-                  return true
-              end
-          })
-        G.GAME.shops_visited['impound'] = true
-    end
-end
 
-function Madcap.Funcs.luxury_shoppe_enabled()
-    if G.GAME.rgmc_luxury_pts and G.GAME.rgmc_luxury_pts > 5 then
-        return true
-    end
-    return false
-end
 
-function Madcap.Funcs.impound_shop_enabled()
-    if G.impound and (#G.impound.cards > 0) then
-        return true
-    end
-    return false
-end
 
-function Madcap.Funcs.get_next_round_button()
-    local _text     = { localize('b_next_round_1'), localize('b_next_round_2') }
-    local _color    = G.C.RED
-    local _func     = 'toggle_shop'
-    local _tooltip  = nil
-
-    local impound_shop_enabled = true
-    local luxury_shoppe_enabled = true
-    
-    if Madcap.Funcs.luxury_shoppe_enabled() and not (G.GAME.shops_visited and G.GAME.shops_visited['luxury']) then
-        _func     = 'goto_luxury_shoppe'
-        _color   = G.C.BLUE
-        _text     = { localize('b_luxury_shoppe_1'), localize('b_luxury_shoppe_2') }
-        _tooltip  = { title = "Luxury Shoppe", text = {"Appears when", "5+ LP"} }
-    elseif Madcap.Funcs.impound_shop_enabled() and not (G.GAME.shops_visited and G.GAME.shops_visited['impound']) then
-        _func     = 'goto_impound_shop'
-        _color   = G.C.PURPLE
-        _text     = { localize('b_impound_shop_1'), localize('b_impound_shop_2') }
-        _tooltip  = { title = "Impound Center", text = {"Buy back your", "impounded cards"} }
-    end
-
-    return {n=G.UIT.R,config={id = 'next_round_button', align = "cm", minw = 2.8, minh = 1.5, r=0.15,colour = _color, one_press = true, button = _func, hover = true, shadow = true, tooltip = _tooltip }, nodes = {
-        {n=G.UIT.R, config={align = "cm", padding = 0.07, focus_args = {button = 'y', orientation = 'cr'}, func = 'set_button_pip'}, nodes={
-            {n=G.UIT.R, config={align = "cm", maxw = 1.3}, nodes={
-                {n=G.UIT.T, config={text = _text[1], scale = 0.4, colour = G.C.WHITE, shadow = true}}
-            }},
-            {n=G.UIT.R, config={align = "cm", maxw = 1.3}, nodes={
-                {n=G.UIT.T, config={text = _text[2], scale = 0.4, colour = G.C.WHITE, shadow = true}}
-            }}   
-        }},              
-    }}
-end
 --G.shop:get_UIE_by_ID('next_round_button'),
 
-local hide_hand_ui_ref = MadLib.hide_hand_ui
-function MadLib.hide_hand_ui()
-    return hide_hand_ui_ref() 
-        or state == G.STATES.RGMC_LUXURY_SHOPPE
-        or state == G.STATES.RGMC_IMPOUND_SHOP
-end
-
-function Madcap.Funcs.edit_shop_ui_t1(card)
-    local bg_colour   = darken(G.C.BLACK, 0.2)
-    local fg_colour   = lighten(G.C.BLACK, 0.1)
-    local currency    = localize('$')
-    local value       = 'cost'
-    local colours     = { G.C.MONEY }
-
-    
-    if Madcap.Funcs.uses_lp(card) then
-      currency = localize('£')
-      bg_colour   = lighten(G.C.GOLD, 0.1)
-      fg_colour   = darken(G.C.RED, 0.7)
-      colours[1] = G.C.RGMC_LUXURY
-      value = 'lp'
-    end
-
-    card.lp = cash_to_lp(card.cost)
-
-    return { n=G.UIT.ROOT, config = {minw = 0.6, align = 'tm', colour = bg_colour, shadow = true, r = 0.05, padding = 0.05, minh = 1}, nodes={
-        {n=G.UIT.R, config={align = "cm", colour = fg_colour, r = 0.1, minw = 1, minh = 0.55, emboss = 0.05, padding = 0.03}, nodes={
-            {n=G.UIT.O, config={object = DynaText({string = {{prefix = currency, ref_table = card, ref_value = value }}, colours = colours, shadow = true, silent = true, bump = true, pop_in = 0, scale = 0.5})}},
-        }}
-    }}
-end
-
-function Madcap.Funcs.edit_shop_ui_t2(card)
-    local is_luxury   = Madcap.Funcs.uses_lp(card)
-    local what_do     = nil
-    local colour      = G.C.GREEN
-    local check       = nil
-    local words       = localize('b_buy')
-
-    if card.ability.set == 'Voucher' then
-        words   = localize('b_redeem')
-        check   = 'can_redeem'
-        what_do = 'redeem_from_shop'
-    elseif card.ability.set == 'Booster' then
-        words   = localize('b_open')
-        check   = 'can_open'
-        what_do = 'open_booster'
-    else
-        check   = 'can_buy'
-        what_do = 'buy_from_shop'
-    end
-
-    if is_luxury then 
-        check = check .. '_luxury'
-    end
-
-    return {n=G.UIT.ROOT, config = {ref_table = card, minw = 1.1, maxw = 1.3, padding = 0.1, align = 'bm', colour = colour, shadow = true, r = 0.08, minh = 0.94, func = check, one_press = true, button = what_do, hover = true}, nodes={
-        {n=G.UIT.T, config={text = words, colour = G.C.WHITE, scale = 0.4}}
-    }}
-end
-
-function Madcap.Funcs.edit_shop_ui_t3(card)
-    local what_do     = 'buy_from_shop'
-    local check       = 'can_buy_and_use'
-    
-    if is_luxury then 
-        check = check .. '_luxury'
-    end
-    
-    return {n=G.UIT.ROOT, config = {id = 'buy_and_use', ref_table = card, minh = 1.1, padding = 0.1, align = 'cr', colour = G.C.RED, shadow = true, r = 0.08, minw = 1.1, func = check, one_press = true, button = what_do, hover = true, focus_args = {type = 'none'}}, nodes={
-        {n=G.UIT.B, config = {w=0.1,h=0.6}},
-        {n=G.UIT.C, config = {align = 'cm'}, nodes={
-            {n=G.UIT.R, config = {align = 'cm', maxw = 1}, nodes={
-                {n=G.UIT.T, config={text = localize('b_buy'),colour = G.C.WHITE, scale = 0.5}}
-            }},
-            {n=G.UIT.R, config = {align = 'cm', maxw = 1}, nodes={
-                {n=G.UIT.T, config={text = localize('b_and_use'),colour = G.C.WHITE, scale = 0.3}}
-            }},
-        }} 
-    }}
-end
-
-function Madcap.Funcs.handle_booster_cost(card)
-    local is_luxury   = Madcap.Funcs.uses_lp(card)
-    if card.cost <= 0 then
-        delay(0.2)
-    elseif is_luxury then
-        MadLib.event({trigger = 'after', delay = 0.2, func = function()
-            card:juice_up()
-            return true end 
-        })
-        ease_lp(card:calc_lp()*-1)
-    else
-        MadLib.event({trigger = 'after', delay = 0.2, func = function()
-            inc_career_stat('c_shop_dollars_spent', card.cost)
-            card:juice_up()
-            return true end 
-        })
-        ease_dollars(-card.cost)
-    end
-end
-
-function Madcap.Funcs.handle_voucher_cost(card)
-    local is_luxury   = Madcap.Funcs.uses_lp(card)
-    if card.cost <= 0 then
-        delay(0.2)
-    elseif is_luxury then
-        ease_lp(card:calc_lp()*-1)
-    else
-        ease_dollars(-card.cost)
-    end
-end

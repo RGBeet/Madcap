@@ -8,11 +8,11 @@ Madcap.Lists.LuxuryRarities = {
 Madcap.Lists.LuxurySets = {
     { value = 'Spectral', weight = 4 },
     { value = 'CosmaTarot', weight = 6 },
-    { value = 'SpatiPlanet', weight = 2 },
+    { value = 'SpatiaPlanet', weight = 2 },
     { value = 'PotentiaCrystal', weight = 1 },
 }
 
-if AKRYS then
+if AKYRS then
     table.insert(Madcap.Lists.LuxurySets, { value = 'Umbral', weight = 4 })
 end
 
@@ -21,7 +21,9 @@ if MoreFluff then
 end
 
 local function create_luxury_item(_area)
+    _area = _area or G.pack_cards
     local nubby         = pseudorandom('luxury_normal1', 1, 100)
+    local card = nil
 
     --[[
         Possible items:
@@ -30,23 +32,35 @@ local function create_luxury_item(_area)
         - Enhanced card (10%)
         - Voucher (5%)
     ]]
-            
+    local e = pseudorandom('luxury_normal1', 1, 2) < 2
     if nubby <= 60 then -- Joker
         local r = Madcap.Funcs.get_weighted_choice(Madcap.Lists.LuxuryRarities)
-        local e = pseudorandom('luxury_normal1', 1, 2) < 2
-        SMODS.add_card({ 
+        card = SMODS.create_card({ 
             set         = 'Joker',
             rarity      = r,
             edition     = e and poll_edition('wheel_of_fortune', nil, true, true) or nil,
-            no_edition  = not e or nil
+            no_edition  = not e or nil,
         })
     elseif nubby <= 85 then -- Consumable
-    elseif nubby <= 90 then -- Voucher
-            
+        local cs = Madcap.Funcs.get_weighted_choice(Madcap.Lists.LuxurySets)
+        card = SMODS.create_card({ 
+            set         = cs,
+            edition     = e and poll_edition('wheel_of_fortune', nil, true, true) or nil,
+            no_edition  = not e or nil,
+        })
+    elseif nubby <= 90 then -- Voucher  
+        card = SMODS.create_card({ 
+            set         = 'Voucher',
+            no_edition  = not e or nil,
+        })
     else -- Playing Card
-            
+        card = SMODS.create_card({ 
+            set         = 'Playing Card',
+            edition     = e and poll_edition('wheel_of_fortune', nil, true, true) or nil,
+            no_edition  = not e or nil,
+        })
     end
-    
+    return card
 end
 
 return {
@@ -57,11 +71,11 @@ return {
         object_type = 'Booster',
         key     = "luxury_normal1",
         weight  = 0,
-        kind    = 'Variety',
+        kind    = 'booster_luxury',
         cost    = 9,
         atlas   = 'boosters',
-        pos     = MLIB.coords(3,1),
-        config      = { extra = 5, choose = 2 },
+        pos     = MLIB.coords(1,0),
+        config      = { extra = 3, choose = 1 },
         group_key   = 'k_rgmc_variety_pack',
         draw_hand   = false,
         loc_vars = function(self, info_queue, card)
@@ -89,8 +103,6 @@ return {
             G.booster_pack_sparkles:fade(1, 0)
         end,
 		create_card		= function(self, card, i)
-
-
             return create_luxury_item(G.pack_cards)
 		end,
     }

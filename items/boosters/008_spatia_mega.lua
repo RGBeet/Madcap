@@ -11,7 +11,7 @@ return {
         kind    = 'SpatiaPlanet',
         cost    = 11,
         atlas   = 'boosters',
-        pos     = MLIB.coords(2,2),
+        pos     = MLIB.coords(2,3),
         config      = { extra = 5, choose = 2 },
         group_key   = 'k_rgmc_spatia_pack',
         draw_hand   = true,

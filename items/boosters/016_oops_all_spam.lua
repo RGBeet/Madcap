@@ -34,7 +34,7 @@ return {
         kind    = 'Variety',
         cost    = 5,
         atlas   = 'boosters',
-        pos     = MLIB.coords(4,1),
+        pos     = MLIB.coords(3,3),
         config      = { extra = 3, choose = 1 },
         group_key   = 'k_rgmc_variety_pack',
         draw_hand   = false,

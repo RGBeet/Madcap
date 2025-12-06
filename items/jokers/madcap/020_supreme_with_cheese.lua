@@ -51,8 +51,8 @@ return {
         },
         loc_vars = function(self, info_queue, card)
             return MadLib.collect_vars_colours(
-                number_format(card.ability.extra.rounds_remaining),
                 number_format(card.ability.extra.x_mult),
+                number_format(card.ability.extra.rounds),
                 { MadLib.get_warning_colour(card.ability.extra.rounds / card.ability.immutable.max_rounds) })
         end,
         calculate = function(self, card, context)

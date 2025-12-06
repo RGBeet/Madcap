@@ -616,9 +616,9 @@ return {
             j_rgmc_supreme_with_cheese = {
                 name = "Supreme With Cheese",
                 text = {
-                    "{X:mult,C:white}X#2#{} Mult for",
+                    "{X:mult,C:white}X#1#{} Mult for",
                     "{C:attention}first{} hand of round",
-                    "{C:inactive}(#1# slices left)"
+                    "{C:inactive}(#2# slices left)"
                 }
             },
             j_rgmc_house_of_cards = {
@@ -5562,6 +5562,34 @@ return {
                     "May contain some rather",
                     "{C:rgmc_unusual}Unusual{} surprises...",
                     "{C:inactive}(Must have room!)",
+				},
+			},
+			p_rgmc_luxury_normal1 = {
+				name = "Luxury Pack",
+				text = {
+					"Choose {C:attention}#1#{} of up to {C:attention}#2#{}",
+					"{C:red}Luxurious{} goodies",
+				},
+			},
+			p_rgmc_luxury_normal2 = {
+				name = "Luxury Pack",
+				text = {
+					"Choose {C:attention}#1#{} of up to {C:attention}#2#{}",
+					"{C:red}Luxurious{} goodies",
+				},
+			},
+			p_rgmc_luxury_jumbo = {
+				name = "Jumbo Luxury Pack",
+				text = {
+					"Choose {C:attention}#1#{} of up to {C:attention}#2#{}",
+					"{C:red}Luxurious{} goodies",
+				},
+			},
+			p_rgmc_luxury_mega = {
+				name = "Mega Luxury Pack",
+				text = {
+					"Choose {C:attention}#1#{} of up to {C:attention}#2#{}",
+					"{C:red}Luxurious{} goodies",
 				},
 			},
             rgmc_suit_info_light = {

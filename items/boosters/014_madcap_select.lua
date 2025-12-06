@@ -1,26 +1,27 @@
 return {
     categories = {
         'Boosters',
-        'Cosma Tarots'
+        'Joker',
     },
     data = {
         object_type = 'Booster',
-        key     = "cosma_normal",
+        key     = "madcap_select",
         weight  = 1,
-        kind    = 'CosmaTarot',
-        cost    = 4,
+        kind    = 'Variety',
+        cost    = 6,
         atlas   = 'boosters',
-        pos     = MLIB.coords(0,0),
-        config      = { extra = 3, choose = 1 },
-        group_key   = 'k_rgmc_cosma_pack',
-        draw_hand   = true,
+        pos     = MLIB.coords(3,1),
+        config      = { extra = 5, choose = 1 },
+        group_key   = 'k_rgmc_variety_pack',
+        draw_hand   = false,
         loc_vars = function(self, info_queue, card)
             local cfg = (card and card.ability) or self.config
             return MadLib.collect_vars(cfg.choose, cfg.extra)
         end,
         ease_background_colour = function(self)
-            ease_colour(G.C.DYN_UI.MAIN, G.C.SET.CosmaTarot)
-            ease_background_colour{new_colour = G.C.SET.CosmaTarot, special_colour = G.C.BLACK, contrast = 2}
+            local c = {0.5, 0.5, 0.5, 1.0}
+            ease_colour(G.C.DYN_UI.MAIN, c)
+            ease_background_colour{new_colour = c, special_colour = G.C.BLACK, contrast = 2}
         end,
         particles = function(self)
             G.booster_pack_sparkles = Particles(1, 1, 0, 0, {
@@ -31,29 +32,28 @@ return {
                 speed = 1.1,
                 padding = -1,
                 attach = G.ROOM_ATTACH,
-                colours = { G.C.WHITE, lighten(G.C.SET.CosmaTarot, 0.4), lighten(G.C.SET.CosmaTarot, 0.2), lighten(G.C.GOLD, 0.2) },
+                colours = { G.C.WHITE, lighten(G.C.BLUE, 0.4), lighten(G.C.RED, 0.2), lighten(G.C.GREEN, 0.2) },
                 fill = true
             })
             G.booster_pack_sparkles.fade_alpha = 1
             G.booster_pack_sparkles:fade(1, 0)
         end,
-        create_card = function(self, card, i)
-            local _card = {
-                    set = "CosmaTarot",
-                    area = G.pack_cards,
-                    skip_materialize = true,
-                    soulable = true,
-                    key_append = "cosma_normal"
-                }
-            return _card
-        end,
+		create_card		= function(self, card, i)
+            return {
+                set     = "MadcapJoker",
+                area    = G.pack_cards,
+                soulable    = true,
+                key_append  = "madcap_select",
+                skip_materialize = true,
+            }
+		end,
 		digital_hallucinations_compat = function()
             local cc = {
-                    set = "CosmaTarot",
-                    area = G.consumeables,
+                    set     = "MadcapJoker",
+                    area    = G.consumeables,
+                    soulable    = true,
+                    key_append  = "madcap_select",
                     skip_materialize = true,
-                    soulable = true,
-                    key_append = "cosma_normal"
                 }
 			cc:set_edition({ negative = true }, true)
 			cc:add_to_deck()

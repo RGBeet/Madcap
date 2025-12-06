@@ -36,7 +36,7 @@ return {
             if Madcap.Funcs.banana_context(context) then
                 local numerator, denominator = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'redd_dacca', true)
                 numerator = MadLib.add(numerator, card.ability.numer_factor or 0)
-                local result = pseudorandom('redd_dacca') < numerator / denominator
+                local result = MadLib.compare_numbers(pseudorandom('redd_dacca'), MadLib.divide(numerator, denominator)) < 0
                 SMODS.post_prob = SMODS.post_prob or {}
                 SMODS.post_prob[#SMODS.post_prob+1] = {
                     pseudorandom_result = true,

@@ -5,21 +5,26 @@ return {
         atlas       = 'stickers',
         pos         = MLIB.coords(1,3),
         badge_colour = HEX('EDB658'),
-        config      = { card_limit = 1 },
+	    config = { extra = { slot = 1 } },
         loc_vars = function(self, info_queue, card)
-            local key = 'rgmc_positive'
-            if card.ability and card.ability.consumeable and card.area ~= G.hand then
-                key = 'rgmc_positive_consumable'
-            elseif card.ability and (card.ability.set == "Default" or card.ability.set == "Enhanced" or (card.ability.consumeable and card.area and card.area == G.hand)) then
-                key = 'rgmc_positive_card'
-            end
-            return { key = key ,vars = { self.config.card_limit } }
+            return MadLib.collect_vars(number_format(math.abs(self.config.extra.slot)))
         end,
-        should_apply = false,
+        get_rate = function(self, card)
+            if G.GAME.modifiers.enable_perishables_in_shop then return 0.25 end
+            return 0.08
+        end,
         apply = function(self, card, val)
-            card.ability.rgmc_positive = true
-        end,
-        calculate = function(self, card, context)
+            if card.area == G.jokers or card.area == G.consumeables then
+                if card.area and not val then
+                    card.area.config.card_limit = card.area.config.card_limit + 1
+                    tell('Bruno Mars 2')
+                end
+                card:remove_from_deck()
+                card.ability.rgmc_positive = val
+                card:add_to_deck()
+            else
+                card.ability.rgmc_positive = val
+            end
         end,
     }
 }

@@ -5,13 +5,13 @@ return {
     },
     data = {
         object_type = 'Booster',
-        key     = "cosma_mega",
-        weight  = 0.25,
+        key     = "cosma_normal1",
+        weight  = 1,
         kind    = 'CosmaTarot',
-        cost    = 8,
+        cost    = 4,
         atlas   = 'boosters',
-        pos     = MLIB.coords(0,2),
-        config      = { extra = 5, choose = 2 },
+        pos     = MLIB.coords(0,1),
+        config      = { extra = 3, choose = 1 },
         group_key   = 'k_rgmc_cosma_pack',
         draw_hand   = true,
         loc_vars = function(self, info_queue, card)
@@ -43,7 +43,7 @@ return {
                     area = G.pack_cards,
                     skip_materialize = true,
                     soulable = true,
-                    key_append = "cosma_mega"
+                    key_append = "cosma_normal"
                 }
             return _card
         end,
@@ -53,7 +53,7 @@ return {
                     area = G.consumeables,
                     skip_materialize = true,
                     soulable = true,
-                    key_append = "cosma_mega"
+                    key_append = "cosma_normal"
                 }
 			cc:set_edition({ negative = true }, true)
 			cc:add_to_deck()

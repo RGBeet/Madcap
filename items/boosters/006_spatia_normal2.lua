@@ -6,13 +6,13 @@ return {
     },
     data = {
         object_type = 'Booster',
-        key     = "spatia_jumbo",
+        key     = "spatia_normal1",
         weight  = 1,
         kind    = 'SpatiaPlanet',
-        cost    = 8,
+        cost    = 4,
         atlas   = 'boosters',
         pos     = MLIB.coords(2,1),
-        config      = { extra = 5, choose = 1 },
+        config      = { extra = 3, choose = 1 },
         group_key   = 'k_rgmc_spatia_pack',
         draw_hand   = true,
         loc_vars = function(self, info_queue, card)
@@ -45,7 +45,7 @@ return {
                     area = G.pack_cards,
                     skip_materialize = true,
                     soulable = true,
-                    key_append = "spatia_jumbo"
+                    key_append = "spatia_normal"
                 }
             return _card
 		end,
@@ -56,7 +56,7 @@ return {
                     area = G.consumeables,
                     skip_materialize = true,
                     soulable = true,
-                    key_append = "spatia_jumbo"
+                    key_append = "spatia_normal"
                 }
 			cc:set_edition({ negative = true }, true)
 			cc:add_to_deck()

@@ -9,6 +9,7 @@ assert(SMODS.load_file("lib/ui.lua"))()
 
 assert(SMODS.load_file("lib/subhands.lua"))()
 assert(SMODS.load_file("lib/mayhem.lua"))()
+assert(SMODS.load_file("lib/shop.lua"))()
 assert(SMODS.load_file("lib/impound.lua"))()
 assert(SMODS.load_file("lib/luxury_points.lua"))()
 assert(SMODS.load_file("lib/temp_hands_discards.lua"))()

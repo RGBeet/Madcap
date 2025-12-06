@@ -50,9 +50,9 @@ local list = {
 		and 6
 	end, 0.8, true),
 
-    Madcap.Funcs.GetMusic('music_madcap_luxuryshoppe',function()
-	return can_play_madcap_music()
-		and G.STATE == G.STATES.RGMC_LUXURY_SHOPPE
+    Madcap.Funcs.GetMusic('music_madcap_luxuryshoppe', function()
+	return (G.STATE == G.STATES.RGMC_LUXURY_SHOPPE
+		or G.STATE == G.STATES.RGMC_IMPOUND_SHOP)
 		and 6
 	end, 0.8, true),
 

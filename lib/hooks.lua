@@ -57,12 +57,40 @@ end
 
 local add_to_deck_ref = Card.add_to_deck
 function Card:add_to_deck(from_debuff)
+	if self.ability and self.ability.rgmc_negative and G.jokers then
+		if self.ability.consumeable then
+			G.consumeables.config.card_limit = G.consumeables.config.card_limit + 1
+		else
+			G.jokers.config.card_limit = G.jokers.config.card_limit + 1
+		end
+	end
+	if self.ability and self.ability.rgmc_positive and G.jokers then
+		if self.ability.consumeable then
+			G.consumeables.config.card_limit = G.consumeables.config.card_limit - 1
+		else
+			G.jokers.config.card_limit = G.jokers.config.card_limit - 1
+		end
+	end
 	add_to_deck_ref(self, from_debuff)
 	Madcap.Funcs.update_global_joker_counts()
 end
 
 local remove_from_deck_ref = Card.remove_from_deck
 function Card:remove_from_deck(from_debuff)
+	if self.ability and self.ability.rgmc_negative and G.jokers then
+		if self.ability.consumeable then
+			G.consumeables.config.card_limit = G.consumeables.config.card_limit - 1
+		else
+			G.jokers.config.card_limit = G.jokers.config.card_limit - 1
+		end
+	end
+	if self.ability and self.ability.rgmc_positive and G.jokers then
+		if self.ability.consumeable then
+			G.consumeables.config.card_limit = G.consumeables.config.card_limit + 1
+		else
+			G.jokers.config.card_limit = G.jokers.config.card_limit + 1
+		end
+	end
 	remove_from_deck_ref(self, from_debuff)
 	Madcap.Funcs.update_global_joker_counts()
 end

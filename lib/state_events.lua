@@ -396,23 +396,25 @@ function Madcap.Funcs.calculate_chips_mult(hand, subhands, cards)
 			end
 		end
 	end]]
-
+	
+	print("level not modified: " .. tostring(diff))
+	print(diff)
 	if diff ~= 0 then
 		local compare = MadLib.compare_numbers(diff,0)
 		local current_level = nil
 		if compare == 1 then
 			current_level = level
-			while current_level > 1 do
-				current_level = current_level - 1
-				chips 	= chips + hand.l_chips
-				mult 	= mult + hand.l_mult
+			while MadLib.compare_numbers(current_level, 1) > 1 do
+				current_level 	= MadLib.subtract(current_level, 1)
+				chips 			= MadLib.add(chips, hand.l_chips)
+				mult 			= MadLib.add(mult + hand.l_mult)
 			end
 		elseif compare == -1 then
 			current_level = hand.level
-			while current_level > 1 do
-				current_level = current_level - 1
-				chips 	= chips - hand.l_chips
-				mult 	= mult - hand.l_mult
+			while MadLib.compare_numbers(current_level, 1) > 1 do
+				current_level 	= MadLib.subtract(current_level, 1)
+				chips 			= MadLib.add(chips, hand.l_chips)
+				mult 			= MadLib.add(mult + hand.l_mult)
 			end
 		end
 	end
@@ -452,7 +454,7 @@ function Madcap.Funcs.hand_display_mod(hand, text, disp_text, poker_hands, scori
 	local mod_check = ''
 
 	-- If modded, then!
-	if ret.level_modded ~= nil then
+	if ret.level_modded ~= 0 then
 		mod_check = '*' 
 		return_true = true
 	end
@@ -471,11 +473,11 @@ function Madcap.Funcs.hand_display_mod(hand, text, disp_text, poker_hands, scori
 
 				-- Subhand suffix
 				if not G.GAME.subhands and G.GAME.subhands[v] and G.GAME.subhands[v].enabled then return end
-				suffix = suffix .. tostring(mod_subhand) .. (ret.subhand_modded ~= nil and '*' or '')
+				suffix = suffix .. tostring(mod_subhand) .. (ret.subhand_modded ~= 0 and '*' or '')
 
 				-- Potentia suffix
 				if G.GAME.subhands[v].empower > 0 then
-					suffix = suffix .. '(' .. tostring(mod_potentia) .. (ret.potentia_modded ~= nil and '*' or '') .. ')'
+					suffix = suffix .. '(' .. tostring(mod_potentia) .. (ret.potentia_modded ~= 0 and '*' or '') .. ')'
 				end
 				suffix = suffix .. (i < #subhands and ',' or ')')
 			end)

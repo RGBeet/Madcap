@@ -1,3 +1,18 @@
+local toggle_shop_ref = G.FUNCS.toggle_shop
+function G.FUNCS.toggle_shop(e)
+    if 
+        G.STATE == G.STATES.RGMC_IMPOUND_SHOP
+        and G.shop_jokers 
+        and G.impound 
+    then
+        MadLib.loop_func(G.shop_jokers.cards, function(v)
+            draw_card(G.shop_jokers, G.impound, nil, nil, nil, v)
+        end)
+    end
+    print("There are now " .. tostring(#G.impound.cards) .. " cards.")
+    toggle_shop_ref(e)
+end
+
 function create_UIBox_subhand_tip(sh)
 	if not G.GAME.subhands[sh].example then return {n=G.UIT.R, config={align = "cm"},nodes = {}} end
 

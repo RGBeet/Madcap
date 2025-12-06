@@ -34,15 +34,22 @@ return {
                 end)
 
                 MadLib.loop_func(context.scoring_hand, function(v) v.not_spectator = nil end)
-
-                card.ability.extra.mult = MadLib.multiply(cards, card.ability.extra.mult_mod or 0)
+                local amt = MadLib.multiply(cards, card.ability.extra.mult_mod)
+                card.ability.extra.mult = amt
             end
 
             if
                 context.joker_main
-                and card.ability.extra.mult > 0
+                and MadLib.is_positive_number(card.ability.extra.mult)
             then
                 return { mult = card.ability.extra.mult }
+            end
+
+            if context.after then
+                MadLib.simple_event(function()
+                    card.ability.extra.mult = 0
+                    return true
+                end, 0, 'after')
             end
         end,
         demicoloncompat = true,
