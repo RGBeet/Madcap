@@ -12,7 +12,8 @@ return {
         config =  {
             extra = {
                 odds = 3,
-                rounds_remaining = 8,
+                rounds      = 8,
+                max_rounds  = 8,
                 effects = {
                     { 1.5,   0.95 },  -- Xscore
                     { 1.5,   0.75 },  -- Xchips
@@ -43,7 +44,7 @@ return {
                 }
             }
 
-            return MadLib.collect_vars(card.ability.extra.rounds_remaining, numer, denom)
+            return MadLib.collect_vars(card.ability.extra.rounds, numer, denom)
         end,
         calculate = function(self, card, context)
 

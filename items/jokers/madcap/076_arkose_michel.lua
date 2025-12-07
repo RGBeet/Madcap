@@ -20,8 +20,22 @@ return {
             then
                 return { mult = card.ability.extra.mult }
             end
-            if Madcap.Funcs.banana_context(context) then 
-                return MadLib.banana_logic(card, 'arkose_michel') 
+
+            -- End of round
+            if Madcap.Funcs.banana_context(context) then
+                local numerator, denominator = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'arkose_michel', true)
+                numerator = MadLib.add(numerator, card.ability.numer_factor or 0)
+                local result = MadLib.compare_numbers(pseudorandom('arkose_michel'), MadLib.divide(numerator, denominator)) < 0
+                SMODS.post_prob = SMODS.post_prob or {}
+                SMODS.post_prob[#SMODS.post_prob+1] = {
+                    pseudorandom_result = true,
+                    result = result,
+                    trigger_obj = card,
+                    numerator = numerator,
+                    denominator = denominator,
+                    identifier = 'arkose_michel'
+                }
+                return result and MadLib.banana_remove(card) or { message = localize("k_safe_ex") }
             end
         end,
         in_pool = function(self, args) -- at least one stone card

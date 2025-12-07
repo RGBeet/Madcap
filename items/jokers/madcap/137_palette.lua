@@ -10,24 +10,25 @@ return {
         rarity  = 3,
         cost    = 8,
         config =  {
-            extra = { x_chips = 0.5 }
+            extra = { x_chips = 3.5 }
         },
         loc_vars = function(self, info_queue, card)
-            return MadLib.collect_vars(card.ability.extra.x_chips)
+            local area = G.hand.highlighted
+            return { vars = { card.ability.extra.x_chips, 5, MadLib.get_unique_enhancements(area) } }
         end,
         calculate = function(self, card, context)
-            if (context.joker_main 
-                and MadLib.spectrum_played(context) 
-                and MadLib.context_has_subhand(context,'ml_sh_spectrum'))
-                or context.forcetrigger 
-            then
-                return { xmult = card.ability.extra.x_mult }
+            if context.joker_main then
+                local driver_tally = MadLib.get_unique_enhancements(G.play.cards)
+                if driver_tally >= 5 then
+                    return { xchips = card.ability.extra.x_chips }
+                end
+            end
+            if context.forcetrigger then
+                return { xchips  = card.ability.extra.x_chips }
             end
         end,
         in_pool = function(self, args)
-            return G.GAME.subhands 
-                and G.GAME.subhands['ml_sh_spectrum']
-                and G.GAME.subhands['ml_sh_spectrum'].enabled
+            return MadLib.get_unique_enhancements(G.playing_cards) > 4
         end,
         demicoloncompat = true,
     }
