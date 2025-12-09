@@ -180,3 +180,4 @@ function MadLib.update_check_state(g,dt)
         g:update_impound_shop(dt)
     end
 end
+

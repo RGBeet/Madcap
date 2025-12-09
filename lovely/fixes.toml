@@ -361,6 +361,18 @@ position = "before"
 payload = '''MadLib.set_pcard_ui(card, specific_vars, desc_nodes)'''
 match_indent = true
 
+[[patches]]
+[patches.pattern]
+target = 'functions/button_callbacks.lua'
+pattern = "SMODS.calculate_context({buying_card = true, card = c1})"
+position = "before"
+payload = '''Madcap.Funcs.calculate_purchase(c1)'''
+match_indent = true
+
+
+
+
+
 # If Bunco is installed, add suit symbols for other suits...
 [[patches]]
 [patches.pattern]

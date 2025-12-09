@@ -42,8 +42,6 @@ function Madcap.Funcs.get_spatia_vars(hand_list, subhand_list)
 end
 
 function Madcap.Funcs.card_level_subhand(card, sh, levels)
-    print(sh)
-    print(G.GAME.subhands[sh])
     if not G.GAME.subhands[sh] then return end
     update_hand_text({sound = 'button', volume = 0.7, pitch = 0.8, delay = 2.0}, {
 		handname	= localize(sh),

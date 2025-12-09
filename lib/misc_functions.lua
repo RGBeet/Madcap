@@ -869,8 +869,70 @@ function Madcap.Funcs.get_cash_out_definition(config,scale)
         {n=G.UIT.R, config={id = 'cash_out_button', align = "cm", padding = 0.1, minw = 7, r = 0.15, colour = G.C.ORANGE, shadow = true, hover = true, one_press = true, button = 'cash_out', focus_args = {snap_to = true}}, nodes=payouts}}}
 end
 
+function MadLib.get_sequence(n, base, add, e, bonus)
+    local value, perma = base, 0
+    for k = 1, n-1 do
+        value = value + add + perma
+        if k % e == 0 then perma = perma + (bonus or 1) end
+    end
+    return value
+end
+
 function Madcap.Funcs.subhands_in_effect()
 	return MadLib.list_matches_one(G.GAME.subhands, function(v)
 		return v.enabled
 	end)
+end
+
+Madcap.Funcs.get_shop_level_cap = function(v)
+	return MadLib.get_sequence(G.GAME.round_resets.ante, 4, 5, 2, 4)
+
+end
+
+function Madcap.Funcs.get_shop_shortage_activate(add)
+	local cur_ante 		= G.GAME.round_resets.ante
+	local ante_value	= MadLib.clamp(cur_ante + 1, 1, 10)
+	local psr			= MadLib.get_sequence(G.GAME.round_resets.ante, 4, 2, 3)
+	local ante_ratio 	= (G.GAME.ante.purchases + add) / psr
+	local game_ratio	= (G.GAME.cards_bought + add) / psr
+	local total_ratio 	= ante_ratio / game_ratio
+	
+	if total_ratio > 2 then return true end
+end
+
+function Madcap.Funcs.add_shortage_level(slvl)
+	G.GAME.shortage_level = G.GAME.shortage_level + slvl
+	tell('Shortage level is currently ' .. number_format(G.GAME.shortage_level) .. '.')
+end
+
+function Madcap.Funcs.get_shop_level_up_activate(add)
+	return add == Madcap.Funcs.get_shop_level_cap()
+end
+
+function Madcap.Funcs.add_shop_level(slvl)
+	G.GAME.shop_level = G.GAME.shop_level + slvl
+	tell('Shop level is currently ' .. number_format(G.GAME.shop_level) .. '.')
+end
+
+function Madcap.Funcs.calculate_purchase(c)
+	local quantity = c:get_quantity_value()
+	tell('+' .. number_format(quantity) .. ' Purchase.')
+
+	-- add the data
+	G.GAME.cards_bought = (G.GAME.cards_bought or 0) + quantity
+	G.GAME.ante.purchases = (G.GAME.ante.purchases or 0) + quantity
+
+	if G.GAME.modifiers.rgmc_enable_shop_inflation then
+		G.GAME.inflation = G.GAME.inflation + quantity
+		tell('Inflation level is currently ' .. number_format(G.GAME.inflation) .. '.')
+	end
+
+	if G.GAME.modifiers.rgmc_enable_harder_shops and Madcap.Funcs.get_shop_level_up_activate(G.GAME.shop_level) then
+		Madcap.Funcs.add_shop_level(0.5)
+	end
+
+	if G.GAME.modifiers.rgmc_enable_shop_shortages and Madcap.Funcs.get_shop_shortage_activate(quantity) then
+		--G.GAME.shortage_level
+		Madcap.Funcs.add_shortage_level(0.5)
+	end
 end

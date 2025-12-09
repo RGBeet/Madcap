@@ -242,7 +242,6 @@ G.FUNCS.reroll_impound = function(e)
             play_sound('coin2')
             play_sound('other1')
           
-         
             local num = math.min(#G.impound.cards, 5)
             pseudoshuffle(G.impound.cards, pseudoseed('impound'))
             for i = 1, num do

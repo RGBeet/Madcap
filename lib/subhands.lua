@@ -208,9 +208,6 @@ function Madcap.Funcs.empower_subhand(card, hand, instant, amount, context)
 	local basic_func = true
 	local empower_level = (G.GAME.subhands[hand].empower or 0)
 
-    print(hand)
-    print(G.GAME.subhands[hand])
-
 	if basic_func then
     	empower_level = math.max(0, empower_level + amount)
 	end

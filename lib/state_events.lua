@@ -56,6 +56,14 @@ function Madcap.Funcs.run_start()
 		Madcap.Funcs.read_mayhem()
 	end
 
+	if G.GAME.modifiers.rgmc_enable_harder_shops then -- aurum stake
+		G.GAME.shop_level = 1
+	end
+
+	if G.GAME.modifiers.rgmc_enable_shop_shortages then -- iridium stake
+		G.GAME.shortage_level = 0
+	end
+
 	-- Borrowed from Bunco
     G.GAME.Exotic = G.GAME.Exotic or false -- Used for exotic suits and ranks?
 
@@ -200,6 +208,10 @@ function Madcap.Funcs.ante_finish()
     -- end of ante
     tell('Ante End')
 
+	if G.GAME.modifiers.rgmc_enable_shop_inflation then
+		G.GAME.inflation = MadLib.divide(G.GAME.inflation, 2)
+		tell('Inflation level is currently ' .. number_format(G.GAME.inflation) .. '.')
+	end
 end
 
 -- Upon starting a shop
