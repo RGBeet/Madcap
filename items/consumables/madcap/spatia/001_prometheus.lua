@@ -11,18 +11,6 @@ Madcap.Lists.SpatiaWhitelist = {
 function Madcap.Funcs.get_spatia_vars(hand_list, subhand_list)
 	local all_vars     = { }
 	local all_colours  = { }
-    --[[
-	MadLib.loop_func(hand_list, function(ha)
-		local hand = G.GAME.hands and G.GAME.hands[ha]
-		table.insert(all_vars, hand and hand.level or 1)
-		table.insert(all_vars, localize(ha,'poker_hands') or "???")
-		table.insert(all_vars, hand and hand.l_mult or 0)
-		table.insert(all_vars, hand and hand.l_chips or 0)
-		table.insert(all_colours,(
-			to_big(hand and hand.level or 1) == to_big(1) and G.C.UI.TEXT_DARK
-			or G.C.HAND_LEVELS[to_number(math.min(7, hand and hand.level or 1))]
-		))
-	end)]]
 
 	MadLib.loop_func(subhand_list, function(sh)
 		local subhand = G.GAME.subhands and G.GAME.subhands[SubHands[sh].name]
@@ -32,10 +20,7 @@ function Madcap.Funcs.get_spatia_vars(hand_list, subhand_list)
 			or SubHands[sh].l_mult) + 1)
 		table.insert(all_vars, (subhand and subhand.l_chips
 			or SubHands[sh].l_chips) + 1)
-		table.insert(all_colours,(
-			to_big(subhand and subhand.level or 1) == to_big(1) and G.C.UI.TEXT_DARK
-			or G.C.HAND_LEVELS[to_number(math.min(7, subhand and subhand.level or 1))]
-		))
+		table.insert(all_colours, MadLib.get_level_color(subhand.level))
 	end)
 	all_vars['colours'] = all_colours
 	return { vars = all_vars }

@@ -40,7 +40,7 @@ return {
             if
                 context.after
                 and (context.full_hand or context.scoring_hand)
-                and to_big(G.GAME.chips) > to_big(G.GAME.blind.chips)
+                and MadLib.compare_numbers(G.GAME.chips, G.GAME.blind.chips)
             then
                 MadLib.simple_event(function()
                     card:set_ability(G.P_CENTERS['m_rgmc_bismuth'])

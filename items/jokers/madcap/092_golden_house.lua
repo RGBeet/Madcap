@@ -34,19 +34,19 @@ return {
                         return true
                     end, 3.0, 'after')
                     -- there is chip
-                    if to_big(chippys) > to_big(0) then
+                    if MadLib.is_positive_number(chippys) then
                         card.ability.extra.chips = card.ability.extra.chips + chippys
                         card_eval_status_text(context_blueprint_card or card, 'extra', nil, nil, nil, {
-                            message = "+" .. number_format(to_big(chippys)),
+                            message = "+" .. number_format(chippys),
                             colour = G.C.CHIPS,
                             card = card
                         })
                     end
                     -- there is mult
-                    if to_big(multys) > to_big(0) then
+                    if MadLib.is_positive_number(multys) then
                         card.ability.extra.mult = card.ability.extra.mult + multys
                         card_eval_status_text(context_blueprint_card or card, 'extra', nil, nil, nil, {
-                            message = "+" .. number_format(to_big(multys)),
+                            message = "+" .. number_format(multys),
                             colour = G.C.MULT,
                             card = card
                             })

@@ -10,8 +10,9 @@ return {
         config = { extra = -5 },
         loc_vars = function(self, info_queue, blind)
             if G.GAME.blind then
+                local max_chips = MadLib.multiply(MadLib.multiply(self.mult, 1.25), get_blind_amount(G.GAME and G.GAME.round_resets.ante or 1))
                 return MadLib.collect_vars(
-                    number_format(self.mult * 1.25 * get_blind_amount(G.GAME and G.GAME.round_resets.ante or 1)),
+                    number_format(max_chips),
                     number_format(blind and blind.ability.extra or -5)
                 )
             else
@@ -19,22 +20,22 @@ return {
             end
         end,
         in_pool = function(self)
-            return Madcap.Data.devmode or to_big(G.GAME.dollars - self.config.extra*3) > to_big(G.GAME.bankrupt_at)
+            return Madcap.Data.devmode or MadLib.compare_numbers(MadLib.subtract(G.GAME.dollars, MadLib.multiply(self.config.extra * 3)), G.GAME.bankrupt_at)
         end,
         calculate = function(self, blind, context)
             if 
                 not G.GAME.blind.disabled 
                 and context.rgmc_total_score 
             then
-                local new_total = G.GAME.chips + context.rgmc_total_score
-                local max_chips = self.mult * 1.25 * get_blind_amount(G.GAME.round_resets.ante)
-                if to_big(new_total) > to_big(max_chips) then
-                    G.GAME.chips = math.floor(new_total / 2)
+                local new_total = MadLib.add(G.GAME.chips, context.rgmc_total_score)
+                local max_chips = MadLib.multiply(MadLib.multiply(self.mult, 1.25), get_blind_amount(G.GAME and G.GAME.round_resets.ante or 1))
+                if MadLib.compare_numbers(new_total, max_chips) > 0 then
+                    G.GAME.chips = math.floor(MadLib.divide(new_total, 2))
                     MadLib.manipulate_chips_mult(0,0)
                     MadLib.simple_event(function()
                         ease_dollars(self.config.extra)
                         return true
-                    end, 1,'after')
+                    end, 1, 'after')
                     MadLib.simple_event(function()
                         G.GAME.blind:wiggle() -- nuh uh!
                         G.GAME.blind.triggered = true

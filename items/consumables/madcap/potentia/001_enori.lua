@@ -8,9 +8,7 @@ function Madcap.Funcs.get_potentia_vars(sh,lvl)
             (empower_level > 0) and (" + " .. empower_level .."") or "",
             localize(sh),
             lvl,
-			colours = {
-				to_big(current_level) < to_big(2) and G.C.BLACK or G.C.HAND_LEVELS[to_number(math.min(7, current_level))]
-			}
+			colours = { MadLib.get_level_color(lvl) }
         },
     }
 end

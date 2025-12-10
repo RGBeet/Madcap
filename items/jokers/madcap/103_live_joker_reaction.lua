@@ -42,8 +42,8 @@ return {
             end
         end,
         calc_dollar_bonus = function(self, card)
-            if  G.GAME.blind.boss and to_big(card.ability.extra.money) ~= to_big(0) then
-                return lenient_bignum(card.ability.extra.money)
+            if  G.GAME.blind.boss and not MadLib.is_zero(card.ability.extra.money) then
+                return card.ability.extra.money
             end
         end,
         demicoloncompat = false

@@ -18,7 +18,7 @@ return {
                 local points, chip_goal = 0, G.GAME.blind.chips
 
                 points = MadLib.build_onto_val(points, function(i)
-                    return to_big(G.GAME.chips) >= to_big(chip_goal) and i <= 10
+                    return MadLib.compare_numbers(G.GAME.chips, chip_goal) and i < 11
                 end, function(v,i)
                     points = points + 1
                     return v ^ self.config.extra

@@ -367,13 +367,13 @@ SMODS.Joker:take_ownership('cloud_9', {
         local nines = MadLib.get_card_count(G.playing_cards, function(v)
             return MadLib.joker_check_rank(v, card, '9')
         end)
-        return MadLib.collect_vars(card.ability.extra.dollars, localize(card.ability.extra.rank, 'ranks'), card.ability.extra.dollars * nines)
+        return MadLib.collect_vars(card.ability.extra.dollars, localize(card.ability.extra.rank, 'ranks'), MadLib.multiply(card.ability.extra.dollars, nines))
     end,
     calc_dollar_bonus = function(self, card)
         local nines = MadLib.get_card_count(G.playing_cards, function(v)
             return MadLib.joker_check_rank(v, card, '9')
         end)
-        return nines > 0 and (card.ability.extra.dollars * nines) or nil
+        return nines > 0 and MadLib.multiply(card.ability.extra.dollars, nines) or nil
     end
 }, true)
 

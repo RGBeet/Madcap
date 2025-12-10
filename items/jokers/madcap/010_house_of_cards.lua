@@ -45,9 +45,9 @@ return {
 
             if
                 context.joker_main
-                and to_big(card.ability.extra.chips) > to_big(0)
+                and MadLib.is_positive_number(card.ability.extra.chips)
             then
-                return { chips = to_big(card.ability.extra.chips) }
+                return { chips = card.ability.extra.chips }
             end
 
             -- End of round

@@ -2,9 +2,9 @@ function Madcap.Funcs.get_hand_data(hand)
     hand = hand or G.GAME.last_played_hand or 'High Card'
     return {
         hand    = hand,
-        chips   = G.GAME and to_big(G.GAME.hands[hand].chips or 5),
-        mult    = G.GAME and to_big(G.GAME.hands[hand].mult or 1),
-        level 	= G.GAME and to_big(G.GAME.hands[hand].level or 1)
+        chips   = G.GAME and G.GAME.hands[hand].chips or 5,
+        mult    = G.GAME and G.GAME.hands[hand].mult or 1,
+        level 	= G.GAME and G.GAME.hands[hand].level or 1
     }
 end
 

@@ -34,7 +34,7 @@ return {
                     message = localize({
                         type    = "variable",
                         key     = 'a_xmult',
-                        vars    = { number_format(lenient_bignum(to_big(card.ability.extra.x_mult))) },
+                        vars    = { number_format(card.ability.extra.x_mult) },
                         card    = card
                     }),
                 }

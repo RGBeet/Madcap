@@ -18,8 +18,8 @@ return {
             return MadLib.collect_vars(number_format(card.ability.extra.luxury))
         end,
         calc_luxury_bonus = function(self, card)
-            if to_big(card.ability.extra.luxury) > to_big(0) then
-                return lenient_bignum(card.ability.extra.luxury)
+            if MadLib.is_positive_number(card.ability.extra.luxury) then
+                return card.ability.extra.luxury
             end
         end,
         demicoloncompat = false,

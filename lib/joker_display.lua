@@ -1768,7 +1768,7 @@ if JokerDisplay then
             local playing_hand = next(G.play.cards)
             card.joker_display_values.x_mult = playing_hand and MadLib.exponent(MadLib.JokerDisplay.get_cards_matching(scoring_hand, function(v)
                 return MadLib.is_rank(v, SMODS.Ranks['rgmc_Sum'].id)
-            end), card.ability.extra.x_chips) or to_big(1)
+            end), card.ability.extra.x_chips) or 1
         end
     }
 

@@ -11,16 +11,18 @@ return {
             return true
         end,
         loc_vars = function(self, info_queue, card)
-            return MadLib.collect_vars(number_format(1/self.debuff.chip_window))
+            return MadLib.collect_vars(number_format(MadLib.divide(1, self.debuff.chip_window)))
         end,
         calculate = function(self, card, context)
             if not G.GAME.blind.disabled and context.rgmc_total_score then
-                local chip_window   = 1/self.debuff.chip_window
-                local minimum       = G.GAME.blind.chips * chip_window
-                local maximum       = G.GAME.blind.chips * ( 1+ chip_window)
-                local new_total     = G.GAME.chips + context.rgmc_total_score
-                --tell('Minimum: ' .. tostring(minimum) ..  ', Score,' .. tostring(new_total) .. ', Maximum: ' .. tostring(maximum))
-                if to_big(new_total) > to_big(maximum) or to_big(new_total) < to_big(minimum) then
+                local chip_window   = MadLib.divide(1, self.debuff.chip_window)
+                local minimum       = MadLib.multiply(G.GAME.blind.chips, chip_window)
+                local maximum       = MadLib.multiply(G.GAME.blind.chips, MadLib.add(chip_window, 1))
+                local new_total     = MadLib.add(G.GAME.chips, context.rgmc_total_score)
+                if 
+                    MadLib.compare_numbers(new_total, maximum) > 0 
+                    or MadLib.compare_numbers(new_total, minimum) < 0
+                then
                     G.GAME.chips = 0
                     MadLib.manipulate_chips_mult(0,0)
                     MadLib.simple_event(function()

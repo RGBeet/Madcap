@@ -31,7 +31,8 @@ function Madcap.Funcs.ease_mayhem(_mod, _check, _silent, _instant)
 	_mod = _mod or 0
     MadLib.simple_event(function()
         local round_UI = G.HUD:get_UIE_by_ID('mayhem_UI_count')
-        local add_mayhem, lose_mayhem = to_big(_mod) > to_big(0), to_big(_mod) < to_big(0)
+		local add_mayhem 	= MadLib.is_positive_number(_mod) 
+        local lose_mayhem 	= MadLib.is_negative_number(_mod) 
 
         local text  = add_mayhem and '+' or ''
         local col   = (add_mayhem and G.C.RGMC_MAYHEM) or (lose_mayhem and G.C.RED) or G.C.FILTER

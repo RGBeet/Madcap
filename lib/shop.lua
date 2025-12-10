@@ -140,32 +140,32 @@ end
 
 function Madcap.Funcs.handle_booster_cost(card)
     local is_luxury   = Madcap.Funcs.uses_lp(card)
-    if card.cost <= 0 then
+    if MadLib.compare_numbers(card.cost, 0) < 1 then
         delay(0.2)
     elseif is_luxury then
         MadLib.event({trigger = 'after', delay = 0.2, func = function()
             card:juice_up()
             return true end 
         })
-        ease_lp(card:calc_lp()*-1)
+        ease_lp(MadLib.get_negative(card:calc_lp()))
     else
         MadLib.event({trigger = 'after', delay = 0.2, func = function()
             inc_career_stat('c_shop_dollars_spent', card.cost)
             card:juice_up()
             return true end 
         })
-        ease_dollars(-card.cost)
+        ease_dollars(MadLib.get_negative(card.cost))
     end
 end
 
 function Madcap.Funcs.handle_voucher_cost(card)
     local is_luxury   = Madcap.Funcs.uses_lp(card)
-    if card.cost <= 0 then
+    if MadLib.compare_numbers(card.cost, 0) < 1 then
         delay(0.2)
     elseif is_luxury then
-        ease_lp(card:calc_lp()*-1)
+        ease_lp(MadLib.get_negative(card:calc_lp()))
     else
-        ease_dollars(-card.cost)
+        ease_dollars(MadLib.get_negative(card.cost))
     end
 end
 

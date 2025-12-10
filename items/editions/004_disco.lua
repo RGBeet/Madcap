@@ -63,7 +63,7 @@ return {
                 if not self.config[choice] then choice = nil end
 
                 if choice == 'x_dollars' then
-                    ease_dollars(G.GAME.dollars * lenient_bignum(self.config[choice]))
+                    ease_dollars(MadLib.multiply(G.GAME.dollars, self.config[choice]))
                     return {
                         message = "X$" .. lenient_bignum(self.config[choice]),
                         colour = G.C.MONEY

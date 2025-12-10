@@ -9,7 +9,7 @@ function Madcap.Funcs.get_moon_card_vars(sh,levels)
 				or SubHands[sh].l_mult) + 1,
             (subhand and subhand.l_chips
 				or SubHands[sh].l_chips) + 1,
-			colours = { ( to_big(subhand and subhand.level or 1) == to_big(1) and G.C.UI.TEXT_DARK or G.C.HAND_LEVELS[to_number(math.min(7, subhand and subhand.level or 1))]), }
+			colours = { MadLib.get_level_color(subhand.level), }
         }
     }
 end

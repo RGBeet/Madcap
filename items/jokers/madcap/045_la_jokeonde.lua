@@ -28,7 +28,7 @@ return {
             if
                 context.final_scoring_step
                 and context.full_hand
-                and (to_big(G.GAME.chips) >= to_big(G.GAME.blind.chips))
+                and MadLib.compare_numbers(G.GAME.chips, G.GAME.blind.chips) >= 0
             then
                 local unscoring_cards = {}
                 MadLib.loop_func(context.full_hand, function(v)

@@ -18,7 +18,7 @@ return {
                 local selected = MadLib.get_list_matches(G.hand.cards, function(v)
                     return Madcap.Funcs.card_in_list(v,G.hand.highlighted)
                 end)
-                sigma_sum = selected and to_big(Madcap.Funcs.get_sigma_value(selected))
+                sigma_sum = selected and Madcap.Funcs.get_sigma_value(selected)
             end
 
             local final_xchips = 1 + ((sigma_sum or 0) * card.ability.extra.xchip_mod)

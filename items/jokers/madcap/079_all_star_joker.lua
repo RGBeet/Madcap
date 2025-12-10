@@ -14,14 +14,13 @@ return {
             return MadLib.collect_vars(card.ability.immutable.total_sum, card.ability.extra.money_mod, card.ability.extra.money)
         end,
         calc_dollar_bonus = function(self, card)
-            if to_big(card.ability.extra.money) > to_big(0) then
-                local cash = card.ability.extra.money
+            if MadLib.is_positive_number(card.ability.extra.money) then
+                local cash = lenient_bignum(card.ability.extra.money)
                 card.ability.extra.money = 0
-                return lenient_bignum(cash)
+                return cash
             end
         end,
         calculate = function(self, card, context)
-
             if (context.before and MadLib.get_hand_sum(context.scoring_hand) == card.ability.immutable.total_sum) then
                 MadLib.loop_func(G.jokers.cards, function(v)
                     MadLib.simple_event(function()

@@ -8,9 +8,7 @@ return {
         boss_colour = HEX('5CB572'),
         min_ante = 4,
         in_pool = function(self)
-            return Madcap.Data.devmode
-                or ((to_big(G.GAME.dollars - 20) > to_big(G.GAME.bankrupt_at))
-                and (to_big(G.GAME.dollars) < to_big(20)))
+            return not MadLib.is_broke(-20) -- not broke by investment
         end,
         defeat = function(self, silent)
             MadLib.event({

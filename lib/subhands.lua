@@ -140,7 +140,7 @@ function Madcap.Funcs.get_potentia_card_vars(sh,lvl)
             (empower_level > 0) and (" + " .. empower_level .."") or "",
             localize(SubHands[sh].name),
             lvl,
-			colours = { to_big(current_level) < to_big(2) and G.C.BLACK or G.C.HAND_LEVELS[to_number(math.min(7, current_level))] }
+			colours = { MadLib.get_level_color(G.GAME.hands[id].level) }
         },
     }
 end
@@ -249,7 +249,7 @@ function Madcap.Funcs.empower_subhand(card, hand, instant, amount, context)
 			end, 2.5, 'after')
 		end
 	end
-	update_hand_text({ sound = "button", volume = 0.7, pitch = 0.9, delay = 2.0 }, { level = to_big(empower_level) })
+	update_hand_text({ sound = "button", volume = 0.7, pitch = 0.9, delay = 2.0 }, { level = number_format(empower_level) })
 	delay(2.6)
     G.GAME.subhands[hand].empower = empower_level
 	MadLib.clear_hand_text()

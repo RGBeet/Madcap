@@ -1041,7 +1041,7 @@ function ease_dollars(mod, instant)
 	--tell('Easing moment')
 	if
 		G.GAME.modifiers.bankrupt_kill
-        and (to_big(G.GAME.dollars) + to_big(mod)) <= to_big(G.GAME.bankrupt_at)
+        and MadLib.is_broke(mod)
 	then
 		MadLib.event({
 			func = function()
@@ -1085,9 +1085,8 @@ if SMODS and SMODS.calculate_individual_effect then
 			end) and amount ~= 1
 		then
 			MadLib.loop_func(SMODS.find_card('j_rgmc_squeezy_cheeze'), function(v)
-				v.ability.extra.xmult_store = lenient_bignum(to_big(v.ability.extra.xmult_store) + to_big(amount))
-				if v.ability.extra.xmult_store > 1 then
-					--tell("New xmult_store is "..lenient_bignum(v.ability.extra.xmult_store))
+				v.ability.extra.xmult_store = MadLib.add(v.ability.extra.xmult_store, amount)
+				if MadLib.compare_numbers(v.ability.extra.xmult_store, 1) > 0 then
 					local m = 0
 					while (v.ability.extra.xmult_store - 1) > 0 do
 						v.ability.extra.xmult_store = v.ability.extra.xmult_store - 1 -- go down bith
@@ -1107,7 +1106,7 @@ if SMODS and SMODS.calculate_individual_effect then
 						}),
 						colour = G.C.CHIPS,
 					})
-					hand_chips = mod_chips(to_big(hand_chips) * to_big(xm)) -- stupid way of doing x1.5 chips
+					hand_chips = mod_chips(MadLib.multiply(hand_chips, xm)) -- stupid way of doing x1.5 chips
 				end
 			end)
 		end
@@ -1387,7 +1386,7 @@ end
 
 local level_up_hand_ref = level_up_hand
 function level_up_hand(card, hand, instant, amount, context)
-	if to_big(amount or 1) > to_big(0) then -- actually levelling up the hand
+	if MadLib.is_positive_number(amount or 1) then -- actually levelling up the hand
 		-- Rocket Keychain: level up a random hand
 		MadLib.loop_joker_effect('j_rgmc_rocket_keychain', function(v)
 			if hand ~= v.ability.extra.target_hand then return end
@@ -1744,7 +1743,7 @@ end
 
 local poker_hands_info_ref = G.FUNCS.get_poker_hand_info
 G.FUNCS.get_poker_hand_info = function(_cards)
-	print('Get Poker Hand Info')
+	--print('Get Poker Hand Info')
 	G.GAME.current_subhands = nil
 	return poker_hands_info_ref(_cards)
 end

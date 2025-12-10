@@ -13,9 +13,8 @@ return {
         end,
         calculate = function (self, card, context)
             if context.end_of_round and not context.game_over and context.main_eval then
-                -- if you get overkill, you get a free tarot card
-                local diff = math.abs(to_big(G.GAME.chips) - to_big(G.GAME.blind.chips)) -- difference between your chips and blind chips
-                if to_big(diff) / to_big(G.GAME.blind.chips) >= to_big(1.5) then
+                local diff = math.abs(MadLib.subtract(G.GAME.chips, G.GAME.blind.chips)) 
+                if MadLib.compare_numbers(MadLib.divide(diff, G.GAME.blind.chips), 1.5) >= 0 then
                     tell('Good job!')
                     MadLib.simple_event(function()
                         local card_type = "Tarot"

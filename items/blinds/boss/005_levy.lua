@@ -10,9 +10,7 @@ return {
         boss_colour = HEX('3F8451'),
         config = { extra = 1 },
         in_pool = function(self)
-            -- cannot be bankrupt
-            return (to_big(G.GAME.dollars) - to_big(G.GAME.bankrupt_at)) > to_big(0)
-                or Madcap.Data.devmode
+            return not MadLib.is_broke()
         end,
         loc_vars = function(self, info_queue, card)
             return MadLib.collect_vars(number_format(self.config.extra or 1))

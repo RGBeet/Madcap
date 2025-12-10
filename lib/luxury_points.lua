@@ -52,10 +52,13 @@ function ease_lp(mod, instant)
     end
 end
 
+local has_positive_lp = function(e)
+    return MadLib.is_positive_number(MadLib.subtract(G.GAME.rgmc_luxury_pts, cash_to_lp(e.config.ref_table.cost)))
+end
+
 -- different one for luxury points
 G.FUNCS.can_buy_luxury = function(e)
-	local lp_cost = cash_to_lp(e.config.ref_table.cost)
-    if (G.GAME.rgmc_luxury_pts - lp_cost) <= 0 then
+	if not has_positive_lp(e) then
         e.config.colour = G.C.UI.BACKGROUND_INACTIVE
         e.config.button = nil
     else
@@ -63,18 +66,17 @@ G.FUNCS.can_buy_luxury = function(e)
         e.config.button = 'buy_from_shop'
     end
     if e.config.ref_parent and e.config.rref_parent.children.buy_and_use then
-      if e.config.ref_parent.children.buy_and_use.states.visible then
-        e.UIBox.alignment.offset.y = -0.6
-      else
-        e.UIBox.alignment.offset.y = 0
-      end
+        if e.config.ref_parent.children.buy_and_use.states.visible then
+            e.UIBox.alignment.offset.y = -0.6
+        else
+            e.UIBox.alignment.offset.y = 0
+        end
     end
 end
 
 -- Can buy & use if enough Luxe held
 G.FUNCS.can_buy_and_use_luxury = function(e)
-	local lp_cost = cash_to_lp(e.config.ref_table.cost)
-    if (G.GAME.rgmc_luxury_pts - lp_cost) <= 0 then
+	if not has_positive_lp(e) then
         e.UIBox.states.visible = false
         e.config.colour = G.C.UI.BACKGROUND_INACTIVE
         e.config.button = nil
@@ -89,8 +91,7 @@ end
 
 -- Can use if enough Luxe held
 G.FUNCS.can_open_luxury = function(e)
-	local lp_cost = cash_to_lp(e.config.ref_table.cost)
-    if (G.GAME.rgmc_luxury_pts - lp_cost) <= 0 then
+	if not has_positive_lp(e) then
         e.config.colour = G.C.UI.BACKGROUND_INACTIVE
         e.config.button = nil
     else
@@ -101,8 +102,7 @@ end
 
 -- Can redeem Voucher if enough Luxe held
 G.FUNCS.can_redeem_luxury = function(e)
-	local lp_cost = cash_to_lp(e.config.ref_table.cost)
-    if (G.GAME.rgmc_luxury_pts - lp_cost) <= 0 then
+	if not has_positive_lp(e) then
         e.config.colour = G.C.UI.BACKGROUND_INACTIVE
         e.config.button = nil
     else
@@ -116,7 +116,7 @@ function Madcap.Funcs.uses_lp(card)
 end
 
 function Madcap.Funcs.luxury_shoppe_enabled()
-    if G.GAME.rgmc_luxury_pts and G.GAME.rgmc_luxury_pts > 5 then
+    if MadLib.compare_numbers(G.GAME.rgmc_luxury_pts, 5) then
         return true
     end
     return false
@@ -127,7 +127,8 @@ end
 ]]
 
 G.FUNCS.can_reroll_luxury_shoppe = function(e)
-    if G.GAME.rgmc_luxury_pts - 2 < 0 then 
+    local roll_amt = 2
+    if G.GAME.rgmc_luxury_pts and not MadLib.compare_numbers(G.GAME.rgmc_luxury_pts, roll_amt) < 0 then
         e.config.colour = G.C.UI.BACKGROUND_INACTIVE
         e.config.button = nil
     else

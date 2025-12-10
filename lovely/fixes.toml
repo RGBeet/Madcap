@@ -502,3 +502,27 @@ payload = '''self.impound = CardArea(
     )
 '''
 match_indent = true
+
+
+
+# Fix this because it makes a crash
+
+[[patches]]
+[patches.pattern]
+target = "functions/button_callbacks.lua"
+pattern = "if (e.config.ref_table.cost) > 0 and (to_big(e.config.ref_table.cost) > to_big(G.GAME.dollars) - to_big(G.GAME.bankrupt_at)) then"
+position = "at"
+payload = '''if 
+    MadLib.compare_numbers(e.config.ref_table.cost, 0) > 0 
+    and MadLib.compare_numbers(e.config.ref_table.cost, MadLib.subtract(G.GAME.dollars, G.GAME.bankrupt_at)) > 0
+then'''
+match_indent = true
+
+
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = "not (self.cost < 0 and (G.GAME.dollars + self.cost) < G.GAME.bankrupt_at) and"
+position = "at"
+payload = '''not (MadLib.is_negative_number(self.cost) and MadLib.compare_numbers(MadLib.add(G.GAME.dollars + self.cost), G.GAME.bankrupt_at)) and'''
+match_indent = true

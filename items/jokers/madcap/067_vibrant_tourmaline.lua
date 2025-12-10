@@ -23,7 +23,7 @@ return {
                 { G.C.SUITS[card.ability.extra.suit] })
         end,
         calc_dollar_bonus = function(self, card)
-            if to_big(card.ability.extra.money) > to_big(0) then return lenient_bignum(card.ability.extra.money) end
+            return MadLib.get_calc_bonus(card.ability.extra.money)
         end,
         calculate = function(self, card, context)
             -- upgrade

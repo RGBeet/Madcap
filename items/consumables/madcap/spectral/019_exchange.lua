@@ -16,18 +16,17 @@ return {
             }
         end,
         can_use = function(self, card)
-            local value = G.GAME.dollars-1
-            return value >= 0 and cash_to_lp(value) > 0
+            return MadLib.is_positive_number(cash_to_lp(G.GAME.dollars))
         end,
         use = function(self, card, area, copier)
-            local amt = to_big(G.GAME.dollars - 1)
+            local amt = MadLib.subtract(G.GAME.dollars, 1)
             MadLib.simple_event(function()
-                ease_dollars(-amt, true)
+                ease_dollars(MadLib.multiply(amt, -1), true)
                 card:juice_up(0.3, 0.5)
                 return true
             end, 1.0, 'after')
             MadLib.simple_event(function()
-                ease_lp((to_big(amt) / math.floor(to_big(G.GAME.dollars) or to_big(5))), true)
+                ease_lp(cash_to_lp(G.GAME.dollars))
                 play_sound('rgmc_kaching', 0.8)
                 card:juice_up(0.3, 0.5)
                 return true

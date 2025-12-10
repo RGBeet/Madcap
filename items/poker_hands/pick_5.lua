@@ -34,18 +34,20 @@ return {
                     end
                 end)
             end)
-            local index = 0
-            --tell("HAND DATA:")
-            --print(hand_data)
-            --tell("PICK 5 DATA:")
-            --print(pick5_data)
-            if not (hand_data and #hand_data < 5 and pick5_data and #pick5_data < 5) then return { } end
+            
+            local index = 1
+            
+            if not (hand_data and #hand_data > 4 and pick5_data and #pick5_data > 4) then return { } end
             while pass and index < 5 do
-                if  hand_data[index].rank ~= pick5_data[index].rank or hand_data[index].suit ~= pick5_data[index].suit then
+                if 
+                    hand_data[index].rank ~= pick5_data[index].rank 
+                    or hand_data[index].suit ~= pick5_data[index].suit 
+                then
                     pass = false
                 end
                 index = index + 1
             end
+            
             return pass and { hand } or { }
         end,
     }

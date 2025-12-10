@@ -32,10 +32,7 @@ return {
                 table.insert(planet_vars, localize(v, 'poker_hands'))
                 table.insert(planet_vars, G.GAME.hands[v].l_mult)
                 table.insert(planet_vars, G.GAME.hands[v].l_chips)
-                table.insert(planet_colours, (
-                    to_big(G.GAME.hands[v].level) == to_big(1) and G.C.UI.TEXT_DARK
-                    or G.C.HAND_LEVELS[to_number(math.min(7, G.GAME.hands[v].level))]
-                ))
+                table.insert(planet_colours, MadLib.get_level_color(G.GAME.hands[v].lvl))
             end)
             MadLib.loop_func(pick_5_cards, function(v)
                 table.insert(planet_vars, localize(v.rank, 'ranks'))

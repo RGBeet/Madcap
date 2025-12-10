@@ -675,8 +675,8 @@ G.FUNCS.flame_handler = function(e)
 			local exptime = math.exp(-0.4*G.real_dt)
 
 			if
-				to_big(G.ARGS.score_intensity.earned_score) >= to_big(G.ARGS.score_intensity.required_score)
-				and to_big(G.ARGS.score_intensity.required_score) > to_big(0) then
+				MadLib.compare_numbers(G.ARGS.score_intensity.earned_score, G.ARGS.score_intensity.required_score) > 0
+				and MadLib.is_positive_number(G.ARGS.score_intensity.required_score) then
 				_F.intensity = ((G.pack_cards and not G.pack_cards.REMOVED) or (G.TAROT_INTERRUPT)) and 0 or math.max(0., math.log(G.ARGS.score_intensity.earned_score, 5)-2)
 			else
 				_F.intensity = 0
@@ -759,7 +759,7 @@ function Madcap.Funcs.get_planet_vars(id)
             G.GAME.hands[id].level,
             G.GAME.hands[id].l_mult,
             G.GAME.hands[id].l_chips,
-			colours = {(to_big(G.GAME.hands[id].level) == to_big(1) and G.C.UI.TEXT_DARK or G.C.HAND_LEVELS[to_number(math.min(7, G.GAME.hands[id].level))])},
+			colours = { MadLib.get_level_color(G.GAME.hands[id].level) },
         },
     }
 end

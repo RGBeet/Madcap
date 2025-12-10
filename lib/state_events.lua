@@ -188,30 +188,45 @@ function Madcap.Funcs.ante_start()
 
 
 	G.GAME.pick_5 = {}
-	--[[
-	local pick_5_cards = MadLib.shuffle_sort_list(G.deck.cards, 5, function(v)
-        return (v ~= nil) and not SMODS.has_no_rank(v)
-    end)
+	
+	MadLib.event({
+		func = function()
+			local pick_5_cards = MadLib.shuffle_sort_list(G.deck.cards, 5, function(v)
+				return (v ~= nil) and not SMODS.has_no_rank(v)
+			end)
 
-	tell('Pick 5:')
-	MadLib.loop_func(pick_5_cards, function(v)
-		table.insert(G.GAME.pick_5, {
-			rank 	= v.base.value,
-			suit 	= v.base.suit
-		})
-		print(G.GAME.pick_5[#G.GAME.pick_5])
-	end)]]
+			tell('Pick 5:')
+			MadLib.loop_func(pick_5_cards, function(v)
+				table.insert(G.GAME.pick_5, {
+					rank 	= v.base.value,
+					suit 	= v.base.suit
+				})
+				print(G.GAME.pick_5[#G.GAME.pick_5])
+			end)
+			return true
+		end
+	})
+
+	if G.GAME.modifiers.rgmc_enable_shop_inflation then
+		G.GAME.inflation = MadLib.divide(G.GAME.inflation, 2)
+		tell('Inflation level is currently ' .. number_format(G.GAME.inflation) .. '.')
+	end
+
+	if G.GAME.shop_level then
+		G.GAME.shop_level = math.floor(MadLib.multiply(G.GAME.shop_level, 3/4))
+		tell('Shop level is currently ' .. number_format(G.GAME.inflation) .. '.')
+	end
+
+	if G.GAME.shortage_level then
+		G.GAME.shortage_level = math.floor(MadLib.divide(G.GAME.shortage_level, 2))
+		tell('Shortage level is currently ' .. number_format(G.GAME.inflation) .. '.')
+	end
 end
 
 -- Upon ending an ante?
 function Madcap.Funcs.ante_finish()
     -- end of ante
     tell('Ante End')
-
-	if G.GAME.modifiers.rgmc_enable_shop_inflation then
-		G.GAME.inflation = MadLib.divide(G.GAME.inflation, 2)
-		tell('Inflation level is currently ' .. number_format(G.GAME.inflation) .. '.')
-	end
 end
 
 -- Upon starting a shop
@@ -284,8 +299,8 @@ function Madcap.Funcs.record_hand_before(scoring_hand,text)
 end
 
 function Madcap.Funcs.record_hand_after(_chips, _mult, _pow)
-	local total_chips = to_big(_chips) ^ (_pow or 1) * to_big(_mult)
-    local current_score, high_score = to_big(total_chips), to_big(G.GAME.best_hand.score)
+	local total_chips = MadLib.multiply(MadLib.exponent(_chips, _pow or 1), _mult)
+    local current_score, high_score = total_chips, G.GAME.best_hand.score
 
     if high_score < current_score then -- Update high score information
         G.GAME.best_hand = {
@@ -370,9 +385,9 @@ end
 
 function Madcap.Funcs.calculate_chips_mult(hand, subhands, cards)
 
-	local level		= to_big(hand.level or 0)
-	local chips 	= to_big(hand.chips or 0)
-	local mult 		= to_big(hand.mult or 0)
+	local level		= hand.level or 0
+	local chips 	= hand.chips or 0
+	local mult 		= hand.mult or 0
 
 	chips 	= MadLib.calculate_chips(chips)
 	mult 	= MadLib.calculate_mult(mult)
