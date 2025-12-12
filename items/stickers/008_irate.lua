@@ -34,7 +34,7 @@ return {
         end,
         should_apply = false,
         apply = function(self, card, val)
-            card.ability.rgmc_irate = true
+            card.ability.rgmc_irate = val or true
         end,
     }
 }

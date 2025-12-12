@@ -6,11 +6,10 @@ return {
         pos         = MLIB.coords(4,4),
         badge_colour = HEX('574C8F'),
         loc_vars = function(self, info_queue, card)
-            return MadLib.collect_vars(number_format(G.GAME.rgmc_lucky_numerator or 1))
         end,
         should_apply = false,
         apply = function(self, card, val)
-            card.ability.rgmc_lucky = true
+            card.ability.rgmc_unity = val or true
         end,
         calculate = function(self, card, context)
             if

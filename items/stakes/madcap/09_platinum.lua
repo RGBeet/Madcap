@@ -10,7 +10,8 @@ return {
         sticker_pos     = { x = 3, y = 1 },
         shiny = true,
         modifiers = function()
-            G.GAME.modifiers.rgmc_enable_boss_gauntlet = true
+            G.GAME.modifiers.rgmc_block_win_status      = {}
+            G.GAME.modifiers.rgmc_block_win_status['boss_gauntlet'] = true
         end,
         colour = G.C.RGMC_PLATINUM,
     }

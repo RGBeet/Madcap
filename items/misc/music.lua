@@ -72,9 +72,9 @@ local list = {
 	end, 0.8, true),
     Madcap.Funcs.GetMusic('music_madcap_finisher',function()
 	return can_play_madcap_music()
-		and Madcap.Funcs.is_playing_blind()
+		and ((Madcap.Funcs.is_playing_blind()
 		and Madcap.Funcs.get_boss_status() > 0
-		and Madcap.Funcs.is_finisher_ante(ante)
+		and Madcap.Funcs.is_finisher_ante(ante)) or G.GAME.force_finisher_music)
 		and 18
 	end, 0.8, true),
 

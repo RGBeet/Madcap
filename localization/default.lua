@@ -5310,31 +5310,32 @@ return {
 			stake_rgmc_wager_t2 = {
 				name = "Jade Wager",
 				text = {
-                    "Cards can be {C:attention}???{}",
-                    "{C:attention}???{}, and {C:attention}???{}",
+                    "Cards can be {C:attention}Eternal{},",
+                    "{C:attention}Delayed{}, and {C:attention}Weakened{}",
                     "{s:0.8}Applies all previous Stakes"
                 },
 			},
 			stake_rgmc_wager_t3 = {
 				name = "Ebony Wager",
 				text = {
-                    "Cards can be {C:attention}???{}",
-                    "{C:attention}???{}, and {C:attention}???{}",
+                    "Cards can be {C:attention}Perishable{},",
+                    "{C:attention}Faulty{}, and {C:attention}Irate{}",
                     "{s:0.8}Applies all previous Stakes"
                 },
 			},
 			stake_rgmc_wager_t4 = {
 				name = "Indigo Wager",
 				text = {
-                    "Cards can be {C:attention}???{}",
-                    "{C:attention}???{}, and {C:attention}???{}",
+                    "{C:rgmc_violet}Impound{} a random card",
+                    "at end of Blind",
                     "{s:0.8}Applies all previous Stakes"
                 },
 			},
 			stake_rgmc_wager_t5 = {
 				name = "Violet Wager",
 				text = {
-                    "Cards can be {C:rgmc_violet}Impounded",
+                    "Cards can be {C:attention}Rental{},",
+                    "{C:attention}Toxic{}, and {C:attention}Slashed{}",
                     "{s:0.8}Applies all previous Stakes"
                 },
 			},
@@ -5357,9 +5358,7 @@ return {
 			stake_rgmc_wager_t7 = {
 				name = "Aurum Wager",
 				text = {
-                    "Cards can be {C:attention}???{}",
-                    "{C:attention}???{}, and {C:attention}???{}",
-                    "{s:0.8}Applies all previous Stakes"
+                    "Blinds can have Modifiers"
                 },
 			},
 			stake_rgmc_wager_t8 = {
@@ -5387,7 +5386,7 @@ return {
 			stake_rgmc_wager_t10 = {
 				name = "Iridium Wager",
 				text = {
-                    "Shops now have {C:rgmc_iridium}Inflation{}",
+                    "Shops now face {C:rgmc_iridium}Inflation{}",
                     "{s:0.8}Applies all previous Stakes"
                 },
 			},

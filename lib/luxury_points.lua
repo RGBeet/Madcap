@@ -10,32 +10,32 @@ end
 function ease_lp(mod, instant)
     local function _mod(mod)
         local dollar_UI = G.HUD:get_UIE_by_ID('luxury_text_UI')
+        local text, col
         mod = mod or 0
-        local text = '+'..localize('$')
-        local col = G.C.RGMC_LUXURY
-        if mod < 0 then
-            text = '-'..localize('$')
-            col = G.C.RED
+        if MadLib.is_negative_number(mod) then
+            text    = '-'..localize('$')
+            col     = G.C.RED
         else
-          --inc_career_stat('c_dollars_earned', mod)
+            text    = '+'..localize('$')
+            col     = G.C.RGMC_LUXURY
         end
         --Ease from current chips to the new number of chips
-        G.GAME.rgmc_luxury_pts = G.GAME.rgmc_luxury_pts + mod
+        G.GAME.rgmc_luxury_pts = MadLib.add(G.GAME.rgmc_luxury_pts, mod)
         dollar_UI.config.object:update()
         G.HUD:recalculate()
         --Popup text next to the chips in UI showing number of chips gained/lost
         attention_text({
-          text = text..tostring(math.abs(mod)),
-          scale = 0.8,
-          hold = 0.7,
-          cover = dollar_UI.parent,
-          cover_colour = col,
-          align = 'cm',
-          })
+            text        = text..tostring(math.abs(mod)),
+            scale       = 0.8,
+            hold        = 0.7,
+            cover           = dollar_UI.parent,
+            cover_colour    = col,
+            align           = 'cm',
+        })
         --Play a chip sound
-        if mod > 0 then
+        if MadLib.is_positive_number(mod) then
           play_sound('rgmc_kaching')
-        elseif mod ~= 0 then
+        elseif not MadLib.is_zero(mod) then
           play_sound('rgmc_kaching_evil')
         end
     end

@@ -1,11 +1,9 @@
 function Madcap.Funcs.get_hand_data(hand)
     hand = hand or G.GAME.last_played_hand or 'High Card'
-    return {
-        hand    = hand,
-        chips   = G.GAME and G.GAME.hands[hand].chips or 5,
-        mult    = G.GAME and G.GAME.hands[hand].mult or 1,
-        level 	= G.GAME and G.GAME.hands[hand].level or 1
-    }
+    return hand,
+        G.GAME and lenient_bignum(G.GAME.hands[hand].chips or 5),
+        G.GAME and lenient_bignum(G.GAME.hands[hand].mult or 1),
+        G.GAME and lenient_bignum(G.GAME.hands[hand].level or 1)
 end
 
 return {
@@ -28,18 +26,15 @@ return {
             return G.GAME.edition_rate * self.weight
         end,
         loc_vars = function(self, info_queue)
-            local data = Madcap.Funcs.get_hand_data()
-            return MadLib.collect_vars(data.hand, data.level, data.chips, data.mult)
+            local hand, chips, mult, level = Madcap.Funcs.get_hand_data()
+            return MadLib.collect_vars(hand, chips, mult, level)
         end,
         calculate = function(self, card, context)
-            if 
-                context.post_joker or
-                (context.main_scoring and context.cardarea == G.play) 
-            then
-                local data = Madcap.Funcs.get_hand_data()
+            if context.post_joker or (context.main_scoring and context.cardarea == G.play)  then
+                local hand = G.GAME.last_played_hand or 'High Card'
                 return { 
-                    chips   = data.chips,
-                    mult    = data.mult,
+                    chips   = lenient_bignum(G.GAME.hands[hand].chips),
+                    mult    = lenient_bignum(G.GAME.hands[hand].mult),
                 }
             end
         end,

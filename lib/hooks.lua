@@ -57,40 +57,12 @@ end
 
 local add_to_deck_ref = Card.add_to_deck
 function Card:add_to_deck(from_debuff)
-	if self.ability and self.ability.rgmc_negative and G.jokers then
-		if self.ability.consumeable then
-			G.consumeables.config.card_limit = G.consumeables.config.card_limit + 1
-		else
-			G.jokers.config.card_limit = G.jokers.config.card_limit + 1
-		end
-	end
-	if self.ability and self.ability.rgmc_positive and G.jokers then
-		if self.ability.consumeable then
-			G.consumeables.config.card_limit = G.consumeables.config.card_limit - 1
-		else
-			G.jokers.config.card_limit = G.jokers.config.card_limit - 1
-		end
-	end
 	add_to_deck_ref(self, from_debuff)
 	Madcap.Funcs.update_global_joker_counts()
 end
 
 local remove_from_deck_ref = Card.remove_from_deck
 function Card:remove_from_deck(from_debuff)
-	if self.ability and self.ability.rgmc_negative and G.jokers then
-		if self.ability.consumeable then
-			G.consumeables.config.card_limit = G.consumeables.config.card_limit - 1
-		else
-			G.jokers.config.card_limit = G.jokers.config.card_limit - 1
-		end
-	end
-	if self.ability and self.ability.rgmc_positive and G.jokers then
-		if self.ability.consumeable then
-			G.consumeables.config.card_limit = G.consumeables.config.card_limit + 1
-		else
-			G.jokers.config.card_limit = G.jokers.config.card_limit + 1
-		end
-	end
 	remove_from_deck_ref(self, from_debuff)
 	Madcap.Funcs.update_global_joker_counts()
 end
@@ -498,131 +470,62 @@ function Card:rgmc_set_immutable(a)
 		and a
 end
 
+local try_apply_sticker = function(card, str, func, chance)
+	if 
+		pseudorandom((area == G.pack_cards and 'packssjr' or 'ssjr') .. G.GAME.round_resets.ante) > chance
+		and not SMODS.Stickers[str].should_apply
+	then
+		func(card,true)
+	end
+end
+
 local set_shop_stickers_ref =  MadLib.set_shop_stickers
 function MadLib.set_shop_stickers(card)
     card = set_shop_stickers_ref(card)
 
     -- Faulty
+	if 
+		Madcap.Funcs.get_num_stickers(card) < 2
+	then
+		if G.GAME.modifiers.rgmc_enable_jade_stickers then
+			try_apply_sticker(card, 'eternal', 			Card.set_eternal, 0.8)
+			try_apply_sticker(card, 'rgmc_delayed', 	Card.rgmc_set_delayed, 0.8)
+			try_apply_sticker(card, 'rgmc_weakened', 	Card.rgmc_set_weakened, 0.8)
+		end
+		if G.GAME.modifiers.rgmc_enable_ebony_stickers then
+			try_apply_sticker(card, 'perishable', 	Card.set_perishable, 0.8)
+			try_apply_sticker(card, 'rgmc_faulty', 	Card.rgmc_set_faulty, 0.8)
+			try_apply_sticker(card, 'rgmc_irate', 	Card.rgmc_set_irate, 0.8)
+		end
+		if G.GAME.modifiers.rgmc_enable_violet_stickers then
+			try_apply_sticker(card, 'rental', 		Card.set_rental, 0.8)
+			try_apply_sticker(card, 'rgmc_toxic', 	Card.rgmc_set_delayed, 0.8)
+			try_apply_sticker(card, 'rgmc_slashed', Card.rgmc_set_slashed, 0.8)
+			try_apply_sticker(card, 'rgmc_chained', Card.rgmc_set_chained, 0.85)
+			try_apply_sticker(card, 'rgmc_diluted', Card.rgmc_set_diluted, 0.89)
+		end
+	end
+
     if 
-        G.GAME.modifiers.rgmc_enable_faulty_in_shop 
-        and pseudorandom((area == G.pack_cards and 'packssjr' or 'ssjr') .. G.GAME.round_resets.ante) > 0.8
-        and not SMODS.Stickers["rgmc_faulty"].should_apply
-    then
-        card:rgmc_set_faulty(true)
-    end
+		G.GAME.modifiers.madcap_stickers
+		and Madcap.Funcs.get_num_stickers(card) < 4
+	then
+		-- Positive ?
+		try_apply_sticker(card, 'rgmc_shielded', 	Card.rgmc_set_shielded, 0.8)
+		try_apply_sticker(card, 'rgmc_lucky', 		Card.rgmc_set_lucky, 0.8)
+		try_apply_sticker(card, 'rgmc_shichi', 		Card.rgmc_set_shichi, 0.8)
+		try_apply_sticker(card, 'rgmc_coronated', 	Card.rgmc_set_coronated, 0.8)
+		--try_apply_sticker(card, 'rgmc_unity', 	card.rgmc_set_lucky, 0.8)
 
-    if G.GAME.modifiers.madcap_stickers then
+		-- Neutral
+		try_apply_sticker(card, 'rgmc_invisible', 	Card.rgmc_set_invisible, 0.8)
+		try_apply_sticker(card, 'rgmc_stereo', 		Card.rgmc_set_stereo, 0.8)
+		try_apply_sticker(card, 'rgmc_unlucky', 	Card.rgmc_set_unlucky, 0.8)
 
-		if
-			pseudorandom((area == G.pack_cards and 'packssjr' or 'ssjr') .. G.GAME.round_resets.ante) > 0.8
-			and not SMODS.Stickers["rgmc_negative"].should_apply
-		then
-			card:rgmc_set_negative(true)
-		end
-
-        if
-			pseudorandom((area == G.pack_cards and 'packssjr' or 'ssjr') .. G.GAME.round_resets.ante) > 0.8
-			and not SMODS.Stickers["rgmc_positive"].should_apply
-		then
-			card:rgmc_set_positive(true)
-		end
-
-        if
-			pseudorandom((area == G.pack_cards and 'packssjr' or 'ssjr') .. G.GAME.round_resets.ante) > 0.8
-			and not SMODS.Stickers["rgmc_shielded"].should_apply
-		then
-			card:rgmc_set_shielded(true)
-		end
-
-        if
-			pseudorandom((area == G.pack_cards and 'packssjr' or 'ssjr') .. G.GAME.round_resets.ante) > 0.8
-			and not SMODS.Stickers["rgmc_weakened"].should_apply
-		then
-			card:rgmc_set_weakened(true)
-		end
-
-        if
-			pseudorandom((area == G.pack_cards and 'packssjr' or 'ssjr') .. G.GAME.round_resets.ante) > 0.8
-			and not SMODS.Stickers["rgmc_invisible"].should_apply
-		then
-			card:rgmc_set_invisible(true)
-		end
-
-        if
-			pseudorandom((area == G.pack_cards and 'packssjr' or 'ssjr') .. G.GAME.round_resets.ante) > 0.8
-			and not SMODS.Stickers["rgmc_stereo"].should_apply
-		then
-			card:rgmc_set_stereo(true)
-		end
-
-		if
-			pseudorandom((area == G.pack_cards and 'packssjr' or 'ssjr') .. G.GAME.round_resets.ante) > 0.8
-			and not SMODS.Stickers["rgmc_lucky"].should_apply
-		then
-			card:rgmc_set_lucky(true)
-		end
-
-		if
-			pseudorandom((area == G.pack_cards and 'packssjr' or 'ssjr') .. G.GAME.round_resets.ante) > 0.8
-			and not SMODS.Stickers["rgmc_unlucky"].should_apply
-		then
-			card:rgmc_set_unlucky(true)
-		end
-
-		if
-			pseudorandom((area == G.pack_cards and 'packssjr' or 'ssjr') .. G.GAME.round_resets.ante) > 0.8
-			and not SMODS.Stickers["rgmc_delayed"].should_apply
-		then
-			card:rgmc_set_delayed(true)
-		end
-
-		if
-			pseudorandom((area == G.pack_cards and 'packssjr' or 'ssjr') .. G.GAME.round_resets.ante) > 0.8
-			and not SMODS.Stickers["rgmc_toxic"].should_apply
-		then
-			card:rgmc_set_toxic(true)
-		end
-
-		if
-			pseudorandom((area == G.pack_cards and 'packssjr' or 'ssjr') .. G.GAME.round_resets.ante) > 0.8
-			and not SMODS.Stickers["rgmc_irate"].should_apply
-		then
-			card:rgmc_set_irate(true)
-		end
-
-		if
-			pseudorandom((area == G.pack_cards and 'packssjr' or 'ssjr') .. G.GAME.round_resets.ante) > 0.8
-			and not SMODS.Stickers["rgmc_shichi"].should_apply
-		then
-			card:rgmc_set_shichi(true)
-		end
-
-		if
-			pseudorandom((area == G.pack_cards and 'packssjr' or 'ssjr') .. G.GAME.round_resets.ante) > 0.8
-			and not SMODS.Stickers["rgmc_coronated"].should_apply
-		then
-			card:rgmc_set_coronated(true)
-		end
-
-		if
-			pseudorandom((area == G.pack_cards and 'packssjr' or 'ssjr') .. G.GAME.round_resets.ante) > 0.5
-			and not SMODS.Stickers["rgmc_slashed"].should_apply
-		then
-			card:rgmc_set_slashed(true)
-		end
-
-		if
-			pseudorandom((area == G.pack_cards and 'packssjr' or 'ssjr') .. G.GAME.round_resets.ante) > 0.8
-			and not SMODS.Stickers["rgmc_chained"].should_apply
-		then
-			card:rgmc_set_chained(true)
-		end
-
-		if
-			pseudorandom((area == G.pack_cards and 'packssjr' or 'ssjr') .. G.GAME.round_resets.ante) > 0.8
-			and not SMODS.Stickers["rgmc_diluted"].should_apply
-		then
-			card:rgmc_set_diluted(true)
+		if not G.GAME.modifiers.rgmc_enable_violet_stickers then
+			try_apply_sticker(card, 'rgmc_slashed', Card.rgmc_set_slashed, 0.9)
+			try_apply_sticker(card, 'rgmc_chained', Card.rgmc_set_chained, 0.95)
+			try_apply_sticker(card, 'rgmc_diluted', Card.rgmc_set_diluted, 0.99)
 		end
     end
 
@@ -1746,4 +1649,79 @@ G.FUNCS.get_poker_hand_info = function(_cards)
 	--print('Get Poker Hand Info')
 	G.GAME.current_subhands = nil
 	return poker_hands_info_ref(_cards)
+end
+
+
+local get_blind_main_colour_ref = get_blind_main_colour
+function get_blind_main_colour(type) -- handles ui colour stuff
+	if blind == 'Gauntlet' then return HEX('27009C') end
+	return get_blind_main_colour_ref(type)
+end
+
+-- taken fron Entropy because good
+local uibox_ref = create_UIBox_blind_select
+function create_UIBox_blind_select()
+    if G.GAME.USING_BREAK then
+        G.E_MANAGER:add_event(Event({
+			trigger = "after",
+            blocking = false,
+            delay = 3,
+			func = function()
+                G.STATE = 7
+                --G.blind_select:remove()
+                --G.blind_prompt_box:remove()
+                G.FUNCS.draw_from_hand_to_deck()
+				return true
+			end,
+		}))
+        G.GAME.USING_BREAK = nil
+    end
+
+	G.blind_select_opts = G.blind_select_opts or {}
+	local t = nil
+	local gauntlet = true --(G.GAME.round_resets.ante > G.GAME.win_ante) and (G.GAME.round_resets.ante % G.GAME.win_ante == 1)
+	if gauntlet then
+        G.GAME.blind_on_deck = "Gauntlet"
+        if not G.GAME.round_resets.blind_choices["Gauntlet"] then
+            G.GAME.round_resets.blind_choices["Gauntlet"] = "bl_rgmc_final_gauntlet"
+        end
+        if not G.GAME.round_resets.blind_states['Gauntlet'] then
+            G.GAME.round_resets.blind_states['Gauntlet'] = "Select"
+        end
+        G.GAME.GauntletSates = {}
+        for i, v in pairs(G.GAME.round_resets.blind_states) do G.GAME.GauntletSates[i] = v end
+        G.GAME.round_resets.loc_blind_states.Gauntlet = "Select"
+        
+		G.blind_select_opts.Gauntlet = G.GAME.round_resets.blind_states['Gauntlet'] ~= 'Hide' and UIBox{
+			definition = { 
+				n=G.UIT.ROOT, config = { align = "cm", colour = G.C.CLEAR },
+				nodes={ UIBox_dyn_container({create_UIBox_blind_choice('Gauntlet')}, false, get_blind_main_colour('Gauntlet')) }
+			}, 
+			config = {
+				align="bmi", offset = { x = 0, y = 0}
+			}
+		} or nil
+        t = {n=G.UIT.ROOT, config = {align = 'tm',minw = width, r = 0.15, colour = G.C.CLEAR}, nodes={
+            { n=G.UIT.R, config={align = "cm", padding = 0.5}, nodes={
+            	G.GAME.round_resets.blind_states['Gauntlet'] ~= 'Hide' and {n=G.UIT.O, config={align = "cm", object = G.blind_select_opts.Gauntlet}} or nil,
+            }}
+        }}
+        G.GAME.round_resets.Gauntlet = nil
+	else
+	end
+	if t ~= nil then
+		G.blind_prompt_box = UIBox{
+    		definition = { n=G.UIT.ROOT, config = {align = 'cm', colour = G.C.CLEAR, padding = 0.2}, nodes={
+				{ n=G.UIT.R, config={align = "cm"}, nodes = {
+					{ n=G.UIT.O, config={object = DynaText({string = localize('ph_choose_blind_1'), colours = {G.C.WHITE}, shadow = true, bump = true, scale = 0.6, pop_in = 0.5, maxw = 5}), id = 'prompt_dynatext1'}}
+				}},
+				{ n=G.UIT.R, config={align = "cm"}, nodes={
+					{n=G.UIT.O, config={object = DynaText({string = localize('ph_choose_blind_2'), colours = {G.C.WHITE}, shadow = true, bump = true, scale = 0.7, pop_in = 0.5, maxw = 5, silent = true}), id = 'prompt_dynatext2'}}
+				}},
+			}},
+    		config = {align="cm", offset = {x=0,y=-15},major = G.HUD:get_UIE_by_ID('row_blind'), bond = 'Weak'}
+		}
+  		return t
+	end
+    return uibox_ref()
 end

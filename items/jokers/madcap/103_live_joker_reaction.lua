@@ -42,9 +42,7 @@ return {
             end
         end,
         calc_dollar_bonus = function(self, card)
-            if  G.GAME.blind.boss and not MadLib.is_zero(card.ability.extra.money) then
-                return card.ability.extra.money
-            end
+            return MadLib.get_calc_bonus(card.ability.extra.money)
         end,
         demicoloncompat = false
     }

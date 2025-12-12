@@ -300,9 +300,7 @@ end
 
 function Madcap.Funcs.record_hand_after(_chips, _mult, _pow)
 	local total_chips = MadLib.multiply(MadLib.exponent(_chips, _pow or 1), _mult)
-    local current_score, high_score = total_chips, G.GAME.best_hand.score
-
-    if high_score < current_score then -- Update high score information
+    if MadLib.compare_numbers(G.GAME.best_hand.score, total_chips) < 0 then -- Update high score information
         G.GAME.best_hand = {
             score   = total_chips,
             hand    = MadLib.get_hand_info(G.hand.cards),

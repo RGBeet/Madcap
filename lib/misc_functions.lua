@@ -154,7 +154,9 @@ function Madcap.Funcs.is_choosing_celestial()
 end
 
 function Madcap.Funcs.get_boss_status()
-	if not (G.GAME and G.GAME.blind and G.GAME.blind.boss and not G.GAME.blind.defeated) then
+	if G.GAME.golden_gauntlet then
+		return 2
+	elseif not (G.GAME and G.GAME.blind and G.GAME.blind.boss and not G.GAME.blind.defeated) then
 		return 0
 	elseif not Madcap.Funcs.is_finisher_ante() then
 		return 1
@@ -935,4 +937,20 @@ function Madcap.Funcs.calculate_purchase(c)
 		--G.GAME.shortage_level
 		Madcap.Funcs.add_shortage_level(0.5)
 	end
+end
+
+function Madcap.Funcs.get_num_stickers(card)
+	local n = 0
+	for k, _ in pairs(SMODS.Stickers) do
+        if card.ability[k] == true then n = n + 1 end
+    end
+	return n
+end
+
+function Madcap.Funcs.get_stickers(card)
+	local n = {}
+	for k, _ in pairs(SMODS.Stickers) do
+        if card.ability[k] == true then n[k] = true end
+    end
+	return n
 end
