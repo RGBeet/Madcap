@@ -7,34 +7,34 @@ return {
         rarity  = 1,
         cost    = 7,
         config = {
-            extra = { chips = 20 }
+            extra = { chips = 10 }
         },
         in_pool = function()
-            -- if eternals/perishables/rentals/pinned are available in shop
-            local stickers = MadLib.get_stickered_cards()
-            return G.GAME.modifiers.enable_eternals_in_shop
-                or G.GAME.modifiers.enable_perishables_in_shop
-                or G.GAME.modifiers.enable_rentals_in_shop
-                or G.GAME.modifiers.cry_enable_pinned_in_shop
-                or (stickers and #stickers > 0) -- # of bad-stickered jokers
+            return MadLib.get_card_stickers() > 0
         end,
         loc_vars = function(self, info_queue, card)
-            local stickers = MadLib.get_stickered_cards()
-            return MadLib.collect_vars(card.ability.extra.chips, card.ability.extra.chips * (stickers and #stickers or 0))
+            local stickers = MadLib.get_card_stickers()
+            return MadLib.collect_vars(card.ability.extra.chips, MadLib.multiply(card.ability.extra.chips, stickers))
         end,
         calculate = function(self, card, context)
-            if (context.before or context.forcetrigger) then
-                local stickers = MadLib.get_stickered_cards()
-                if stickers and #stickers > 0 then
+            if context.joker_main or context.forcetrigger then
+                local stickers = MadLib.get_card_stickers()
+                if stickers > 0 then
                     MadLib.loop_func(stickers, function(v)
                         MadLib.simple_event(function()
                             v:juice_up(0.2, 0.5)
                             return true
                         end, 0.1, 'immediate')
                     end)
-                    return { chips = #stickers * card.ability.extra.chips }
+                    return { chips = MadLib.multiply(card.ability.extra.chips, stickers) }
                 end
             end
+        end,
+        add_to_deck = function(self, card, from_debuff)
+            G.GAME.rgmc_sticker_mod = G.GAME.rgmc_sticker_mod + 0.1
+        end,
+        remove_from_deck = function(self, card, from_debuff)
+            G.GAME.rgmc_sticker_mod = G.GAME.rgmc_sticker_mod - 0.1
         end,
         demicoloncompat = true,
     }

@@ -9,64 +9,6 @@ function Madcap.Funcs.get_aoe_cards(center,cards,range)
 end
 
 function Card:do_volatile_explode(bypass_reqs)
-    -- if NOT a volatile or marked by already marked by volatile
-    if
-        not (bypass_reqs or SMODS.has_enhancement(v, 'm_rgmc_volatile'))
-        or self.ability.volatile_marked
-    then
-        return false
-    end
-
-    self.ability.volatile_marked = true -- mark as volatile
-
-    local targets, temp, ep = {}, {}, 0
-
-    -- Hit the next
-    if (self.area and self.area.cards and #self.area.cards > 1) then
-        local index = MadLib.get_item_index(self, self.area.cards)
-        targets = Madcap.Funcs.get_aoe_cards(self,self.area.cards,1)
-
-        -- get the temp info
-        MadLib.loop_func(targets, function(v,i)
-            v:do_volatile_explode(true)
-            table.insert(temp, { card = v, ind = i })
-        end)
-
-        -- closer, left, right
-        table.sort(temp_cards, function(a, b)
-            local abs_a, abs_b = math.abs(index-a), math.abs(index-b)
-            return abs_a ~= abs_b
-                and (abs_a < abs_b)
-                or (a < b)
-        end)
-
-        MadLib.loop_func(temp_cards, function (v, i)
-            if not SMODS.has_enhancement(v, 'm_rgmc_dynamite') then
-                MadLib.simple_event(function()
-                    v:juice_up(0.5, 0.5)
-                    v:start_dissolve()
-                    return true
-                end, 0.4, 'after')
-                delay(0.4)
-            else -- is a volatile
-                MadLib.simple_event(function()
-                    local _xmult = self.ability.x_mult or 2
-                    v:juice_up(0.6, 0.6)
-                    mult = mod_mult(mult * _xmult)
-                    card_eval_status_text(v, 'extra', nil, nil, nil, {
-                        message = 'X' .. number_format(_mult) , colour = G.C.RED
-                    })
-                    return true
-                end, 0.5, 'after')
-                MadLib.simple_event(function()
-                    v:juice_up(1.2, 1.2)
-                    v:shatter()
-                    return true
-                end, 0.8, 'after')
-                delay(0.8)
-            end
-        end)
-    end
     return true
 end
 
@@ -81,7 +23,13 @@ return {
         key     = 'dynamite',
         atlas   = 'enhancements',
         pos     = MLIB.coords(1,1),
-        config = { extra = { x_score = 1.4, x_mult = 2, odds = 5, active = false } },
+        config = { 
+            extra = { 
+                x_score = 1.4, 
+                x_mult = 2, 
+                odds = 6, 
+            }
+        },
         disenhancement      = true,
         loc_vars = function(self, info_queue, card)
             local _numer, _denom = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'dynamite')
@@ -90,18 +38,32 @@ return {
         end,
         calculate = function(self, card, context)
             if context.cardarea == G.play and context.main_scoring then
-                if SMODS.pseudorandom_probability(card, 'dynamite', 1, card.ability.extra.odds) then
-                    card.ability.extra.active = true
-                    MadLib.simple_event(function()
-                        v:juice_up()
-                        return true
-                    end)
-                end
-                return { xscore = card.ability.extra.x_score }
+                return { 
+                    xscore          = card.ability.extra.x_score,
+                    after_scoring   = true 
+                }
             end
 
-            if context.final_scoring_step and card.ability.extra.active and context.scoring_hand then
-                card:do_volatile_explode()
+            if 
+                context.ml_post_scoring
+                and context.scoring_hand
+            then
+                if 
+                    context.other_card == card 
+                    --and SMODS.pseudorandom_probability(card, 'dynamite', 1, card.ability.extra.odds) 
+                then
+                    local target = card
+                    print('Kaboom!')
+                    MadLib.event({
+                        func    = function()
+                            Madcap.Funcs.explode_card(card)
+                            --target:start_dissolve()
+                            return true
+                        end,
+                        trigger = 'after',
+                        delay   = 0.8
+                    })
+                end
             end
         end,
     }

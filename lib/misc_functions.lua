@@ -954,3 +954,9 @@ function Madcap.Funcs.get_stickers(card)
     end
 	return n
 end
+
+function Madcap.Funcs.explode_card(card)
+    MadLib.spawn_effect("rgmc_explosion",card.tilt_var.mx,card.tilt_var.my)
+    card:start_dissolve()
+    card = nil
+end

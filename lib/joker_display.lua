@@ -821,6 +821,17 @@ if JokerDisplay then
             card.joker_display_values.localized_text = "(" .. rank1 .. ", " .. rank2 .. ")"
         end
     }
+
+    jod['j_rgmc_sticker_shock'] = {
+        text = {
+            { text = "+" },
+            { ref_table = "card.joker_display_values", ref_value = "chips", retrigger_type = "mult" }
+        },
+        text_config = { colour = G.C.CHIPS },
+        calc_function = function(card)
+            card.joker_display_values.chips = MadLib.multiply(card.ability.extra.chips, MadLib.get_card_stickers())
+        end
+    }
     
     jod['j_rgmc_bolstered_joker'] = {
         text = {
@@ -1644,32 +1655,6 @@ if JokerDisplay then
 
             card.joker_display_values.caught = localize(_result)
             card.joker_display_values.misses = number_format(card.ability.extra.misses) .. "/" .. number_format(card.ability.extra.max_misses)
-        end,
-    }
-
-    jod['j_rgmc_all_star_joker'] = {
-        text = {
-            { text = "+" },
-            { ref_table = "card.ability.extras", ref_value = "money", retrigger_type = "mult" }
-        },
-        extra = {
-            { text = "+$" },
-            { ref_table = "card.joker_display_values", ref_value = "money_mod" },
-        },
-        reminder_text = {
-            { text = "(=24)" },
-        },
-        calc_function = function(card)
-            if next(G.play.cards) then return end
-            local text, _, scoring_hand = JokerDisplay.evaluate_hand()
-            local money_mod = 0
-            if MadLib.get_hand_sum(scoring_hand) == card.ability.immutable.total_sum then
-                for i=1,#G.jokers.cards do
-                    money_mod = MadLib.multiply(money_mod, card.ability.extra.money_mod)
-
-                end
-            end
-            card.joker_display_values.money_mod = money_mod
         end,
     }
 

@@ -730,3 +730,20 @@ Madcap.DeckFuncs = {
         end
 	}
 }
+
+MadLib.register_effect('rgmc_explosion',{
+	duration 	= 100,
+	max_frame 	= 17,
+	fps			= 20,
+	sound		= 'rgmc_bomb_explosion'
+})
+
+MadLib.register_sprite('rgmc_explosion',{
+	path		= mod_path .. 'assets/effects/explosion.png',
+	inst_key	= 'img_explosion',
+	px 			= 200,
+	py			= 282,
+	xoff		= 100/2,
+	yoff		= 282/2,
+	subimages	= 17,
+})

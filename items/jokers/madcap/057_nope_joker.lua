@@ -20,8 +20,8 @@ return {
         calculate = function(self, card, context)
             if context.before or context.forcetrigger then
 
-                local good_odds = SMODS.pseudorandom_probability(card, 'nope_joker', 1, card.ability.extra.odds, "nope_jkr_pos") and 1
-                local bad_odds  = SMODS.pseudorandom_probability(card, 'nope_joker', 1, card.ability.extra.odds_bad, "nope_jkr_neg") and 1
+                local good_odds = SMODS.pseudorandom_probability(card, 'nope_joker', 1, card.ability.extra.odds, "nope_jkr_pos")
+                local bad_odds  = SMODS.pseudorandom_probability(card, 'nope_joker', 1, card.ability.extra.odds_bad, "nope_jkr_neg")
                 local discarding = context.discard and true or false
 
                 local amount = (good_odds and 1) or (bad_odds and -1) or 0

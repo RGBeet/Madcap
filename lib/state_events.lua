@@ -46,7 +46,8 @@ function Madcap.Funcs.run_start()
             ante    = 0
         },
 		potentias_used		= 0,
-		shops_visited		= {}
+		shops_visited		= {},
+		rgmc_sticker_mod	= 0,
     }
 	MadLib.loop_table(madcap_vals, function(k,v) G.GAME[k] = v end)
 	

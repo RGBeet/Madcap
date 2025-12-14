@@ -471,6 +471,8 @@ function Card:rgmc_set_immutable(a)
 end
 
 local try_apply_sticker = function(card, str, func, chance)
+	local percentage = MadLib.clamp(1 - G.GAME.rgmc_sticker_mod, 0.01, 0.99)
+	chance = (chance or 0.8) * percentage
 	if 
 		pseudorandom((area == G.pack_cards and 'packssjr' or 'ssjr') .. G.GAME.round_resets.ante) > chance
 		and not SMODS.Stickers[str].should_apply
@@ -482,6 +484,7 @@ end
 local set_shop_stickers_ref =  MadLib.set_shop_stickers
 function MadLib.set_shop_stickers(card)
     card = set_shop_stickers_ref(card)
+	local bypass = (G.GAME.rgmc_sticker_mod > 0)
 
     -- Faulty
 	if 
@@ -507,7 +510,7 @@ function MadLib.set_shop_stickers(card)
 	end
 
     if 
-		G.GAME.modifiers.madcap_stickers
+		(G.GAME.modifiers.madcap_stickers or bypass)
 		and Madcap.Funcs.get_num_stickers(card) < 4
 	then
 		-- Positive ?
@@ -526,6 +529,20 @@ function MadLib.set_shop_stickers(card)
 			try_apply_sticker(card, 'rgmc_slashed', Card.rgmc_set_slashed, 0.9)
 			try_apply_sticker(card, 'rgmc_chained', Card.rgmc_set_chained, 0.95)
 			try_apply_sticker(card, 'rgmc_diluted', Card.rgmc_set_diluted, 0.99)
+		end
+
+		if bypass then
+			try_apply_sticker(card, 'eternal', 			Card.set_eternal, 0.87)
+			try_apply_sticker(card, 'rgmc_delayed', 	Card.rgmc_set_delayed, 0.87)
+			try_apply_sticker(card, 'rgmc_weakened', 	Card.rgmc_set_weakened, 0.87)
+			try_apply_sticker(card, 'perishable', 		Card.set_perishable, 0.90)
+			try_apply_sticker(card, 'rgmc_faulty', 		Card.rgmc_set_faulty, 0.90)
+			try_apply_sticker(card, 'rgmc_irate', 		Card.rgmc_set_irate, 0.90)
+			try_apply_sticker(card, 'rental', 			Card.set_rental, 0.93)
+			try_apply_sticker(card, 'rgmc_toxic', 		Card.rgmc_set_delayed, 0.93)
+			try_apply_sticker(card, 'rgmc_slashed', 	Card.rgmc_set_slashed, 0.93)
+			try_apply_sticker(card, 'rgmc_chained', 	Card.rgmc_set_chained, 0.97)
+			try_apply_sticker(card, 'rgmc_diluted', 	Card.rgmc_set_diluted, 0.97)
 		end
     end
 
@@ -1730,4 +1747,14 @@ function create_UIBox_blind_select()
   		return t
 	end
     return uibox_ref()
+end
+
+local dt_event_ref = MadLib.dt_event
+function MadLib.dt_event(type, tick)
+	dt_event_ref(type, tick)
+end
+
+local ml_update_ref = MadLib.update_delta
+function MadLib.update_delta()
+	ml_update_ref()
 end

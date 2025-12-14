@@ -508,7 +508,7 @@ match_indent = true
 target = "card.lua"
 pattern = "not (self.cost < 0 and (G.GAME.dollars + self.cost) < G.GAME.bankrupt_at) and"
 position = "at"
-payload = '''MadLib.can_afford(self.cost) and'''
+payload = '''not (not MadLib.is_positive and not MadLib.can_afford(self.cost)) and'''
 match_indent = true
 
 [[patches]]

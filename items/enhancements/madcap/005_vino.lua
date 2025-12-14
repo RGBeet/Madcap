@@ -38,15 +38,15 @@ return {
             end
 
             if
-                context.after
+                context.final_scoring_step
                 and (context.full_hand or context.scoring_hand)
-                and MadLib.compare_numbers(G.GAME.chips, G.GAME.blind.chips)
+                and MadLib.compare_numbers(G.GAME.chips, G.GAME.blind.chips) >= 0
             then
                 MadLib.simple_event(function()
                     card:set_ability(G.P_CENTERS['m_rgmc_bismuth'])
                     card:juice_up()
                     play_sound('rgmc_flourish')
-                    return
+                    return true
                 end, 0.8, 'after')
             end
         end,
