@@ -116,7 +116,7 @@ function Madcap.Funcs.uses_lp(card)
 end
 
 function Madcap.Funcs.luxury_shoppe_enabled()
-    if MadLib.compare_numbers(G.GAME.rgmc_luxury_pts, 5) then
+    if MadLib.compare_numbers(G.GAME.rgmc_luxury_pts, 5) > 0 then
         return true
     end
     return false

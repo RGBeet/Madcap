@@ -247,18 +247,6 @@ position = "after"
 match_indent = true
 payload = "G.deck.cards = Madcap.Funcs.shuffle_deck(G.deck.cards)"
 
-# Redirect
-[[patches]]
-[patches.pattern]
-target = "engine/ui.lua"
-pattern = '''if node.config and node.config.id == id then return node end'''
-position = "after"
-match_indent = true
-payload = '''
-	if G.HUD_blind and id == 'chip_UI_count' and G.HUD_blind ~= self then -- haha funny workaround
-		return G.HUD_blind:get_UIE_by_ID(id)
-	end'''
-
 ## Taken from Cryptid - used for creating "abstract suits"
 [[patches]]
 [patches.pattern]
@@ -512,7 +500,7 @@ match_indent = true
 target = "functions/button_callbacks.lua"
 pattern = "if (e.config.ref_table.cost) > 0 and (to_big(e.config.ref_table.cost) > to_big(G.GAME.dollars) - to_big(G.GAME.bankrupt_at)) then"
 position = "at"
-payload = '''if  MadLib.can_afford(e.config.ref_table.cost) then'''
+payload = '''if not MadLib.can_afford(e.config.ref_table.cost) then'''
 match_indent = true
 
 [[patches]]

@@ -183,11 +183,12 @@ return {
 				name = "Infernal",
 				text = {
 					"{X:rgmc_xscore,C:white}X#1#{} Score",
+                    "{C:rgmc_xscore}after{} end of scoring",
 					"{C:green}#2# in #3#{} chance to",
-					"burn up upon",
+					"burn up at",
                     "end of round",
                     "if {C:attention}triggered",
-                    "during {C:attention}Blind{}"
+                    "during {C:attention}blind{}"
 				},
 			},
 			e_rgmc_chrome = {

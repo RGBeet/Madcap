@@ -1658,6 +1658,13 @@ function get_blind_main_colour(type) -- handles ui colour stuff
 	return get_blind_main_colour_ref(type)
 end
 
+function Madcap.Funcs.get_gauntlet_status()
+	return G.GAME.modifiers.rgmc_block_win_status
+		and G.GAME.modifiers.rgmc_block_win_status['Gauntlet']
+		and G.GAME.round_resets.ante > G.GAME.win_ante
+		and G.GAME.round_resets.ante % G.GAME.win_ante == 1
+end
+
 -- taken fron Entropy because good
 local uibox_ref = create_UIBox_blind_select
 function create_UIBox_blind_select()
@@ -1679,8 +1686,7 @@ function create_UIBox_blind_select()
 
 	G.blind_select_opts = G.blind_select_opts or {}
 	local t = nil
-	local gauntlet = true --(G.GAME.round_resets.ante > G.GAME.win_ante) and (G.GAME.round_resets.ante % G.GAME.win_ante == 1)
-	if gauntlet then
+	if Madcap.Funcs.get_gauntlet_status() then
         G.GAME.blind_on_deck = "Gauntlet"
         if not G.GAME.round_resets.blind_choices["Gauntlet"] then
             G.GAME.round_resets.blind_choices["Gauntlet"] = "bl_rgmc_final_gauntlet"

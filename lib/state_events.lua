@@ -367,7 +367,7 @@ function Madcap.Funcs.get_modded_hand_level(card)
 end
 
 function Madcap.Funcs.get_modded_subhand_levels(card, sh, pt)
-	local sh_mod, pt_mod = sh+0, pt+0
+	local sh_mod, pt_mod = sh and (sh+0) or nil, pt and (pt+0) or nil
 	if card.ability then
 		if card.ability.rgmc_chained then sh_mod = sh_mod - 1 end
 		if card.ability.rgmc_diluted then pt_mod = pt_mod - 1 end
@@ -390,7 +390,7 @@ function Madcap.Funcs.calculate_chips_mult(hand, subhands, cards)
 	chips 	= MadLib.calculate_chips(chips)
 	mult 	= MadLib.calculate_mult(mult)
 
-	local sh_mod, pt_mod = 0, 0
+	local sh_mod, pt_mod = nil, nil
 	-- Affect the hand level first
 	MadLib.loop_func({ G.hand, G.jokers, G.consumeables }, function(list)
 		MadLib.loop_func(list.cards, function(v)
@@ -401,8 +401,8 @@ function Madcap.Funcs.calculate_chips_mult(hand, subhands, cards)
 		end)
 	end)
 
-	local diff = level - hand.level
-	tell(number_format(hand.level) .. ' - ' .. number_format(level) .. ' = ' .. number_format(diff) .. '.')
+	local diff = MadLib.subtract(level, hand.level)
+	--tell(number_format(hand.level) .. ' - ' .. number_format(level) .. ' = ' .. number_format(diff) .. '.')
 	-- If hand level was changed, change chips and mult
 
 	--[[
@@ -422,9 +422,8 @@ function Madcap.Funcs.calculate_chips_mult(hand, subhands, cards)
 		end
 	end]]
 	
-	print("level not modified: " .. tostring(diff))
-	print(diff)
-	if diff ~= 0 then
+	print(MadLib.compare_numbers(level, hand.level))
+	if MadLib.compare_numbers(level, hand.level) ~= 0 then
 		local compare = MadLib.compare_numbers(diff,0)
 		local current_level = nil
 		if compare == 1 then
@@ -446,8 +445,8 @@ function Madcap.Funcs.calculate_chips_mult(hand, subhands, cards)
 
 	MadLib.loop_func(subhands, function(v)
 		local sh = G.GAME.subhands[v]
-		local sh_mult 	= sh.mult + (sh_mod * sh.l_mult)
-		local sh_chips 	= sh.chips + (sh_mod * sh.l_chips)
+		local sh_mult 	= sh_mod 	and (sh.mult + (sh_mod * sh.l_mult)) or 0
+		local sh_chips 	= sh_chips 	and sh.chips + (sh_mod * sh.l_chips) or 0
 		if sh.empower > 0 then
 			local pt_level 	= sh.empower + pt_mod
 			local pt_bonus 	= Madcap.Funcs.calculate_potentia_bonus(pt_level, cards)
@@ -459,7 +458,7 @@ function Madcap.Funcs.calculate_chips_mult(hand, subhands, cards)
 	end)
 
 	local data = { 
-		level_modded	= (diff ~= 0) and diff or nil,
+		level_modded	= (level ~= hand.level) and diff or nil,
 		subhand_modded	= (sh_mod ~= 0) and sh_mod or nil,
 		potentia_modded = (pt_mod ~= 0) and pt_mod or nil
 	}
@@ -478,8 +477,10 @@ function Madcap.Funcs.hand_display_mod(hand, text, disp_text, poker_hands, scori
 	local nu_level, nu_chips, nu_mult, ret = Madcap.Funcs.calculate_chips_mult(G.GAME.hands[text], subhands, scoring_hand)
 	local mod_check = ''
 
+	print(ret.level_modded)
+
 	-- If modded, then!
-	if ret.level_modded ~= 0 then
+	if ret.level_modded then
 		mod_check = '*' 
 		return_true = true
 	end
@@ -498,11 +499,11 @@ function Madcap.Funcs.hand_display_mod(hand, text, disp_text, poker_hands, scori
 
 				-- Subhand suffix
 				if not G.GAME.subhands and G.GAME.subhands[v] and G.GAME.subhands[v].enabled then return end
-				suffix = suffix .. tostring(mod_subhand) .. (ret.subhand_modded ~= 0 and '*' or '')
+				suffix = suffix .. tostring(mod_subhand) .. (ret.subhand_modded and '*' or '')
 
 				-- Potentia suffix
 				if G.GAME.subhands[v].empower > 0 then
-					suffix = suffix .. '(' .. tostring(mod_potentia) .. (ret.potentia_modded ~= 0 and '*' or '') .. ')'
+					suffix = suffix .. '(' .. tostring(mod_potentia) .. (ret.potentia_modded and '*' or '') .. ')'
 				end
 				suffix = suffix .. (i < #subhands and ',' or ')')
 			end)

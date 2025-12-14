@@ -22,9 +22,11 @@ return {
                 context.post_joker or
                 (context.main_scoring and context.cardarea == G.play)
             then
-                if (total_score or 0) > 0 then card.ability.triggered = true end
+                card.ability.triggered = true
+                print('triggered')
                 return { 
-                    xscore = self.config.x_score or 3,
+                    xscore          = self.config.x_score or 3,
+                    after_scoring   = true
                 }
             end
 
@@ -32,13 +34,19 @@ return {
             if context.end_of_blind then
                 if 
                     card.ability.triggered == true
-                    and not card.ability.eternal 
-                    and SMODS.pseudorandom_probability(card, 'infernal', 1, card.ability.extra.odds) 
                 then
-                    target:start_dissolve({ G.C.DARK }, nil, 1.6)
-                    card = nil
-                else
-                    card.ability.triggered = false
+                    print('Triggered?')
+                    if
+                        not card.ability.eternal 
+                        and SMODS.pseudorandom_probability(card, 'infernal', 1, card.ability.extra.odds) 
+                    then
+                        print('DIE!')
+                        card:start_dissolve({ G.C.DARK }, nil, 1.6)
+                        card = nil
+                    else
+                        print('LIVE')
+                        card.ability.triggered = false
+                    end
                 end
             end
         end,

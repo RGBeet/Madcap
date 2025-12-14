@@ -50,17 +50,17 @@ function Madcap.Funcs.get_best_hand(cards)
 
     MadLib.loop_func(poker_hand_list, function(h)
         if not G.GAME.hands[h].visible then return end
-        local score     = G.GAME.hands[h].chips * G.GAME.hands[h].mult
+        local score     = MadLib.multiply(G.GAME.hands[h].chips, G.GAME.hands[h].mult)
         local change    = false
         tell('Hand: ' .. h .. ', Score: ' .. number_format(score))
-        if score > best_score then
+        if MadLib.compare_numbers(score, best_score) > 0 then
             change = true
-        elseif score == best_score then
-            if G.GAME.hands[h].level > best_level then change = true end
+        elseif MadLib.compare_numbers(score, best_score) == 0 then
+            if MadLib.compare_numbers(G.GAME.hands[h].level, best_level) > 0 then change = true end
         end
         if not change then return end
         best_hand   = h
-        best_score  = G.GAME.hands[h].chips * G.GAME.hands[h].mult
+        best_score  = MadLib.multiply(G.GAME.hands[h].chips, G.GAME.hands[h].mult)
         best_level  = G.GAME.hands[h].level
     end)
 

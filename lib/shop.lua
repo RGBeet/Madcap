@@ -28,16 +28,20 @@ function Madcap.Funcs.get_next_round_button()
     local _color    = G.C.RED
     local _func     = 'toggle_shop'
     local _tooltip  = nil
-
-    local impound_shop_enabled = true
-    local luxury_shoppe_enabled = true
     
-    if Madcap.Funcs.luxury_shoppe_enabled() and not (G.GAME.shops_visited and G.GAME.shops_visited['luxury']) then
+    
+    if 
+        Madcap.Funcs.luxury_shoppe_enabled() 
+        and not (G.GAME.shops_visited and G.GAME.shops_visited['luxury']) 
+    then
         _func     = 'goto_luxury_shoppe'
         _color   = G.C.BLUE
         _text     = { localize('b_luxury_shoppe_1'), localize('b_luxury_shoppe_2') }
         _tooltip  = { title = "Luxury Shoppe", text = {"Appears when", "5+ LP"} }
-    elseif Madcap.Funcs.impound_shop_enabled() and not (G.GAME.shops_visited and G.GAME.shops_visited['impound']) then
+    elseif 
+        Madcap.Funcs.impound_shop_enabled() 
+        and not (G.GAME.shops_visited and G.GAME.shops_visited['impound']) 
+    then
         _func     = 'goto_impound_shop'
         _color   = G.C.PURPLE
         _text     = { localize('b_impound_shop_1'), localize('b_impound_shop_2') }

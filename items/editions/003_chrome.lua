@@ -19,11 +19,7 @@ return {
             return MadLib.collect_vars(self.config.x_score)
         end,
         calculate = function(self, card, context)
-            if 
-                context.post_joker or
-                (context.main_scoring and context.cardarea == G.play)
-                and G.GAME.chips > 0
-            then
+            if context.post_joker or (context.main_scoring and context.cardarea == G.play) then
                 return { xscore = self.config.x_score or 1 }
             end
         end

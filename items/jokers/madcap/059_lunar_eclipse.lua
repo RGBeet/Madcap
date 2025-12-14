@@ -17,7 +17,9 @@ return {
         end,
         calculate = function(self, card, context)
             if
-                (context.joker_main and context.cardarea == G.jokers and MadLib.context_has_subhand(context,'ml_sh_dark'))
+                (context.cardarea == G.jokers 
+                and context.joker_main
+                and MadLib.context_has_subhand(context,'ml_sh_dark'))
                 or context.forcetrigger
             then
                 return { xmult = card.ability.extra.x_mult, card = card }

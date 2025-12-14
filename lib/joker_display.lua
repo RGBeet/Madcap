@@ -1376,7 +1376,7 @@ if JokerDisplay then
             if MadLib.list_has_string(subhands, 'ml_sh_light') then
                 x_chips = card.ability.extra.x_chips
             end
-            card.joker_display_values.x_mult   = number_format(x_mult)
+            card.joker_display_values.x_chips   = number_format(x_chips)
         end,
         style_function = function(card, text, reminder_text, extra)
             if text and text.children[1] and card.joker_display_values then
