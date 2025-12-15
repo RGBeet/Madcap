@@ -955,8 +955,20 @@ function Madcap.Funcs.get_stickers(card)
 	return n
 end
 
-function Madcap.Funcs.explode_card(card)
-    MadLib.spawn_effect("rgmc_explosion",card.tilt_var.mx,card.tilt_var.my)
-    card:start_dissolve()
-    card = nil
+--- EXPLODE
+function Madcap.Funcs.get_aoe_cards(center,cards,range)
+    local left, right  = math.max(index - range, 1), math.min(index + range, #cards)
+    local list, index = {}, MadLib.get_item_index(center, cards)
+    if index == -1 then return {} end
+    for i=left, right do
+        if i ~= index then table.insert(list, cards[i]) end
+    end
+    return list
+end
+
+function Madcap.Funcs.explodes(card)
+    local enhancements = SMODS.get_enhancements(card)
+    for key, _ in pairs(enhancements) do
+        if G.P_CENTERS[key].explodes or key == 'm_rgmc_dynamite' then return true end
+    end
 end

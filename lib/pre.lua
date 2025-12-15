@@ -732,9 +732,9 @@ Madcap.DeckFuncs = {
 }
 
 MadLib.register_effect('rgmc_explosion',{
-	duration 	= 100,
-	max_frame 	= 17,
-	fps			= 20,
+	duration 	= 16,
+	max_frame 	= 16,
+	fps			= 30,
 	sound		= 'rgmc_bomb_explosion'
 })
 

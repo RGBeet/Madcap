@@ -527,6 +527,7 @@ position = "at"
 payload = '''if not MadLib.can_afford(e.config.ref_table.cost) or (not e.config.ref_table:can_use_consumeable()) then'''
 match_indent = true
 
+# Prevents winning unless you beat the Golden Gauntlet
 [[patches]]
 [patches.pattern]
 target = "functions/button_callbacks.lua"
@@ -541,4 +542,23 @@ payload = '''if G.GAME.modifiers.rgmc_block_win_status and MadLib.list_matches_o
            game_won = false
            G.GAME.won = false 
         end'''
+match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''G.E_MANAGER:add_event(Event({
+        trigger = 'after',
+        blockable = false,
+        delay =  0.7*dissolve_time,
+        func = (function() childParts:fade(0.3*dissolve_time) return true end)
+    }))'''
+position = "after"
+payload = '''
+G.E_MANAGER:add_event(Event({
+    trigger = 'after',
+    blockable = false,
+    delay =  0.5,
+    func = (function() MadLib.do_special_destroy_effect(self) return true end)
+}))'''
 match_indent = true

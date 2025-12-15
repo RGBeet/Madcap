@@ -23,8 +23,10 @@ return {
         calculate = function(self, card, context)
             -- Scoring effect
             if context.cardarea == G.play and context.main_scoring then
-                card.ability.extra.active = true
-                return { xscore = math.max(0,MadLib.round(card.ability.extra.x_score, 2)) }
+                return { 
+                    xscore          = card.ability.extra.x_score,
+                    after_scoring   = true 
+                }
             end
 
             -- Held in hand effect
@@ -33,21 +35,26 @@ return {
                 and context.main_scoring
                 and SMODS.pseudorandom_probability(card, 'vino', 1, card.ability.extra.odds)
             then
-                card.ability.extra.active = true
-                return { xscore = math.max(0,MadLib.round(card.ability.extra.x_score/2, 2)) }
+                return { 
+                    xscore          = MadLib.divide(card.ability.extra.x_score, 2),
+                    after_scoring   = true 
+                }
             end
 
             if
-                context.final_scoring_step
-                and (context.full_hand or context.scoring_hand)
-                and MadLib.compare_numbers(G.GAME.chips, G.GAME.blind.chips) >= 0
+                context.ml_post_scoring
+                and context.scoring_hand
+                and context.other_card == card
             then
-                MadLib.simple_event(function()
-                    card:set_ability(G.P_CENTERS['m_rgmc_bismuth'])
-                    card:juice_up()
-                    play_sound('rgmc_flourish')
-                    return true
-                end, 0.8, 'after')
+                MadLib.event({
+                    func    = function()
+                        --Madcap.Funcs.explode_card(card)
+                        --target:start_dissolve()
+                        return true
+                    end,
+                    trigger = 'after',
+                    delay   = 1.0
+                })
             end
         end,
     }
