@@ -9,8 +9,8 @@ return {
         object_type = "PokerHand",
         key = "rgmc_pyramid_spectrum",
         visible = false,
-        chips = 170,
-        mult = 16,
+        chips = 200,
+        mult = 18,
         l_chips = 50,
         l_mult = 4,
         example = {
@@ -22,8 +22,9 @@ return {
             { 'rgmc_TOW_4', 	true },
         },
         evaluate = function(parts, hand)
-            if not (spectrum_part and next(parts[spectrum_part]) and next(parts['rgmc_pyramid_base'])) then return {} end
-            return { SMODS.merge_lists(parts[spectrum_part], parts['rgmc_pyramid_base']) }
+            local spectrum_part = parts[MadLib.SpectrumId..'spectrum']
+            if not (spectrum_part and next(spectrum_part) and next(parts['rgmc_pyramid_base'])) then return {} end
+            return { SMODS.merge_lists(spectrum_part, parts['rgmc_pyramid_base']) }
         end,
     }
 }

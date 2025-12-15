@@ -13,7 +13,7 @@ return {
             extra = { x_chips = 3.5 }
         },
         loc_vars = function(self, info_queue, card)
-            local area = G.hand.highlighted
+            local area = G.hand and G.hand.highlighted or {}
             return { vars = { card.ability.extra.x_chips, 5, MadLib.get_unique_enhancements(area) } }
         end,
         calculate = function(self, card, context)
