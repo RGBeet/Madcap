@@ -13,7 +13,9 @@ return {
         end,
         calculate = function(self, card, context)
             -- score
-            if context.cardarea == G.play and context.main_scoring then
+            if 
+                context.cardarea == G.play 
+                and context.main_scoring then
                 return { rgmc_luxury_pts = card.ability.extra.luxury or 1 }
             end
 

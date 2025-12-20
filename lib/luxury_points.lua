@@ -13,10 +13,10 @@ function ease_lp(mod, instant)
         local text, col
         mod = mod or 0
         if MadLib.is_negative_number(mod) then
-            text    = '-'..localize('$')
+            text    = '-'..localize('£')
             col     = G.C.RED
         else
-            text    = '+'..localize('$')
+            text    = '+'..localize('£')
             col     = G.C.RGMC_LUXURY
         end
         --Ease from current chips to the new number of chips
@@ -551,7 +551,13 @@ G.FUNCS.goto_luxury_shoppe = function(e)
     end
 end
 
-
+function Card:calculate_luxury_bonus()
+    if not self:can_calculate() then return end
+    local obj = self.config.center
+    if obj.calc_luxury_bonus and type(obj.calc_luxury_bonus) == 'function' then
+        return obj:calc_luxury_bonus(self)
+    end
+end
 
 
 --G.shop:get_UIE_by_ID('next_round_button'),

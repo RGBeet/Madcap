@@ -24,7 +24,6 @@ return {
                 (context.cardarea == G.play and context.other_card)
                 or context.forcetrigger
             then
-                local _id = context.other_card:get_id()
                 if
                     context.forcetrigger
                     or MadLib.is_rank(context.other_card, SMODS.Ranks[card.ability.extra.ranks[1]].id)

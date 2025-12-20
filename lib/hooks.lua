@@ -973,6 +973,7 @@ if SMODS and SMODS.calculate_individual_effect then
 				return v == string.lower(key)
 			end) and amount ~= 1
 		then
+			-- Squeezy Cheeze
 			MadLib.loop_func(SMODS.find_card('j_rgmc_squeezy_cheeze'), function(v)
 				v.ability.extra.xmult_store = MadLib.add(v.ability.extra.xmult_store, amount)
 				if MadLib.compare_numbers(v.ability.extra.xmult_store, 1) > 0 then
@@ -1002,7 +1003,7 @@ if SMODS and SMODS.calculate_individual_effect then
 
 		if key == "rgmc_luxury_pts" then -- TODO: check if this works?
 			amount = math.max(amount, 0)
-			G.GAME.rgmc_luxury_pts = G.GAME.rgmc_luxury_pts + amount
+			ease_lp(amount)
 			text = "+£"..number_format(amount)
 			if from_edition then
 				card_eval_status_text(scored_card, 'jokers', nil, percent, nil, {message = text, colour = G.C.RGMC_LUXURY, sound = 'rgmc_kaching', edition = true})

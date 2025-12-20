@@ -309,6 +309,11 @@ if JokerDisplay then
             { text = "+$" },
             { ref_table = "card.joker_display_values", ref_value = "dollars", retrigger_type = "dollars" }
         },
+        reminder_text = {
+            { text = "(" },
+            { ref_table = "card.joker_display_values", ref_value = "edwin_card", colour = G.C.ORANGE },
+            { text = ")" },
+        },
         text_config = { colour = G.C.MONEY },
         calc_function = function(card)
             local dollars_held = 0
@@ -322,9 +327,15 @@ if JokerDisplay then
                 end
                 dollars_held = dollars_held + 1
             end)
-            card.joker_display_values.dollars = MadLib.multiply(dollars_held,
-                card.ability.extra.money_mod)
+            card.joker_display_values.dollars = MadLib.multiply(dollars_held, card.ability.extra.money_mod)
+            card.joker_display_values.edwin_card = localize { type = 'variable', key = "jdis_rank_of_suit", vars = { localize(G.GAME.current_round.rgmc_edwin_card.rank, 'ranks'), localize(G.GAME.current_round.rgmc_edwin_card.suit, 'suits_plural') } }
         end,
+        style_function = function(card, text, reminder_text, extra)
+            if reminder_text and reminder_text.children[2] then
+                reminder_text.children[2].config.colour = lighten(G.C.SUITS[G.GAME.current_round.rgmc_edwin_card.suit], 0.35)
+            end
+            return false
+        end
     }
 
     jod['j_rgmc_penrose_stairs'] = {
@@ -420,15 +431,7 @@ if JokerDisplay then
             if G.STATE == G.STATES.HAND_PLAYED then return end
             local numerator, denominator        = SMODS.get_probability_vars(card, MadLib.add(1, card.ability.immutable.increase), card.ability.immutable.odds, 'house_of_cards')
             card.joker_display_values.odds      = localize { type = 'variable', key = "jdis_odds", vars = { numerator, denominator } }
-            card.joker_display_values.chips     = card.ability.extra.chips + card.ability.extra.chip_mod
-        end,
-        style_function = function(card, text, reminder_text, extra)
-            local numerator, denominator        = SMODS.get_probability_vars(card, MadLib.add(1, card.ability.immutable.increase), card.ability.immutable.odds, 'house_of_cards')
-            if extra and extra.children then
-                local div = MadLib.divide(numerator, denominator)
-                return true
-            end
-            return false
+            card.joker_display_values.chips     = MadLib.add(card.ability.extra.chips, card.ability.extra.chip_mod)
         end,
     }
 
@@ -2092,4 +2095,204 @@ if JokerDisplay then
             }
         }
     }
+
+    function MadLib.JokerDisplay.valid_card(playing_card)
+        return playing_card.facing and not (playing_card.facing == 'back') and not playing_card.debuff
+    end
+
+    -- Overhaul
+
+    --[[
+        Fibonacci
+        Odd Todd
+        Even Steven
+        Lusty Joker
+        Wrathful Joker
+        Gluttonous Joker
+        Greedy JOker
+        8-Ball
+        Scholar
+        Sixth Sense
+        Superposition
+        Baron
+        Cloud 9
+        Mail-In Rebate
+        Walkie Talkie
+        Wee Joker
+        The Idol
+        Hit the Road
+        Invicible Joker
+        Triboulet
+        Canio
+        Yorick
+        Perkeo
+        Erosion
+
+        Half Joker
+        Driver's License
+        Swashbuckler
+        Glass Joker
+        Raised Fist
+        Steel Joker
+        Stone Joker
+        Abstract Joker
+        Square Joker
+        Baseball Joker
+        Trading Card
+        Castle
+    ]]
+
+    -- Fibonacci
+    jod['j_fibonacci'].calc_function = function(card)
+        local mult = 0
+        local text, _, scoring_hand = JokerDisplay.evaluate_hand()
+        if text ~= 'Unknown' then
+            for _, scoring_card in pairs(scoring_hand) do
+                mult = MadLib.has_fib_rank(scoring_card)
+                    and MadLib.add(mult, MadLib.multiply(MadLib.is_base_rank(card) 
+                        and card.ability.extra.mult 
+                        or card.ability.extra.mult2, JokerDisplay.calculate_card_triggers(scoring_card, scoring_hand)))
+                    or mult
+            end
+        end
+        card.joker_display_values.mult = mult
+        card.joker_display_values.localized_text = "(" .. localize("Ace", "ranks") .. ",2,3,5,8)"
+    end
+
+    -- Odd Todd
+    jod['j_odd_todd'].calc_function = function(card)
+        local chips = 0
+        local text, _, scoring_hand = JokerDisplay.evaluate_hand()
+        if text ~= 'Unknown' then
+            for _, scoring_card in pairs(scoring_hand) do
+                chips = MadLib.has_odd_rank(scoring_card)
+                    and MadLib.add(chips, MadLib.multiply(card.ability.extra.chips, JokerDisplay.calculate_card_triggers(scoring_card, scoring_hand)))
+                    or chips
+            end
+        end
+        card.joker_display_values.chips = chips
+        card.joker_display_values.localized_text = "(" .. localize("Ace", "ranks") .. ",9,7,5,3)"
+    end
+
+    -- Even Steven
+    jod['j_even_steven'].reminder_text = { ref_table = "card.joker_display_values", ref_value = "localized_text" }
+    jod['j_even_steven'].calc_function = function(card)
+        local mult = 0
+        local text, _, scoring_hand = JokerDisplay.evaluate_hand()
+        if text ~= 'Unknown' then
+            for _, scoring_card in pairs(scoring_hand) do
+                mult = MadLib.has_even_rank(scoring_card)
+                    and MadLib.add(mult, MadLib.multiply(card.ability.extra.mult, JokerDisplay.calculate_card_triggers(scoring_card, scoring_hand)))
+                    or mult
+            end
+        end
+        card.joker_display_values.mult = mult
+        card.joker_display_values.localized_text = "(10,8,6,4,2)"
+    end
+
+    -- Shoot the Moon
+     jod['j_shoot_the_moon'].calc_function = function(card)
+        local playing_hand = next(G.play.cards)
+        local mult = 0
+        
+        for _, playing_card in ipairs(G.hand.cards) do
+            if playing_hand or not playing_card.highlighted then
+                if 
+                    MadLib.JokerDisplay.valid_card(playing_card) 
+                    and MadLib.joker_check_rank(playing_card, card, 'Queen')
+                then
+                    mult = MadLib.add(mult, MadLib.multiply(card.ability.extra.mult, JokerDisplay.calculate_card_triggers(playing_card, nil, true)))
+                end
+            end
+        end
+        card.joker_display_values.mult = mult
+    end
+
+    -- 8-Ball
+    jod['j_8_ball'].calc_function = function(card)
+        local count = 0
+        local text, _, scoring_hand = JokerDisplay.evaluate_hand()
+        
+        if text ~= 'Unknown' then
+            for _, scoring_card in pairs(scoring_hand) do
+                if MadLib.joker_check_rank(scoring_card, card, card.ability.extra.rank or '8') then
+                    count   = MadLib.add(count, JokerDisplay.calculate_card_triggers(scoring_card, scoring_hand))
+                end
+            end
+        end
+        card.joker_display_values.count = count
+        local numerator, denominator = SMODS.get_probability_vars(card, 1, card.ability.extra, '8_ball')
+        card.joker_display_values.odds = localize { type = 'variable', key = "jdis_odds", vars = { numerator, denominator } }
+    end
+
+    -- Scholar
+    jod['j_scholar'].calc_function = function(card)
+        local chips, mult = 0, 0
+        local text, _, scoring_hand = JokerDisplay.evaluate_hand()
+        if text ~= 'Unknown' then
+            for _, scoring_card in pairs(scoring_hand) do
+                if MadLib.joker_check_rank(scoring_card, card, card.ability.extra.rank or 'Ace') then
+                    local retriggers = JokerDisplay.calculate_card_triggers(scoring_card, scoring_hand)
+                    chips   = MadLib.add(chips, MadLib.multiply(card.ability.extra.chips, retriggers))
+                    mult    = MadLib.add(mult, MadLib.multiply(card.ability.extra.mult, retriggers))
+                end
+            end
+        end
+        card.joker_display_values.mult = mult
+        card.joker_display_values.chips = chips
+        card.joker_display_values.localized_text = "(" .. localize("k_aces") .. ")"
+    end
+
+    -- Sixth Sense
+    jod['j_sixth_sense'].calc_function = function(card)
+        local _, _, scoring_hand = JokerDisplay.evaluate_hand()
+        local sixth_sense_eval = #scoring_hand == 1 and MadLib.joker_check_rank(scoring_hand[1], card, card.ability.extra.rank or '6')
+        card.joker_display_values.active = G.GAME and G.GAME.current_round.hands_played == 0
+        card.joker_display_values.count = sixth_sense_eval and 1 or 0
+    end
+
+    -- Superposition
+    jod['j_superposition'].calc_function = function(card)
+        local is_superposition = false
+        local _, poker_hands, scoring_hand = JokerDisplay.evaluate_hand()
+        if 
+            poker_hands[card.ability.extra.poker_hand or 'Straight']
+            and next(poker_hands[card.ability.extra.poker_hand or 'Straight'])
+        then
+            for _, scoring_card in pairs(scoring_hand) do
+                if MadLib.joker_check_rank(scoring_card, card, card.ability.extra.rank or 'Ace') then
+                    is_superposition = true
+                end
+            end
+        end
+        card.joker_display_values.count = is_superposition and 1 or 0
+        card.joker_display_values.localized_text_straight = localize(card.ability.extra.poker_hand or 'Straight', "poker_hands")
+        card.joker_display_values.localized_text_ace = localize(card.ability.extra.rank or "Ace", "ranks")
+    end
+
+    -- Baron
+    jod['j_baron'].calc_function = function(card)
+        local playing_hand = next(G.play.cards)
+        local count = 0
+        for _, playing_card in ipairs(G.hand.cards) do
+            if playing_hand or not playing_card.highlighted then
+                if 
+                    MadLib.JokerDisplay.valid_card(playing_card)
+                    and MadLib.joker_check_rank(scoring_card, card, card.ability.extra.rank or 'King')
+                then
+                    count = MadLib.add(count, JokerDisplay.calculate_card_triggers(playing_card, nil, true))
+                end
+            end
+        end
+        card.joker_display_values.x_mult = MadLib.exponent(card.ability.extra.x_mult, count)
+    end
+
+    -- Cloud 9
+    jod['j_cloud_9'].calc_function = function(card)
+        local nines = MadLib.get_card_count(G.playing_cards, function(v)
+            return MadLib.joker_check_rank(v, card, card.ability.extra.rank or '9')
+        end)
+        card.joker_display_values.dollars = MadLib.multiply(card.ability.extra.dollars, nine)
+        card.joker_display_values.localized_text = "(" .. localize("k_round") .. ")"
+    end
 end

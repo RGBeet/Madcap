@@ -211,6 +211,45 @@ SMODS.Joker:take_ownership('lusty_joker', {
     end
 }, true)
 
+SMODS.Joker:take_ownership('wrathful_joker', {
+    key = "lusty_joker",
+    config = { extra = { s_mult = 3, suit = 'Spades' }, },
+    calculate = function(self, card, context)
+        if context.individual and context.cardarea == G.play and
+            context.other_card:is_suit(card.ability.extra.suit) then
+            return {
+                mult = card.ability.extra.s_mult
+            }
+        end
+    end
+}, true)
+
+SMODS.Joker:take_ownership('gluttenous_joker', {
+    key = "lusty_joker",
+    config = { extra = { s_mult = 3, suit = 'Clubs' }, },
+    calculate = function(self, card, context)
+        if context.individual and context.cardarea == G.play and
+            context.other_card:is_suit(card.ability.extra.suit) then
+            return {
+                mult = card.ability.extra.s_mult
+            }
+        end
+    end
+}, true)
+
+SMODS.Joker:take_ownership('greedy_joker', {
+    key = "lusty_joker",
+    config = { extra = { s_mult = 3, suit = 'Diamonds' }, },
+    calculate = function(self, card, context)
+        if context.individual and context.cardarea == G.play and
+            context.other_card:is_suit(card.ability.extra.suit) then
+            return {
+                mult = card.ability.extra.s_mult
+            }
+        end
+    end
+}, true)
+
 --[[
     The following Jokers have been reworked to incorporate MadLib's quantum rank stuff. 
 ]]
@@ -229,7 +268,7 @@ SMODS.Joker:take_ownership('8_ball', {
             (#G.consumeables.cards + G.GAME.consumeable_buffer < G.consumeables.config.card_limit)
         then
             if
-                MadLib.joker_check_rank(context.other_card, card, '8')
+                MadLib.joker_check_rank(context.other_card, card, card.ability.extra.rank or '8')
                 and SMODS.pseudorandom_probability(card, '8_ball', 1, card.ability.extra.odds)
             then
                 G.GAME.consumeable_buffer = G.GAME.consumeable_buffer + 1
@@ -318,7 +357,7 @@ SMODS.Joker:take_ownership('superposition', {
             and #G.consumeables.cards + G.GAME.consumeable_buffer < G.consumeables.config.card_limit
         then
             if MadLib.list_matches_one(context.scoring_hand, function(v)
-                return MadLib.joker_check_rank(v, card, 'Ace')
+                return MadLib.joker_check_rank(v, card, card.ability.extra.rank or 'Ace')
             end) then
                 MadLib.event({
                     func = (function()
@@ -591,7 +630,7 @@ SMODS.Joker:take_ownership('triboulet', {
 }, true)
 
 -- Canio
-SMODS.Joker:take_ownership('canio', {
+SMODS.Joker:take_ownership('caino', {
     config = { extra = { xmult = 1, xmult_gain = 1 } },
     loc_vars = function(self, info_queue, card)
         return MadLib.collect_vars(card.ability.extra.xmult_gain, card.ability.extra.xmult)

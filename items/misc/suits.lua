@@ -20,7 +20,7 @@ local goblets = {
         if args and args.initial_deck then
             return false
         end
-        return Madcap.Funcs.exotic_in_pool() or Madcap.Data.devmode
+        return Madcap.Funcs.exotic_in_pool()
     end
 }
 
@@ -46,7 +46,7 @@ local towers = {
         if args and args.initial_deck then
             return false
         end
-        return Madcap.Funcs.exotic_in_pool() or Madcap.Data.devmode
+        return Madcap.Funcs.exotic_in_pool()
     end
 }
 
@@ -72,7 +72,7 @@ local blooms = {
         if args and args.initial_deck then
             return false
         end
-        return Madcap.Funcs.exotic_in_pool() or Madcap.Data.devmode
+        return Madcap.Funcs.exotic_in_pool()
     end
 }
 
@@ -98,7 +98,7 @@ local daggers = {
         if args and args.initial_deck then
             return false
         end
-        return Madcap.Funcs.exotic_in_pool() or Madcap.Data.devmode
+        return Madcap.Funcs.exotic_in_pool()
     end
 }
 
@@ -124,7 +124,7 @@ local voids = {
         if args and args.initial_deck then
             return false
         end
-        return Madcap.Funcs.exotic_in_pool() or Madcap.Data.devmode
+        return Madcap.Funcs.exotic_in_pool()
     end
 }
 
@@ -150,7 +150,7 @@ local lanterns = {
         if args and args.initial_deck then
             return false
         end
-        return Madcap.Funcs.exotic_in_pool() or Madcap.Data.devmode
+        return Madcap.Funcs.exotic_in_pool()
     end
 }
 
