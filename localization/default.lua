@@ -6598,16 +6598,17 @@ return {
             ml_sh_light             = "Light",
             ml_sh_dark              = "Dark",
             ml_sh_balanced          = "Neutral",
-            ml_sh_spectrum          = "Dazzling",
+            ml_sh_spectrum          = "Prismatic",
             ml_sh_high              = "High",
             ml_sh_low               = "Low",
 
             k_mission_accomplished  = "Mission Accomplished!",
             k_mission_in_progress   = "Mission in Progress...",
             k_mission_failed        = "Mission Failed...",
+            k_empowered             = "Empowered",
 
             k_costs                 = "Costs",
-            k_luxury_pts            = "Luxury Points",
+            k_luxury_pts            = "Luxe",
             ['£']                   = '£',
 
             -- Config

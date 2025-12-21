@@ -40,9 +40,10 @@ match_indent = true
 target = "functions/state_events.lua"
 pattern = '''scoring_hand = final_scoring_hand
     delay(0.2)'''
-position = "after"
+position = "at"
 payload = '''scoring_hand = Madcap.Funcs.modify_scoring_hand(scoring_hand)
-Madcap.Funcs.record_hand_before(scoring_hand,text)'''
+Madcap.Funcs.record_hand_before(scoring_hand,text)
+delay(0.2)'''
 match_indent = true
 
 # Record the hand afterwards

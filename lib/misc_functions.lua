@@ -972,3 +972,140 @@ function Madcap.Funcs.explodes(card)
         if G.P_CENTERS[key].explodes or key == 'm_rgmc_dynamite' then return true end
     end
 end
+
+function Madcap.Funcs.get_spatia_vars(subhand_list)
+	local all_vars     = { }
+	local all_colours  = { }
+
+	MadLib.loop_func(subhand_list, function(sh)
+	    local subhand 	= G.GAME.subhands and G.GAME.subhands[sh]
+		table.insert(all_vars, subhand and subhand and subhand.level or 1)
+		table.insert(all_vars, localize(sh))
+		table.insert(all_vars, (subhand and subhand.l_mult
+			or SubHands[sh].l_mult) + 1)
+		table.insert(all_vars, (subhand and subhand.l_chips
+			or SubHands[sh].l_chips) + 1)
+		table.insert(all_colours, MadLib.get_level_color(subhand.level))
+	end)
+	all_vars['colours'] = all_colours
+	return { vars = all_vars }
+end
+
+function Madcap.Funcs.get_moon_card_vars(sh)
+	local subhand 	= G.GAME.subhands and G.GAME.subhands[sh]
+	local current_level = subhand and subhand.level or 1
+    return {
+        vars = {
+            current_level,
+            localize(sh),
+            (subhand and subhand.l_mult
+				or SubHands[sh].l_mult) + 1,
+            (subhand and subhand.l_chips
+				or SubHands[sh].l_chips) + 1,
+			colours = { MadLib.get_level_color(subhand.level), }
+        }
+    }
+end
+
+function Madcap.Funcs.card_level_hand(card, hand_type)
+    update_hand_text({sound = 'button', volume = 0.7, pitch = 0.8, delay = 0.3}, {
+		handname 	= localize(hand_type, 'poker_hands'),
+		chips 		= G.GAME.hands[hand_type].chips,
+		mult 		= G.GAME.hands[hand_type].mult,
+		level		= G.GAME.hands[hand_type].level
+	})
+    level_up_hand(card, hand_type)
+    update_hand_text({sound = 'button', volume = 0.7, pitch = 1.1, delay = 0}, {mult = 0, chips = 0, handname = '', level = ''})
+    if G.GAME.current_round.current_hand.handname ~= "" then
+        G.E_MANAGER:add_event(Event({
+            trigger = 'after',
+            func = function()
+                G.hand:parse_highlighted()
+                return true
+            end
+        }))
+    end
+end
+
+function Madcap.Funcs.card_level_subhand(card, sh, levels)
+    if not G.GAME.subhands[sh] then return end
+    update_hand_text({sound = 'button', volume = 0.7, pitch = 0.8, delay = 2.0}, {
+		handname	= localize(sh),
+		chips 		= G.GAME.subhands[sh].chips,
+		mult 		= G.GAME.subhands[sh].mult,
+		level 		= G.GAME.subhands[sh].level,
+		multiply	= true
+	})
+    Madcap.Funcs.level_up_subhand(card, sh, false, levels or 1)
+    update_hand_text({sound = 'button', volume = 0.7, pitch = 1.1, delay = 2.0}, {mult = 0, chips = 0, handname = '', level = ''})
+    if G.GAME.current_round.current_hand.handname ~= "" then
+        G.E_MANAGER:add_event(Event({
+            trigger = 'after',
+            func = function()
+                G.hand:parse_highlighted()
+                return true
+            end
+        }))
+    end
+end
+
+function Madcap.Funcs.card_empower_subhand(card, sh, levels)
+    if not G.GAME.subhands[sh] then return end
+    local pt_bonus 	= Madcap.Funcs.calculate_potentia_bonus(G.GAME.subhands[sh].empower, 5)
+    local nu_chips 	= MadLib.multiply(G.GAME.subhands[sh].chips, pt_bonus)
+    local nu_mult 	= MadLib.multiply(G.GAME.subhands[sh].mult, pt_bonus)
+    update_hand_text({sound = 'button', volume = 0.7, pitch = 0.8, delay = 2.0}, {
+		handname	= localize(sh),
+		chips 		= nu_chips,
+		mult 		= nu_mult,
+		level 		= G.GAME.subhands[sh].empower,
+		multiply	= true
+	})
+    Madcap.Funcs.empower_subhand(card, sh, false, levels or 1)
+    update_hand_text({sound = 'button', volume = 0.7, pitch = 1.1, delay = 2.0}, {mult = 0, chips = 0, handname = '', level = ''})
+    if G.GAME.current_round.current_hand.handname ~= "" then
+        G.E_MANAGER:add_event(Event({
+            trigger = 'after',
+            func = function()
+                G.hand:parse_highlighted()
+                return true
+            end
+        }))
+    end
+end
+
+function Madcap.Funcs.use_moon_card(card)
+    if not card.ability.subhand then return end
+	Madcap.Funcs.card_level_subhand(card, card.ability.subhand, card.ability.levels or 1)
+end
+
+function Madcap.Funcs.use_potentia_card(card)
+    if not card.ability.subhand then return end
+	if #SMODS.find_card('j_rgmc_empowerer') > 0 then
+		MadLib.loop_func(SMODS.find_card('j_rgmc_empowerer'), function(v)
+			level_up_hand_ref(card, MadLib.get_random_poker_hand(), false, G.GAME.potentias_used)
+		end)
+	end
+	Madcap.Funcs.card_empower_subhand(card, card.ability.subhand, card.ability.levels or 1)
+end
+
+function Madcap.Funcs.use_spatia_card(card)
+	MadLib.loop_func(card.ability.subhands, function(v) Madcap.Funcs.card_level_subhand(card, v, card.ability.level_factor or 1) end)
+    local hand = pseudorandom_element(Madcap.Lists.SpatiaWhitelist, pseudoseed('spatia' .. tostring(G.GAME.round_resets.ante)))
+    Madcap.Funcs.card_level_hand(card, hand)
+end
+
+function Madcap.Funcs.get_potentia_vars(sh,lvl)
+	local subhand = G.GAME.subhands and G.GAME.subhands[sh]
+	local current_level = subhand and subhand.level 	or 1
+	local empower_level = subhand and subhand.empower 	or 0
+    return {
+        vars = {
+            current_level,
+            (empower_level > 0) and (" + " .. empower_level .."") or "",
+            localize(sh),
+            lvl,
+			colours = { MadLib.get_level_color(lvl) }
+        },
+    }
+end

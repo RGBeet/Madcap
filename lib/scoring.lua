@@ -4,6 +4,7 @@ function MadLib.base_cm_mod(hand,poker_info,data)
     --{text,disp_text,poker_hands,scoring_hand,non_loc_disp_text}
     data = data or {}
     local subhands = MadLib.get_subhands(poker_info[4])
+    --[[
     tell('Hand/Chips Before:' .. tostring(hand_chips) .. "," .. tostring(mult))
 
     -- Do subhand shtuff
@@ -17,30 +18,12 @@ function MadLib.base_cm_mod(hand,poker_info,data)
             x_mult      = x_mult ^ (1 + 0.02 * sh.empower)
         end
 
-        hand_chips  = mod_chips(hand_chips * x_chips)
-        mult        = mod_mult(mult * x_mult)
+        hand_chips  = mod_chips(MadLib.multiply(hand_chips, x_chips))
+        mult        = mod_mult(MadLib.multiply(mult, x_mult))
     end)
-
-    tell('Hand/Chips After:' .. tostring(hand_chips) .. "," .. tostring(mult))
+    ]]
+    tell('Hand/Chips:' .. tostring(hand_chips) .. "," .. tostring(mult))
     return base_cm_mod_ref(hand, poker_info, data) -- just in case...
-end
-
-function Madcap.Funcs.finalize_chips_mult(scoring_hand)
-    tell("Do Full Hand Stuff")
-	local active = MadLib.get_subhands(scoring_hand)
-
-    if #active > 0 then
-        local new_chips = hand_chips
-        local new_mult  = mult
-
-        for i=1, #active do
-            new_chips   = new_chips * active[i].x_chips
-            new_mult    = new_mult * active[i].x_mult
-
-            hand_chips = mod_chips(new_chips)
-            mult = mod_mult(new_mult)
-        end
-    end
 end
 
 -- idk 2

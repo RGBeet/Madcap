@@ -410,7 +410,7 @@ SMODS.Joker:take_ownership('cloud_9', {
     end,
     calc_dollar_bonus = function(self, card)
         local nines = MadLib.get_card_count(G.playing_cards, function(v)
-            return MadLib.joker_check_rank(v, card, '9')
+            return MadLib.joker_check_rank(v, card, card.ability.extra.rank or '9')
         end)
         return nines > 0 and MadLib.multiply(card.ability.extra.dollars, nines) or nil
     end
@@ -492,7 +492,7 @@ end
 SMODS.Joker:take_ownership('idol', {
     calculate = function(self, card, context)
         if context.individual and context.cardarea == G.play then
-            if MadLib.is_rank_and_suit(context.other_card, G.GAME.current_round.vremade_idol_card.id, G.GAME.current_round.vremade_idol_card.suit) then
+            if MadLib.is_rank_and_suit(context.other_card, G.GAME.current_round.idol_card.id, G.GAME.current_round.idol_card.suit) then
                 return {
                     xmult = card.ability.extra.xmult,
                     target_card = context.other_card,
@@ -557,7 +557,7 @@ SMODS.Joker:take_ownership('invisible_joker', {
             end)
             if #jokers > 0 then
                 if #G.jokers.cards <= G.jokers.config.card_limit then
-                    local chosen_joker = pseudorandom_element(jokers, 'vremade_invisible')
+                    local chosen_joker = pseudorandom_element(jokers, 'invisible')
                     local copied_joker = copy_card(chosen_joker, nil, nil, nil,
                         chosen_joker.edition and chosen_joker.edition.negative)
                     copied_joker:add_to_deck()
@@ -596,7 +596,7 @@ SMODS.Joker:take_ownership('shoot_the_moon', {
         if
             context.individual
             and context.cardarea == G.hand
-            and not context.end_of_round
+            and (not context.end_of_round)
             and MadLib.joker_check_rank(context.other_card, card, 'Queen')
         then
             local amt = context.other_card:get_quantity_value()
@@ -704,7 +704,7 @@ SMODS.Joker:take_ownership('perkeo', {
             end)
             G.E_MANAGER:add_event(Event({
                 func = function()
-                    local card_to_copy, _ = pseudorandom_element(items, 'vremade_perkeo')
+                    local card_to_copy, _ = pseudorandom_element(items, 'perkeo')
                     local copied_card = copy_card(card_to_copy)
                     copied_card:set_edition("e_negative", true)
                     copied_card:add_to_deck()
@@ -766,7 +766,7 @@ SMODS.Joker:take_ownership('drivers_license', {
 -- Gets the # of empty slots - useful for editing.
 function MadLib.get_empty_slots(area)
     if not area then return 0 end
-    local num = area.config.card_limit + #SMODS.find_card("j_vremade_stencil", true)
+    local num = area.config.card_limit + #SMODS.find_card("stencil", true)
     MadLib.loop_func(area.cards, function(v)
         num = num - v:get_quantity_value() or 0
     end)
@@ -1048,7 +1048,7 @@ SMODS.Joker:take_ownership('madness', {
                         G.jokers.cards[i]
                 end
             end
-            local joker_to_destroy = pseudorandom_element(destructable_jokers, 'vremade_madness')
+            local joker_to_destroy = pseudorandom_element(destructable_jokers, 'madness')
 
             if joker_to_destroy then
                 joker_to_destroy.getting_sliced = true

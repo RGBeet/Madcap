@@ -12,7 +12,7 @@ return {
         cost    = 4,
         aurinko = false,
         config = {
-            hands 			= { 'ml_sh_balanced' },
+            subhands 	    = { 'ml_sh_spectrum' },
             level_factor	= 1
         },
         set_card_type_badge = function(self, card, badges)

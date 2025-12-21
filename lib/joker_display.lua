@@ -2190,24 +2190,6 @@ if JokerDisplay then
         card.joker_display_values.localized_text = "(10,8,6,4,2)"
     end
 
-    -- Shoot the Moon
-     jod['j_shoot_the_moon'].calc_function = function(card)
-        local playing_hand = next(G.play.cards)
-        local mult = 0
-        
-        for _, playing_card in ipairs(G.hand.cards) do
-            if playing_hand or not playing_card.highlighted then
-                if 
-                    MadLib.JokerDisplay.valid_card(playing_card) 
-                    and MadLib.joker_check_rank(playing_card, card, 'Queen')
-                then
-                    mult = MadLib.add(mult, MadLib.multiply(card.ability.extra.mult, JokerDisplay.calculate_card_triggers(playing_card, nil, true)))
-                end
-            end
-        end
-        card.joker_display_values.mult = mult
-    end
-
     -- 8-Ball
     jod['j_8_ball'].calc_function = function(card)
         local count = 0
@@ -2294,5 +2276,105 @@ if JokerDisplay then
         end)
         card.joker_display_values.dollars = MadLib.multiply(card.ability.extra.dollars, nine)
         card.joker_display_values.localized_text = "(" .. localize("k_round") .. ")"
+    end
+
+    -- Mail-In Rebate
+    jod['j_mail'].calc_function = function(card)
+        local dollars = 0
+        local hand = G.hand.highlighted
+        for _, playing_card in pairs(hand) do
+            if 
+                MadLib.JokerDisplay.valid_card(playing_card)
+                and G.GAME.current_round.mail_card.id
+            then
+                dollars = MadLib.add(dollars, card.ability.extra)
+            end
+        end
+        card.joker_display_values.dollars           = G.GAME.current_round.discards_left > 0 and dollars or 0
+        card.joker_display_values.mail_card_rank    = localize(G.GAME.current_round.mail_card.rank, 'ranks')
+    end
+
+    -- Walkie Talkie
+    jod['j_walkie_talkie'].reminder_text = { ref_table = "card.joker_display_values", ref_value = "localized_text" }
+    jod['j_walkie_talkie'].calc_function = function(card)
+        local chips, mult = 0, 0
+        local text, _, scoring_hand = JokerDisplay.evaluate_hand()
+        if text ~= 'Unknown' then
+            for _, scoring_card in pairs(scoring_hand) do
+                 if MadLib.list_matches_one(card.ability.extra.ranks, function(v)
+                    return MadLib.is_rank(scoring_card, SMODS.Ranks[v].id)
+                end) then
+                    local retriggers = JokerDisplay.calculate_card_triggers(scoring_card, scoring_hand)
+                    chips = chips + card.ability.extra.chips * retriggers
+                    mult = mult + card.ability.extra.mult * retriggers
+                end
+            end
+        end
+        card.joker_display_values.chips             = chips
+        card.joker_display_values.mult              = mult
+        card.joker_display_values.localized_text    = '(' .. localize(card.ability.extra.ranks[1], 'ranks') .. ', ' .. localize(card.ability.extra.ranks[1], 'ranks') .. ')'
+    end
+
+    -- The Idol
+    jod['j_idol'].calc_function = function(card)
+        local count = 0
+        local text, _, scoring_hand = JokerDisplay.evaluate_hand()
+        if text ~= 'Unknown' then
+            for _, scoring_card in pairs(scoring_hand) do
+                if MadLib.is_rank_and_suit(scoring_card, G.GAME.current_round.vremade_idol_card.id, G.GAME.current_round.idol_card.suit) then
+                    count = count + JokerDisplay.calculate_card_triggers(scoring_card, scoring_hand)
+                end
+            end
+        end
+        card.joker_display_values.x_mult = MadLib.exponent(card.ability.extra, count)
+        card.joker_display_values.idol_card = localize { type = 'variable', key = "jdis_rank_of_suit", vars = { localize(G.GAME.current_round.idol_card.rank, 'ranks'), localize(G.GAME.current_round.idol_card.suit, 'suits_plural') } }
+    end
+
+    -- Shoot the Moon
+     jod['j_shoot_the_moon'].calc_function = function(card)
+        local playing_hand = next(G.play.cards)
+        local mult = 0
+        
+        for _, playing_card in ipairs(G.hand.cards) do
+            if playing_hand or not playing_card.highlighted then
+                if 
+                    MadLib.JokerDisplay.valid_card(playing_card) 
+                    and MadLib.joker_check_rank(playing_card, card, 'Queen')
+                then
+                    mult = MadLib.add(mult, MadLib.multiply(card.ability.extra.mult, JokerDisplay.calculate_card_triggers(playing_card, nil, true)))
+                end
+            end
+        end
+        card.joker_display_values.mult = mult
+    end
+
+    -- Triboulet
+    jod['j_triboulet'].calc_function = function(card)
+        local count = 0
+        local text, _, scoring_hand = JokerDisplay.evaluate_hand()
+        if text ~= 'Unknown' then
+            for _, scoring_card in pairs(scoring_hand) do
+                if MadLib.list_matches_one(card.ability.extra.ranks, function(v)
+                    return MadLib.is_rank(context.other_card, SMODS.Ranks[v].id)
+                end) then
+                    count = count + JokerDisplay.calculate_card_triggers(scoring_card, scoring_hand)
+                end
+            end
+        end
+        card.joker_display_values.x_mult = MadLib.exponent(card.ability.extra, count)
+        card.joker_display_values.localized_text_king   = localize(card.ability.extra.ranks[1], "ranks")
+        card.joker_display_values.localized_text_queen  = localize(card.ability.extra.ranks[2], "ranks")
+    end
+
+    -- Yorick - fix discard variable
+    jod['j_yorick'].reminder_text = {
+        { text = "(" },
+        { ref_table = "card.joker_display_values", ref_value = "yorick_discards" },
+        { text = "/" },
+        { ref_table = "card.ability.extra",        ref_value = "discards" },
+        { text = ")" },
+    }
+    jod['j_yorick'].calc_function = function(card)
+        card.joker_display_values.yorick_discards = MadLib.subtract(card.ability.discards_remaining,card.ability.discards) or card.ability.extra.discards
     end
 end

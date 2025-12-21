@@ -253,7 +253,7 @@ function Madcap.Funcs.play_hand(hand)
 			if v.cherry_active then
 				G.discard:remove_card(v)
 				G.play:emplace(v)
-				delay(0.2)
+				delay(0.1)
 			end
 		end
 	end)
@@ -378,7 +378,8 @@ end
 
 -- Gives the main value of the Potentia - relies on poker hand size
 function Madcap.Funcs.calculate_potentia_bonus(empower_level, cards)
-	local card_bonus = math.max(1, #(cards or {}) - (G.GAME.subhand_minimum or 5) + 1)
+	local amt = (type(cards) == 'table' and #cards) or (type(cards) == 'number' and cards) or 0
+	local card_bonus = math.max(1, amt - (G.GAME.subhand_minimum or 5) + 1)
 	return MadLib.round(1 + math.max(0, (empower_level or 0)) * (card_bonus/6), 2)
 end
 
@@ -500,16 +501,21 @@ end
 
 function Madcap.Funcs.hand_display_mod(hand, text, disp_text, poker_hands, scoring_hand)
 
-	tell('Hand Display Mod')
     local subhands = MadLib.get_subhands(scoring_hand)
     local return_true = nil
     local prefix, suffix = '', ''
 
 	local nu_level, nu_chips, nu_mult, ret = Madcap.Funcs.calculate_chips_mult(G.GAME.hands[text], subhands, scoring_hand)
 	local mod_check = ''
-
+	
+	--[[
+	print('Old Chips:' .. number_format(G.GAME.hands[text].chips))
+	print('Old Mult:' .. number_format(G.GAME.hands[text].mult))
 	print('Nu Chips:' .. number_format(nu_chips))
 	print('Nu Mult:' .. number_format(nu_mult))
+	]]
+	print('Calculating Spaghetti')
+
 	-- If modded, then!
 	if ret.level_modded then
 		mod_check = '*' 
@@ -546,18 +552,27 @@ function Madcap.Funcs.hand_display_mod(hand, text, disp_text, poker_hands, scori
 		end
 	end
 
-	update_hand_text({ immediate = nil, nopulse = true, delay = 0}, {
-		level 		= number_format(nu_level) .. mod_check .. suffix,
-		handname 	= disp_text,
-		mult 		= number_format(nu_mult),
-		chips 		= number_format(nu_chips)
-	})
+	if return_true then
+		update_hand_text({ nopulse = true, delay = 0 }, {
+			level 		= number_format(nu_level) .. mod_check .. suffix,
+			handname 	= disp_text,
+			mult 		= number_format(nu_mult),
+			chips 		= number_format(nu_chips)
+		})
+		disp_text = MadLib.normalize_spaces(disp_text)
+	end
 
-	disp_text = MadLib.normalize_spaces(disp_text)
-
-	if AKYRS then
-        return_true = return_true or AKYRS.hand_display_mod(hand, text, disp_text, poker_hands) ~= nil
-    end
+	
 
     return return_true
+end
+
+if AKYRS then
+	local akyrs_hand_display_ref = Madcap.Funcs.hand_display_mod
+
+	function Madcap.Funcs.hand_display_mod(hand, text, disp_text, poker_hands, scoring_hand)
+        return akyrs_hand_display_ref(hand, text, disp_text, poker_hands, scoring_hand) 
+			or AKYRS.hand_display_mod(hand, text, disp_text, poker_hands)
+	end
+
 end

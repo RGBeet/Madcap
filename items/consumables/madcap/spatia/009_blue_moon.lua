@@ -1,23 +1,4 @@
-function Madcap.Funcs.get_moon_card_vars(sh,levels)
-	local subhand 	= G.GAME.subhands and G.GAME.subhands[sh]
-	local current_level = subhand and subhand.level or 1
-    return {
-        vars = {
-            current_level,
-            localize(sh),
-            (subhand and subhand.l_mult
-				or SubHands[sh].l_mult) + 1,
-            (subhand and subhand.l_chips
-				or SubHands[sh].l_chips) + 1,
-			colours = { MadLib.get_level_color(subhand.level), }
-        }
-    }
-end
 
-function Madcap.Funcs.use_moon_card(card)
-    if not card.ability.subhand then return end
-	Madcap.Funcs.card_level_subhand(card, card.ability.subhand, card.ability.levels or 1)
-end
 
 return {
     categories = {

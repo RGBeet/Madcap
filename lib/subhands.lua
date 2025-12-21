@@ -86,26 +86,10 @@ SubHands = {
 -- Levels up a chosen subhand
 function Madcap.Funcs.level_up_subhand(card, hand, instant, amount, context)
 	amount = amount or 1
-	local basic_func = true
-    G.GAME.subhands[hand].level = math.max(0, G.GAME.subhands[hand].level + amount)
-
-	-- CRYPTID: Universum also applies to sub-hands?!
-    if next(SMODS.find_card('j_cry-Universum')) then
-        universum_mod = 1
-        local effects = {}
-        SMODS.calculate_context({cry_universum = true}, effects)
-        for i = 1, #effects do
-            universum_mod = universum_mod * (effects[i] and effects[i].jokers and effects[i].jokers.mod or 1)
-        end
-        G.GAME.subhands[hand].mult 	= G.GAME.subhands[hand].mult 	* (universum_mod)^amount
-        G.GAME.subhands[hand].chips = G.GAME.subhands[hand].chips 	* (universum_mod)^amount
-		basic_func = false
-	end
-
-	if basic_func then
-    	G.GAME.subhands[hand].mult 	= G.GAME.subhands[hand].mult 	+ G.GAME.subhands[hand].l_mult*amount
-    	G.GAME.subhands[hand].chips = G.GAME.subhands[hand].chips 	+ G.GAME.subhands[hand].l_chips*amount
-	end
+	
+    G.GAME.subhands[hand].mult 	= G.GAME.subhands[hand].mult 	+ G.GAME.subhands[hand].l_mult*amount
+    G.GAME.subhands[hand].chips = G.GAME.subhands[hand].chips 	+ G.GAME.subhands[hand].l_chips*amount
+    G.GAME.subhands[hand].level = math.max(0, MadLib.add(G.GAME.subhands[hand].level, amount))
 
     if not instant and MadLib.is_animation_enabled() then
         MadLib.event({trigger = 'after', delay = 0.2, func = function()
@@ -113,19 +97,50 @@ function Madcap.Funcs.level_up_subhand(card, hand, instant, amount, context)
             if card and card.juice_up then card:juice_up(0.6, 0.35) end
             G.TAROT_INTERRUPT_PULSE = true
             return true end })
+
         update_hand_text({delay = 0}, {mult = MadLib.calculate_mult(G.GAME.subhands[hand].mult), StatusText = true})
+        
         MadLib.event({trigger = 'after', delay = 0.9, func = function()
             play_sound('tarot1')
             if card and card.juice_up then card:juice_up(0.6, 0.35) end
             return true end })
+        
         update_hand_text({delay = 0}, {chips = MadLib.calculate_chips(G.GAME.subhands[hand].chips), StatusText = true})
+        
         MadLib.event({trigger = 'after', delay = 0.9, func = function()
             play_sound('tarot1')
             if card and card.juice_up then card:juice_up(0.6, 0.35) end
             G.TAROT_INTERRUPT_PULSE = nil
             return true end })
-        update_hand_text({sound = 'rgmc_pop', volume = 0.7, pitch = 1.0, delay = 0}, {level = G.GAME.subhands[hand].level})
+        
+            update_hand_text({sound = 'rgmc_pop', volume = 0.7, pitch = 1.0, delay = 0}, {level = G.GAME.subhands[hand].level})
         delay(2.0)
+    end
+end
+
+-- Empowers the chosen subhand
+function Madcap.Funcs.empower_subhand(card, hand, instant, amount, context)
+	amount = amount or 1
+    G.GAME.subhands[hand].empower = math.max(0, MadLib.add(G.GAME.subhands[hand].empower or 0, amount))
+
+    if not instant and MadLib.is_animation_enabled() then
+
+        local pt_bonus 	= Madcap.Funcs.calculate_potentia_bonus(G.GAME.subhands[hand].empower, 5)
+        local nu_chips 	= MadLib.multiply(G.GAME.subhands[hand].chips, pt_bonus)
+        local nu_mult 	= MadLib.multiply(G.GAME.subhands[hand].mult, pt_bonus)
+        
+        update_hand_text({ sound = 'rgmc_empower', volume = 0.7, pitch = 0.8, delay = 2.0 }, {
+            handname = localize(hand),
+            level    = lenient_bignum(G.GAME.subhands[hand].empower),
+            chips    = lenient_bignum(nu_chips),
+            mult     = lenient_bignum(nu_mult),
+            func = function()
+                play_sound('tarot1')
+                if card and card.juice_up then card:juice_up(0.6, 0.35) end
+                G.TAROT_INTERRUPT_PULSE = nil
+                return true
+            end 
+        })
     end
 end
 
@@ -157,8 +172,6 @@ end
 function Madcap.Funcs.set_subhand(_sh,_state)
 	if not (G.GAME.subhands and G.GAME.subhands[_sh]) then return false end
 	G.GAME.subhands[_sh].enabled = _state or (not G.GAME.subhands[_sh].enabled)
-    print(G.GAME.subhands or "NOTHING")
-
     return true
 end
 
@@ -200,59 +213,6 @@ function Madcap.Funcs.calculate_empower_bonus(hand, cards)
 	if not G.GAME.subhands or G.GAME.subhands[hand] then return 0 end
 	local EP = Madcap.Funcs.get_potentia_bonus(hand, cards)
 	return G.GAME.subhands[hand].chips * EP, G.GAME.subhands[hand].mult * EP
-end
-
--- Empowers the chosen subhand
-function Madcap.Funcs.empower_subhand(card, hand, instant, amount, context)
-	amount = amount or 1
-	local basic_func = true
-	local empower_level = (G.GAME.subhands[hand].empower or 0)
-
-	if basic_func then
-    	empower_level = math.max(0, empower_level + amount)
-	end
-    if not instant then
-        -- update the UI before setting the new values
-		update_hand_text({
-            sound = 'button', volume = 0.7, pitch = 0.8, delay = 1.0
-        }, {
-            handname = localize(hand),
-            level    = G.GAME.subhands[hand].level,
-            chips    = G.GAME.subhands[hand].chips,
-            mult     = G.GAME.subhands[hand].mult
-        })
-
-		if MadLib.is_animation_enabled()  then
-			local nu_chips, nu_mult = 0, 0
-			update_hand_text({ sound = 'rgmc_empower', volume = 0.7, pitch = 0.8, delay = 2.0 }, {
-				handname = localize(hand),
-				level    = lenient_bignum(empower_level),
-				chips    = lenient_bignum(nu_chips),
-				mult     = lenient_bignum(nu_mult)
-			})
-			MadLib.simple_event(function()
-				ease_colour(G.C.UI_CHIPS, copy_table(G.C.RGMC_UNUSUAL), 0.1)
-				ease_colour(G.C.UI_MULT, copy_table(G.C.RGMC_UNUSUAL), 0.1)
-				Madcap.Funcs.pulse_flame(0.01, empower_level)
-				MadLib.event({
-					trigger = "after",
-					blockable = false,
-					blocking = false,
-					delay = 2.5,
-					func = function()
-					ease_colour(G.C.UI_CHIPS, G.C.BLUE, 1)
-					ease_colour(G.C.UI_MULT, G.C.RED, 1)
-					return true
-					end,
-				})
-				return true
-			end, 2.5, 'after')
-		end
-	end
-	update_hand_text({ sound = "button", volume = 0.7, pitch = 0.9, delay = 2.0 }, { level = number_format(empower_level) })
-	delay(2.6)
-    G.GAME.subhands[hand].empower = empower_level
-	MadLib.clear_hand_text()
 end
 
 -- Returns whether the subhand is visible (and active?)
