@@ -27,18 +27,10 @@ return {
 
             if valid and #valid > 1 then
                 MadLib.loop_func(valid, function(v,i)
-                    MadLib.simple_event(function()
-                        Madcap.Funcs.mayhemize(v, {
-                            force_values 	= true,
-                            min_mult 		= self.config.extra or 1.25,
-                            max_mult 		= self.config.extra or 1.25
-                        }, false)
-					    v:juice_up(0.3, 0.5)
-                        return true
-                    end, 0.8, 'after')
+                    
                 end)
                 MadLib.simple_event(function()
-                    SMODS.Stickers['rgmc_positive']:apply(valid[1], true)
+                    --???
                     return true
                 end, 1.0, 'after')
             end

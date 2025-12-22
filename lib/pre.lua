@@ -262,7 +262,6 @@ local mlibmv = Madcap.MayhemValues
 Madcap.MayhemConversions = {
 	['cry_prob']		= mlibmv['Probability'],
 	['odds']			= mlibmv['Probability'],
-	['dollars']			= mlibmv['AddMoney'],
 	['h_size']			= mlibmv['HandSize'],
 	['h_mod']			= mlibmv['HandSize'],
 	['handsize']		= mlibmv['HandSize'],
@@ -287,6 +286,9 @@ Madcap.MayhemConversions = {
 	['xmult']			= mlibmv['MultiMult'],
 	['x_mult']			= mlibmv['MultiMult'],
 	['h_x_mult']		= mlibmv['MultiMult'],
+	-- ???
+	['Xmult']			= mlibmv['MultiMult'],
+	['Xmult_gain']		= mlibmv['MultiMult'],
 	['xchips']			= mlibmv['MultiChips'],
 	['x_chips']			= mlibmv['MultiChips'],
 	['h_x_chips']		= mlibmv['MultiChips'],
@@ -309,7 +311,7 @@ loop_keys_add({ 'chips', 'chip_mod', 'perma_bonus', 'perma_h_chips', 't_chips', 
 	Madcap.MayhemConversions,  mlibmv['AddChips'])
 loop_keys_add({ 'score', 'score_mod', 'perma_score', 'perma_h_score' },
 	Madcap.MayhemConversions,  mlibmv['AddScore'])
-loop_keys_add({ 'dollars', 'h_dollars', 'p_dollars', 'perma_p_dollars', 'perma_h_dollars' },
+loop_keys_add({ 'dollars', 'h_dollars', 'p_dollars', 'perma_p_dollars', 'perma_h_dollars', 'price' },
 	Madcap.MayhemConversions,  mlibmv['AddMoney'])
 loop_keys_add({ 'h_size', 'h_mod', 'handsize', 'hand_size', },
 	Madcap.MayhemConversions,  mlibmv['HandSize'])
@@ -378,7 +380,7 @@ Madcap.DefineExtras = {
 	['j_fibonacci'] 		= { ['extra'] = mlibmv['AddMult'] },
 	['j_steel_joker'] 		= { ['extra'] = mlibmv['MultiMult'] },
 	['j_scary_face'] 		= { ['extra'] = mlibmv['AddChips'] },
-	['j_abstract'] 			= { ['extra'] = mlibmv['AddChips'] },
+	['j_abstract'] 			= { ['extra'] = mlibmv['AddMult'] },
 	['j_delayed_grat'] 		= { ['extra'] = mlibmv['AddMoney'] },
 	['j_hack'] 				= { ['extra'] = mlibmv['Retriggers'] },
 	['j_even_steven'] 		= { ['extra'] = mlibmv['AddMult'] },
@@ -747,3 +749,12 @@ MadLib.register_sprite('rgmc_explosion',{
 	yoff		= 282/2,
 	subimages	= 17,
 })
+
+Madcap.Lists.RankUIs = {
+    rgmc_X          = 'x',
+    rgmc_Sum        = 'sum',
+    rgmc_Draw2      = 'draw_2',
+    rgmc_Skip       = 'skip',
+    rgmc_Reverse    = 'reverse',
+    rgmc_0          = '0'
+}

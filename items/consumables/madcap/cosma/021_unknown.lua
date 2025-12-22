@@ -38,7 +38,7 @@ return {
             
             G.GAME.joker_buffer = 0
             Madcap.Funcs.set_last_cosma(self)
-            return { message = "+1", colour = G.C.RGMC_MAYHEM}
+            return { message = "+1", colour = G.C.PURPLE}
         end
     }
 }

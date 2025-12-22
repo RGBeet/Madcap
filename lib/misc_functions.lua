@@ -1109,3 +1109,24 @@ function Madcap.Funcs.get_potentia_vars(sh,lvl)
         },
     }
 end
+
+-- Adds UI for special ranks!
+function MadLib.set_pcard_ui(card, specific_vars, desc_nodes)
+    if not card then return loc_vars end
+    MadLib.loop_table(Madcap.Lists.RankUIs, function(k,v)
+        if SMODS.Ranks[k] and card:get_id() == SMODS.Ranks[k].id then
+            localize{ type = 'other', key = 'rgmc_info_'..v, nodes = desc_nodes }
+        end
+    end)
+    return loc_vars
+end
+
+function Madcap.Funcs.check_eval_card(card,i)
+	--G.GAME.blind_stats = G.GAME.blind_stats or {}
+	if not SMODS.has_no_suit(card) then -- has a suit
+		table.insert(G.GAME.blind_stats.suits, card.base.suit)
+	end
+	if not SMODS.has_no_rank(card) then -- has a rank
+		table.insert(G.GAME.blind_stats.ranks, card.base.value)
+	end
+end

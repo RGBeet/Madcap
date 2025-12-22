@@ -3,7 +3,7 @@ function Card:calculate_rgmc_engraved()
         if self.ability.rgmc_engraved_tally == 1 then
             self.ability.rgmc_engraved_tally = 0
             card_eval_status_text(self, 'extra', nil, nil, nil, {message = localize('rgmc_enabled_ex'),colour = G.C.FILTER, delay = 0.45})
-            SMODS.Stickers['rgpd_engraved']:apply(self, false)
+            SMODS.Stickers['rgmc_engraved']:apply(self, false)
         else
             self.ability.rgmc_engraved_tally = self.ability.rgmc_engraved_tally - 1
             card_eval_status_text(self, 'extra', nil, nil, nil, {message = localize{type='variable',key='a_remaining',vars={self.ability.rgmc_engraved_tally}},colour = G.C.FILTER, delay = 0.45})

@@ -21,7 +21,6 @@ return {
                 return string.sub(v, 1, 2) == 'j_' -- is a joker
             end)
             local _key = pseudorandom_element(selection, pseudoseed('past_lives'))
-            Madcap.Funcs.ease_mayhem(self.config.extra and -self.config.extra or -1, true)
             MadLib.simple_event(function()
                 local _joker = MadLib.create_joker(_key)
                 return true

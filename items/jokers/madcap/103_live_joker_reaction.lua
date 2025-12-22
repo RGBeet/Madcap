@@ -28,7 +28,7 @@ return {
             -- Reset!
             if context.setting_blind and card.ability.immutable.reset then
                 card.ability.immutable.reset = false
-                card.ability.extra.dollars = card.ability.extra.dollars.starting_amount
+                card.ability.extra.dollars = card.ability.extra.starting_amount
                 return { message = localize('k_reset') }
             end
             -- Show it's about to reset back to its true value

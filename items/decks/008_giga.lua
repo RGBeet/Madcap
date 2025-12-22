@@ -1,6 +1,7 @@
 Madcap.GigaBlacklist = { -- 4 cards or more!
     'Three of a Kind',
     'Pair',
+    'High Card',
 }
 
 return {

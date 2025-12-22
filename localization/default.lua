@@ -52,17 +52,6 @@ local deck_text = {
         "or {C:attention}skipping{} blind",
         "{C:blue}#3#{} hands, {C:red}#4#{} discards"
     },
-    mayhem = {
-		"Start with {C:attention}+#1# {C:rgmc_mayhem}Mayhem{}",
-        "{C:rgmc_mayhem}Mayhem{} increases and decreases",
-        "{C:attention}X#2#{} as fast{}",
-        "{C:rgmc_voids}Void{} cards appear",
-        "{C:attention}#3#X{} as often"
-    },
-    mayhem_vl = {
-		"{C:rgmc_voids}Voids{} and {C:rgmc_lanterns}Lanterns{}",
-        "appear {C:attention}"
-    },
     cross = {
 	    "Scored cards are {C:attention}",
         "\"permanently\" debuffed{}",
@@ -144,10 +133,6 @@ return {
 				name = "Fuchsia Deck",
 				text = deck_text.fuchsia
 			},
-			b_rgmc_mayhem = {
-				name = "Deck of Mayhem",
-				text = deck_text.mayhem
-			},
 			b_rgmc_lunacy = {
 				name = "Deck of Lunacy",
 				text = {
@@ -215,13 +200,6 @@ return {
                     "{C:inactive}{C:chips}+#2#{C:inactive} Chips, {C:mult}+#3#{C:inactive} Mult)",
                     ""
 				},
-			},
-			e_rgmc_abyssal = {
-				name = "Abyssal",
-				text = {
-                    "{C:rgmc_mayhem}+#1#{} Mayhem",
-                    "at {C:attention}start of hand"
-                }
 			},
 			e_rgmc_luxury = {
 				name = "Luxury",
@@ -429,12 +407,6 @@ return {
                     "Held triangular numbers",
                     "discard the card",
                     "to their right"
-                },
-            },
-            bl_rgmc_din = {
-                name = "The Din",
-                text = {
-                    "+#1# Temporary Mayhem",
                 },
             },
             bl_rgmc_flip = {
@@ -2340,7 +2312,6 @@ return {
             j_rgmc_pandoras_potato = {
                 name = "Pandora's Potato",
                 text = {
-                    "{C:rgmc_mayhem}+#1#{} Mayhem",
                     "{C:green}+#2#{} Numerator",
                     "{E:1,C:rgmc_bismuth}?!?"
                 },
@@ -2460,572 +2431,7 @@ return {
                     "{C:inactive}(Currently #3#%{C:inactive})",
                 },
             },
-            -- Redo
-            j_8_ball = {
-                name = "8-Ball",
-                text = {
-                    "{C:green}#1# in #2#{} chance for each",
-                    "played {C:attention}#3#{} to create a",
-                    "{C:tarot}Tarot{} card when scored",
-                    "{C:inactive}(Must have room)"
-                },
-            },
-            j_scholar = {
-                name = "Scholar",
-                text = {
-                    "Played {C:attention}#1#s{}",
-                    "give {C:chips}+#2#{} Chips",
-                    "and {C:mult}+#3#{} Mult",
-                    "when scored"
-                }
-            },
-            j_sixth_sense = {
-                name = "Sixth Sense",
-                text = {
-                    "If {C:attention}first hand{} of round is",
-                    "a single {C:attention}#1#{}, destroy it and",
-                    "create a {C:spectral}Spectral{} card",
-                    "{C:inactive}(Must have room)"
-                }
-            },
-            j_superposition = {
-                name = "Superposition",
-                text = {
-                    "Create a {C:tarot}Tarot{} card if",
-                    "poker hand contains an",
-                    "{C:attention}#1#{} and a {C:attention}#2#{}",
-                    "{C:inactive}(Must have room)"
-                }
-            },
-            j_baron = {
-                name = "Baron",
-                text = {
-                    "Each {C:attention}#1#{}",
-                    "held in hand",
-                    "gives {X:mult,C:white}X#2#{} Mult",
-
-                }
-            },
-            j_cloud_9 = {
-                name = "Cloud 9",
-                text = {
-                    "Earn {C:money}$#1#{} for each",
-                    "{C:attention}#2#{} in your {C:attention}full deck",
-                    "at end of round",
-                    "{C:inactive}(Currently {C:money}$#3#{}{C:inactive})"
-                }
-            },
-            j_walkie_talkie = {
-                name = "Walkie Talkie",
-                text = {
-                    "Each played {C:attention}#1#{} or {C:attention}#2#",
-                    "gives {C:chips}+#3#{} Chips and", 
-                    "{C:mult}+#4#{} Mult when scored"
-                },
-            },
-            j_wee = {
-                name = "Wee Joker",
-                text = {
-                    "This Joker gains",
-                    "{C:chips}+#1#{} Chips for",
-                    "each scored {C:attention}#2#",
-                    "{C:inactive}(Currently {C:chips}+#3#{C:inactive} Chips)"
-                },
-                unlock = {
-                    "Win a run in {E:1,C:attention}#1#",
-                    "or fewer rounds"
-                }
-            },
-            j_hit_the_road = {
-                name = "Hit the Road",
-                text = {
-                    "This Joker gains {X:mult,C:white} X#1# {} Mult",
-                    "for every {C:attention}#2#{}",
-                    "discarded this round",
-                    "{C:inactive}(Currently {X:mult,C:white} X#3# {C:inactive} Mult)"
-                },
-                unlock = {
-                    "Discard {E:1,C:attention}5",
-                    "{E:1,C:attention}Jacks{} at the",
-                    "same time"
-                }
-            },
-            j_shoot_the_moon = {
-                name = "Shoot the Moon",
-                text = {
-                    "Each {C:attention}#1#{}",
-                    "held in hand",
-                    "gives {C:mult}+#2#{} Mult",
-                },
-                unlock = {
-                    "Play every {E:1,C:attention}Heart",
-                    "in your deck in",
-                    "a single round"
-                }
-            },
-            j_triboulet = {
-                name = "Triboulet",
-                text = {
-                    "Played {C:attention}#1#s{} and",
-                    "{C:attention}#2#s{} each give",
-                    "{X:mult,C:white}X#3#{} Mult when scored"
-                },
-                unlock = {
-                    "{E:1,s:1.3}?????"
-                }
-            },
-            j_raised_fist = {
-                name = "Raised Fist",
-                text = {
-                    "Adds {C:attention}#1#X{} the rank",
-                    "of {C:attention}lowest{} ranked card",
-                    "held in hand to Mult",
-                },
-            },
-            -- More Fluff revisions
-            j_mf_rosetinted = {
-                name = "Rose-Tinted Glasses",
-                text = {
-                    "If {C:attention}first hand{} of round is",
-                    "a single {C:attention}#1#{}, destroy it and",
-                    "create a free {C:attention}Double Tag{}",
-                }
-            },
-            j_mf_pixeljoker = {
-                name = "Pixel Joker",
-                text = {
-                    "Played {C:attention}#1#s{}, {C:attention}#2#s{}",
-                    "{C:attention}#3#s{} and {C:attention}#4#s{} each give",
-                    "{X:mult,C:white}X#5#{} Mult when scored"
-                },
-            },
-            j_mf_hallofmirrors = {
-                name = "Hall of Mirrors",
-                text = {
-                    "{C:attention}+#1#{} hand size for",
-                    "each {C:attention}#2#{} scored in",
-                    "the current round",
-                    "{C:inactive}(Currently {C:attention}+#3#{C:inactive} cards)"
-                }
-            },
-            j_mf_jackofalltrades = {
-                name = "Jack of All Trades",
-                text = {
-                    "Each {C:attention}#1#{} held",
-                    "in hand gives {C:mult}+#2#{} Mult,",
-                    "{C:chips}+#3#{} Chips, and {C:money}$#4#"
-                },
-            },
-            j_mf_slotmachine = { 
-                name = "Slot Machine",
-                text = {
-                    "{C:green}#1# in #2#{} chance to retrigger",
-                    "scored {C:attention}#3#s{} {C:attention}#4#{} times",
-                },
-            },
-            j_mf_bowlingball = {
-                name = "Bowling Ball",
-                text = {
-                    "Played {C:attention}#1#s{}",
-                    "give {C:chips}+#2#{} Chips",
-                    "and {C:mult}+#3#{} Mult",
-                    "when scored",
-                    --art_credit("footlongdingledong"),
-                }
-            },
-            -- All in Jest
-            j_aij_atom = {
-                name = "Atom",
-                text = {
-                    "If played hand is",
-                    "a single {C:attention}#1#{},",
-                    "level up {C:attention}#2#{} once",
-                },
-            },
-            j_aij_nedda = {
-                name = "Nedda",
-                text = {
-                    "{C:attention}#1#s{} held in hand",
-                    "give {X:mult,C:white}X#2#{} Mult"
-                },
-                unlock = {
-                    "?????"
-                }
-            },
-            j_aij_silvio = {
-                name = "Silvio",
-                text = {
-                    "Retrigger all {C:attention}#1#{}",
-                    "once for each {C:attention}#2#{}",
-                    "held in hand",
-                },
-                unlock = {
-                    "?????"
-                }
-            },
-            j_aij_soviet = { 
-                name = "Soviet", 
-                text = { 
-                    "{C:mult}+#1#{} Mult if {C:attention}played hand{}",
-                    "contains no {C:attention}Kings{}, {C:attention}Queens{},",
-                    "or other {C:attention}\"Royal\"{} ranks"
-                } 
-            },
-            j_aij_fatuus = {
-                name = "Fatuus",
-                text = {
-                    'If first played hand of',
-                    'round contains only {C:attention}Royal{} ranks,',
-                    'apply a {C:blue}Blue Seal{}',
-                    'to a random played card',
-                },
-            },
-            j_aij_fou_du_roi = {
-                name = "Fou du Roi",
-                text = {
-                    '{C:green}#1# in #2#{} chance to create a',
-                    '{C:tarot}Tarot{} card if played hand',
-                    'contains a {C:attention}Royal{} rank',
-                    '{C:inactive}(Must have room)'
-                },
-                -- possible error: scored/played
-            },
-            j_aij_comedians_manifesto = { 
-                name = "Comedian's Manifesto", 
-                text = { 
-                    "{C:attention}Royal{} ranks in",
-                    "{C:attention}Standard Packs{} become",
-                    "{C:attention}#1#s" 
-                } 
-            },
-            j_aij_tetraphobia = {
-                name = "Tetraphobia",
-                text = {
-                    "This Joker gains {C:mult}+#1#{} Mult",
-                    "per {C:attention}#2#{} discarded, resets",
-                    "when a {C:attention}#2#{} is scored",
-                    "{C:inactive}(Currently {C:mult}+#3#{C:inactive} Mult)",
-                },
-            },
-            j_aij_trypophobia = {
-                name = "Trypophobia",
-                text = {
-                    "{C:mult}+#1#{} Mult if scored hand",
-                    "contains only {C:attention}#2#s",
-                    "and {C:attention}#3#s",
-                },
-            },
-            j_aij_square_eyes = { 
-                name = "Square Eyes", 
-                text = {
-                    "Scored {C:attention}#1#s{} and {C:attention}#2#s{}",
-                    "give {C:mult}+#3#{} Mult",
-                    "per {C:attention}#1#{} in played hand",
-                    "and {C:mult}+#4#{} Mult",
-                    "per {C:attention}#2#{} in played hand",
-                } 
-            },
-            j_aij_lucky_seven = {
-                name = "Lucky Seven",
-                text = {
-                    "Turn all scored",
-                    "unenhanced {C:attention}#1#s{} into",
-                    "{C:attention}Lucky Cards{}"
-                },
-            },
-            j_aij_teeny_joker = {
-                name = "Teeny Joker",
-                text = {
-                    "{C:chips}+#1#{} Chips if played hand",
-                    "contains only {C:attention}#2#s{}",
-                },
-            },
-            j_aij_mondrian_joker = {
-                name = "Mondrian Joker",
-                text = {
-                    "{C:mult}+#1#{} Mult per {C:attention}#2#",
-                    "in your {C:attention}full deck",
-                    "{C:inactive}(Currently{} {C:mult}+#3#{}{C:inactive} Mult)"
-                },
-            },
-            j_aij_public_bathroom = {
-                name = "Public Bathroom",
-                text = {
-                    "This Joker gains {C:mult}+#1#{} Mult",
-                    "per played {C:attention}#2#{} in a {C:attention}#3#{}",
-                    "{C:inactive}(Currently {C:mult}+#4#{C:inactive} Mult)"
-                },
-            },
-            j_aij_clowns_on_parade = {
-                name = "Clowns on Parade",
-                text = {
-                    "This {C:attention}Joker{} gains {C:chips}+#1#{} Chips",
-                    "if played hand contains",
-                    "at least three {C:attention}#2#s{}",
-                    "{C:inactive}(Currently{} {C:chips}+#3#{} {C:inactive}Chips){}"
-                },
-            },
-            j_aij_hat_trick = { 
-                name = 
-                "Hat Trick", 
-                text = { 
-                    "Played {C:attention}#1#s{} give {C:mult}Mult{}",
-                    "equal to the level of",
-                    "{C:attention}#2#{}",
-                    "when scored"
-                } 
-            },
-            j_aij_flying_ace = {
-                name = "Flying Ace",
-                text = {
-                    "Earn {C:money}$#1#{} at end of round",
-                    "per {C:attention}#2#{} of unique {C:attention}suit{}",
-                    "scored this round",
-                    "{C:inactive}(Currently{} {C:money}$#3#{}{C:inactive}){}"
-                },
-            },
-            j_aij_tetrominoker = { 
-                name = "Tetrominoker", 
-                text = { 
-                    "Scoring {C:attention}#1#s{} have a {C:green}#2# in #3#{}",
-                    "chance to create a {C:attention}copy{}",
-                    "of themselves" 
-                } 
-            },
-            j_aij_angel_number = { 
-                name = "Angel Number", 
-                text = { 
-                    "{C:attention}+#1#{} to all {C:green}listed",
-                    "{C:green}probabilities{} for each {C:attention}#2#",
-                    "scored this hand",
-                    "{C:attention}Resets{} each hand",
-                    "{C:inactive}(Currently {C:green}+#3#{C:inactive})"
-                } 
-            },
-            j_aij_david = {
-                name = "David",
-                text = {
-                    "This Joker gains {C:chips}+#1#{}",
-                    "Chips if {C:attention}played hand{}",
-                    "is only {C:spades}#4#{} {C:attention}#3#{}",
-                    "{C:inactive}(Currently{} {C:chips}+#2#{C:inactive} Chips){}",
-                },
-            },
-            j_aij_charles = {
-                name = "Charles",
-                text = {
-                    "This Joker gains {X:mult,C:white}X#1#{}",
-                    "Mult if {C:attention}played hand{}",
-                    "is only {C:hearts}#4#{} {C:attention}#3#{}",
-                    "{C:inactive}(Currently{} {X:mult,C:white}X#2#{C:inactive} Mult){}",
-                },
-            },
-            j_aij_cesar = {
-                name = "Cesar",
-                text = {
-                    'Earn {C:money}$#1#{} at end of',
-                    'round. Increases by {C:money}$#2#{}',
-                    'if {C:attention}played hand{} is only',
-                    '{C:diamonds}#4# {C:attention}#3#'
-                },
-            },
-            j_aij_alexandre = {
-                name = "Alexandre",
-                text = {
-                    "This Joker gains {C:mult}+#1#{}",
-                    "Mult if {C:attention}played hand{}",
-                    "is only {C:clubs}#4#{} {C:attention}#3#{}",
-                    "{C:inactive}(Currently{} {C:mult}+#2#{C:inactive} Mult){}",
-                },
-            },
-            j_aij_word_art = { 
-                name = "Word Art", 
-                text = { 
-                    "{C:mult}+#1#{} Mult per {C:attention}letter{} rank",
-                    "in played hand",
-                    "{C:inactive,s:0.8}(e.g. Ace, King, Queen, Jack)"
-                } 
-            },
-            j_aij_petrushka = {
-                name = "Petrushka",
-                text = {
-                    "Gives {C:mult}+#1#{} Mult per",
-                    "total {C:attention}nominal value{} of",
-                    "all {C:attention}scored cards{}",
-                    "{C:inactive}(A=14, K=13, Q=12, J=11)"
-                },
-            },
-            j_aij_beanstalk = { 
-                name = "Beanstalk", 
-                text = { 
-                    "{C:attention}#1#{} {C:attention}cannot{} be {C:red}debuffed",
-                    "and {C:attention}always{} score" 
-                } 
-            },
-            j_aij_mistigri = {
-                name = "Mistigri",
-                text = {
-                    "{C:attention}+1{} hand size per {C:attention}#1#",
-                    "{C:attention}#2#s{} held in hand"
-                },
-            },
-            j_aij_taikomochi = { 
-                name = "Taikomochi", 
-                text = { 
-                    "{C:attention}#2#s{} held in hand",
-                    "give {C:chips}+#1#{} Chips"
-                } 
-            },
-            -- Paperback
-            j_paperback_jestrica = {
-                name = "Jestrica",
-                text = {
-                    "This Joker gains {C:mult}+#1#{} Mult",
-                    "when a {C:attention}#2{} is scored",
-                    "Resets if no {C:attention}#2#s{} are",
-                    "scored in a round",
-                    "(#4#)",
-                    "{C:inactive}(Currently {C:mult}+#3#{C:inactive} Mult)"
-                },
-            },
-            j_paperback_power_surge = {
-                name = "Power Surge",
-                text = {
-                    "Played {C:attention}#1#s{} give",
-                    "{X:mult,C:white}X#2#{} Mult when scored",
-                    "{C:green}#3# in #4#{}",
-                    "chance to {C:red}destroy{} a",
-                    "card {C:attention}held in hand{}",
-                }
-            },
-            j_paperback_emergency_broadcast = {
-                name = "Emergency Broadcast",
-                text = {
-                    "Scored {C:attention}#1#s{} and {C:attention}#2#s{} give",
-                    "{C:mult}+#3#{} Mult and {C:chips}+#4#{} Chips",
-                },
-            },
-            j_paperback_one_sin_and_hundreds_of_good_deeds = {
-                name = "One Sin and Hundreds of Good Deeds",
-                text = {
-                    "Scored {C:attention}#1#s{} and {C:attention}Rankless Cards{}",
-                    "give {C:mult}+#2#{} Mult when scored",
-                    "{C:inactive}''It feeds on evil''",
-                },
-            },
-            j_paperback_one_sin_and_hundreds_of_good_deeds_fed = {
-                name = "{C:red}One Sin and Hundreds of Good Deeds{}",
-                text = {
-                    "Scored {C:attention}#1#s{} and {C:attention}Rankless Cards{}",
-                    "give {C:mult}+Mult{} for each",
-                    "remaining card in deck when scored",
-                    "{C:inactive}(Currently {C:mult}+#3#{}{C:inactive})",
-                },
-            },
-            j_paperback_surfer = {
-                name = "Surfer",
-                text = {
-                    "This Joker gains {C:chips}+#1#{} Chips",
-                    "for every {C:attention}#2#{} held in hand",
-                    "at {C:attention}end of round{}, and {C:chips}+#3#",
-                    "Chips for every {C:attention}#2#{} scored",
-                    "{C:inactive}(Currently {C:chips}+#4#{C:inactive} chips)"
-                }
-            },
-            j_paperback_plague_doctor = {
-                name = "Plague Doctor",
-                text = {
-                    "If played hand is a #1#,",
-                    "convert the scoring card into",
-                    "an {C:attention}#2#{}. Each {C:attention}#2#{}",
-                    "held in hand gives {X:mult,C:white}X#3#{} Mult"
-                }
-            },
-            j_paperback_as_above_so_below = {
-                name = "As Above, So Below",
-                text = {
-                    "Playing a five-card poker hand with an",
-                    "{C:attention}#1#{} creates a {C:purple}Tarot{} card,",
-                    "if poker hand also contains a {C:attention}#2#{}",
-                    "create a {C:spectral}Spectral{} card instead",
-                    "{C:inactive}(Must have room)"
-                },
-                unlock = {
-                    "Play a {C:attention}Rapture{}"
-                }
-            },
-            -- TOGA's Pack
-			j_toga_winvista = {
-				name = 'Windows Vista',
-				text = {
-					"If the played hand contains",
-					"a single {C:attention}#1#{},",
-                    "{C:red}destroy{} it and",
-					"apply {C:dark_edition}#2#{} to",
-					"a {C:attention}random{} Joker",
-					"{C:inactive,s:0.8}(Ignores Jokers",
-                    "{C:inactive,s:0.8}with {C:dark_edition,s:0.8}#3#{C:inactive,s:0.8} edition)",
-				}
-			},
-			j_toga_win8 = {
-				name = 'Windows 8',
-				text = {
-					"Played {C:attention}#1#s{} gain",
-					"{C:attention}held in hand{}",
-					"{X:mult,C:white}X#2#{} Mult"
-				}
-			},
-			j_toga_y2kbug = {
-				name = 'Y2K Bug',
-				text = {
-					"If the played hand contains a",
-					"{C:attention}#1#{} and a {C:attention}#2#{}, scoring cards",
-					"give {C:chips}+#3#{} Chips and {C:red}+#4#{} Mult",
-					"{C:inactive,s:0.8}(Have you updated your system yet?){}",
-				}
-			},
-			j_toga_mac_os_x = {
-				name = 'Mac OS X',
-				text = {
-					"Held in hand {C:attention}#1#s{} and {C:attention}Xs{}",
-					"give {X:chips,C:white}X#3#{} Chips"
-				}
-			},
-			j_toga_solitairejoker = {
-				name = 'Solitaire Joker',
-				text = {
-					"When playing a hand {C:attention}containing{} a {C:attention}#1#{},",
-					"draw remaining {C:attention}#2#s{} in the deck to hand.",
-					"Rank changes every round.",
-					"{C:inactive,s:0.8}An Office regular.{}"
-				}
-			},
-			j_toga_y2ksticker = {
-				name = 'Y2K Sticker',
-				text = {
-					"{C:attention}#1#s{} are",
-					"considered as",
-					"{C:attention}face cards{}"
-				}
-			},
-            -- Vanilla modification?!
-            j_seance_new = {
-                name = "Séance",
-                text = {
-                    "If {C:attention}poker hand{} contains a",
-                    "{C:attention}#1#{} or {C:attention}#2#{},",
-                    "create a random {C:spectral}Spectral{} card",
-                    "{C:inactive}(Must have room)"
-                }
-            },
-            j_four_fingers_new = {
-                name = "Four Fingers",
-                text = {
-                    "All {C:attention}Flushes{},",
-                    "{C:attention}Spectrums{}, and {C:attention}Straights{}",
-                    "can be made with {C:attention}4{} cards"
-                }
-            },
+            
         },
         Enhanced = {
 			m_rgmc_ferrous = {
@@ -3734,14 +3140,6 @@ return {
 				name = "Micro Sleeve +",
 				text = deck_text.micro
 			},
-			sleeve_rgmc_mayhem_sleeve = {
-				name = "Sleeve of Mayhem",
-				text = deck_text.mayhem
-			},
-			sleeve_rgmc_mayhem_sleeve_alt = {
-				name = "Sleeve of Mayhem +",
-				text = deck_text.mayhem_vl
-			},
 			sleeve_rgmc_capital_sleeve = {
 				name = "Capital Sleeve",
 				text = deck_text.capital
@@ -3802,7 +3200,7 @@ return {
 				text = {
 					"Adds {C:rgmc_unusual}Madcap{} deck features",
                     "regardless of Deck",
-                    "{C:inactive}(Mayhem, music, etc.)"
+                    "{C:inactive}(Music, etc.)"
 				},
 			},
         },
@@ -3935,8 +3333,6 @@ return {
             c_rgmc_sacrifice= {
                 name = 'Sacrifice',
                 text = {
-                    "Gain {C:rgmc_unusual,S:1}+#1#{} Mayhem",
-                    "but {C:red}destroy{} {C:attention}#2#{} {C:attention}random{} Joker(s)",
                 }
             },
             c_rgmc_past_lives = {
@@ -3944,7 +3340,6 @@ return {
                 text = {
                     "Creates a base",
                     "{C:attention}previously destroyed{} Joker",
-                    "at the cost of {C:rgmc_unusual,E:1}-#1#{} Mayhem",
                     "{C:inactive}(Must have room)",
                 }
             },
@@ -3959,7 +3354,6 @@ return {
                 name = 'The Vessel',
                 text = {
                     "Randomly select {C:attention}#1#{} Joker(s)",
-                    "{C:rgmc_mayhem,E:1}Mayhemize all values",
                     "by {X:dark_edition,C:white}X#2#{} and",
                     "apply {C:rgmc_evil}Giant{} sticker"
                 }
@@ -4006,7 +3400,7 @@ return {
                 text = {
                     "Creates a random {C:dark_edition}Negative",
                     "consumable, Joker, or card and",
-                    "{C:rgmc_mayhem,E:1}Mayhemize{} its values",
+                    
                     "{C:inactive}({C:attention}Values {C:inactive}are randomized",
                     "{C:inactive}between {C:attention}X#1#{C:inactive} and {C:attention}X#2#{C:inactive})",
                 }
@@ -4489,7 +3883,6 @@ return {
             c_rgmc_sugar_plum = {
                 name = "Sugar Plum",
                 text = {
-                "Adds {C:mayhem}+#5#{} Mayhem",
                 "every {C:attention}#4#{} rounds",
                 "this has been held",
                 "{C:inactive}(Currently {C:attention}#1#{C:inactive}, {}[{C:attention}#2#{C:inactive}#3#{}]{C:inactive})",
@@ -4792,7 +4185,6 @@ return {
                 name = "Pandora Tag",
 				text = {
 					"At start of next Blind,",
-                    "gain {C:rgmc_mayhem}+1{} Mayhem"
 				},
             },
             tag_rgmc_decant = {
@@ -5520,14 +4912,6 @@ return {
                     "{C:inactive}(Must have room!)",
 				},
 			},
-			p_rgmc_factory_error = {
-				name = "Factory Error",
-				text = {
-					"Choose {C:attention}#1#{} of up to {C:attention}#2#{}",
-					"{C:rgmc_mayhem, E:1}Factory Error {C:attention}Jokers",
-                    "{C:inactive}(Must have room!)",
-				},
-			},
 			p_rgmc_oops_all_spam = {
 				name = "Oops! All SPAM",
 				text = {
@@ -5950,8 +5334,7 @@ return {
 			rgmc_unstable = {
 				name = "Unstable",
 				text = {
-                    "At end of {C:attention}Blind,",
-                    "{C:rgmc_mayhem}Mayhemize this card"
+                    "???"
 				},
 			},
 
@@ -6616,7 +5999,6 @@ return {
 
 
             ui_rgmc_subhands            = "Subhands",
-            ui_rgmc_mayhem              = "Mayhem",
             ui_rgmc_luxury              = "Luxury Points",
 
             ui_rgmc_cosma               = "Cosma Tarots",
@@ -6749,6 +6131,9 @@ return {
                 "5 Infinity cards",
                 "of the same suit"
             },
+            rgmc_nohand = {
+                "Oops, no possible hand!"
+            },
         },
         poker_hands= {
             rgmc_pyramid                    = "Pyramid",
@@ -6761,6 +6146,7 @@ return {
             rgmc_noak_flush                 = "Flush None",
             rgmc_infoak                     = "Infinitum",
             rgmc_infoak_flush               = "Fluxus Infinitum",
+            rgmc_nohand                     = "No Hand",
         },
 		labels = {
             rgmc_engraved            = "Engraved",

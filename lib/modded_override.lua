@@ -9,10 +9,12 @@ if MadLib.mod_loaded('TOGAPack') then
         return card and card.edition and not card.edition[ed]
     end
 
+    --[[
     MadLib.RankManipulation['j_toga_megasxlr'] = { from_rank = '8', to_rank = 'King' }
     MadLib.RankManipulation['j_toga_hexadecimaljkr'] = { from_rank = 'Ace', to_rank = '10' }
     MadLib.RankManipulation['j_toga_binaryjkr'] = { from_rank = '10', to_rank = '2' }
     MadLib.FaceManipulation['j_toga_y2ksticker'] = { rank = '2', type = 'add' }
+    ]]
 
     -- Windows Vista - modular rank and edition
     SMODS.Joker:take_ownership('toga_winvista', {
@@ -148,7 +150,7 @@ if MadLib.mod_loaded('TOGAPack') then
 	    local result = isfaceref(self, from_boss)
         if G.jokers then
             MadLib.loop_func(G.jokers.cards, function(j)
-                local info = MadLib.FaceManipulation[j.config.center.key]
+                --local info = MadLib.FaceManipulation[j.config.center.key]
                 if not info then return end
                 local search = j.ability.extra.ranks or { j.ability.extra.rank } or info.ranks or { info.rank }
                 local new_result = MadLib.list_matches_one(search, function(v)
@@ -211,10 +213,12 @@ if MadLib.mod_loaded('TOGAPack') then
             MadLib.loop_func(G.jokers.cards, function(j)
                 if j.config.center.key == 'j_toga_solitairejoker' then
                     local valid_solitaire_cards = MadLib.get_list_matches(function(v)
-                        return SMODS.has_no_rank(v)
-                    end)
-                    local pick = pseudorandom_element(valid_solitaire_cards, pseudoseed('solitaire'..G.GAME.round_resets.ante))
-                    j.ability.extra.rank = pick.base.value or 'Ace'
+                        return not SMODS.has_no_rank(v)
+                    end) or {}
+                    if #valid_solitaire_cards > 0 then
+                        local pick = pseudorandom_element(valid_solitaire_cards, pseudoseed('solitaire'..G.GAME.round_resets.ante))
+                        j.ability.extra.rank = pick.base.value or 'Ace'
+                    end
                 end
             end)
         end

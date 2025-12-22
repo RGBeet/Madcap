@@ -18,7 +18,7 @@ function Madcap.Funcs.get_special_card_vars(set,xchips,xmult)
 			xmult,
 			(amt * xchips) + 1,
 			(amt * xmult) + 1,
-			colours = { G.C.RGMC_MAYHEM }
+			colours = { G.C.PURPLE }
         }
     }
 end

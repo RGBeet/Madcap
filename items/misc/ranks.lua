@@ -122,7 +122,8 @@ if 3 == 3 then -- Dynamic Ranks
         end,
     }
 
-    -- Infinity: Counts as all ranks played and held in hand*
+    --[[
+    -- Infinity: Counts as all ranks played and held in hand (Moved to Overclocked)
     local infinity = {
         object_type = "Rank",
         lc_atlas = 'bs_nr_lc',
@@ -144,6 +145,7 @@ if 3 == 3 then -- Dynamic Ranks
         end,
     }
     MadLib.loop_func({ x, sum, infinity } , function(v) table.insert(list,v) end)
+    ]]
 end
 
 if 4 then -- UNO Ranks

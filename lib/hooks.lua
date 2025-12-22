@@ -294,6 +294,7 @@ Madcap.Lists.RandomPoolBlacklist = {
 	Back 		= 0,
 	Sleeve 		= 0,
 	Default 	= 0,
+	Tag			= 0,
 }
 
 function Madcap.Funcs.get_random_set(seed, blacklist, min_number)
@@ -1731,7 +1732,6 @@ end
 
 local do_special_destroy_effect_ref = MadLib.do_special_destroy_effect 
 function MadLib.do_special_destroy_effect(card)
-	print("i love this card")
     if Madcap.Funcs.explodes(card) then
 		MadLib.spawn_effect("rgmc_explosion", card.tilt_var.mx, card.tilt_var.my)
 		play_sound('generic1', math.random()*0.2 + 0.9,0.5)

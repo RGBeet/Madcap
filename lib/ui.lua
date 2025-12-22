@@ -171,7 +171,6 @@ end
 
 local config_content = {
 	['mechanics'] = {
-		'mayhem',
 		'subhands',
 	},
 	['rarities'] = {
@@ -289,7 +288,6 @@ SMODS.current_mod.config_tab = function()
 								shadow = true,
 							}},
 							{ n = G.UIT.C, config = { align = 'cr' }, nodes = {
-								create_toggle{ label = "Mayhem", align = 'cl', ref_table = MadcapConfig, ref_value = 'mayhem', w = _width1, scale = _box, label_scale = _label, shadow = true },
 								create_toggle{ label = "Subhands", align = 'cl', ref_table = MadcapConfig, ref_value = 'subhands', w = _width1, scale = _box, label_scale = _label, shadow = true },
 							}}
 						},
@@ -777,25 +775,13 @@ end
 
 local edit_uibox_ref = MadLib.edit_uibox_contents
 function MadLib.edit_uibox_contents(contents, scale)
-	local scale_mayhem = scale * (3/4)
 	contents = edit_uibox_ref(contents, scale)
 	for i=1,2 do
 		contents.buttons[1].nodes[i].config.minw = contents.buttons[1].nodes[i].config.minw * 0.75
 		contents.buttons[1].nodes[i].config.minh = contents.buttons[1].nodes[i].config.minh * 0.6
 	end
 	--contents.dollars_chips = nil
-	table.insert(contents.buttons[1].nodes,{n=G.UIT.R, config={id = 'hud_mayhem',align = "cm", padding = 0.05, emboss = 0.05, r = 0.1, colour = G.C.DYN_UI.BOSS_MAIN}, nodes={
-		{n=G.UIT.R, config={align = "cm", minh = 0.33, maxw = 1.35 }, nodes={
-			{n=G.UIT.T, config={text = localize('rgmc_mayhem'), scale = scale_mayhem, colour = G.C.UI.TEXT_LIGHT, shadow = true}},
-		}},
-		{n=G.UIT.R, config={align = "cm", r = 0.1, minw = 1, colour = G.C.DYN_UI.BOSS_DARK }, nodes={
-			{n=G.UIT.O, config={object = DynaText({string = {{ref_table = G.GAME, ref_value = 'mayhem'}}, font = G.LANGUAGES['en-us'].font, colours = { G.C.RGMC_UNUSUAL }, shadow = true, rotate = true, scale = scale_mayhem * 2}), id = 'mayhem_UI_count'}},
-		}},
-		{n=G.UIT.R, config={align = "cm", colour = G.C.CLEAR}, nodes={
-			{n=G.UIT.T, config={text = '/', scale = scale_mayhem, colour = darken(G.C.UI.TEXT_LIGHT,0.3), shadow = true}},
-			{n=G.UIT.O, config={object = DynaText({string = {{ref_table = G.GAME, ref_value = 'max_mayhem'}}, font = G.LANGUAGES['en-us'].font, colours = {darken(G.C.RGMC_UNUSUAL,0.2)},shadow = true, rotate = true, scale = scale_mayhem}),id = 'max_mayhem_UI'}}
-		}}
-	}})
+	
 	return contents
 end
 

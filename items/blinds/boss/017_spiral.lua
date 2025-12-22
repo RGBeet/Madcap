@@ -1,7 +1,6 @@
 return {
     categories = {
         'New Suits',
-        'Mayhem'
     },
     data = {
         object_type = 'Blind',

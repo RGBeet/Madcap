@@ -204,7 +204,6 @@ payload = '''rgmc_evil = G.C.RGMC_EVIL,
 rgmc_hotpink = G.C.RGMC_HOT_PINK,
 rgmc_light = G.C.RGMC_LIGHT,
 rgmc_dark = G.C.RGMC_DARK,
-rgmc_mayhem = G.C.RGMC_MAYHEM,
 rgmc_luxury = G.C.RGMC_LUXURY,
 rgmc_unusual = G.C.RGMC_UNUSUAL,
 rgmc_gimmick = G.C.GIMMICK,
@@ -290,14 +289,14 @@ if card and card.config and card.config.center == G.P_CENTERS.c_base then
     info_queue[#info_queue+1] = {
         set = "Other",
         key = 'rgmc_info_voids',
-        vars = { number_format(Madcap.Funcs.get_void_mayhem()) }
+        vars = { number_format(1) }
     }
   end
   if card.base.suit == 'rgmc_lanterns' then
     info_queue[#info_queue+1] = {
         set = "Other",
         key = 'rgmc_info_lanterns',
-        vars = { number_format(Madcap.Funcs.get_lantern_mayhem()) }
+        vars = { number_format(1) }
     }
   end
 end
@@ -315,14 +314,14 @@ if card and card.config and card.config.center == G.P_CENTERS.c_base then
     info_queue[#info_queue+1] = {
         set = "Other",
         key = 'rgmc_info_voids',
-        vars = { number_format(Madcap.Funcs.get_mayhem()) }
+        vars = { number_format(1) }
     }
   end
   if card.base.suit == 'rgmc_lanterns' then
     info_queue[#info_queue+1] = {
         set = "Other",
         key = 'rgmc_info_lanterns',
-        vars = { number_format(Madcap.Funcs.get_mayhem()) }
+        vars = { number_format(1) }
     }
   end
 end

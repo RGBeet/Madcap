@@ -20,9 +20,6 @@ function Madcap.Funcs.run_start()
     end
 
     local madcap_vals = {
-		mayhem				= 0,
-		mayhem_state		= 0,
-		max_mayhem			= G.GAME.starting_params.add_max_mayhem or 100,
 		rgmc_luxury_pts		= G.GAME.starting_params.rgmc_luxury_pts or 0,
 		dead_jokers			= {},
 		missed_jokers		= {},
@@ -51,12 +48,6 @@ function Madcap.Funcs.run_start()
     }
 	MadLib.loop_table(madcap_vals, function(k,v) G.GAME[k] = v end)
 	
-	-- Silently add mayhem if deck starts with more mayhem
-	if G.GAME.starting_params.add_mayhem then
-		Madcap.Funcs.ease_mayhem(G.GAME.starting_params.add_mayhem, true, true, true)
-		Madcap.Funcs.read_mayhem()
-	end
-
 	if G.GAME.modifiers.rgmc_enable_harder_shops then -- aurum stake
 		G.GAME.shop_level = 1
 	end
@@ -121,11 +112,6 @@ function Madcap.Funcs.blind_end()
 				return true
 			end
 		end)
-	end
-
-	-- Do a mayhem check
-	if G.GAME.mayhem and G.GAME.mayhem > 0 then
-		Madcap.Funcs.blind_end_mayhem_check() -- done in case others want to edit this function
 	end
 
     if
@@ -261,12 +247,9 @@ end
 
 -- Record hand
 function Madcap.Funcs.record_hand_before(scoring_hand,text)
-    local hand_type = G.GAME.ante.hand_types[text]
+    --local hand_types = G.GAME.ante.hand_types[text]
 
 	G.GAME.ante.ranks = G.GAME.ante.ranks or {}
-	tell('Jeff time!')
-	print(G.GAME.ante.ranks)
-	tell(#G.GAME.ante.ranks .. ' ranks recorded.')
 
 	MadLib.loop_func(scoring_hand, function(v)
 		local _rank, _suit = v:get_id(), v.base.suit
@@ -274,22 +257,12 @@ function Madcap.Funcs.record_hand_before(scoring_hand,text)
 		G.GAME.ante.ranks[_rank] = G.GAME.ante.ranks[_rank] or 0
 		G.GAME.ante.ranks[_suit] = G.GAME.ante.ranks[_suit] or 0
 
-		print(_rank .. ':' .. G.GAME.ante.ranks[_rank])
-		print(_suit .. ':' .. G.GAME.ante.ranks[_suit]) -- rank type stuff
-
-        if G.GAME.ante.ranks[_rank] == 0 then
-            G.GAME.ante.unique_ranks = G.GAME.ante.unique_ranks + 1
-			--tell('There are now ' .. tostring(G.GAME.ante.unique_ranks) .. ' unique ranks recorded.')
-        end
-
-        -- suit type stuff
-        if G.GAME.ante.suits[_suit] == 0 then
-            G.GAME.ante.unique_suits = G.GAME.ante.unique_suits + 1
-			--tell('There are now ' .. tostring(G.GAME.ante.unique_suits) .. ' unique suits recorded.')
-        end
+        if G.GAME.ante.ranks[_rank] == 0 then G.GAME.ante.unique_ranks = G.GAME.ante.unique_ranks + 1 end
+        if G.GAME.ante.suits[_suit] == 0 then G.GAME.ante.unique_suits = G.GAME.ante.unique_suits + 1 end
 
         G.GAME.ante.ranks[_rank]	= (G.GAME.ante.ranks[_rank] or 0) + 1
         G.GAME.ante.suits[_suit]	= (G.GAME.ante.suits[_suit] or 0) + 1
+
         G.GAME.ante.faces_scored = (G.GAME.ante.faces_scored or 0) + (v:is_face(true) and 1 or 0)
 
     	G.GAME.ante.hand_types[text] = G.GAME.ante.hand_types[text] or 0
@@ -309,7 +282,7 @@ function Madcap.Funcs.record_hand_after(_chips, _mult)
             ante    = G.GAME.round_resets.ante
         }
     	SMODS.calculate_context({ rgmc_high_score = total_chips })
-		tell('New High Score! (' .. tostring(total_chips) .. ')')
+		--tell('New High Score! (' .. tostring(total_chips) .. ')')
     end
     SMODS.calculate_context({ rgmc_total_score = total_chips })
     return true
