@@ -24,7 +24,7 @@
                 if MadLib.is_rank(context.other_card, card.ability.extra.rank) then
                     return not context.other_card.debuff
                         and { xchips = card.ability.extra.x_chips }
-                        or MadLib.get_debuff_data(card)
+                        or { message = localize('k_debuffed'), colour = G.C.RED, card = card }
                 end
             end
         end,

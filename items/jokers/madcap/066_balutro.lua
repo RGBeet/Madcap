@@ -44,7 +44,7 @@ return {
                 and context.repetition
                 and context.other_card
             then
-                return MadLib.get_retrigger_data(context.other_card, lenient_bignum(math.min(card.ability.extra.retriggers, card.ability.immutable.max_retriggers)))
+                return { message = localize('k_again_ex'), repetitions = lenient_bignum(math.min(card.ability.extra.retriggers, card.ability.immutable.max_retriggers)), card = context.other_card }
             end
         end,
         demicoloncompat = true,

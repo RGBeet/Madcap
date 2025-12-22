@@ -21,7 +21,7 @@ return {
                 if SMODS.has_enhancement(context.other_card,'m_wild') then
 
                     -- Don't do a thing if the card is debuffed
-                    if context.other_card.debuff then return MadLib.get_debuff_data(card) end
+                    if context.other_card.debuff then return { message = localize('k_debuffed'), colour = G.C.RED, card = card } end
 
                     -- Not the other card, and either not a wild card or a wild card with edition/seal
                     local from_card, to_card = context.other_card, MadLib.get_cards_from_shuffled_deck(

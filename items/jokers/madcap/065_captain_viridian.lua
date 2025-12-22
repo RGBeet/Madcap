@@ -25,7 +25,7 @@ return {
                     and SMODS.pseudorandom_probability(card, 'captain_viridian', 1, card.ability.extra.odds))
             then
                 local _success = Madcap.Funcs.set_edition_flipped(context.other_card)
-                if _success then return MadLib.simple_card_message(card, localize("rgmc_flipped_ex")) end
+                if _success then return { message = localize("rgmc_flipped_ex"), card = card } end
             end
 
             if

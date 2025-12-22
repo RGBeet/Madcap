@@ -36,7 +36,7 @@ return {
                 and context.other_card:is_suit(G.GAME.current_round.rgmc_edwin_card.suit)
             then -- has both suit and rank
                 if context.other_card.debuff then -- don't count debuffed cards haha
-                    return MadLib.get_debuff_data(card) --TODO: remove this
+                    return { message = localize('k_debuffed'), colour = G.C.RED, card = context.other_card }
                 else
                     card.ability.extra.money = MadLib.add(card.ability.extra.money, card.ability.extra.money_mod)
                     card_eval_status_text(card, "extra", nil, nil, nil, { message = "Edwin!" })

@@ -22,6 +22,7 @@ return {
         end,
         calculate = function(self, card, context)
             if (context.before and MadLib.get_hand_sum(context.scoring_hand) == card.ability.immutable.total_sum) then
+                
                 MadLib.loop_func(G.jokers.cards, function(v)
                     MadLib.simple_event(function()
                         play_sound('tarot2', 1, 0.4)
@@ -35,9 +36,13 @@ return {
                     --card_eval_status_text(card, 'extra', nil, nil, nil, {message = "Hey Now!", colour = G.C.MONEY})
                     return true
                 end, 3.5, 'after')
-                return MadLib.get_simple_upgrade_data(MadLib.ScoreKeys.AddMoney, card, card.ability.extra.money_mod * #G.jokers.cards)
+                card.ability.extra.money = MadLib.add(card.ability.extra.money, MadLib.multiply(card.ability.extra.money_mod, #G.jokers.cards))
+                return {
+                    message     = localize('k_upgrade_ex'),
+                    card        = card
+                }
             end
-            if context.forcetrigger then return MadLib.get_add_money_data(card) end
+            if context.forcetrigger then return  { card = card, dollars = card.ability.extra.money or card.ability.extra.money } end
         end,
         perishable_compat = false,
         demicoloncompat = true,

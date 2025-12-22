@@ -22,7 +22,7 @@ return {
                     or context.forcetrigger)
             then
                 context.other_card.ability.glass_michel = true
-                return MadLib.get_retrigger_data(card,1)
+                return { message = localize('k_again_ex'), repetitions = 1, card = card }
             end
 
             -- End of round stuff
@@ -34,7 +34,7 @@ return {
 
                 return SMODS.pseudorandom_probability(card, 'glass_michel', 1, card.ability.extra.odds)
                     and MadLib.banana_remove(card)
-                    or MadLib.get_safe_data(card)
+                    or { message = localize(msg or 'k_safe_ex'), card = card }
             end
         end,
         in_pool = function(self, args) -- at least one glass card
