@@ -44,7 +44,7 @@ return {
             end
             if context.after then
                 local _index = nil
-                print(tostring(#G.deck.cards) .. ' cards...')
+                --print(tostring(#G.deck.cards) .. ' cards...')
                 for i=1,#G.deck.cards do
                     if MadLib.compare_ids(card, G.deck.cards[i], 'rgmc_clown') then
                         _index = i

@@ -30,8 +30,6 @@ function Madcap.Funcs.impound_card(card)
     return Madcap.Funcs.impound_cards({ card })
 end
 
-
-
 function Madcap.Funcs.create_card_for_impound_shop(area)
     local card = pseudorandom_element(G.impound.cards, pseudoseed('impound'))
     return card

@@ -9,7 +9,7 @@ function G.FUNCS.toggle_shop(e)
             draw_card(G.shop_jokers, G.impound, nil, nil, nil, v)
         end)
     end
-    print("There are now " .. tostring(#G.impound.cards) .. " cards.")
+    --print("There are now " .. tostring(#G.impound.cards) .. " cards.")
     toggle_shop_ref(e)
 end
 
@@ -59,7 +59,7 @@ function G.UIDEF.subhands()
 		local cm_scale 	= (not empower) and 0.45 or (0.45 * 0.8)
 
 		if not current_subhand or (not current_subhand.enabled and current_subhand.level == 1) then return end
-		--print(current_subhand.chips)
+		----print(current_subhand.chips)
 		subhands[#subhands+1] = {n=G.UIT.R, config={align = "cm", padding = 0.05, r = 0.1, colour = darken(G.C.JOKER_GREY, current_subhand.enabled and 0.1 or 0.4), emboss = 0.05, hover = false, force_focus = true, on_demand_tooltip = {filler = {func = create_UIBox_subhand_tip, args = sh}}}, nodes={
 		{n=G.UIT.C, config={align = "cl", padding = 0, minw = 5}, nodes={
 			{n=G.UIT.C, config={align = "cm", padding = 0.01, r = 0.1, colour = G.C.HAND_LEVELS[math.min(7, current_subhand.level)], minw = 1.5, outline = 0.8, outline_colour = G.C.WHITE}, nodes={
@@ -495,7 +495,7 @@ Madcap.Funcs.full_ui_add = function(nodes, key, scale)
 end
 
 Madcap.Funcs.generate_multiblind_ui = function(blinds, config)
-	print('multiblind ui time!!!')
+	--print('multiblind ui time!!!')
     if not blinds then return end
 
     local tbl 		= config.table or {}
@@ -522,7 +522,7 @@ Madcap.Funcs.generate_multiblind_ui = function(blinds, config)
     -- local blind_txt_dmy = "dd_"..(mod_prefix and (mod_prefix.."_") or "")..diff.."_blind"
 	MadLib.loop_func(blinds, function(v)
 		if not G.P_BLINDS[v] then return end
-		print('added blind')
+		--print('added blind')
 		local bb = G.P_BLINDS[v]
 		local temp_blind = AnimatedSprite(0,0,1,1, G.ANIMATION_ATLAS[bb.atlas or 'blind_chips'], bb.pos)
 		temp_blind:define_draw_steps({ {shader = 'dissolve', shadow_height = 0.05}, {shader = 'dissolve'} })
@@ -604,11 +604,11 @@ Madcap.Funcs.add_blind_info = function(blind, ability_text_table, args)
 		info_queue 			= info_queue
 	}
 
-    --print(inspect(G.GAME.blind))
+    ----print(inspect(G.GAME.blind))
 
 	if blind and blind.debuff then
         if blind.debuff.rgmc_blind_multiblind then
-			print('bonus blind ID is ' .. (G.GAME.rgmc_bonus_blind or 'NIL'))
+			--print('bonus blind ID is ' .. (G.GAME.rgmc_bonus_blind or 'NIL'))
 			if G.GAME.rgmc_bonus_blind then
 				Madcap.Funcs.generate_multiblind_ui({ G.GAME.rgmc_bonus_blind }, data)
             end
@@ -702,7 +702,7 @@ function Madcap.Funcs.recalculate_blind_ui()
         }
 
         --[[
-        MadLib.remove_all(G.HUD_blind.children,function(v) print("A") return v and v.config and (v.config.object ~= G.GAME.blind) end)
+        MadLib.remove_all(G.HUD_blind.children,function(v) --print("A") return v and v.config and (v.config.object ~= G.GAME.blind) end)
         G.HUD_blind.UIRoot:remove()
         G.HUD_blind.definition = create_UIBox_HUD_blind()
         G.HUD_blind:set_parent_child(G.HUD_blind.definition, nil)]]

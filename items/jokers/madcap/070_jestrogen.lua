@@ -20,7 +20,7 @@ return {
             }
         },
         loc_vars = function(self, info_queue, card)
-            print(MadLib.SpectrumId..'Spectrum')
+            --print(MadLib.SpectrumId..'Spectrum')
             return MadLib.collect_vars(localize(card.ability.extra.poker_hands[1] or 'Flush', 'poker_hands'),
                 localize(card.ability.extra.poker_hands[2] or Madcap.Funcs.get_spectrum(), 'poker_hands'),
                 localize(card.ability.extra.rank, 'ranks'),

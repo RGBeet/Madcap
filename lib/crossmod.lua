@@ -179,7 +179,7 @@ if next(SMODS.find_mod("MoreFluff")) then
 		if not (phand and phand.highlighted and #phand.highlighted > 0) then return 0 end
 
 		local text, loc_disp_text, poker_hands, scoring_hand, disp_text = G.FUNCS.get_poker_hand_info(phand.highlighted)
-		--print(poker_hands[1])
+		----print(poker_hands[1])
 
 		return G.GAME.hands[poker_hands[1]] and G.GAME.hands[poker_hands[1]].level or 0
 	end
@@ -271,7 +271,7 @@ local function inject_p_card_suit_compat(suit, rank)
 end
 
 local function rank_injection(self)
-	--print("Performing extra rank injection YAY!")
+	----print("Performing extra rank injection YAY!")
 	for _, suit in pairs(SMODS.Suits) do
 		inject_p_card_suit_compat(suit, self)
 	end
@@ -287,7 +287,7 @@ local function inject_rank_atlas(prefix)
 			local rank = SMODS.Ranks[k]
 			rank.inject = rank_injection
 			inject_rank_list[#inject_rank_list+1] = {key = k, pos_x = rank.pos.x}
-			--print("Injecting the graphic for rank "..rank.key)
+			----print("Injecting the graphic for rank "..rank.key)
 		end
 	end)
 end

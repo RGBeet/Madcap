@@ -310,10 +310,10 @@ function Madcap.Funcs.create_card_for_luxury_shoppe(area)
     local rarity = nil
 
     for _, v in ipairs(rates) do
-        print(v.type)
+        --print(v.type)
         if polled_rate > check_rate and polled_rate <= check_rate + v.val then
             if v.type == 'Joker' then
-                --print('JOKER TIME!')
+                ----print('JOKER TIME!')
                 local rarity = Madcap.Funcs.get_weighted_choice(Madcap.Lists.LuxuryRates)
                 card = create_card(v.type, area, nil, rarity, nil, nil, nil, 'sho')
                 MadLib.event({

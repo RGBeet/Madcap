@@ -37,7 +37,7 @@ return {
                    return v == card
                 end) then
                     local new_type = pseudorandom_element(Madcap.Lists.Bismuth, pseudoseed('bismuth'))
-                    --print('new type is '..new_type)
+                    ----print('new type is '..new_type)
                     card.ability.sticker_type = new_type
                     return {
                         message = "!"

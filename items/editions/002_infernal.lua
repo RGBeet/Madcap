@@ -23,7 +23,7 @@ return {
                 (context.main_scoring and context.cardarea == G.play)
             then
                 card.ability.triggered = true
-                print('triggered')
+                --print('triggered')
                 return { 
                     xscore          = self.config.x_score or 3,
                     after_scoring   = true
@@ -35,16 +35,16 @@ return {
                 if 
                     card.ability.triggered == true
                 then
-                    print('Triggered?')
+                    --print('Triggered?')
                     if
                         not card.ability.eternal 
                         and SMODS.pseudorandom_probability(card, 'infernal', 1, card.ability.extra.odds) 
                     then
-                        print('DIE!')
+                        --print('DIE!')
                         card:start_dissolve({ G.C.DARK }, nil, 1.6)
                         card = nil
                     else
-                        print('LIVE')
+                        --print('LIVE')
                         card.ability.triggered = false
                     end
                 end

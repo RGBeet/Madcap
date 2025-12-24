@@ -393,7 +393,7 @@ function Madcap.Funcs.get_goldenhouse_chipmult(target)
     if not target then return 0, 0 end
     local chips, mult, changed = 0,0,false
 
-    --print(target)
+    ----print(target)
 
     if -- regular planets
         target.ability.hand_type

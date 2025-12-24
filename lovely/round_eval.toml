@@ -183,7 +183,7 @@ times = 1
 target = 'functions/common_events.lua'
 pattern = '''local luxury_pitch = 1.0'''
 position = 'after'
-payload = '''print('LUXURY PTS: '..number_format(num_lp))'''
+payload = '''--print('LUXURY PTS: '..number_format(num_lp))'''
 match_indent = true
 
 [[patches]]

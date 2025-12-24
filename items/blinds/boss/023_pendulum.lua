@@ -38,7 +38,7 @@ return {
                     if v and (#v.cards > 0) then
                         local num = math.ceil(#v.cards/2)
                         MadLib.loop_func(v.cards, function(c,i)
-                            print(tostring(#v.cards-i) .. ' > ' .. tostring(num))
+                            --print(tostring(#v.cards-i) .. ' > ' .. tostring(num))
                             local should_debuff = nil
                             if not blind.config.left_side then
                                 should_debuff = (i+1) <= num

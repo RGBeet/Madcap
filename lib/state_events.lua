@@ -188,7 +188,7 @@ function Madcap.Funcs.ante_start()
 					rank 	= v.base.value,
 					suit 	= v.base.suit
 				})
-				print(G.GAME.pick_5[#G.GAME.pick_5])
+				--print(G.GAME.pick_5[#G.GAME.pick_5])
 			end)
 			return true
 		end
@@ -336,7 +336,7 @@ function Madcap.Funcs.get_modded_hand_level(card)
 			mod = mod + card.ability.extra.level_mod
 		end
 	end
-	--print('MOD IS ' .. number_format(mod) .. '.')
+	----print('MOD IS ' .. number_format(mod) .. '.')
 	return mod
 end
 
@@ -365,7 +365,7 @@ function Madcap.Funcs.calculate_chips_mult(hand, subhands, cards)
 	chips 	= MadLib.calculate_chips(chips)
 	mult 	= MadLib.calculate_mult(mult)
 
-	--print('Point 1: ' .. number_format(chips) .. ' Chips & ' .. number_format(mult) .. ' Mult.')
+	----print('Point 1: ' .. number_format(chips) .. ' Chips & ' .. number_format(mult) .. ' Mult.')
 
 	local sh_mod, pt_mod = nil, nil
 	-- Affect the hand level first
@@ -399,7 +399,7 @@ function Madcap.Funcs.calculate_chips_mult(hand, subhands, cards)
 		end
 	end]]
 	
-	print(MadLib.compare_numbers(level, hand.level))
+	--print(MadLib.compare_numbers(level, hand.level))
 	if MadLib.compare_numbers(level, hand.level) ~= 0 then
 		local compare = MadLib.compare_numbers(diff,0)
 		local current_level = nil
@@ -420,7 +420,7 @@ function Madcap.Funcs.calculate_chips_mult(hand, subhands, cards)
 		end
 	end
 
-	--print('Point 2: ' .. number_format(chips) .. ' Chips & ' .. number_format(mult) .. ' Mult.')
+	----print('Point 2: ' .. number_format(chips) .. ' Chips & ' .. number_format(mult) .. ' Mult.')
 
 	MadLib.loop_func(subhands, function(v)
 		local sh = G.GAME.subhands[v]
@@ -429,7 +429,7 @@ function Madcap.Funcs.calculate_chips_mult(hand, subhands, cards)
 		local sh_chips 	= sh.chips
 		
 		if sh_mod and MadLib.compare_numbers(sh_mod, sh.level) ~= 0 then
-			print('Subhand Modified')
+			--print('Subhand Modified')
 			local diff = MadLib.subtract(level, sh.level)
 			local compare = MadLib.compare_numbers(diff,0)
 			local current_level = nil
@@ -460,7 +460,7 @@ function Madcap.Funcs.calculate_chips_mult(hand, subhands, cards)
 		chips 	= chips * sh_chips
 	end)
 
-	print('Point 3: ' .. number_format(chips) .. ' Chips & ' .. number_format(mult) .. ' Mult.')
+	--print('Point 3: ' .. number_format(chips) .. ' Chips & ' .. number_format(mult) .. ' Mult.')
 
 	local data = { 
 		level_modded	= (level ~= hand.level) and diff or nil,
@@ -482,12 +482,12 @@ function Madcap.Funcs.hand_display_mod(hand, text, disp_text, poker_hands, scori
 	local mod_check = ''
 	
 	--[[
-	print('Old Chips:' .. number_format(G.GAME.hands[text].chips))
-	print('Old Mult:' .. number_format(G.GAME.hands[text].mult))
-	print('Nu Chips:' .. number_format(nu_chips))
-	print('Nu Mult:' .. number_format(nu_mult))
+	--print('Old Chips:' .. number_format(G.GAME.hands[text].chips))
+	--print('Old Mult:' .. number_format(G.GAME.hands[text].mult))
+	--print('Nu Chips:' .. number_format(nu_chips))
+	--print('Nu Mult:' .. number_format(nu_mult))
 	]]
-	print('Calculating Spaghetti')
+	--print('Calculating Spaghetti')
 
 	-- If modded, then!
 	if ret.level_modded then

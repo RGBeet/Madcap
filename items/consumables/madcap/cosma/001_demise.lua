@@ -1,6 +1,6 @@
 function Madcap.Funcs.set_last_cosma(self)
     G.GAME.last_cosma_tarot = self.key
-    print(self.key)
+    --print(self.key)
 end
 
 return {

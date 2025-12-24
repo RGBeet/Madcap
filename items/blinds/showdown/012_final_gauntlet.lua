@@ -12,7 +12,7 @@ return {
             return false -- must be uhhh
         end,
         set_blind = function(self, reset, silent)
-            print('Golden Gauntlet Begin!')
+            --print('Golden Gauntlet Begin!')
             G.GAME.force_finisher_music = true
             if G.GAME.golden_gauntlet == nil then
 				--Madcap.Funcs.assist_set_blind()

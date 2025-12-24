@@ -128,7 +128,7 @@ match_indent = true
 target = '=[SMODS _ "src/utils.lua"]'
 pattern = '''eval.repetitions = eval.repetitions or 0'''
 position = "after"
-payload = '''print(tostring(eval.repetitions) .. ' repetitions!')'''
+payload = '''--print(tostring(eval.repetitions) .. ' repetitions!')'''
 overwrite = true
 match_indent = true
 
@@ -149,7 +149,7 @@ if G.GAME.Jokers.ActionReplay then
     end) and MadLib.list_matches_one(action_replays, function(v)
         return Madcap.Funcs.action_replay_check(v, eval.repetitions)
     end)
-    print("STOP RETRIGGERS = " .. (stop_retriggers == true and "TRUE" or "FALSE"))
+    --print("STOP RETRIGGERS = " .. (stop_retriggers == true and "TRUE" or "FALSE"))
     if stop_retriggers then return end
 end
 '''

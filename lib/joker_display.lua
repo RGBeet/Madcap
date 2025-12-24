@@ -1036,7 +1036,7 @@ if JokerDisplay then
     jod['j_rgmc_iron_joker'] = {
         text = {
             { text = "+" },
-            { ref_table = "card.joker_display_values", ref_value = "mult" },
+            { ref_table = "card.joker_display_values", ref_value = "chips", retrigger_type = "mult" },
         },
         calc_function   = function(card)
             card.joker_display_values.chips = MadLib.multiply(card.ability.extra.chips, #MadLib.get_enhanced_cards(G.playing_cards,card.ability.enhancement))
@@ -2085,8 +2085,4 @@ if JokerDisplay then
             }
         }
     }
-
-    function MadLib.JokerDisplay.valid_card(playing_card)
-        return playing_card.facing and not (playing_card.facing == 'back') and not playing_card.debuff
-    end
 end

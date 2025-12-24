@@ -8,7 +8,7 @@ Madcap.Lists.MadcapUpgrades = {
 
 Madcap.Funcs.orb_compatible = function(card)
     local enhancement = card.config.center.key
-    --print(enhancement)
+    ----print(enhancement)
     return enhancement == 'c_base'
         or Madcap.Lists.MadcapUpgrades[enhancement] ~= nil
 end

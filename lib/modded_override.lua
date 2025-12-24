@@ -1301,7 +1301,7 @@ if next(SMODS.find_mod("UnStable")) then
                 context.destroying_card
                 and context.destroying_card.to_destroy
             then
-                --print(inspect(context))
+                ----print(inspect(context))
                 MadLib.simple_event(function()
                     add_tag(Tag('tag_double'))
                     play_sound('generic1', 0.9 + math.random()*0.1, 0.8)
