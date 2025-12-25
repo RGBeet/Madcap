@@ -11,7 +11,7 @@ Madcap.Lists.LollipopEditions = {
 local add_editions = true
 -- madcap add editions
 if add_editions then
-    MadLib.loop_func({ 'iridescent', 'chrome', 'disco', 'galactic', 'luxury' }, function(v)
+    MadLib.loop_func({ 'chrome', 'disco', 'galactic', 'luxury' }, function(v)
         table.insert(Madcap.Lists.LollipopEditions, 'e_rgmc_'..v)
     end)
 end

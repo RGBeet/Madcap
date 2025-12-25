@@ -3457,8 +3457,6 @@ return {
                 }
 			},
         },
-        AntiSpectral = {
-        },
         Tarot = {
 			c_rgmc_girder = { -- ferrous
 				name = "Girder",

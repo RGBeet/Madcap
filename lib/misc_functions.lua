@@ -1110,17 +1110,6 @@ function Madcap.Funcs.get_potentia_vars(sh,lvl)
     }
 end
 
--- Adds UI for special ranks!
-function MadLib.set_pcard_ui(card, specific_vars, desc_nodes)
-    if not card then return loc_vars end
-    MadLib.loop_table(Madcap.Lists.RankUIs, function(k,v)
-        if SMODS.Ranks[k] and card:get_id() == SMODS.Ranks[k].id then
-            localize{ type = 'other', key = 'rgmc_info_'..v, nodes = desc_nodes }
-        end
-    end)
-    return loc_vars
-end
-
 function Madcap.Funcs.check_eval_card(card,i)
 	--G.GAME.blind_stats = G.GAME.blind_stats or {}
 	if not SMODS.has_no_suit(card) then -- has a suit
@@ -1129,4 +1118,18 @@ function Madcap.Funcs.check_eval_card(card,i)
 	if not SMODS.has_no_rank(card) then -- has a rank
 		table.insert(G.GAME.blind_stats.ranks, card.base.value)
 	end
+end
+
+
+if Overloaded then
+	Madcap.Funcs.get_joker_rank = Overloaded.Funcs.get_joker_rank
+	Madcap.Funcs.get_joker_ranks = Overloaded.Funcs.get_joker_ranks
+	Madcap.Funcs.get_joker_suit = Overloaded.Funcs.get_joker_suit
+	Madcap.Funcs.get_joker_suits = Overloaded.Funcs.get_joker_suits
+else
+	local get_vals = function(card,default,x1) return (type(card.ability.extra) == 'table' and card.ability.extra[x1]) or card.ability[x1] or default end
+	function Madcap.Funcs.get_joker_rank(card, default) return get_vals(card, default, 'rank', 'override_rank') end
+	function Madcap.Funcs.get_joker_ranks(card, default) return get_vals(card, default, 'ranks', 'override_ranks') end
+	function Madcap.Funcs.get_joker_suit(card, default) return get_vals(card, default, 'suit', 'override_suit') end
+	function Madcap.Funcs.get_joker_suits(card, default) return get_vals(card, default, 'suits', 'override_suits') end
 end

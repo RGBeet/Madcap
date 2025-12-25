@@ -750,11 +750,14 @@ MadLib.register_sprite('rgmc_explosion',{
 	subimages	= 17,
 })
 
-Madcap.Lists.RankUIs = {
+for k,v in pairs({
     rgmc_X          = 'x',
     rgmc_Sum        = 'sum',
     rgmc_Draw2      = 'draw_2',
     rgmc_Skip       = 'skip',
     rgmc_Reverse    = 'reverse',
     rgmc_0          = '0'
-}
+
+}) do 
+	MadLib.CardUIs.Ranks[k] = v
+end
