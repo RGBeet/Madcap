@@ -13,8 +13,9 @@ return {
             extra = { chips = 0, chip_mod = 8, rank = '2' }
         },
         loc_vars = function(self, info_queue, card)
+            
             return MadLib.collect_vars(number_format(card.ability.extra.chip_mod),
-                localize(card.ability.extra.rank or '2', 'ranks'),
+                MadLib.get_rank_locvar(card, '2'),
                 number_format(card.ability.extra.chips))
         end,
         calculate = function(self, card, context)
@@ -29,11 +30,11 @@ return {
             if 
                 (context.individual 
                 and context.cardarea == G.play 
-                and MadLib.is_rank(context.other_card, SMODS.Ranks[card.ability.extra.rank or '2'].id) 
+                and MadLib.joker_check_rank(context.other_card, card, '2') 
                 and not context.blueprint)
                 or context.forcetrigger
             then
-                card.ability.extra.chips = card.ability.extra.chips + card.ability.extra.chip_mod
+                card.ability.extra.chips = MadLib.add(card.ability.extra.chips, card.ability.extra.chip_mod)
                 return {
                     message = localize('k_upgrade_ex'),
                     colour = G.C.CHIPS,

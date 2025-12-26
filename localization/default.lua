@@ -655,7 +655,7 @@ return {
             j_rgmc_plentiful_ametrine = {
                 name = "Plentiful Ametrine",
                 text = {
-                    "For each scored {C:rgmc_goblets}Goblet{} card,",
+                    "For each scored {V:1}#5#{} card,",
                     "{C:green}#1# in #2#{} chance",
                     "this Joker gains {C:mult}+#3#{} Mult",
                     "Resets at end of {C:attention}Ante",
@@ -665,7 +665,7 @@ return {
             j_rgmc_toughened_shungite = {
                 name = "Toughened Shungite",
                 text = {
-                    "For each scored {C:rgmc_towers}Tower{} card,",
+                    "For each scored {V:1}#5#{} card,",
                     "{C:green}#1# in #2#{} chance",
                     "this Joker gains {C:chips}+#3# Chips",
                     "Resets at end of {C:attention}Ante",
@@ -1236,22 +1236,22 @@ return {
             j_rgmc_vibrant_tourmaline= {
                 name = "Vibrant Tourmaline",
                 text = {
-                    "For each scored {V:1}#1#{} card,",
-                    "{C:green}#2# in #3#{} chance",
-                    "this Joker gains {C:money}$#4#",
+                    "For each scored {V:1}#5#{} card,",
+                    "{C:green}#1# in #2#{} chance",
+                    "this Joker gains {C:money}$#3#",
                     "Resets at end of {C:attention}Ante",
                     "{C:inactive}(Currently gives",
-                    "{C:money}$#5#{C:inactive} at end of round)"
+                    "{C:money}$#4#{C:inactive} at end of round)"
                 },
             },
             j_rgmc_obsidian_blade = {
                 name = "Obsidian Blade",
                 text = {
-                    "For each scored {V:1}#1#{} card,",
-                    "{C:green}#2# in #3#{} chance",
-                    "this Joker gains {X:mult,C:white}X#4#{} Mult",
+                    "For each scored {V:1}#5#{} card,",
+                    "{C:green}#1# in #2#{} chance",
+                    "this Joker gains {X:mult,C:white}X#3#{} Mult",
                     "Resets at end of {C:attention}Ante",
-                    "{C:inactive}(Currently {X:mult,C:white}X#5# {C:inactive} Mult)"
+                    "{C:inactive}(Currently {X:mult,C:white}X#4# {C:inactive} Mult)"
                 },
             },
             j_rgmc_jestrogen = {

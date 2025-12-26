@@ -28,9 +28,10 @@ return {
             }
         },
         loc_vars = function(self, info_queue, card)
+            local ranks = Madcap.Funcs.get_joker_ranks(card, { '7', '8' })
             return { vars = {
-                localize(card.ability.extra.ranks[1] or '7', 'ranks'),
-                localize(card.ability.extra.ranks[2] or '8', 'ranks'),
+                localize(ranks[1], 'ranks'),
+                localize(ranks[2], 'ranks'),
                 number_format(card.ability.extra.retriggers)
             }}
         end,
@@ -40,16 +41,18 @@ return {
                 and context.cardarea == G.play
                 and not context.blueprint)
             then
-                if MadLib.is_rank(context.other_card, SMODS.Ranks[card.ability.extra.ranks[2] or '8'].id) then
+                local ranks = Madcap.Funcs.get_joker_ranks(card, { '7', '8' })
+                if MadLib.joker_check_rank(context.other_card, card, ranks[2]) then
                     local position = 0
-                    for i=1, #(context.scoring_hand or {}) do
+                    local list = context.scoring_hand or {}
+                    for i=1, #list do
                         if context.scoring_hand[i] == context.other_card then
                             position = i
                             break
                         end
                     end
                     for i=1, position-1 do -- if 7 is before 8, retrigger the 8 twice
-                        if MadLib.is_rank(context.scoring_hand[i], SMODS.Ranks[card.ability.extra.ranks[1] or '7'].id) then
+                        if MadLib.joker_check_rank(list[i], card, ranks[1]) then
                             return { 
                                 repetitions = card.ability.extra.repetitions
                             }

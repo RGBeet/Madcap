@@ -24,7 +24,7 @@ return {
             local current_step = Madcap.ToyPiano.BigSteps[card.ability.immutable.step]
             local rank = Madcap.ToyPiano.Positions[current_step]
             return MadLib.collect_vars(number_format(card.ability.extra.chip_mod),
-                number_format(card.ability.extra.chip_mod*5),
+                number_format(MadLib.multiply(card.ability.extra.chip_mod, 5)),
                 number_format(card.ability.extra.chips),
                 number_format(card.ability.immutable.step),
                 number_format(#Madcap.ToyPiano.BigSteps),
@@ -42,10 +42,10 @@ return {
                 if MadLib.is_rank(context.other_card, SMODS.Ranks[rank or 'rgmc_X'].id) then
                     if card.ability.immutable.step < #Madcap.ToyPiano.BigSteps then -- not done yet
                         card.ability.immutable.step = card.ability.immutable.step + 1
-                        card.ability.extra.chips = card.ability.extra.chips + card.ability.extra.chip_mod
+                        card.ability.extra.chips = MadLib.add(card.ability.extra.chips, card.ability.extra.chip_mod)
                     else
                         card.ability.immutable.step = 1
-                        card.ability.extra.chips = card.ability.extra.chips + card.ability.extra.chip_mod * 5
+                        card.ability.extra.chips = MadLib.add(card.ability.extra.chips, MadLib.multiply(card.ability.extra.chip_mod, 5))
                     end
                     return {
                         colour = G.C.CHIPS,

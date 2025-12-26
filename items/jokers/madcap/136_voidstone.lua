@@ -21,11 +21,11 @@ return {
         loc_vars = function(self, info_queue, card)
             local numer, denom = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'holystone')
             return MadLib.collect_vars_colours(
-                localize(card.ability.extra.suit, 'suits_plural'),
+                localize(Madcap.Funcs.get_joker_suit(card, 'rgmc_voids'), 'suits_plural'),
                 numer,
                 denom,
                 number_format(card.ability.extra.mayhem_mod),
-                { G.C.SUITS[card.ability.extra.suit] })
+                { G.C.SUITS[Madcap.Funcs.get_joker_suit(card, 'rgmc_voids')] })
         end,
         calculate = function(self, card, context)
             -- Retrigger held/scored

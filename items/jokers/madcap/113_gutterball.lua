@@ -14,13 +14,13 @@ return {
             extra = { ranks = { '3', '6', '10' }, repetitions = 1 },
         },
         loc_vars = function(self, info_queue, card)
-            return MadLib.collect_vars(localize(card.ability.extra.ranks[1] or '3', 'ranks'),
-                localize(card.ability.extra.ranks[2] or '6', 'ranks'),
-                localize(card.ability.extra.ranks[3] or '10', 'ranks'),
+            local ranks = Madcap.Funcs.get_joker_ranks(card, { '3', '6', '10' })
+            return MadLib.collect_vars(localize(ranks[1], 'ranks'),
+                localize(ranks[2], 'ranks'),
+                localize(ranks[3], 'ranks'),
                 card.ability.extra.repetitions)
         end,
         calculate = function(self, card, context)
-
             if 
                 context.other_card
                 and context.scoring_hand
@@ -34,9 +34,7 @@ return {
                 end
                 if pos > 1 then
                     local target = context.scoring_hand[pos-1]
-                    if MadLib.list_matches_one(card.ability.extra.ranks, function(v) 
-                        return MadLib.is_rank(target, SMODS.Ranks[v].id)
-                    end) then
+                    if MadLib.has_rank(card, target, Madcap.Funcs.get_joker_ranks(card, { '3', '6', '10' })) then
                         return { repetitions = card.ability.extra.repetitions or 1 }
                     end
                 end

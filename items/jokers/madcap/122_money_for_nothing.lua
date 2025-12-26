@@ -1,15 +1,3 @@
-function Madcap.Funcs.sveerz_generate_pattern(card)
-    card.ability.immutable.suit_pattern = {}
-    local potential_cards = MadLib.shuffle_sort_list(G.playing_cards, card.ability.immutable.pattern_length, function(v)
-        return not SMODS.has_no_suit(v)
-    end) or {}
-    local j = 1
-    for i=1,card.immutable.pattern_length do
-        card.ability.immutable.suit_pattern[i] = potential_cards[j].base.suit
-        if j+1 < #potential_cards then j=j+1 end
-    end
-end
-
 return {
     categories = {
         'Unfinished Content'
@@ -28,9 +16,10 @@ return {
             }
         },
         loc_vars = function(self, info_queue, card)
+            local ranks = Madcap.Funcs.get_joker_ranks(card, { '9', '5' })
             return { vars = {
-                localize(card.ability.extra.ranks[1], 'ranks'),
-                localize(card.ability.extra.ranks[2], 'ranks'),
+                localize(ranks[1], 'ranks'),
+                localize(ranks[2], 'ranks'),
                 number_format(card.ability.extra.dollars)
             }}
         end,
@@ -40,16 +29,18 @@ return {
                 and context.cardarea == G.play
                 and not context.blueprint)
             then
-                if MadLib.is_rank(context.other_card, SMODS.Ranks[card.ability.extra.ranks[2]].id) then
+                local ranks = Madcap.Funcs.get_joker_ranks(card, { '9', '5' })
+                if MadLib.joker_check_rank(context.other_card, card, ranks[2]) then
                     local position = 0
-                    for i=1, #(context.scoring_hand or {}) do
+                    local list = context.scoring_hand or {}
+                    for i=1, #list do
                         if context.scoring_hand[i] == context.other_card then
                             position = i
                             break
                         end
                     end
-                    for i=1, position-1 do -- if 9 is before 5, gain $4
-                        if MadLib.is_rank(context.scoring_hand[i], SMODS.Ranks[card.ability.extra.ranks[1]].id) then
+                    for i=1, position-1 do
+                        if MadLib.joker_check_rank(list[i], card, ranks[1]) then
                             return { dollars = card.ability.extra.dollars }
                         end
                     end

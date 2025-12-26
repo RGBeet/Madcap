@@ -23,13 +23,13 @@ return {
             --print(MadLib.SpectrumId..'Spectrum')
             return MadLib.collect_vars(localize(card.ability.extra.poker_hands[1] or 'Flush', 'poker_hands'),
                 localize(card.ability.extra.poker_hands[2] or Madcap.Funcs.get_spectrum(), 'poker_hands'),
-                localize(card.ability.extra.rank, 'ranks'),
+                MadLib.get_rank_locvar(card, 'Queen'),
                 number_format(card.ability.extra.repetitions))
         end,
         calculate = function(self, card, context)
             if 
                 context.cardarea == G.play
-                and MadLib.is_rank(context.other_card, SMODS.Ranks[card.ability.extra.rank].id)
+                and MadLib.joker_check_rank(context.other_card, card, 'Queen')
                 and (context.poker_hands[card.ability.extra.poker_hands[1] or 'Flush']
                     or context.poker_hands[card.ability.extra.poker_hands[2] or Madcap.Funcs.get_spectrum()])
             then

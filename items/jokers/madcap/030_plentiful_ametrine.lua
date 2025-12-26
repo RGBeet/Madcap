@@ -11,11 +11,13 @@ return {
         },
         loc_vars = function(self, info_queue, card)
             local _numer, _denom = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'plentiful_ametrine')
-            return MadLib.collect_vars(
-                    number_format(_numer),
-                    number_format(_denom),
-                    number_format(card.ability.extra.mult_mod),
-                    number_format(card.ability.extra.mult))
+            return MadLib.collect_vars_colours(
+                number_format(_numer),
+                number_format(_denom),
+                number_format(card.ability.extra.mult_mod),
+                number_format(card.ability.extra.mult),
+                localize(Madcap.Funcs.get_joker_suit(card, 'rgmc_goblets'), 'suits_singular'),
+                { G.C.SUITS[Madcap.Funcs.get_joker_suit(card, 'rgmc_goblets')] })
         end,
         calculate = function(self, card, context)
             -- scaling

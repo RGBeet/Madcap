@@ -1,6 +1,5 @@
 return {
     categories = {
-        'Unfinished Content',
         'New Suits',
         'Voids and Lanterns'
     },
@@ -17,14 +16,14 @@ return {
         loc_vars = function(self, info_queue, card)
             return MadLib.collect_vars_colours(
                 number_format(card.ability.extra.mult),
-                localize(card.ability.extra.suit, 'suits_plural'),
-                { G.C.SUITS[card.ability.extra.suit] })
+                localize(Madcap.Funcs.get_joker_suit(card, 'rgmc_voids'), 'suits_plural'),
+                { G.C.SUITS[Madcap.Funcs.get_joker_suit(card, 'rgmc_voids')] })
         end,
         calculate = function(self, card, context)
             if
                 context.individual
                 and context.cardarea == G.play
-                and context.other_card:is_suit(card.ability.extra.suit)
+                and context.other_card:is_suit(Madcap.Funcs.get_joker_suit(card, 'rgmc_voids'))
             then
                 return { mult = card.ability.extra.mult, card = card }
             end

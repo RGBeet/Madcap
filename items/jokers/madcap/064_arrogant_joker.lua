@@ -15,14 +15,14 @@ return {
         loc_vars = function(self, info_queue, card)
             return MadLib.collect_vars_colours(
                 number_format(card.ability.extra.mult),
-                localize(card.ability.extra.suit, 'suits_singular'),
-                { G.C.SUITS[card.ability.extra.suit] })
+                localize(Madcap.Funcs.get_joker_suit(card, 'rgmc_daggers'), 'suits_singular'),
+                { G.C.SUITS[Madcap.Funcs.get_joker_suit(card, 'rgmc_daggers')] })
         end,
         calculate = function(self, card, context)
             if
                 context.individual
                 and context.cardarea == G.play
-                and context.other_card:is_suit(card.ability.extra.suit)
+                and context.other_card:is_suit(Madcap.Funcs.get_joker_suit(card, 'rgmc_daggers'))
             then
                 return { mult = card.ability.extra.mult }
             end

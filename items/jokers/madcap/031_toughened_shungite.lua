@@ -11,12 +11,14 @@ return {
             extra = { odds = 4, chips = 0, chip_mod = 15, suit = 'rgmc_towers' }
         },
         loc_vars = function(self, info_queue, card)
-            local _numer, _denom = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'vari_seala')
-            return MadLib.collect_vars(
-                    number_format(_numer),
-                    number_format(_denom),
-                    number_format(card.ability.extra.chip_mod),
-                    number_format(card.ability.extra.chips))
+            local _numer, _denom = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'toughened_shungite')
+            return MadLib.collect_vars_colours(
+                number_format(_numer),
+                number_format(_denom),
+                number_format(card.ability.extra.chip_mod),
+                number_format(card.ability.extra.chips),
+                localize(Madcap.Funcs.get_joker_suit(card, 'rgmc_towers'), 'suits_singular'),
+                { G.C.SUITS[Madcap.Funcs.get_joker_suit(card, 'rgmc_towers')] })
         end,
         calculate = function(self, card, context)
             -- scaling

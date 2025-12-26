@@ -16,13 +16,14 @@ return {
 		generate_ui = Madcap.Funcs.generate_special_ui,
         long_title = { "Brother of the Joker" },
         loc_vars = function(self, info_queue, card)
-            return MadLib.collect_vars(localize(card.ability.extra.rank or 'rgmc_Madcap', 'ranks'), number_format(card.ability.extra.retriggers))
+            return MadLib.collect_vars(MadLib.get_rank_locvar(card, 'rgmc_Madcap'), 
+                number_format(card.ability.extra.retriggers))
         end,
         calculate = function(self, card, context)
             -- Retrigger discarded?
             if 
                 context.repeat_discard
-                and MadLib.is_rank(context.other_card, SMODS.Ranks[card.ability.extra.rank or 'rgmc_Madcap'].id)
+                and MadLib.joker_check_rank(context.other_card, card, 'rgmc_Madcap')
             then
                 return card.ability.extra.repetitions
             end
@@ -32,7 +33,7 @@ return {
                 context.individual 
                 and (context.cardarea == G.play or context.cardarea == G.hand)
                 and not context.blueprint
-                and MadLib.is_rank(context.other_card, SMODS.Ranks[card.ability.extra.rank or 'rgmc_Madcap'].id)
+                and MadLib.joker_check_rank(context.other_card, card, 'rgmc_Madcap')
             then
                 return { repetitions = card.ability.extra.repetitions }
             end

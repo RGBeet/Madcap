@@ -16,18 +16,18 @@ return {
                 and G.GAME.current_round.rgmc_wizard_card
             then
                 if G.GAME.current_round.rgmc_wizard_card.rank_discovered then
-                    rank = localize(G.GAME.current_round.rgmc_wizard_card.rank, 'ranks')
+                    rank = localize(Madcap.Funcs.get_joker_rank(card, G.GAME.current_round.rgmc_wizard_card.rank), 'ranks')
                 end
                 if G.GAME.current_round.rgmc_wizard_card.suit_discovered then
-                    suit = localize(G.GAME.current_round.rgmc_wizard_card.suit, 'suits_plural')
+                    suit = localize(Madcap.Funcs.get_joker_rank(card, G.GAME.current_round.rgmc_wizard_card.suit), 'suits_plural')
                 end
             end
 
             return MadLib.collect_vars(
                 number_format(card.ability.extra.mult),
                 number_format(card.ability.extra.chips),
-                (Madcap.Data.devmode and G.GAME.MADCAP) and G.GAME.current_round.rgmc_wizard_card.rank or "SEKRIT",
-                (Madcap.Data.devmode and G.GAME.MADCAP) and Madcap.Data.devmode and G.GAME.current_round.rgmc_wizard_card.suit or "SEKRIT")
+                rank,
+                suit)
         end,
         calculate = function(self, card, context)
 
@@ -37,7 +37,7 @@ return {
                 and not context.blueprint
                 and not context.forcetrigger
             then
-                if MadLib.is_rank(context.other_card, SMODS.Ranks[G.GAME.current_round.rgmc_wizard_card.rank].id) then -- u got the rank (prioritizes over suit)
+                if MadLib.joker_check_rank(context.other_card, card, G.GAME.current_round.rgmc_wizard_card.rank) then -- u got the rank (prioritizes over suit)
                     G.GAME.current_round.rgmc_wizard_card.rank_discovered = true
                     return { chips = card.ability.extra.chips }
                 end

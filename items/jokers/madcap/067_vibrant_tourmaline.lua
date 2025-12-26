@@ -15,12 +15,12 @@ return {
         loc_vars = function(self, info_queue, card)
             local _numer, _denom = SMODS.get_probability_vars(card, 1, card.ability.extra.odds)
             return MadLib.collect_vars_colours(
-                localize(card.ability.extra.suit, 'suits_singular'),
                 number_format(_numer),
                 number_format(_denom),
                 number_format(card.ability.extra.money_mod),
                 number_format(card.ability.extra.money),
-                { G.C.SUITS[card.ability.extra.suit] })
+                localize(Madcap.Funcs.get_joker_suit(card, 'rgmc_blooms'), 'suits_singular'),
+                { G.C.SUITS[Madcap.Funcs.get_joker_suit(card, 'rgmc_blooms')] })
         end,
         calc_dollar_bonus = function(self, card)
             return MadLib.get_calc_bonus(card.ability.extra.money)

@@ -14,7 +14,7 @@ return {
             return MadLib.collect_vars(
                     number_format(_numer),
                     number_format(_denom),
-                    localize(card.ability.extra.rank, 'ranks'),
+                    localize(Madcap.Funcs.get_joker_rank(card, '6'), 'ranks'),
                     number_format(card.ability.extra.chip_mod),
                     number_format(card.ability.extra.chips))
         end,
@@ -26,13 +26,13 @@ return {
                 and not context.forcetrigger
             then
                 if
-                    MadLib.is_rank(context.other_card, SMODS.Ranks[card.ability.extra.rank].id)
+                    MadLib.joker_check_rank(context.other_card, card, '6')
                     and SMODS.pseudorandom_probability(card, 'six_shooter', 1, card.ability.extra.odds)
                 then
                     local target = context.other_card
 
                     MadLib.simple_event(function()
-                        card.ability.extra.chips = card.ability.extra.chips + card.ability.extra.chip_mod
+                        card.ability.extra.chips = MadLib.add(card.ability.extra.chips, card.ability.extra.chip_mod)
                         play_sound(('tarot2'), 0.76, 0.4)
                         target:juice_up(0.3, 0.4)
                         return true
@@ -43,7 +43,7 @@ return {
                         return true
                     end, 0.3, 'after')
 
-                    card.ability.extra.chips = card.ability.extra.chips + card.ability.extra.chip_mod 
+                    card.ability.extra.chips = MadLib.add(card.ability.extra.chips, card.ability.extra.chip_mod) 
                     return {
                         message = localize('k_upgrade_ex'),
                         colour  = G.C.CHIPS
@@ -52,7 +52,7 @@ return {
             end
             if -- give the chips
                 (context.joker_main or context.forcetrigger)
-                and card.ability.extra.chips > 0
+                and MadLib.is_positive_number(card.ability.extra.chips)
             then
                 return { chips = card.ability.extra.chips }
             end

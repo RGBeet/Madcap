@@ -17,8 +17,8 @@ return {
             return MadLib.collect_vars(
                 number_format(card.ability.extra.numerator_mod),
                 number_format(card.ability.extra.goal),
-                localize(card.ability.extra.rank or '7', 'ranks'),
-                number_format(card.ability.extra.numerator_mod*2),
+                MadLib.get_rank_locvar(card, '7'),
+                number_format(MadLib.multiply(card.ability.extra.numerator_mod, 2)),
                 number_format(card.ability.extra.numerator))
         end,
         calculate = function(self, card, context)
@@ -29,13 +29,13 @@ return {
                 and not context.blueprint 
                 and not context.repetition 
             then
-                return { numerator = context.numerator + card.ability.numerator }
+                return { numerator = MadLib.add(context.numerator, card.ability.numerator) }
             end
             -- Up the numerator
             if 
                 (context.individual 
                 and context.cardarea == G.play 
-                and MadLib.is_rank(context.other_card, SMODS.Ranks[card.ability.extra.rank or '7'].id) 
+                and MadLib.joker_check_rank(context.other_card, card, '7')
                 and not context.blueprint)
                 or context.forcetrigger
             then
@@ -57,9 +57,9 @@ return {
                 context.pseudorandom_result 
                 and context.result 
             then
-                local decrement = card.ability.extra.numerator_mod * 2
-                decrement = (card.ability.extra.numerator - decrement) > 0 and decrement or card.ability.extra.numerator
-                card.ability.extra.numerator = card.ability.extra.numerator - decrement
+                local decrement = MadLib.multiply(card.ability.extra.numerator_mod, 2)
+                decrement = MadLib.is_positive_number(MadLib.subtract(card.ability.extra.numerator, decrement)) and decrement or card.ability.extra.numerator
+                card.ability.extra.numerator = MadLib.subtract(card.ability.extra.numerator, decrement)
                 return {
                     message = "-" .. number_format(decrement),
                     colour  = G.C.RED
