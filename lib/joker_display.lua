@@ -1797,7 +1797,7 @@ if JokerDisplay then
             {
                 border_nodes = {
                     { text = "X" },
-                    { ref_table = "card.ability", ref_value = "x_mult", retrigger_type = "exp" }
+                    { ref_table = "card.joker_display_values", ref_value = "x_mult", retrigger_type = "exp" }
                 }
             }
         },
@@ -1805,10 +1805,13 @@ if JokerDisplay then
             { ref_table = "card.joker_display_values", ref_value = "active_text" },
         },
         calc_function = function(card)
-            local sorted_hand = MadLib.shuffle_sort_list(context.scoring_hand, #context.scoring_hand, function(v)
+            local text, _, scoring_hand = JokerDisplay.evaluate_hand()
+            local sorted_hand = MadLib.shuffle_sort_list(scoring_hand, #scoring_hand, function(v)
                 return not Card:is_suitless()
             end, function(a,b)
-                return MadLib.has_suit_in_list(a, MadLib.SuitTypes.Base, true)
+                local _a = MadLib.has_suit_in_list(a, MadLib.SuitTypes.Base, true) and 1 or 0
+                local _b = MadLib.has_suit_in_list(b, MadLib.SuitTypes.Base, true) and 1 or 0
+                return _a > _b
             end)
 
             local num_suits = 0
@@ -1837,8 +1840,11 @@ if JokerDisplay then
                 return v.base.suit
             end)) or num_suits >= 3
 
-            card.joker_display_values.active = dark_suit and light_suit and modded_suit
-            card.joker_display_values.active_text = localize(active and 'k_active' or 'rgmc_inactive')
+            local active = dark_suit and light_suit and modded_suit
+
+            card.joker_display_values.active        = active
+            card.joker_display_values.x_mult        = active and card.ability.extra.x_mult or 1
+            card.joker_display_values.active_text   = localize(active and 'k_active_ex' or 'rgmc_inactive')
         end,
         style_function = function(card, text, reminder_text, extra)
             if reminder_text and reminder_text.children[1] and card.joker_display_values then

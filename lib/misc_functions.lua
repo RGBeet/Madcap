@@ -1126,10 +1126,14 @@ if Overloaded then
 	Madcap.Funcs.get_joker_ranks = Overloaded.Funcs.get_joker_ranks
 	Madcap.Funcs.get_joker_suit = Overloaded.Funcs.get_joker_suit
 	Madcap.Funcs.get_joker_suits = Overloaded.Funcs.get_joker_suits
+	Madcap.Funcs.get_joker_hand =  Overloaded.Funcs.get_joker_hand
+	Madcap.Funcs.get_joker_hands =  Overloaded.Funcs.get_joker_hands
 else
 	local get_vals = function(card,default,x1) return (type(card.ability.extra) == 'table' and card.ability.extra[x1]) or card.ability[x1] or default end
 	function Madcap.Funcs.get_joker_rank(card, default) return get_vals(card, default, 'rank', 'override_rank') end
 	function Madcap.Funcs.get_joker_ranks(card, default) return get_vals(card, default, 'ranks', 'override_ranks') end
 	function Madcap.Funcs.get_joker_suit(card, default) return get_vals(card, default, 'suit', 'override_suit') end
 	function Madcap.Funcs.get_joker_suits(card, default) return get_vals(card, default, 'suits', 'override_suits') end
+	function Madcap.Funcs.get_joker_hand(card, default) return get_vals(card, default, 'suit', 'override_hand') end
+	function Madcap.Funcs.get_joker_hands(card, default) return get_vals(card, default, 'suits', 'override_hands') end
 end

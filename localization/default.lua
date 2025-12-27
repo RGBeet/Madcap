@@ -6100,27 +6100,12 @@ return {
                 "5 face cards containing",
                 "at least 3 unique ranks"
             },
-            rgmc_blazer_flush = { -- not used
-                "5 face cards",
-                "of the same suit, containing",
-                "at least 3 unique ranks",
-            },
-            rgmc_blazer_spectrum = { -- not used
-                "5 face cards",
-                "of different suits",
-                "containing at least",
-                "3 unique ranks",
-            },
             rgmc_kaleidoscope = {
                 "5 Bismuth Cards"
             },
             rgmc_pick_five = {
                 "5 random ranks chosen",
                 "at the start of each Ante"
-            },
-            rgmc_noak = {
-                "5 cards of another poker hand",
-                "whose cumulative rank equals 0"
             },
             rgmc_infoak = {
                 "5 Infinity cards"

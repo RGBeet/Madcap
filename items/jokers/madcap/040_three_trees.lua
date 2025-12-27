@@ -23,7 +23,9 @@ return {
                 local sorted_hand = MadLib.shuffle_sort_list(context.scoring_hand, #context.scoring_hand, function(v)
                     return not Card:is_suitless()
                 end, function(a,b)
-                    return MadLib.has_suit_in_list(a, MadLib.SuitTypes.Base, true)
+                    local _a = MadLib.has_suit_in_list(a, MadLib.SuitTypes.Base, true) and 1 or 0
+                    local _b = MadLib.has_suit_in_list(b, MadLib.SuitTypes.Base, true) and 1 or 0
+                    return _a > _b
                 end)
 
                 local num_suits = 0
