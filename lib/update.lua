@@ -18,11 +18,9 @@ local function update_sprite_delta(spr,dt)
 				obj.pos.y = 0
 			elseif obj.pos.x+1 < anim.width then
 				obj.pos.x = obj.pos.x + 1
-				----print("X")
 			elseif obj.pos.y < anim.height then
 				obj.pos.x = 0
 				obj.pos.y = obj.pos.y + 1
-				----print("Y")
 			end
 		else
 			anim.delta_time = anim.delta_time + dt * anim.delta_speed

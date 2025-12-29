@@ -356,13 +356,10 @@ end
 
 local function loop_directories(tbl, path)
     path = path or {}
-    --tell('Loading Directories')
-	--print(path)
 	MadLib.loop_table(tbl, function(key,value)
         if type(value) ~= "table" then return false end
 		local pass = value.pass and value.pass() or nil
 		if (pass ~= nil and pass ~= false) then
-			--tell("Loading folder at: " .. table.concat(path, ".") .. (next(path) and "." or "") .. key)
 			local final_path = 'items/'
 			MadLib.loop_func(path, function(v,i)
 				final_path = final_path .. v .. '/'
@@ -377,12 +374,9 @@ local function loop_directories(tbl, path)
 end
 
 loop_directories(Madcap.Directories)
--- File loading based on Cryptid mod lmao
 local errors = {}
 Madcap.object_buffer = {}
 
--- File loading ended!
---print(errors)
 for f, e in ipairs(errors) do
     tell_stat("Error loading file",e)
 end

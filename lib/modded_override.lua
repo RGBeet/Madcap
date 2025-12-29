@@ -19,7 +19,8 @@ if MadLib.mod_loaded('TOGAPack') then
     -- Windows Vista - modular rank and edition
     SMODS.Joker:take_ownership('toga_winvista', {
         config = {
-            extra = { rank = '6', edition = 'negative' }
+            rank = '6',
+            extra = { edition = 'negative' }
         },
         loc_vars = function(self, info_queue, card)
             return MadLib.collect_vars(localize(card.ability.extra.rank or '6', 'ranks'), MadLib.localize_name_text('Edition', 'e_'..(card.ability.extra.edition or 'negative')))
@@ -65,7 +66,8 @@ if MadLib.mod_loaded('TOGAPack') then
 
     SMODS.Joker:take_ownership('toga_win8', {
         config = {
-            extra = { rank = '8', xmult = 0.08 }
+            rank = '8',
+            extra = { xmult = 0.08 }
         },
         loc_vars = function(self, info_queue, card)
             return MadLib.collect_vars(localize(card.ability.extra.rank or '8', 'ranks'), number_format(card.ability.extra.xmult))
@@ -98,8 +100,9 @@ if MadLib.mod_loaded('TOGAPack') then
     }, true)
 
     SMODS.Joker:take_ownership('toga_y2kbug', {
-        config = {
-            extra = { ranks = { '2', 'King' }, chips = 25, mult = 4, active = false }
+        config = { 
+            ranks = { '2', 'King' },
+            extra = { chips = 25, mult = 4, active = false }
         },
         loc_vars = function(self, info_queue, card)
             return MadLib.collect_vars(localize(card.ability.extra.ranks[1] or '2', 'ranks'),
@@ -111,7 +114,7 @@ if MadLib.mod_loaded('TOGAPack') then
             if context.before then
                 if MadLib.list_matches_all(card.ability.extra.ranks or {'2', 'King' }, function(v)
                     return MadLib.list_matches_one(#context.full_hand, function(v2)
-                        return MadLib.is_rank(v2, SMODS.Ranks[v].id)
+                        return MadLib.is_rank(v2, v)
                     end)
                 end) then
                     card.ability.extra.active = true
@@ -135,9 +138,7 @@ if MadLib.mod_loaded('TOGAPack') then
     }, true)
 
     SMODS.Joker:take_ownership('toga_y2ksticker', {
-        config = {
-            extra = { rank = '2' }
-        },
+        config = { rank = '2' },
         loc_vars = function(self, info_queue, card)
             return MadLib.collect_vars(localize(card.ability.extra.ranks or '2', 'ranks'))
         end,
@@ -150,15 +151,7 @@ if MadLib.mod_loaded('TOGAPack') then
 	    local result = isfaceref(self, from_boss)
         if G.jokers then
             MadLib.loop_func(G.jokers.cards, function(j)
-                --local info = MadLib.FaceManipulation[j.config.center.key]
-                if not info then return end
-                local search = j.ability.extra.ranks or { j.ability.extra.rank } or info.ranks or { info.rank }
-                local new_result = MadLib.list_matches_one(search, function(v)
-                    return MadLib.is_rank(self, SMODS.Ranks[v].id)
-                end)
-                result = (new_result == true)
-                    and ((info.type and info.type == 'remove') and false or true)
-                    or ((info.type and info.type == 'set') and false or new_result)
+                ---???
             end)
         end
         return result
@@ -167,7 +160,8 @@ if MadLib.mod_loaded('TOGAPack') then
     -- Mac OS X - modular rank. X is also hardcoded.
     SMODS.Joker:take_ownership('toga_mac_os_x', {
         config = {
-            extra = { rank = '10', h_x_chips = 1.25 } -- nerfed
+            rank = '10',
+            extra = { h_x_chips = 1.25 } -- nerfed
         },
         loc_vars = function(self, info_queue, card)
             return MadLib.collect_vars(localize(card.ability.extra.ranks or '10', 'ranks'),
@@ -181,7 +175,7 @@ if MadLib.mod_loaded('TOGAPack') then
                 context.individual 
                 and context.cardarea == G.hand 
                 and not context.end_of_round 
-                and (MadLib.joker_check_rank(context.other_card, card, card.ability.extra.rank or '10')
+                and (MadLib.joker_check_rank(context.other_card, card, '10')
                     or MadLib.joker_check_rank(context.other_card, card, 'rgmc_x'))
             then
                 return not context.other_card.debuff and {
@@ -196,13 +190,14 @@ if MadLib.mod_loaded('TOGAPack') then
     
     SMODS.Joker:take_ownership('toga_solitairejoker', {
         config = {
-            extra = { rank = "Ace", poker_hand = 'Straight', draw_cards = 3 }
+            rank = 'Ace', 
+            extra = { poker_hand = 'Straight', draw_cards = 3 }
         },
         loc_vars = function(self, info_queue, card)
 		    local togasolitaire = G.GAME.current_round.togabalatro and G.GAME.current_round.togabalatro.solitaire or {}
             return MadLib.collect_vars(localize(card.ability.extra.poker_hand, 'poker_hands'),
                 math.floor(card.ability.extra.draw_cards),
-                localize(card.ability.extra.rank or 'Ace', 'ranks'))
+                localize(card.ability.rank or 'Ace', 'ranks'))
         end,
     }, true)
 
@@ -217,7 +212,7 @@ if MadLib.mod_loaded('TOGAPack') then
                     end) or {}
                     if #valid_solitaire_cards > 0 then
                         local pick = pseudorandom_element(valid_solitaire_cards, pseudoseed('solitaire'..G.GAME.round_resets.ante))
-                        j.ability.extra.rank = pick.base.value or 'Ace'
+                        j.ability.rank = pick.base.value or 'Ace'
                     end
                 end
             end)
@@ -255,7 +250,7 @@ if MadLib.mod_loaded('TOGAPack') then
                     if next(poker_hands[j.ability.extra.poker_hand or 'Straight']) then
                         local cur_cards = {}
                         MadLib.loop_func(G.deck.cards, function(c)
-                            if MadLib.is_rank(c, j.ability.extra.rank or 'Ace') then cur_cards[#cur_cards+1] = c end
+                            if MadLib.joker_check_rank(j, c, '10') then cur_cards[#cur_cards+1] = c end
                         end)
                         MadLib.loop_func(cur_cards, function(c,i)
                             draw_card(G.deck, G.hand, i*100/#cur_cards, 'up', true, c)
@@ -272,15 +267,31 @@ if MadLib.mod_loaded('TOGAPack') then
 
 end
 
+MadLib.IdToRank = {
+    [2]     = '2',
+    [3]     = '3',
+    [4]     = '4',
+    [5]     = '5',
+    [6]     = '6',
+    [7]     = '7',
+    [8]     = '8',
+    [9]     = '9',
+    [10]    = '10',
+    [11]    = 'Jack',
+    [12]    = 'Queen',
+    [13]    = 'King',
+    [14]    = 'Ace'
+}
+
 -- Paperback
 if next(SMODS.find_mod("paperback")) then
     -- Fixes the Paperback rank function.
     function PB_UTIL.is_rank(card, rank)
         if not card or not card.get_id then return end
         if type(rank) == 'string' then
-            return MadLib.is_rank(card, SMODS.Ranks[rank].id)
-        elseif type(rank) == 'number' then
             return MadLib.is_rank(card, rank)
+        elseif type(rank) == 'number' then
+            return MadLib.is_rank(card, MadLib.IdToRank[rank])
         end
     end
 
@@ -310,9 +321,9 @@ if next(SMODS.find_mod("paperback")) then
             end
             -- Upgrade this Joker for every scored 8
             if not context.blueprint and context.individual and context.cardarea == G.play then
-                if MadLib.is_rank(context.other_card, SMODS.Ranks[card.ability.extra.rank or '8'].id) then
+                if MadLib.joker_check_rank(context.other_card, card, '8') then
                     card.ability.extra.scored = true
-                    card.ability.extra.mult = card.ability.extra.mult + card.ability.extra.mult_mod
+                    card.ability.extra.mult = MadLib.add(card.ability.extra.mult, card.ability.extra.mult_mod)
 
                     return {
                         extra = {
@@ -326,7 +337,7 @@ if next(SMODS.find_mod("paperback")) then
             end
             -- Check if this Joker's mult should reset depending on if an 8 was scored this round
             if not context.blueprint and context.end_of_round and context.main_eval then
-                if not card.ability.extra.scored and card.ability.extra.mult > 0 then
+                if not card.ability.extra.scored and MadLib.is_positive_number(card.ability.extra.mult) then
                     card.ability.extra.mult = 0
 
                     return {
@@ -356,7 +367,7 @@ if next(SMODS.find_mod("paperback")) then
             then
                 local cracked_eggs = MadLib.get_list_matches(context.scoring_hand, function(v)
                     return MadLib.list_matches_one(card.ability.extra.ranks, function(v2)
-                        return MadLib.is_rank(v, SMODS.Ranks[v2].id)
+                        return MadLib.is_rank(v, v2)
                     end)
                 end)
 
@@ -391,10 +402,8 @@ if next(SMODS.find_mod("paperback")) then
                     if PB_UTIL.chance(card, 'power_surge') then
                         local destroyed_card = #G.hand.cards > 0 and
                         pseudorandom_element(G.hand.cards, pseudoseed('power_surge_destroy'))
-
                         if destroyed_card then destroyed_card.ability.paperback_destroyed = true end
                     end
-
                     return { xmult = card.ability.extra.x_mult }
                 end
             end
@@ -423,7 +432,7 @@ if next(SMODS.find_mod("paperback")) then
                 and context.individual
                 and context.cardarea == G.play
                 and MadLib.list_matches_one(card.ability.extra.ranks, function(v)
-                    return MadLib.is_rank(context.other_card, SMODS.Ranks[v].id)
+                    return MadLib.is_rank(context.other_card, v)
                 end)
             then
                 return {
@@ -447,7 +456,7 @@ if next(SMODS.find_mod("paperback")) then
         loc_vars = function(self, info_queue, card)
             return MadLib.collect_vars(number_format(card.ability.extra.chip_mod), 
                 localize(card.ability.extra.rank or '10', 'ranks'), 
-                number_format(math.floor(card.ability.extra.chip_mod/2)),
+                number_format(math.floor(MadLib.divide(card.ability.extra.chip_mod, 2))),
                 number_format(card.ability.extra.chips))
         end,
         calculate = function(self, card, context)
@@ -459,7 +468,7 @@ if next(SMODS.find_mod("paperback")) then
                 and not context.blueprint
                 and PB_UTIL.is_rank(context.other_card, card.ability.extra.rank) 
             then
-                card.ability.extra.chips = card.ability.extra.chips + card.ability.extra.chip_mod
+                card.ability.extra.chips = MadLib.add(card.ability.extra.chips, card.ability.extra.chip_mod)
                 return {
                     message = localize {
                         type = 'variable',
@@ -479,13 +488,13 @@ if next(SMODS.find_mod("paperback")) then
                 and not context.blueprint
                 and PB_UTIL.is_rank(context.other_card, card.ability.extra.rank)
             then
-                card.ability.extra.chips = card.ability.extra.chips + math.floor(card.ability.extra.chip_mod/2)
-
+                local div_chips = math.floor(MadLib.divide(card.ability.extra.chip_mod, 2))
+                card.ability.extra.chips = MadLib.add(card.ability.extra.chips, div_chips)
                 return {
                     message = localize {
                         type = 'variable',
                         key = 'a_chips',
-                        vars = { math.floor(card.ability.extra.chip_mod/2) }
+                        vars = { div_chips }
                     },
                     colour = G.C.CHIPS,
                     juice_card = context.other_card,
@@ -518,7 +527,7 @@ if next(SMODS.find_mod("paperback")) then
         end,
         add_to_deck = function(self, card, from_debuff)
             if MadLib.loop_func(G.hand.cards, function(v)
-                return MadLib.is_rank(v, SMODS.Ranks[card.ability.extra.rank or 'paperback_Apostle'].id)
+                return MadLib.joker_check_rank(v, card, 'paperback_Apostle')
             end) >= 12 then
                 G.GAME.pool_flags.plague_doctor_can_spawn = false
                 MadLib.event({
@@ -543,15 +552,11 @@ if next(SMODS.find_mod("paperback")) then
                 and not context.blueprint
             then
                 local count = MadLib.loop_func(G.hand.cards, function(v)
-                    return MadLib.is_rank(v, SMODS.Ranks[card.ability.extra.rank or 'paperback_Apostle'].id)
+                    return MadLib.is_rank(v, card.ability.extra.rank or 'paperback_Apostle')
                 end)
-
-                local target_card = context.scoring_hand[1]
-                local target_rank = card.ability.extra.rank or 'paperback_Apostle'
-
                 if 
                     context.scoring_name == (card.ability.extra.poker_hand or 'High Card')
-                    and not MadLib.joker_check_rank(target_card, card, target_rank)
+                    and not MadLib.joker_check_rank(target_card, card, 'paperback_Apostle')
                 then
                     count = count + 1
                     MadLib.simple_event(function()
@@ -641,7 +646,7 @@ if next(SMODS.find_mod("paperback")) then
             if not card.debuff then
                 local active = (not MadLib.list_matches_one(context.scoring_hand, function(v)
                     return not SMODS.has_no_rank(v)
-                        and PB_UTIL.compare_ranks(v:get_id(), card.ability.extra.lowest_rank)
+                        and PB_UTIL.compare_ranks(v:get_id(), card.ability.extra.lowest_rank) -- TODO: GET RANK
                 end))
                 if active then
                     return {
@@ -698,7 +703,7 @@ if next(SMODS.find_mod("paperback")) then
                 return {
                     vars = {
                         localize(card.ability.extra.rank, 'ranks'),
-                        card.ability.extra.scaling * (#G.deck.cards or 0)
+                        MadLib.multiply(card.ability.extra.scaling, #G.deck.cards or 0)
                     },
                     key = "j_paperback_one_sin_and_hundreds_of_good_deeds_fed"
                 }
@@ -712,7 +717,7 @@ if next(SMODS.find_mod("paperback")) then
             then
                 return {
                     mult = #G.deck.cards > 0 
-                        and (card.ability.extra.scaling * #G.deck.cards)
+                        and MadLib.multiply(card.ability.extra.scaling, #G.deck.cards)
                         or card.ability.extra.mult
                 }
             end
@@ -753,7 +758,7 @@ if next(SMODS.find_mod("aikoyorisshenanigans")) then
             if
                 context.repetition
                 and MadLib.list_matches_one(card.ability.extra.ranks, function(v)
-                    return MadLib.is_rank(context.other_card, SMODS.Ranks[v].id)
+                    return MadLib.is_rank(context.other_card, v)
                 end)
             then
                 return {
@@ -803,15 +808,15 @@ if next(SMODS.find_mod("Bunco")) then
 
                 if not SMODS.has_no_rank(target) then
                     MadLib.loop_table(Madcap.Lists.CropCircles.Ranks, function(k,v)
-                        if not MadLib.is_rank(target, SMODS.Ranks[k].id) then return end
-                        mult = mult + (v * card.ability.extra.mult_mod)
+                        if not MadLib.is_rank(target, k) then return end
+                        mult = MadLib.add(mult + MadLib.multiply(v, card.ability.extra.mult_mod))
                     end)
                 end
 
                 if not SMODS.has_no_suit(target) then
                     MadLib.loop_table(Madcap.Lists.CropCircles.Suits, function(k,v)
                         if not target:is_suit(k) then return end
-                        mult = mult + (v * card.ability.extra.mult_mod)
+                        mult = MadLib.add(mult + MadLib.multiply(v, card.ability.extra.mult_mod))
                     end)
                 end
 
@@ -844,7 +849,7 @@ if next(SMODS.find_mod("Bunco")) then
                 if MadLib.list_matches_all(context.scoring_hand, function(v)
                     return (not SMODS.has_no_rank(context.scoring_hand[i]))
                         and MadLib.list_matches_one(Madcap.Lists.Hack, function(v2)
-                            return MadLib.is_rank(v,SMODS.Ranks[v2].id)
+                            return MadLib.is_rank(v, v2)
                         end)
                 end) then
                     return {
@@ -868,7 +873,7 @@ if next(SMODS.find_mod("Bunco")) then
                 and context.cardarea == G.play
                 and context.other_card
                 and (MadLib.list_matches_one(MadLib.get_combined_list(MadLib.RankTypes.Face, MadLib.RankTypes.Irregular), function(v)
-                    return MadLib.is_rank(context.other_card, SMODS.Ranks[v].id)
+                    return MadLib.is_rank(context.other_card, v)
                 end) or SMODS.has_no_rank(context.other_card))
                 and SMODS.pseudorandom_probability(card, pseudorandom('zero_shapiro' .. G.SEED), 1, card.ability.extra.odds, 'bunc_zero_shapiro')
             then
@@ -926,7 +931,7 @@ if next(SMODS.find_mod("Bunco")) then
                 local rank      = Madcap.Funcs.get_lowest_rank()
                 local condition = false
                 MadLib.loop_func(context.scoring_hand, function(v)
-                    if not MadLib.is_rank(v, SMODS.Ranks[rank].id) then return end
+                    if not MadLib.is_rank(v, rank) then return end
                     MadLib.simple_event(function()
                         v:flip();
                         play_sound('card1', 1);
@@ -1006,10 +1011,10 @@ if next(SMODS.find_mod("UnStable")) then
 
                 MadLib.loop_func(hand, function(v)
                     if not is_binary then return end
-                    if MadLib.is_rank(v, SMODS.Ranks[MadLib.RankIds['1']].id) then
+                    if MadLib.is_rank(v, MadLib.RankIds['1']) then
                         final_rank = final_rank + 2 ^ (#hand-i)
                         suit_list[#suit_list+1] = hand[1].base.suit
-                    elseif MadLib.is_rank(v, SMODS.Ranks[MadLib.RankIds['0']].id) then
+                    elseif MadLib.is_rank(v, MadLib.RankIds['0']) then
                         is_binary = false
                         return
                     end
@@ -1064,7 +1069,7 @@ if next(SMODS.find_mod("UnStable")) then
         calculate = function(self, card, context)
             if context.before and not context.blueprint then
                 card.ability.extra.active = (MadLib.loop_func(context.scoring_hand, function(v)
-                    return MadLib.is_rank(v, SMODS.Ranks[card.ability.extra.rank].id)
+                    return MadLib.is_rank(v, card.ability.extra.rank)
                 end) == 1)
             end
 
@@ -1175,7 +1180,7 @@ if next(SMODS.find_mod("UnStable")) then
                 and not context.retrigger_joker
             then
                 MadLib.loop_func(context.scoring_hand, function(v)
-                    if  not (v:is_suit(card.ability.extra.suits[card.ability.immutable.side]) and MadLib.is_rank(v, SMODS.Ranks[card.ability.extra.ranks[card.ability.immutable.side]].id)) then return end
+                    if  not (v:is_suit(card.ability.extra.suits[card.ability.immutable.side]) and MadLib.is_rank(v, card.ability.extra.ranks[card.ability.immutable.side])) then return end
 
                     MadLib.simple_event(function()
                         big_juice(card)
@@ -1301,7 +1306,6 @@ if next(SMODS.find_mod("UnStable")) then
                 context.destroying_card
                 and context.destroying_card.to_destroy
             then
-                ----print(inspect(context))
                 MadLib.simple_event(function()
                     add_tag(Tag('tag_double'))
                     play_sound('generic1', 0.9 + math.random()*0.1, 0.8)
@@ -1688,7 +1692,7 @@ if next(SMODS.find_mod("MoreFluff")) then
                 (context.individual
                 and context.cardarea == G.play
                 and MadLib.list_matches_one(card.ability.extra.ranks, function(c)
-                    return MadLib.is_rank(context.other_card, SMODS.Ranks[c].id)
+                    return MadLib.is_rank(context.other_card, c)
                 end)) or context.forcetrigger
             then
                 return {
@@ -1787,7 +1791,7 @@ if next(SMODS.find_mod("MoreFluff")) then
                 local noted = false
                 for i=1,9 do
                     local r = Madcap.Lists.Sudoku[i]
-                    if MadLib.is_rank(context.other_card, SMODS.Ranks[r].id) then
+                    if MadLib.is_rank(context.other_card, r) then
                         noted = true
                         card.ability.extra.ranks[i] = 1
                         break
@@ -1796,7 +1800,7 @@ if next(SMODS.find_mod("MoreFluff")) then
                 -- 1 counts as Ace
                 if
                     not (noted or card.ability.extra.ranks[1] == 1)
-                    and MadLib.is_rank(context.other_card, SMODS.Ranks[MadLib.RankIds['1']].id)
+                    and MadLib.is_rank(context.other_card, MadLib.RankIds['1'])
                 then
                     card.ability.extra.ranks[1] = 1
                     noted = true
@@ -1928,7 +1932,7 @@ if next(SMODS.find_mod("MoreFluff")) then
         -- Rose-Tinted Glasses
         JokerDisplay.Definitions["j_mf_rosetinted"].calc_function = function(card)
             local _, _, scoring_hand = JokerDisplay.evaluate_hand()
-            local sixth_sense_eval = #scoring_hand == 1 and MadLib.is_rank(scoring_hand[1], SMODS.Ranks[card.ability.extra.rank].id)
+            local sixth_sense_eval = #scoring_hand == 1 and MadLib.is_rank(scoring_hand[1], card.ability.extra.rank)
             card.joker_display_values.active = G.GAME and G.GAME.current_round.hands_played == 0
             card.joker_display_values.count = (card.joker_display_values.active and sixth_sense_eval) and 1 or 0
         end
@@ -1940,9 +1944,9 @@ if next(SMODS.find_mod("MoreFluff")) then
             if text ~= 'Unknown' then
                 MadLib.loop_func(scoring_hand, function(v)
                     if not MadLib.list_matches_one(card.ability.extra.ranks, function(c)
-                        return MadLib.is_rank(context.other_card, SMODS.Ranks[c].id)
+                        return MadLib.is_rank(context.other_card, c)
                     end) then return end
-                    mult = mult * card.ability.extra.x_mult ^ JokerDisplay.calculate_card_triggers(scoring_card, scoring_hand)
+                    mult = MadLib.multiply(mult, MadLib.exponent(card.ability.extra.x_mult, JokerDisplay.calculate_card_triggers(scoring_card, scoring_hand)))
                 end)
             end
             card.joker_display_values.x_mult = mult
@@ -1993,9 +1997,9 @@ if next(SMODS.find_mod("MoreFluff")) then
             local text, _, scoring_hand = JokerDisplay.evaluate_hand()
             if text ~= 'Unknown' then
                 MadLib.loop_func(scoring_hand, function(v)
-                    if not MadLib.is_rank(v, SMODS.Ranks[card.ability.extra.rank].id) then return end
-                    mult = mult + card.ability.extra.mult * JokerDisplay.calculate_card_triggers(scoring_card, scoring_hand)
-                    chips = chips + card.ability.extra.chips * JokerDisplay.calculate_card_triggers(scoring_card, scoring_hand)
+                    if not MadLib.is_rank(v, card.ability.extra.rank) then return end
+                    mult    = MadLib.add(mult, MadLib.multiply(card.ability.extra.mult, JokerDisplay.calculate_card_triggers(scoring_card, scoring_hand)))
+                    chips   = MadLib.add(chips, MadLib.multiply(card.ability.extra.chips, JokerDisplay.calculate_card_triggers(scoring_card, scoring_hand)))
                 end)
             end
             card.joker_display_values.mult = mult
@@ -2073,10 +2077,10 @@ if next(SMODS.find_mod("allinjest")) then
                 context.repetition
                 and context.cardarea == G.play
                 and context.other_card
-                and MadLib.is_rank(context.other_card, SMODS.Ranks[card.ability.extra.ranks[1] or 'King'].id)
+                and MadLib.is_rank(context.other_card, card.ability.extra.ranks[1])
             then
                 local count = MadLib.loop_func(G.hand.cards, function(v)
-                    return MadLib.is_rank(context.other_card, SMODS.Ranks[card.ability.extra.ranks[2] or 'Queen'].id)
+                    return MadLib.is_rank(context.other_card, card.ability.extra.ranks[2])
                 end)
                 if count > 0 then
                     return {
@@ -2096,7 +2100,7 @@ if next(SMODS.find_mod("allinjest")) then
             if context.joker_main then
                 if not MadLib.list_matches_one(context.full_hand, function(v)
                     MadLib.loop_func(card.ability.extra.ranks or Madcap.Lists.RoyaltyRanks, function(v2)
-                       return MadLib.is_rank(v, SMODS.Ranks[v2].id)
+                       return MadLib.is_rank(v, v2)
                     end)
                 end) then
                     return { mult = card.ability.extra.mult }
@@ -2112,7 +2116,7 @@ if next(SMODS.find_mod("allinjest")) then
             if context.joker_main then
                 if MadLib.list_matches_one(context.full_hand, function(v)
                     MadLib.loop_func(card.ability.extra.ranks or Madcap.Lists.RoyaltyRanks, function(v2)
-                       return MadLib.is_rank(v, SMODS.Ranks[v2].id)
+                       return MadLib.is_rank(v, v2)
                     end)
                 end) then
                     local valid_cards = MadLib.get_list_matches(context.full_hand, function(v)
@@ -2146,7 +2150,7 @@ if next(SMODS.find_mod("allinjest")) then
                 context.joker_main
                 and MadLib.list_matches_one(context.full_hand, function(v)
                     MadLib.loop_func(card.ability.extra.ranks or Madcap.Lists.RoyaltyRanks, function(v2)
-                       return MadLib.is_rank(v, SMODS.Ranks[v2].id)
+                       return MadLib.is_rank(v, v2)
                     end)
                 end)
                 and SMODS.pseudorandom_probability(card, 'vari_seala', 1, card.ability.extra.odds)
@@ -2184,7 +2188,7 @@ if next(SMODS.find_mod("allinjest")) then
             then
                 MadLib.loop_func(G.pack_cards.cards, function(v)
                     if MadLib.list_matches_one(card.ability.extra.ranks or Madcap.Lists.RoyaltyRanks, function(v2)
-                        return MadLib.is_rank(v, SMODS.Ranks[v2].id)
+                        return MadLib.is_rank(v, v2)
                     end) then
                         MadLib.simple_event(function()
                             assert(SMODS.change_base(v, nil, card.ability.extra.rank or 'Jack'))
@@ -2257,7 +2261,7 @@ if next(SMODS.find_mod("allinjest")) then
                 context.joker_main
                 and MadLib.list_matches_all(context.scoring_hand, function(v)
                     return MadLib.list_matches_one(card.ability.extra.ranks, function(v)
-                        return MadLib.is_rank(context.other_card, SMODS.Ranks[v].id)
+                        return MadLib.is_rank(context.other_card, v)
                     end)
                 end)
             then
@@ -2283,7 +2287,7 @@ if next(SMODS.find_mod("allinjest")) then
                 and context.cardarea == G.play
                 and context.other_card
                 and MadLib.list_matches_one(card.ability.extra.ranks, function(v)
-                    return MadLib.is_rank(context.other_card, SMODS.Ranks[v].id)
+                    return MadLib.is_rank(context.other_card, v)
                 end)
             then
                 local mult = 0
@@ -2776,7 +2780,7 @@ if next(SMODS.find_mod("allinjest")) then
             if context.full_hand then
                 _cards = MadLib.loop_func(context.full_hand, function(v)
                     return MadLib.list_matches_one(card.ability.extra.ranks or Madcap.Lists.WordArtJokers, function(v2)
-                        return MadLib.is_rank(v, SMODS.Ranks[v2].id)
+                        return MadLib.is_rank(v, v2)
                     end)
                 end)
             end
@@ -2804,7 +2808,7 @@ if next(SMODS.find_mod("allinjest")) then
 
                     if has_rank then
                         for i = #MadLib.RankTypes.Base, 1, -1 do
-                            if MadLib.is_rank(v, SMODS.Ranks[MadLib.RankTypes.Base[i]].id) then
+                            if MadLib.is_rank(v, MadLib.RankTypes.Base[i]) then
                                 value = i+1
                                 break
                             end

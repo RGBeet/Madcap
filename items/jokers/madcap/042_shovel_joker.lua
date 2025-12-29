@@ -19,7 +19,7 @@ return {
             (context.cardarea == G.play
                 and context.individual
                 and context.other_card
-                and MadLib.is_rank(context.other_card, SMODS.Ranks[card.ability.extra.rank].id)
+                and MadLib.is_rank(context.other_card, card.ability.extra.rank or 'rgmc_Knight')
                 and MadLib.has_suit_in_list(context.other_card, MadLib.SuitTypes.Dark))
                 or context.forcetrigger -- demicolon
             then

@@ -205,27 +205,19 @@ function CardArea:shuffle(_seed)
 				end
 			end
 			if card.seal and card.seal == 'rgmc_patina' then
-				--tell('Patina Seal')
 				while pos < math.min(#self.cards / 2,#self.cards) do pos = move_forwards(pos, self.cards) end
 				MadLib.number_func(10, function()
 					if not SMODS.pseudorandom_probability(card, 'patina', 1, 3) then return end
 					pos = move_forwards(pos, self.cards)
 					rolls = rolls + 1
 				end)
-				--tell('Position for Patina is now' .. tostring(pos) .. '/' .. tostring(#self.cards) .. '.')
-				----print(self.cards[pos].seal)
-				--tell(tostring(rolls) .. ' rolls.')
 			elseif card.seal and card.seal == 'rgmc_cuprum' then
-				--tell('Cuprum Seal')
 				while pos > math.max(#self.cards / 2,1) do pos = move_backwards(pos, self.cards) end
 				MadLib.number_func(10, function()
 					if not SMODS.pseudorandom_probability(card, 'cuprum', 1, 2) then return end
 					pos = move_backwards(pos, self.cards)
 					rolls = rolls + 1
 				end)
-				--tell('Position for Cuprum is now' .. tostring(pos) .. '/' .. tostring(#self.cards) .. '.')
-				----print(self.cards[pos].seal)
-				--tell(tostring(rolls) .. ' rolls.')
 			elseif SMODS.has_enhancement(card, 'm_rgmc_plumbum') then
 				tell('Plumbum enhancement')
 				while pos > 1 do
@@ -234,8 +226,6 @@ function CardArea:shuffle(_seed)
 					end
 					pos = move_backwards(pos, self.cards)
 				end
-				--print(self.cards[pos].config.center.key)
-				--tell('Position for Plumbum is now' .. tostring(pos) .. '/' .. tostring(#self.cards) .. '.')
 			end
 		end
 		pos = pos + 1
@@ -316,7 +306,6 @@ Madcap.Funcs.has_major_sticker = function(self)
 end
 
 function MadLib.is_shop_area(area)
-	----print('area is' .. area.key)
 	return area == (G.shop_jokers or {})
     or area == (G.shop_vouchers or {})
     or area == (G.shop_booster or {})
@@ -660,7 +649,6 @@ function create_UIBox_HUD_blind()
     local stake_sprite = get_stake_sprite(G.GAME.stake or 1, 0.5)
 
 	--tell('UI to find:')
-	----print(orig.nodes[2].nodes[2].nodes[2].nodes)
 
 	local score_text = { n=G.UIT.R, config={align = "cm", maxw = 2.8}, nodes={
 				{n=G.UIT.T, config={ref_table = G.GAME, ref_value = 'chips_text', lang = G.LANGUAGES['en-us'], scale = 0.75, colour = G.C.WHITE, id = 'chip_UI_count', func = 'chip_UI_set', shadow = true}}}}
@@ -698,7 +686,6 @@ function create_UIBox_blind_choice(type, run_info)
 		local cost_string = ' $' .. tostring(cost)
 		local function insert_after_blind_name(nodes, new_node)
 			for i, node in ipairs(nodes or {}) do
-				--print(node)
 				if node.config and node.config.id == 'blind_name' then
 					-- Insert right after
 					table.insert(nodes, i + 1, new_node)
@@ -772,7 +759,6 @@ function Card:stop_drag()
 		local _type 	= fancy_cards[i].type
 		local _target, _rank, _suit
 
-		--print(fancy_cards[i])
 		if _type == 'm_rgmc_lazurite' then
 			local changed
 			local copy_rank = _index < #self.area.cards
@@ -923,7 +909,6 @@ if not Entropy then
 		end
 	end
 else
-	--print('chicken jockey!')
 end
 
 local ease_dollars_ref = ease_dollars
@@ -1045,7 +1030,6 @@ function Card:shatter()
 	if self.ability.glass_michel then
 		self:glass_michel_save()
 	else
-		--print('shatter')
 		shatter_ref(self)
 	end
 end
@@ -1333,11 +1317,9 @@ function evaluate_poker_hand(hand)
 		if spider and results['Straight'][1] then
 			local cardtype = hand[1]:has_light_suit()
 				and 'light' or 'dark'
-			--print('card type is ' .. cardtype)
 			for _, v in pairs(hand) do
 				if cardtype == 'light' then
 					if v:has_light_suit() then
-						----print('light -> dark')
 						cardtype = 'dark'
 					else
 						cardtype = nil
@@ -1345,7 +1327,6 @@ function evaluate_poker_hand(hand)
 					end
 				else
 					if v:has_dark_suit() then
-						----print('dark -> light')
 						cardtype = 'light'
 					else
 						cardtype = nil
@@ -1480,7 +1461,6 @@ function Card:start_dissolve(...)
 			or (self.ability.rgmc_shielded
 			or self.ability.rgmc_twinkling)
 		then
-			----print("Piss off")
 			return
 		end
     end
@@ -1634,7 +1614,6 @@ end
 
 local poker_hands_info_ref = G.FUNCS.get_poker_hand_info
 G.FUNCS.get_poker_hand_info = function(_cards)
-	----print('Get Poker Hand Info')
 	G.GAME.current_subhands = nil
 	return poker_hands_info_ref(_cards)
 end

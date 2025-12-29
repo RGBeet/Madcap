@@ -136,7 +136,6 @@ payload = '''if G.shop_jokers then
     MadLib.loop_func(G.shop_jokers.cards, function(v,i)
         table.insert(G.GAME.missed_jokers,v.config.center.key)
     end)
-    ----print(tostring(#G.GAME.missed_jokers) .. ' missed Jokers.')
 end'''
 
 # Dead jokers list
@@ -148,7 +147,6 @@ pattern = '''self.removed = true'''
 position = 'after'
 payload = '''if G.GAME.dead_jokers then
 	table.insert(G.GAME.dead_jokers,self.config.center.key)
-    ----print(tostring(#G.GAME.dead_jokers) .. ' \"unalived\" Jokers.')
 end'''
 
 [[patches]]

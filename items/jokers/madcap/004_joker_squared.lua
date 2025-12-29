@@ -15,7 +15,7 @@ return {
                 ((context.cardarea == G.play and context.other_card)
                 or context.forcetrigger)
                 and MadLib.list_matches_one(MadLib.RankTypes['Square'], function(c)
-                    return MadLib.is_rank(context.other_card, SMODS.Ranks[c].id) 
+                    return MadLib.is_rank(context.other_card, c) 
                 end)
             then
                 return { mult = lenient_bignum(card.ability.extra.mult) }

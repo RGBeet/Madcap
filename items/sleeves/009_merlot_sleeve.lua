@@ -57,7 +57,6 @@ return {
 						func = function()
 							for i=1, #G.playing_cards do
 								local v = G.playing_cards[i]
-								--print(i%2==0 and "YES" or "NO")
 								if i%2==0 then
 									if v:has_light_suit() then
 										v:change_suit('rgmc_blooms')

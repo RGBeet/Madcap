@@ -26,8 +26,8 @@ return {
             then
                 if
                     context.forcetrigger
-                    or MadLib.is_rank(context.other_card, SMODS.Ranks[card.ability.extra.ranks[1]].id)
-                    or MadLib.is_rank(context.other_card, SMODS.Ranks[card.ability.extra.ranks[2]].id)
+                    or MadLib.is_rank(context.other_card, card.ability.extra.ranks[1] or MadLib.RankIds['0'])
+                    or MadLib.is_rank(context.other_card, card.ability.extra.ranks[2] or MadLib.RankIds['1'])
                 then
                     return { chips = card.ability.extra.chips }
                 end

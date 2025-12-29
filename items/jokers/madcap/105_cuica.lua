@@ -21,7 +21,7 @@ return {
         calculate = function(self, card, context)
             -- Reset if played hand does not contain a 2
             if context.before and MadLib.list_matches_all(context.full_hand, function(v)
-                return not MadLib.is_rank(v, SMODS.Ranks[card.ability.extra.rank or '2'].id) 
+                return not MadLib.joker_check_rank(context.other_card, card, '2')
             end) then 
                 card.ability.extra.chips = 0
                 return { message = localize('k_reset') }
@@ -30,7 +30,7 @@ return {
             if 
                 (context.individual 
                 and context.cardarea == G.play 
-                and MadLib.joker_check_rank(context.other_card, card, '2') 
+                and MadLib.joker_check_rank(context.other_card, card, '2')
                 and not context.blueprint)
                 or context.forcetrigger
             then

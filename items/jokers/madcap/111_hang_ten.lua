@@ -24,28 +24,19 @@ return {
                 and context.cardarea == G.hand 
                 and not context.end_of_round
             then
-                if MadLib.is_rank(context.other_card, SMODS.Ranks[card.ability.extra.ranks[1] or '10'].id) then
+                if MadLib.is_rank(context.other_card, card.ability.extra.ranks[1] or '10') then
                     return not context.other_card.debuff
                         and { mult = card.ability.extra.mult }
                         or  { message = localize('k_debuffed'), colour = G.C.RED }
                 end
                 if 
-                    MadLib.is_rank(context.other_card, SMODS.Ranks[card.ability.extra.ranks[2] or '2'].id)
+                    MadLib.is_rank(context.other_card, card.ability.extra.ranks[2] or '2')
                     and context.other_card.debuff
                 then
                     return { xmult = card.ability.extra.x_mult }
                 end
             end
-            -- Gives +10 Mult, and X0.8 Mult if holding at least one 2
-            if context.forcetrigger then
-                return { 
-                    mult = card.ability.extra.mult,
-                    xmult = MadLib.list_matches_one(G.hand.cards, function(v)
-                        return MadLib.is_rank(v, SMODS.Ranks[card.ability.extra.ranks[2] or '2'].id)
-                    end) and 0.8 or nil
-                }
-            end
         end,
-        demicoloncompat = true
+        demicoloncompat = false
     }
 }

@@ -55,6 +55,7 @@ return {
             then
 
                 local new_food = math.random(1, 6)
+                print(new_food)
                 card.ability.immutable.mode = new_food
 
                 if -- if doable, show a line

@@ -28,7 +28,7 @@ return {
                 context.individual 
                 and context.cardarea == G.hand 
                 and not context.end_of_round
-                and MadLib.is_rank(context.other_card, SMODS.Ranks[card.ability.extra.rank or 'Jack'].id)
+                and MadLib.joker_check_rank(context.other_card, card, 'Jack')
             then
                 if context.other_card.debuff then
                     return {

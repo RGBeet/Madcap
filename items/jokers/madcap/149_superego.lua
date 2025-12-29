@@ -31,7 +31,6 @@ function Madcap.Funcs.get_best_hand(cards)
 
     MadLib.loop_func(combo_list, function(c)
         local _, _, poker_hands, _, _ = G.FUNCS.get_poker_hand_info(c)
-        ----print(poker_hands)
         MadLib.loop_table(poker_hands, function(k,v)
             if (type(v) == 'table' and #v > 0) and poker_hand_table[k] == nil then
                 poker_hand_table[k] = true
@@ -46,7 +45,6 @@ function Madcap.Funcs.get_best_hand(cards)
 
     local poker_hand_list = {}
     for k,_ in pairs(poker_hand_table) do poker_hand_list[#poker_hand_list+1] = k end
-    ----print(poker_hand_table)
 
     MadLib.loop_func(poker_hand_list, function(h)
         if not G.GAME.hands[h].visible then return end

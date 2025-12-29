@@ -27,7 +27,6 @@ return {
                 end, function(a,b)
                     return MadLib.get_card_total_value(a) > MadLib.get_card_total_value(b)
                 end)
-                --print(eligible_cards)
                 MadLib.loop_func(eligible_cards, function(v)
                     MadLib.simple_event(function()
                         local edition = poll_edition('providence', nil, true, true)

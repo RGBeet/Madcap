@@ -30,7 +30,6 @@ return {
                 or context.forcetrigger
             then
                 if card.ability.extra.retriggers > 0 and context.other_card then
-                    --print("Hello!")
                     card.ability.extra.retriggers = card.ability.extra.retriggers - 1
                     return {
                         repetitions = 1,

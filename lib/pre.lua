@@ -8,10 +8,8 @@ function print_debug_text(text,prefix)
 	if type(text) == 'string' then
 		finished_text = "[MADCAP] - "..(prefix and prefix..' ' or '')..(text or '???')
 	else
-		--print(text)
 		finished_text = "[MADCAP] - TEXT TYPE IS "..type(text)
 	end
-	--print(finished_text)
 end
 
 function tell(text)
@@ -29,7 +27,6 @@ end
 
 function tell_list(text,list)
     print_debug_text(text..":")
-    --print(list)
 end
 
 Madcap = {
@@ -574,7 +571,6 @@ Madcap.GoldenHouseFuncs = {
 -- For the Red Pill, Blue Pill
 MadLib.loop_table(MadLib.JokerLists.Chips, function(key,list)
 	tell('Looping through '..key)
-	--print(list)
     MadLib.loop_func(list, function(v)
         tell('Attempting to load "'..tostring(v).. '" as a Chip Joker')
         if not SMODS.Centers[v] then return end
@@ -586,7 +582,6 @@ end)
 
 MadLib.loop_table(MadLib.JokerLists.Mult, function(key,list)
 	tell('Looping through '..key)
-	--print(list)
     MadLib.loop_func(list, function(v)
         tell('Attempting to load "'..tostring(v).. '" as a Mult Joker')
         if not SMODS.Centers[v] then return end

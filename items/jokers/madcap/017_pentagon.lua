@@ -20,7 +20,7 @@ return {
                 or context.forcetrigger
             then
                 local matches = MadLib.list_matches_one(Madcap.Lists.PentagonalNumbers, function(c)
-                    return MadLib.is_rank(context.other_card, SMODS.Ranks[c].id)
+                    return MadLib.is_rank(context.other_card, c)
                 end)
                 if matches then return { chips = card.ability.extra.chips } end
             end

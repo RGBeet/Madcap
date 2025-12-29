@@ -32,7 +32,7 @@ return {
                 and not context.repetition
                 and not context.blueprint
                 and context.other_card
-                and MadLib.is_rank(context.other_card, G.GAME.current_round.rgmc_edwin_card.id)
+                and MadLib.is_rank(context.other_card, G.GAME.current_round.rgmc_edwin_card.rank)
                 and context.other_card:is_suit(G.GAME.current_round.rgmc_edwin_card.suit)
             then -- has both suit and rank
                 if context.other_card.debuff then -- don't count debuffed cards haha

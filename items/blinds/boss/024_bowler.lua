@@ -44,7 +44,7 @@ return {
                 local pins_knocked = {}
                 MadLib.loop_func(G.hand.cards, function(v,i)
                     if MadLib.list_matches_one(MadLib.RankTypes['Triangular'], function(v2)
-                        return MadLib.is_rank(v,SMODS.Ranks[v2].id)
+                        return MadLib.is_rank(v, MadLib.rank_id(v2))
                     end) then
                         tell('Add pins knocked...')
                         pins_knocked = Madcap.Funcs.discard_aoe(v, G.hand, i, pins_knocked)

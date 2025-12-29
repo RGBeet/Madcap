@@ -214,7 +214,7 @@ if JokerDisplay then
             if text ~= 'Unknown' then
                 mult = MadLib.multiply(MadLib.JokerDisplay.get_cards_matching(scoring_hand, function(v)
                     return MadLib.list_matches_one(MadLib.RankTypes['Square'], function(c)
-                        return MadLib.is_rank(v, SMODS.Ranks[c].id)
+                        return MadLib.is_rank(v, c)
                     end)
                 end), card.ability.extra.mult)
             end
@@ -238,7 +238,7 @@ if JokerDisplay then
             if text ~= 'Unknown' then
                 chips = MadLib.multiply(MadLib.JokerDisplay.get_cards_matching(scoring_hand, function(v)
                     return MadLib.list_matches_one(Madcap.Lists.PentagonalNumbers, function(c)
-                        return MadLib.is_rank(v, SMODS.Ranks[c].id)
+                        return MadLib.is_rank(v, c)
                     end)
                 end), card.ability.extra.chips)
             end
@@ -310,7 +310,7 @@ if JokerDisplay then
             MadLib.loop_func(G.hand.cards, function(v)
                 if
                     v.highlighted
-                    or not (MadLib.is_rank(v, G.GAME.current_round and G.GAME.current_round.rgmc_edwin_card.id or 5)
+                    or not (MadLib.is_rank(G.GAME.current_round and G.GAME.current_round.rgmc_edwin_card.rank, card, '5')
                     and v:is_suit(G.GAME.current_round and G.GAME.current_round.rgmc_edwin_card.suit or 'Diamonds'))
                 then
                     return
@@ -493,7 +493,7 @@ if JokerDisplay then
             local spectrum  = poker_hands[card.ability.extra.poker_hands[2] or  Madcap.Funcs.get_spectrum()]
             if 
                 (flush or spectrum) 
-                and MadLib.is_rank(playing_card, SMODS.Ranks[card.ability.extra.rank].id)
+                and MadLib.joker_check_rank(playing_card, joker_card, 'Queen')
             then
                 return MadLib.multiply(joker_card.ability.extra.repetitions, JokerDisplay.calculate_joker_triggers(joker_card))
             end
@@ -518,9 +518,9 @@ if JokerDisplay then
         end,
         retrigger_function = function(playing_card, scoring_hand, held_in_hand, joker_card)
             if not held_in_hand then return 0 end
-            if MadLib.is_rank(playing_card, SMODS.Ranks[card.ability.extra.rank].id) then
+            if MadLib.joker_check_rank(playing_card, joker_card, '4') then
                 local repetitions = MadLib.maximum(joker_card.ability.extra.repetitions, joker_card.ability.extra.max_repetitions)
-                return MadLib.multiply(joker_card.ability.extra.repetitions, JokerDisplay.calculate_joker_triggers(joker_card))
+                return MadLib.multiply(repetitions, JokerDisplay.calculate_joker_triggers(joker_card))
             end
             return 0
         end
@@ -803,8 +803,8 @@ if JokerDisplay then
             local chips = 0
             if text ~= 'Unknown' then
                 MadLib.loop_func(scoring_hand, function(v)
-                    if not (MadLib.is_rank(v, SMODS.Ranks[card.ability.extra.ranks[1]].id)
-                    or MadLib.is_rank(v, SMODS.Ranks[card.ability.extra.ranks[2]].id)) then return end
+                    if not (MadLib.is_rank(v, card.ability.extra.ranks[1])
+                    or MadLib.is_rank(v, card.ability.extra.ranks[2])) then return end
                     chips = MadLib.add(chips, card.ability.extra.chips)
                 end)
             end
@@ -1242,7 +1242,7 @@ if JokerDisplay then
             local text, _, scoring_hand = JokerDisplay.evaluate_hand()
             if text ~= 'Unknown' then
                 count = MadLib.JokerDisplay.get_cards_matching(scoring_hand, function(v)
-                    return MadLib.is_rank(v, SMODS.Ranks['2'].id)
+                    return MadLib.joker_check_rank(v, card, '6')
                 end)
             end
             card.joker_display_values.count     = count
@@ -1288,7 +1288,7 @@ if JokerDisplay then
             if text ~= 'Unknown' then
                 if G.GAME.current_round.rgmc_wizard_card.rank_discovered then
                     rank = MadLib.multiply(MadLib.JokerDisplay.get_cards_matching(scoring_hand, function(v)
-                        return MadLib.is_rank(v, SMODS.Ranks[G.GAME.current_round.rgmc_wizard_card.rank].id)
+                        return MadLib.is_rank(v, G.GAME.current_round.rgmc_wizard_card.rank)
                     end), card.ability.extra.chips)
                     rank_text = localize(G.GAME.current_round.rgmc_wizard_card.rank, "ranks")
                 end
@@ -1344,7 +1344,7 @@ if JokerDisplay then
                     if 
                         not (playing_card.facing == 'back')
                         and not playing_card.debuff 
-                        and MadLib.is_rank(playing_card, SMODS.Ranks['rgmc_Knight'].id)
+                        and MadLib.joker_check_rank(playing_card, card, 'rgmc_Knight')
                     then
                         count = MadLib.add(count, JokerDisplay.calculate_card_triggers(playing_card, nil, true))
                     end
@@ -1745,7 +1745,7 @@ if JokerDisplay then
         calc_function = function(card)
             local playing_hand = next(G.play.cards)
             card.joker_display_values.x_mult = playing_hand and MadLib.exponent(MadLib.JokerDisplay.get_cards_matching(scoring_hand, function(v)
-                return MadLib.is_rank(v, SMODS.Ranks['rgmc_Sum'].id)
+                return MadLib.joker_check_rank(v, card, 'rgmc_Knight')
             end), card.ability.extra.x_chips) or 1
         end
     }
@@ -1895,7 +1895,7 @@ if JokerDisplay then
                 if 
                     not (playing_card.facing == 'back') 
                     and not playing_card.debuff 
-                    and MadLib.is_rank(playing_card, SMODS.Ranks['rgmc_Knight'].id)
+                    and MadLib.joker_check_rank(playing_card, card, 'rgmc_Knight')
                     and MadLib.has_suit_in_list(playing_card, MadLib.SuitTypes.Dark)
                 then
                     count = MadLib.add(count, JokerDisplay.calculate_card_triggers(playing_card, nil, true))

@@ -27,7 +27,6 @@ return {
             if Madcap.Funcs.get_end_of_round(context) then
                 return MadLib.food_joker_logic(card)
             end
-
             if context.after then
                 card.ability.extra.xmult_store = 0
             end

@@ -36,9 +36,20 @@ return {
                 Madcap.Funcs.get_end_of_round(context)
                 and SMODS.pseudorandom_probability(card, 'bball_pasta', 1, card.ability.extra.odds)
             then
-                card.ability.extra.mult     = MadLib.add(card.ability.extra.mult, card.ability.extra.mult_mod)
-                card.ability.extra.chips    = MadLib.add(card.ability.extra.chips, card.ability.extra.chip_mod)
-                return { message = localize("k_upgrade_ex") }
+                SMODS.scale_card(card, {
+				    ref_table       = card.ability.extra,
+				    ref_value       = "chips",
+				    scalar_value    = "chip_mod",
+				    message_key     = "a_chips",
+				    message_colour  = G.C.CHIPS,
+			    })
+                SMODS.scale_card(card, {
+				    ref_table       = card.ability.extra,
+				    ref_value       = "mult",
+				    scalar_value    = "mult_mod",
+				    message_key     = "a_mult",
+				    message_colour  = G.C.MULT,
+			    })
             end
         end,
         demicoloncompat = true,

@@ -52,7 +52,6 @@ return {
                 and context.card.config.center.set == "Joker"
                 and context.card.config.center.rarity == 1 -- common joker
             then
-                --print(context.card.config.center.rarity)
                 local new_edition = poll_edition('standard_edition'..G.GAME.round_resets.ante, nil, true, true, Madcap.Lists.LollipopEditions)
                 MadLib.simple_event(function()
                     local card = copy_card(self, nil, nil, nil, false)

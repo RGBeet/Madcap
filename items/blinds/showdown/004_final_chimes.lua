@@ -18,7 +18,7 @@ return {
                 local _, _, _, scoring = G.FUNCS.get_poker_hand_info(cards)
                 if next(find_joker('Splash')) then scoring = cards end
                 return not MadLib.list_matches_one(scoring, function(v)
-                    return MadLib.is_rank(v,SMODS.Ranks[G.GAME.x_value].id)
+                    return MadLib.is_rank(v,G.GAME.x_value)
                 end)
             end
         end

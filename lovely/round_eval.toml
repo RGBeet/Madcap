@@ -180,14 +180,6 @@ times = 1
 
 [[patches]]
 [patches.pattern]
-target = 'functions/common_events.lua'
-pattern = '''local luxury_pitch = 1.0'''
-position = 'after'
-payload = '''--print('LUXURY PTS: '..number_format(num_lp))'''
-match_indent = true
-
-[[patches]]
-[patches.pattern]
 target = "functions/common_events.lua"
 pattern = '''definition = {n=G.UIT.ROOT, config={align = 'cm', colour = G.C.CLEAR}, nodes={
                         {n=G.UIT.R, config={id = 'cash_out_button', align = "cm", padding = 0.1, minw = 7, r = 0.15, colour = G.C.ORANGE, shadow = true, hover = true, one_press = true, button = 'cash_out', focus_args = {snap_to = true}}, nodes={

@@ -21,7 +21,7 @@
                 (context.cardarea == G.hand and not context.end_of_round) -- held cards
                 or context.forcetrigger
             then
-                if MadLib.is_rank(context.other_card, card.ability.extra.rank) then
+                if MadLib.is_rank(context.other_card, card.ability.extra.rank or 'rgmc_Knight') then
                     return not context.other_card.debuff
                         and { xchips = card.ability.extra.x_chips }
                         or { message = localize('k_debuffed'), colour = G.C.RED, card = card }
@@ -30,7 +30,7 @@
         end,
         in_pool = function(self, args) -- at least one Knight rank
             return MadLib.list_matches_one(G.playing_cards or {}, function(v)
-                return v.base.value == 'rgmc_Knight'
+                return MadLib.is_rank(v, self.config.extra.rank or 'rgmc_Knight')
             end)
         end,
         demicoloncompat = true,

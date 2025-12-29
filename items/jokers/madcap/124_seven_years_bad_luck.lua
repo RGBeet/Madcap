@@ -50,7 +50,7 @@ return {
                 MadLib.loop_func(context.removed, function(v)
                     if not v.shattered then return end
                     card.ability.denominator_mod = card.ability.denominator_mod + (MadLib.list_matches_one(card.ability.extra.ranks, function(v2)
-                        return MadLib.is_rank(v, SMODS.Ranks[v2].id)
+                        return MadLib.is_rank(v, v2)
                     end) and 2 or 1)
                 end)
                 -- Add denominator mod

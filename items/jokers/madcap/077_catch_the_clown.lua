@@ -44,14 +44,12 @@ return {
             end
             if context.after then
                 local _index = nil
-                --print(tostring(#G.deck.cards) .. ' cards...')
                 for i=1,#G.deck.cards do
                     if MadLib.compare_ids(card, G.deck.cards[i], 'rgmc_clown') then
                         _index = i
                         break
                     end
                 end
-                --tell('Index in deck is ' .. tostring(_index) .. '...')
             end
             -- Target card does not score.
             if not card.ability.extra.caught and not context.blueprint and context.before then

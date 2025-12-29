@@ -2663,51 +2663,6 @@ return {
 			},
 		},
         Planet = {
-            c_rgmc_pikari = {
-                name = "Pikari",
-                text = {
-					"({V:1}lvl.#3#{})({V:2}lvl.#4#{})",
-					"Level up",
-					"{C:attention}#1#{}",
-					"and {C:attention}#2#{},",
-                },
-            },
-            c_rgmc_suojata = {
-                name = "Suojata",
-                text = {
-					"({V:1}lvl.#3#{})({V:2}lvl.#4#{})",
-					"Level up",
-					"{C:attention}#1#{}",
-					"and {C:attention}#2#{},",
-                },
-            },
-            c_rgmc_kukinta = {
-                name = "Kukinta",
-                text = {
-					"({V:1}lvl.#3#{})({V:2}lvl.#4#{})",
-					"Level up",
-					"{C:attention}#1#{}",
-					"and {C:attention}#2#{},",
-                },
-            },
-            c_rgmc_veitsi = {
-                name = "Veitsi",
-                text = {
-					"({V:1}lvl.#3#{})({V:2}lvl.#4#{})",
-					"Level up",
-					"{C:attention}#1#{}",
-					"and {C:attention}#2#{},",
-                },
-            },
-            c_rgmc_tyhja = {
-                name = "Tyhjä",
-                text = {
-					"({V:1}lvl.#3#{})({V:2}lvl.#4#{})",
-					"Level up",
-					"{C:attention}#1#{}",
-					"and {C:attention}#2#{},",
-                },
-            },
             c_rgmc_tatooine = {
                 name = "Tatoiine",
                 text = {
