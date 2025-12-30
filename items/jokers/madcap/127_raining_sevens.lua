@@ -29,7 +29,7 @@ return {
                 and not context.blueprint 
                 and not context.repetition 
             then
-                return { numerator = MadLib.add(context.numerator, card.ability.numerator) }
+                return { numerator = context.numerator + card.ability.extra.numerator }
             end
             -- Up the numerator
             if 
@@ -46,7 +46,7 @@ return {
                         ref_value   = "numerator",
                         scalar_value = "numerator_mod",
                         scaling_message = {
-                            message = "+" .. number_format(card.ability.card.ability.numerator_mod),
+                            message = "+" .. number_format(card.ability.extra.numerator_mod),
                             colour = G.C.GREEN
                         }
                     })
@@ -57,9 +57,9 @@ return {
                 context.pseudorandom_result 
                 and context.result 
             then
-                local decrement = MadLib.multiply(card.ability.extra.numerator_mod, 2)
-                decrement = MadLib.is_positive_number(MadLib.subtract(card.ability.extra.numerator, decrement)) and decrement or card.ability.extra.numerator
-                card.ability.extra.numerator = MadLib.subtract(card.ability.extra.numerator, decrement)
+                local decrement = card.ability.extra.numerator_mod
+                decrement = MadLib.is_positive_number(card.ability.extra.numerator - decrement) and decrement or card.ability.extra.numerator
+                card.ability.extra.numerator = card.ability.extra.numerator - decrement
                 return {
                     message = "-" .. number_format(decrement),
                     colour  = G.C.RED

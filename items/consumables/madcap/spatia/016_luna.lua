@@ -13,18 +13,10 @@ return {
         cost    = 8,
         aurinko = true,
         loc_vars = function(self, info_queue, card)
-            local amt = G.GAME.consumeable_usage_total
-                and Madcap.Lists.ConsumableSpatias[card.ability.set]
-                and (G.GAME.consumeable_usage_total or {})[Madcap.Lists.ConsumableSpatias[card.ability.set]]
-                or 0
-            return Madcap.Funcs.get_special_card_vars(self.config.set, (amt * self.config.xchips) + 1, (amt * self.config.xmult) + 1)
+            return Madcap.Funcs.get_special_card_vars(card)
         end,
         can_use = function(self, card)
-            local amt = G.GAME.consumeable_usage
-                and Madcap.Lists.ConsumableSpatias[card.ability.set]
-                and (G.GAME.consumeable_usage_total or {})[Madcap.Lists.ConsumableSpatias[card.ability.set]]
-                or 0
-            return amt > 0
+            return Madcap.Funcs.get_special_card_multiplier(card) > 0
         end,
         use = function(self, card, area, copier)
             Madcap.Funcs.use_consumable_specific_special_card(card)

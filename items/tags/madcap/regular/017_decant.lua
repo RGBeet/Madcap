@@ -1,4 +1,4 @@
-function MadLib.do_level_up(card,poker_hand,amt)
+function MadLib.do_level_up(card, poker_hand, amt)
 	update_hand_text({ sound = "button", volume = 0.7, pitch = 0.8, delay = 0.3 }, {
 		handname = localize(poker_hand, "poker_hands"),
 		chips = G.GAME.hands[poker_hand].chips,
@@ -15,7 +15,6 @@ end
 return {
     categories = {
         'Tags',
-        'Mayhem',
     },
     data = {
         object_type = "Tag",

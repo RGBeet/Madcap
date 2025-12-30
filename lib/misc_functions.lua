@@ -1135,3 +1135,78 @@ else
 	function Madcap.Funcs.get_joker_hand(card, default) return get_vals(card, default, 'suit', 'override_hand') end
 	function Madcap.Funcs.get_joker_hands(card, default) return get_vals(card, default, 'suits', 'override_hands') end
 end
+
+Madcap.Lists.ConsumableSpatias = {
+    ['Tarot']               = 'tarot',
+    ['Planet']              = 'planet',
+    ['Spectral']            = 'spectral',
+    ['CosmaTarot']          = 'cosma',
+    ['SpatiaPlanet']        = 'spatia',
+    ['PotentiaCrystal']     = 'potentia'
+}
+
+function Madcap.Funcs.get_special_card_multiplier(card)
+    return G.GAME.consumeable_usage_total
+        and Madcap.Lists.ConsumableSpatias[card.ability.set]
+        and (G.GAME.consumeable_usage_total or {})[Madcap.Lists.ConsumableSpatias[card.ability.set]]
+        or 0
+end
+
+function Madcap.Funcs.get_special_card_vars(card,xchips,xmult,colour)
+    local amt = Madcap.Funcs.get_special_card_multiplier(card)
+    return {
+        vars = {
+			localize(MadLib.get_most_played_hand(), 'poker_hands'),
+			card.ability.xchips,
+			card.ability.xmult,
+            localize('k_'..Madcap.Lists.ConsumableSpatias[card.ability.set]),
+			MadLib.add(MadLib.multiply(amt, card.ability.xchips), 1),
+			MadLib.add(MadLib.multiply(amt, card.ability.xmult), 1),
+			colours = { colour or G.C.PURPLE }
+        }
+    }
+end
+
+function Madcap.Funcs.use_consumable_specific_special_card(card)
+	local select_hand       = MadLib.get_most_played_hand()
+	local amt               = Madcap.Funcs.get_special_card_multiplier(card)
+    
+	if not select_hand then return end
+    
+	
+	local new_chips = MadLib.add(G.GAME.hands[select_hand].chips, MadLib.multiply(G.GAME.hands[select_hand].chips, MadLib.multiply(amt, card.ability.xchips)))
+	local new_mult  = MadLib.add(G.GAME.hands[select_hand].mult, MadLib.multiply(G.GAME.hands[select_hand].mult, MadLib.multiply(amt, card.ability.xmult)))
+
+    if not (Talisman and Talisman.config_file.disable_anims) then
+        update_hand_text({delay = 0}, {handname = localize(select_hand, 'poker_hands'), StatusText = true})
+        
+		MadLib.event({trigger = 'after', delay = 0.2, func = function()
+            play_sound('tarot1')
+            if card and card.juice_up then card:juice_up(0.8, 0.5) end
+            G.TAROT_INTERRUPT_PULSE = true
+            return true end })
+		update_hand_text({delay = 1.0}, {mult = 'X' .. number_format(MadLib.add(MadLib.multiply(card.ability.xmult, amt), 1)), StatusText = true})
+
+		update_hand_text({delay = 0.25}, {mult = new_mult, StatusText = true})
+        
+		MadLib.event({trigger = 'after', delay = 0.9, func = function()
+            play_sound('tarot1')
+            if card and card.juice_up then card:juice_up(0.8, 0.5) end
+            return true end })
+		update_hand_text({delay = 1.0}, {chips = 'X' .. number_format(MadLib.add(MadLib.multiply(card.ability.xchips, amt), 1)), StatusText = true})
+
+		update_hand_text({delay = 0.25}, {chips = new_chips})
+        
+		MadLib.event({trigger = 'after', delay = 0.9, func = function()
+            play_sound('tarot1')
+            if card and card.juice_up then card:juice_up(0.8, 0.5) end
+            G.TAROT_INTERRUPT_PULSE = nil
+            return true end })
+        delay(1.3)
+    end
+
+	G.GAME.hands[select_hand].chips = new_chips
+	G.GAME.hands[select_hand].mult 	= new_mult
+
+	update_hand_text({sound = 'button', volume = 0.7, pitch = 1.1, delay = 0}, {mult = 0, chips = 0, handname = '', level = ''})
+end

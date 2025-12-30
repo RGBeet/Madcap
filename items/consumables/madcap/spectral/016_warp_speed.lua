@@ -13,7 +13,10 @@ return {
             return true
         end,
         use = function(self, card, area, copier)
-            Madcap.Funcs.use_spatia_card(card, G.GAME.subhands, card.ability.extra)
+            MadLib.loop_func(card.ability.subhands, function(v)
+                Madcap.Funcs.set_subhand(v, true)
+                Madcap.Funcs.card_level_subhand(card, v, card.ability.level_factor or 1) 
+            end)
         end,
     }
 }

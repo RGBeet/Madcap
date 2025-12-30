@@ -2961,9 +2961,9 @@ return {
                     "Gives {C:attention}most played{} hand",
                     "{C:inactive}(Currently {C:attention,E:1}#1#{}{C:inactive})",
                     "{X:mult,C:white}X#2#{} Mult and {X:chips,C:white}X#3#{} Chips",
-                    "per {C:tarot}Tarot{} Card used{}",
+                    "per {V:1}#4#{} used{}",
                     "this Ante",
-                    "{C:inactive}(Currently {X:chips,C:white}X#4#{C:inactive} and {X:mult,C:white}X#5#{C:inactive})"
+                    "{C:inactive}(Currently {X:chips,C:white}X#5#{C:inactive} and {X:mult,C:white}X#6#{C:inactive})"
                 },
             },
             c_rgmc_luna = {
@@ -2972,9 +2972,9 @@ return {
                     "Gives {C:attention}most played{} hand",
                     "{C:inactive}(Currently {C:attention,E:1}#1#{}{C:inactive})",
                     "{X:mult,C:white}X#2#{} Mult and {X:chips,C:white}X#3#{} Chips",
-                    "per {C:spectral}Spectral{} Card used{}",
+                    "per {V:1}#4#{} used{}",
                     "this Ante",
-                    "{C:inactive}(Currently {X:chips,C:white}X#4#{C:inactive} and {X:mult,C:white}X#5#{C:inactive})"
+                    "{C:inactive}(Currently {X:chips,C:white}X#5#{C:inactive} and {X:mult,C:white}X#6#{C:inactive})"
                 },
             },
             c_rgmc_pagoon = {
@@ -2983,9 +2983,9 @@ return {
                     "Gives {C:attention}most played{} hand",
                     "{C:inactive}(Currently {C:attention,E:1}#1#{}{C:inactive})",
                     "{X:mult,C:white}X#2#{} Mult and {X:chips,C:white}X#3#{} Chips",
-                    "per {C:cosmatarot}Cosma{} Tarot used{}",
+                    "per {V:1}#4#{} used{}",
                     "this Ante",
-                    "{C:inactive}(Currently {X:chips,C:white}X#4#{C:inactive} and {X:mult,C:white}X#5#{C:inactive})"
+                    "{C:inactive}(Currently {X:chips,C:white}X#5#{C:inactive} and {X:mult,C:white}X#6#{C:inactive})"
                 },
             },
         },
@@ -3999,7 +3999,7 @@ return {
             c_rgmc_warp_speed = {
                 name = "Warp Speed",
                 text = {
-                    "Upgrade every",
+                    "Activate and upgrade every",
                     "{C:rgmc_unusual,E:1}Sub-Hand",
                     "by {C:attention}#1#{} level(s)"
                 },
@@ -4034,15 +4034,6 @@ return {
                     "Adds a {C:attention}discounted",
                     "{C:spatiaplanet}Subhand{} voucher",
                     "to the next shop"
-                }
-            },
-            c_rgmc_magnify = {
-                name = 'Magnify',
-                text = {
-                    "Multiply {E:1,C:rgmc_bismuth}all values{}",
-                    "of a random {C:attention}Joker",
-                    "by {C:purple}X#1#{}",
-                    "{C:dark_edition}-#2#{} Joker slot{C:inactive}(s)"
                 }
             },
             c_rgmc_triplicate = {
@@ -4930,22 +4921,21 @@ return {
             rgmc_info_voids = {
 				name = "Void Suit",
 				text = {
-					"{C:rgmc_mayhem}+#1#{} Mayhem",
-					"when scored"
+					"{C:rgmc_mayhem}+X#1{} to all",
+                    "{C:attention}additive{} {C:mult}mult{} values",
+					"{C:rgmc_mayhem}+X#2{} to all",
+                    "{C:attention}multiplicative{} and",
+                    "exponential {C:mult}mult{} values"
 				},
             },
             rgmc_info_lanterns = {
 				name = "Lantern Suit",
 				text = {
-					"{C:rgmc_mayhem}#1#{} Mayhem",
-					"when scored"
-				},
-            },
-            rgmc_info_jumble = {
-				name = "{C:red}Jumbled{}",
-				text = {
-					"This {C:attention}#1#{} of {C:attention}#2#{}",
-                    "counts as a {C:green}#3#{} of {C:green}#4#{}"
+					"{C:rgmc_mayhem}+X#1{} to all",
+                    "{C:attention}additive{} {C:chips}chips{} values",
+					"{C:rgmc_mayhem}+X#2{} to all",
+                    "{C:attention}multiplicative{} and",
+                    "exponential {C:chips}chips{} values"
 				},
             },
             -- bismuth
@@ -5023,19 +5013,19 @@ return {
                     "{C:inactive,s:0.7}Madcap-supported mods!"
                 }
             },
+            rgmc_info_sum = {
+                text = {
+                    "{C:chips}+(SUM){} chips",
+                    "{C:inactive,s:0.7}Equals the sum of",
+                    "{C:inactive,s:0.7}all played {C:attention,S:0.7}number {C:inactive,S:0.7}ranks"
+                }
+            },
             rgmc_info_x = {
                 text = {
                     "Count as a {C:rgmc_bismuth}random rank{}",
                     "This rank changes every {C:attention}Ante{}",
                     "{C:inactive,s:0.7}Only works with",
                     "{C:inactive,s:0.7}Madcap-supported mods!"
-                }
-            },
-            rgmc_info_sum = {
-                text = {
-                    "{C:chips}+(SUM){} chips",
-                    "{C:inactive,s:0.7}Equals the sum of",
-                    "{C:inactive,s:0.7}all played {C:attention,S:0.7}number {C:inactive,S:0.7}ranks"
                 }
             },
             rgmc_info_draw_2 = {

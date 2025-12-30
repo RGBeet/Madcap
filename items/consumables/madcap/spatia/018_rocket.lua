@@ -19,7 +19,7 @@ return {
         pos     = get_pos(1,6),
         cost    = 3,
         aurinko = true,
-        config = { hands = { 'rgmc_pick_five' }, level_factor = 1 },
+        config = { type = 'rgmc_pick_five', level_factor = 1 },
         set_card_type_badge = function(self, card, badges)
             badges[1] = create_badge(localize("rgmc_rocket"), get_type_colour(self or card.config, card), nil, 1.2)
         end,
@@ -41,6 +41,12 @@ return {
             end)
             planet_vars['colours'] = planet_colours
             return { vars = planet_vars }
+        end,
+        can_use = function(self, card)
+            return true
+        end,
+        use = function(self, card, area, copier)
+            SMODS.smart_level_up_hand(card, card.ability.type, nil, card.ability.level_factor or 1)
         end,
     }
 }

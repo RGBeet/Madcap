@@ -554,12 +554,6 @@ function create_card(_type, area, legendary, _rarity, skip_materialize, soulable
 	end
 
 	local card = old_create_card(_type, area, legendary, _rarity, skip_materialize, soulable, forced_key, key_append)
-
-	if G.GAME.mayhem then
-		local mayhem_state	= mfuncs.get_mayhem_state()
-		if mayhem_state > 0 then card = Madcap.Funcs.mayhemize(card) end
-	end
-
 	return card
 end
 
@@ -952,12 +946,34 @@ end
 if SMODS and SMODS.calculate_individual_effect then
 	local cie = SMODS.calculate_individual_effect
 	function SMODS.calculate_individual_effect(effect, scored_card, key, amount, from_edition)
-		local ret = cie(effect, scored_card, key, amount, from_edition)
 
+		-- Lantern and Void suits
+		if scored_card.is_suit then
+			local new_value = amount
+			--print("key is",key)
+			if scored_card:is_suit('rgmc_voids') then
+				if key == 'mult' or key == 'h_mult' or key == 'mult_mod' then
+					new_value = math.ceil(MadLib.multiply(new_value, 2))
+				end
+				if key == 'xmult' or key == 'x_mult' or key == 'Xmult_mod' then
+					new_value = MadLib.multiply(new_value, 1.5)
+				end
+			elseif scored_card:is_suit('rgmc_lanterns') then
+				if key == 'chips' or key == 'h_chips' or key == 'chip_mod' then
+					new_value = math.ceil(MadLib.multiply(new_value, 2))
+				end
+				if key == 'xchips' or key == 'x_chips' or key == 'Xchip_mod' then
+					new_value = MadLib.multiply(new_value, 1.5)
+				end
+			end
+			amount = new_value
+		end
+
+		local ret = cie(effect, scored_card, key, amount, from_edition)
 		if
 			MadLib.list_matches_one({'x_mult', 'xmult', 'x_mult_mod', 'xmult_mod'}, function(v)
 				return v == string.lower(key)
-			end) and amount ~= 1
+			end) and MadLib.compare_numbers(amount, 1) ~= 0
 		then
 			-- Squeezy Cheeze
 			MadLib.loop_func(SMODS.find_card('j_rgmc_squeezy_cheeze'), function(v)
@@ -987,7 +1003,7 @@ if SMODS and SMODS.calculate_individual_effect then
 			end)
 		end
 
-		if key == "rgmc_luxury_pts" then -- TODO: check if this works?
+		if key == "rgmc_luxury_pts" then
 			amount = math.max(amount, 0)
 			ease_lp(amount)
 			text = "+£"..number_format(amount)
@@ -1428,7 +1444,6 @@ function Card:get_quantity_value()
 	if self.ability and self.ability.rgmc_stereo then ret = ret * 2 end
 	return ret
 end
-
 
 --[[
 	Flipped cards cannot be debuffed if the Streemerz Joker is owned
