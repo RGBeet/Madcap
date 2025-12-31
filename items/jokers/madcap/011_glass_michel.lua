@@ -18,8 +18,7 @@ return {
             if
                 context.repetition
                 and context.cardarea == G.play
-                and (SMODS.has_enhancement(context.other_card, 'm_glass')
-                    or context.forcetrigger)
+                and SMODS.has_enhancement(context.other_card, 'm_glass')
             then
                 context.other_card.ability.glass_michel = true
                 return { message = localize('k_again_ex'), repetitions = 1, card = card }
@@ -43,6 +42,7 @@ return {
             end)
         end,
         perishable_compat   = false,
-        demicoloncompat     = true,
+        demicoloncompat     = false,
+        quasicoloncheck     = false
     },
 }

@@ -21,7 +21,12 @@ return {
             end
         end,
         calculate = function(self, card, context)
-
+            if context.checktrigger then
+                return context.individual
+                    and context.cardarea == G.play
+                    and context.other_card
+                    and context.other_card:is_suit(Madcap.Funcs.get_joker_suit(card, G.GAME.current_round.rgmc_barbershop.suit))
+            end
             if
                 (context.individual
                 and context.cardarea == G.play
@@ -32,7 +37,6 @@ return {
                 card.ability.extra.scored = true
                 return { mult = card.ability.extra.mult }
             end
-
             if
                 context.after
                 and card.ability.extra.scored
@@ -55,5 +59,6 @@ return {
             return MadLib.get_num_suits(G.playing_cards or {}) > 1
         end,
         demicoloncompat = true,
+        quasicoloncheck = true
     },
 }

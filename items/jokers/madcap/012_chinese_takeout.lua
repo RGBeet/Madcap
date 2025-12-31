@@ -1,3 +1,60 @@
+-- Used for both forcetrigger and normal trigger
+function Madcap.Funcs.do_chinese_takeout(card)
+    local ret = {}
+    if
+        card.ability.immutable.mode == 1
+        or card.ability.immutable.mode == 3
+        or card.ability.immutable.mode == 5
+    then
+        ret.chips = card.ability.extra.effects[card.ability.immutable.mode]
+    elseif
+        card.ability.immutable.mode == 2
+        or card.ability.immutable.mode == 4
+    then
+        ret.mult = card.ability.extra.effects[card.ability.immutable.mode]
+    elseif
+        card.ability.immutable.mode == 6
+        or card.ability.immutable.mode == 7
+    then
+        ret.x_mult = card.ability.extra.effects[card.ability.immutable.mode]
+    else
+        ret.x_score = card.ability.extra.effects[card.ability.immutable.mode]
+    end
+    return ret
+end
+
+local calc_func = function(self, card, context)
+    if context.setting_blind and not context.blueprint then
+        local new_food = math.random(1, 8)
+        card.ability.immutable.mode = new_food
+
+        if -- if doable, show a line
+            card.ability.immutable.mode > 0
+            and card.ability.immutable.mode <= 8
+        then
+            return { message = localize("rgmc_chinese_line" .. card.ability.immutable.mode) }
+        end
+    end
+    
+    if (context.cardarea == G.jokers and context.joker_main) or context.forcetrigger then
+        Madcap.Funcs.do_chinese_takeout(card)
+    end
+
+    if Madcap.Funcs.get_end_of_round(context) then
+        return MadLib.food_joker_logic(card)
+    end
+end
+
+if Overloaded or Cryptid then
+    local calc_func_ref = calc_func
+    calc_func = function(self, card, context)
+        if context.checktrigger then
+            return context.cardarea == G.jokers and context.joker_main
+        end
+        return calc_func_ref(self, card, context)
+    end
+end
+
 return {
     data = {
         object_type = "Joker",
@@ -21,9 +78,7 @@ return {
                     2.5     -- Xscore
                 }
             },
-            immutable = {
-                mode = 1    -- starts off at just fried rice
-            }
+            immutable = { mode = 1 }
         },
         loc_vars = function(self, info_queue, card)
             local str = "null"
@@ -39,59 +94,7 @@ return {
                 number_format(card.ability.extra.rounds),
                 { MadLib.get_warning_colour(card.ability.extra.rounds / card.ability.extra.max_rounds)})
         end,
-        calculate = function(self, card, context)
-
-            -- Start of blind
-            if
-                context.setting_blind
-                and not context.blueprint
-            then
-
-                local new_food = math.random(1, 8)
-                card.ability.immutable.mode = new_food
-
-                if -- if doable, show a line
-                    card.ability.immutable.mode > 0
-                    and card.ability.immutable.mode <= 8
-                then
-                    return { message = localize("rgmc_chinese_line" .. card.ability.immutable.mode) }
-                end
-            end
-
-            -- At scoring time...
-            if
-                context.forcetrigger or
-                (context.cardarea == G.jokers and context.joker_main)
-            then
-                --tell('Value: '..number_format(card.ability.extra.effects[card.ability.immutable.mode]))
-                local ret = {}
-                if
-                    card.ability.immutable.mode == 1
-                    or card.ability.immutable.mode == 3
-                    or card.ability.immutable.mode == 5
-                then
-                    ret.chips = card.ability.extra.effects[card.ability.immutable.mode]
-                elseif
-                    card.ability.immutable.mode == 2
-                    or card.ability.immutable.mode == 4
-                then
-                    ret.mult = card.ability.extra.effects[card.ability.immutable.mode]
-                elseif
-                    card.ability.immutable.mode == 6
-                    or card.ability.immutable.mode == 7
-                then
-                    ret.xmult = card.ability.extra.effects[card.ability.immutable.mode]
-                else
-                    ret.xscore = card.ability.extra.effects[card.ability.immutable.mode]
-                end
-                return ret
-            end
-
-            -- End of round
-            if Madcap.Funcs.get_end_of_round(context) then
-                return MadLib.food_joker_logic(card)
-            end
-        end,
+        calculate = calc_func,
         perishable_compat   = false,
         demicoloncompat     = true,
     },

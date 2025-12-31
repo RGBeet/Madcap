@@ -16,19 +16,22 @@ return {
                 or 0
             return MadLib.collect_vars(
                     number_format(card.ability.extra.chips),
-                    number_format(card.ability.extra.chips * cards))
+                    number_format(MadLib.multiply(card.ability.extra.chips, cards)))
         end,
         calculate = function(self, card, context)
+            if context.checktrigger then
+                return context.joker_main
+            end
             if context.joker_main or context.forcetrigger then
-                local amt = #MadLib.get_enhanced_cards(G.playing_cards,card.ability.enhancement)
-                return { chips = card.ability.extra.chips * (amt or 0) }
+                return { chips = MadLib.multiply(card.ability.extra.chips, #MadLib.get_enhanced_cards(G.playing_cards,card.ability.enhancement)) }
             end
         end,
+        in_pool = function(self, args) -- At least one Ferrous Card
+            return MadLib.list_matches_one(G.playing_cards or {}, function(v)
+                return SMODS.has_enhancement(v, 'm_rgmc_ferrous')
+            end)
+        end,
         demicoloncompat = true,
+        quasicoloncheck = true
     },
-    in_pool = function(self, args) -- At least one Ferrous Card
-        return MadLib.list_matches_one(G.playing_cards or {}, function(v)
-            return SMODS.has_enhancement(v, 'm_rgmc_ferrous')
-        end)
-    end
 }

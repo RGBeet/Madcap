@@ -1,4 +1,3 @@
--- numer_factor is used to nerf the redd dacca slightly on crytid's beige deck
 return {
     categories = {
         'OP Jokers'
@@ -24,15 +23,12 @@ return {
             )
         end,
         calculate = function(self, card, context)
-            -- ^1.2 Mult
-            if
-                context.forcetrigger or
-                (context.cardarea == G.jokers and context.joker_main)
-            then
+            if context.checktrigger then
+                return (context.cardarea == G.jokers and context.joker_main)
+            end
+            if context.forcetrigger or (context.cardarea == G.jokers and context.joker_main) then
                 return { emult = card.ability.extra.e_mult }
             end
-
-            -- End of round
             if Madcap.Funcs.banana_context(context) then
                 local numerator, denominator = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'redd_dacca', true)
                 numerator = MadLib.add(numerator, card.ability.numer_factor or 0)
@@ -51,5 +47,6 @@ return {
         end,
         eternal_compat  = false,
         demicoloncompat = true,
+        quasicoloncheck = true
     },
 }

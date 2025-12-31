@@ -19,6 +19,12 @@ return {
                 { G.C.SUITS[Madcap.Funcs.get_joker_suit(card, 'rgmc_towers')] })
         end,
         calculate = function(self, card, context)
+            if context.checktrigger then
+                return (context.individual
+                    and context.cardarea == G.play
+                    and context.other_card
+                    and context.other_card:is_suit(Madcap.Funcs.get_joker_suit(card, 'rgmc_towers')))
+            end
             if
                 (context.individual
                 and context.cardarea == G.play
@@ -29,5 +35,6 @@ return {
             end
         end,
         demicoloncompat = true,
+        quasicoloncheck = true
     },
 }

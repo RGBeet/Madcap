@@ -1,3 +1,29 @@
+local calc_func = function(self, card, context)
+    if
+        (context.individual 
+            and context.cardarea == G.play
+            and MadLib.list_matches_one(MadLib.RankTypes['Square'], function(c)
+                return MadLib.is_rank(context.other_card, c) 
+            end))
+        or context.forcetrigger 
+    then
+        return { mult = card.ability.extra.mult }
+    end
+end
+
+if Overloaded or Cryptid then
+    local calc_func_ref = calc_func
+    calc_func = function(self, card, context)
+        if context.checktrigger then
+            return context.other_card
+                and MadLib.list_matches_one(MadLib.RankTypes['Square'], function(c)
+                    return MadLib.is_rank(context.other_card, c) 
+                end)
+        end
+        return calc_func_ref(self, card, context)
+    end
+end
+
 return {
     data = {
         object_type = "Joker",
@@ -10,17 +36,8 @@ return {
         loc_vars = function(self, info_queue, card)
             return MadLib.collect_vars(number_format(card.ability.extra.mult))
         end,
-        calculate = function(self, card, context)
-            if
-                ((context.cardarea == G.play and context.other_card)
-                or context.forcetrigger)
-                and MadLib.list_matches_one(MadLib.RankTypes['Square'], function(c)
-                    return MadLib.is_rank(context.other_card, c) 
-                end)
-            then
-                return { mult = lenient_bignum(card.ability.extra.mult) }
-            end
-        end,
+        calculate = calc_func,
         demicoloncompat = true,
+        quasicoloncheck = true
     },
 }

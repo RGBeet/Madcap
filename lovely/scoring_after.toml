@@ -123,15 +123,6 @@ match_indent = true
 # Action replay - removing repetitions and stockpiling them?
 #SMODS.calculate_context({ repeating_card = card, other_context = context, num_repetitions = #reps or 0 })
 
-[[patches]]
-[patches.pattern]
-target = '=[SMODS _ "src/utils.lua"]'
-pattern = '''eval.repetitions = eval.repetitions or 0'''
-position = "after"
-payload = '''--print(tostring(eval.repetitions) .. ' repetitions!')'''
-overwrite = true
-match_indent = true
-
 # Remove retriggers if Aww! No Retriggers is present
 # ALL of them
 [[patches]]

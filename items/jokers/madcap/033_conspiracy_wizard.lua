@@ -30,7 +30,13 @@ return {
                 suit)
         end,
         calculate = function(self, card, context)
-
+            if context.checktrigger then
+                return context.cardarea == G.play
+                and context.individual
+                and not context.blueprint
+                and (MadLib.joker_check_rank(context.other_card, card, G.GAME.current_round.rgmc_wizard_card.rank)
+                or context.other_card:is_suit(G.GAME.current_round.rgmc_wizard_card.suit))
+            end
             if
                 context.cardarea == G.play
                 and context.individual
@@ -46,7 +52,6 @@ return {
                     return { mult = card.ability.extra.mult }
                 end
             end
-
             if context.forcetrigger then -- do both chip and mult, but do not reveal the cards
                 return { 
                     chips = card.ability.extra.chips,

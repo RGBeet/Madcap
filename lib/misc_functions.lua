@@ -1,5 +1,5 @@
 -- Used strictly by SMODS.calculate_main_scoring
-function Madcap.Funcs.alter_score_order(card,scoring_hand,context,in_scoring)
+function Madcap.Funcs.alter_score_order(card, scoring_hand, context, in_scoring)
 	if not scoring_hand then return end
 
 	-- Stereo
@@ -10,34 +10,11 @@ function Madcap.Funcs.alter_score_order(card,scoring_hand,context,in_scoring)
 		end
 	end
 
-    -- CONTINUUM: Scored 8s repeat all cards before it
-    if
-        #scoring_hand > 1               -- more than 1 card
-        and card:get_id() == 8          -- scoring card is an 8
-        and #SMODS.find_card('j_rgmc_continuum') > 0
-    then -- 1 or more continuums
-
-        local repeats = #SMODS.find_card('j_rgmc_continuum')
-        local index, selection = 1, nil
-
-        -- Score cards again until the original card is reached
-
-        SMODS.score_card(card, context)
-
-        for i=1, repeats do
-            index = 1 -- go to start
-            while
-                index <= #scoring_hand   -- haven't gone through the whole thing
-            do
-                selection = scoring_hand[index]
-                if selection == card and i == repeats then
-                    break -- we're done here
-                end
-                SMODS.score_card(selection, context)
-                index = (selection == card) and (#scoring_hand + 1) or (index + 1)
-            end
-        end
-    end -- continuum ends
+	MadLib.loop_func(G.jokers.cards, function(v)
+		if v.config.center.alter_scoring_order then
+			v.config.center:alter_scoring_order(card, scoring_hand, context, in_scoring)
+		end
+	end)
 
 end
 
@@ -1209,4 +1186,41 @@ function Madcap.Funcs.use_consumable_specific_special_card(card)
 	G.GAME.hands[select_hand].mult 	= new_mult
 
 	update_hand_text({sound = 'button', volume = 0.7, pitch = 1.1, delay = 0}, {mult = 0, chips = 0, handname = '', level = ''})
+end
+
+function Madcap.Funcs.eat_food_joker(card)
+    MadLib.event({
+        func = function()
+            play_sound('tarot1')
+            
+            card.T.r = -0.2
+            card:juice_up(0.3, 0.4)
+            card.states.drag.is = true
+            card.children.center.pinch.x = true
+            
+            MadLib.event({
+                trigger = 'after',
+                delay = 0.3,
+                blockable = false,
+                func = function()
+                    card:remove()
+                    return true
+                end
+            })
+            return true
+        end
+    })
+end
+
+function Madcap.Funcs.food_joker_round_end(card)
+    if not Madcap.Funcs.get_end_of_round(context) then return end
+
+    card.ability.extra.rounds = MadLib.subtract(card.ability.extra.rounds, 1)
+
+    if MadLib.compare_numbers(card.ability.extra.rounds, 0) < 1 then
+        return { message = { localize("rgmc_minus_round") }, colour = G.C.FILTER, }
+    else
+        Madcap.Funcs.eat_food_joker(card)
+        return { message = { "!!" }, colour = G.C.RED, }
+    end
 end

@@ -19,17 +19,22 @@ return {
                     number_format(card.ability.extra.chips))
         end,
         calculate = function(self, card, context)
+            if context.checktrigger then
+                return context.individual
+                and context.other_card
+                and not context.forcetrigger
+                and MadLib.joker_check_rank(context.other_card, card, '6')
+                and SMODS.pseudorandom_probability(card, 'six_shooter', 1, card.ability.extra.odds)
+            end
             if -- build the chips
                 context.cardarea == G.play
                 and context.individual
                 and context.other_card
                 and not context.forcetrigger
+                and MadLib.joker_check_rank(context.other_card, card, '6')
+                and SMODS.pseudorandom_probability(card, 'six_shooter', 1, card.ability.extra.odds)
             then
-                if
-                    MadLib.joker_check_rank(context.other_card, card, '6')
-                    and SMODS.pseudorandom_probability(card, 'six_shooter', 1, card.ability.extra.odds)
-                then
-                    local target = context.other_card
+                local target = context.other_card
 
                     MadLib.simple_event(function()
                         card.ability.extra.chips = MadLib.add(card.ability.extra.chips, card.ability.extra.chip_mod)
@@ -48,12 +53,8 @@ return {
                         message = localize('k_upgrade_ex'),
                         colour  = G.C.CHIPS
                     }
-                end
             end
-            if -- give the chips
-                (context.joker_main or context.forcetrigger)
-                and MadLib.is_positive_number(card.ability.extra.chips)
-            then
+            if context.joker_main or context.forcetrigger then
                 return { chips = card.ability.extra.chips }
             end
         end,

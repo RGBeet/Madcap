@@ -25,39 +25,12 @@ return {
             return MadLib.collect_vars(number_format(card.ability.extra.twinkles))
         end,
         calculate = function(self, card, context)
-
-            if context.first_hand_drawn then
-                local targets = MadLib.shuffle_sort_list(G.hand.cards, card.ability.extra.twinkles or 1, function(v) return true end)
-                MadLib.loop_func(targets, function(v,i)
-                    MadLib.simple_event(function()
-                        v:set_edition({ polychrome = true })
-                        v:set_rgmc_twinkling(true)
-                        v:juice_up(0.5, 0.7)
-                        play_sound('rgmc_contagion', math.min(1+i*0.1, 2), 0.6)
-                        return true
-                    end, math.max(0.6-i*0.05,0.1), 'after')
-                end)
+            if context.checktrigger then
+                return context.cardarea == G.play
+                    and context.individual
+                    and context.other_card
+                    and (context.other_card.edition and context.other_card.ability['rgmc_twinkling'])
             end
-
-            if
-                context.cardarea == G.play
-                and context.individual
-                and context.other_card
-                and (context.other_card.edition and context.other_card.ability['rgmc_twinkling']) -- twinkling
-            then
-                local tc = MadLib.shuffle_sort_list(G.hand.cards, 1, function(v)
-                    return not (v.edition or v.ability.twinkling)
-                end)
-                if tc then
-                    local fc = context.other_card
-                    MadLib.simple_event(function()
-                        tell('do the thing')
-                        twinkle_transfer(fc,tc[1])
-                        return true
-                    end, 0.1, 'after')
-                end
-            end
-
             if context.forcetrigger then
                 local from_cards = MadLib.shuffle_sort_list(G.hand.cards, card.ability.extra.twinkles or 1, function(v)
                     return v.edition and v.edition.polychrome and v.ability['rgmc_twinkling']
@@ -78,7 +51,38 @@ return {
                     end
                 end)
             end
+            if context.first_hand_drawn then
+                local targets = MadLib.shuffle_sort_list(G.hand.cards, card.ability.extra.twinkles or 1, function(v) return true end)
+                MadLib.loop_func(targets, function(v,i)
+                    MadLib.simple_event(function()
+                        v:set_edition({ polychrome = true })
+                        v:set_rgmc_twinkling(true)
+                        v:juice_up(0.5, 0.7)
+                        play_sound('rgmc_contagion', math.min(1+i*0.1, 2), 0.6)
+                        return true
+                    end, math.max(0.6-i*0.05,0.1), 'after')
+                end)
+            end
+            if
+                context.cardarea == G.play
+                and context.individual
+                and context.other_card
+                and (context.other_card.edition and context.other_card.ability['rgmc_twinkling']) -- twinkling
+            then
+                local tc = MadLib.shuffle_sort_list(G.hand.cards, 1, function(v)
+                    return not (v.edition or v.ability.twinkling)
+                end)
+                if tc then
+                    local fc = context.other_card
+                    MadLib.simple_event(function()
+                        tell('do the thing')
+                        twinkle_transfer(fc,tc[1])
+                        return true
+                    end, 0.1, 'after')
+                end
+            end
         end,
         demicoloncompat = true,
+        quasicoloncheck = true,
     },
 }

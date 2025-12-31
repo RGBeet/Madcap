@@ -20,38 +20,35 @@ return {
                 { G.C.SUITS[Madcap.Funcs.get_joker_suit(card, 'rgmc_goblets')] })
         end,
         calculate = function(self, card, context)
-            -- scaling
+            if context.checktrigger then
+                return context.cardarea == G.play
+                    and context.individual
+                    and context.other_card:is_suit(card.ability.extra.suit)
+                    and SMODS.pseudorandom_probability(card, 'plentiful_ametrine', 1, card.ability.extra.odds)
+            end
             if
                 context.cardarea == G.play
                 and context.individual
+                and context.other_card:is_suit(card.ability.extra.suit)
+                and SMODS.pseudorandom_probability(card, 'plentiful_ametrine', 1, card.ability.extra.odds)
             then
-                if
-                    context.other_card:is_suit(card.ability.extra.suit)
-                    and SMODS.pseudorandom_probability(card, 'plentiful_ametrine', 1, card.ability.extra.odds)
-                then
-                    card.ability.extra.mult = card.ability.extra.mult + card.ability.extra.mult_mod
-                    return {
-                        message = localize('k_upgrade_ex'),
-                        colour  = G.C.MULT
-                    }
-                end
+                SMODS.scale_card(card, {
+                    ref_table       = card.ability.extra,
+                    ref_value       = "mult",
+                    scalar_value    = "mult_mod",
+                    message_key     = "a_mult",
+                    message_colour  = G.C.MULT,
+                })
             end
-
-            -- give the mult
-            if
-                (context.joker_main or context.forcetrigger)
-                and card.ability.extra.mult > 0
-            then
+            if context.joker_main or context.forcetrigger then
                 return { mult = card.ability.extra.mult }
             end
-
-            -- reset at end of ante
             if context.new_ante then
+                local last_mult = card.ability.extra.mult
                 card.ability.extra.mult = 0
-                return {
-                    message = localize('k_reset'),
-                    colour  = G.C.FILTER
-                }
+                if MadLib.is_positive_number(last_mult) then
+                    return { message = localize('k_reset') }
+                end
             end
         end,
         perishable_compat = false,

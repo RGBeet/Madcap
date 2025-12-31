@@ -21,38 +21,35 @@ return {
                 { G.C.SUITS[Madcap.Funcs.get_joker_suit(card, 'rgmc_towers')] })
         end,
         calculate = function(self, card, context)
-            -- scaling
+            if context.checktrigger then
+                return context.cardarea == G.play
+                    and context.individual
+                    and context.other_card:is_suit(card.ability.extra.suit)
+                    and SMODS.pseudorandom_probability(card, 'toughened_shungite', 1, card.ability.extra.odds)
+            end
             if
                 context.cardarea == G.play
                 and context.individual
+                and context.other_card:is_suit(card.ability.extra.suit)
+                and SMODS.pseudorandom_probability(card, 'toughened_shungite', 1, card.ability.extra.odds)
             then
-                if
-                    context.other_card:is_suit(card.ability.extra.suit)
-                    and SMODS.pseudorandom_probability(card, 'toughened_shungite', 1, card.ability.extra.odds)
-                then
-                    card.ability.extra.chips = card.ability.extra.chips + card.ability.extra.chip_mod
-                    return {
-                        message = localize('k_upgrade_ex'),
-                        colour  = G.C.MULT
-                    }
-                end
+                SMODS.scale_card(card, {
+                    ref_table       = card.ability.extra,
+                    ref_value       = "chips",
+                    scalar_value    = "chip_mod",
+                    message_key     = "a_chips",
+                    message_colour  = G.C.CHIPS,
+                })
             end
-
-            -- give the mult
-            if
-                (context.joker_main or context.forcetrigger)
-                and card.ability.extra.chips > 0
-            then
+            if context.joker_main or context.forcetrigger then
                 return { chips = card.ability.extra.chips }
             end
-
-            -- reset at end of ante
             if context.new_ante then
+                local last_chips = card.ability.extra.chips
                 card.ability.extra.chips = 0
-                return {
-                    message = localize('k_reset'),
-                    colour  = G.C.FILTER
-                }
+                if MadLib.is_positive_number(last_chips) then
+                    return { message = localize('k_reset') }
+                end
             end
         end,
         perishable_compat = false,

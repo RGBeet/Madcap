@@ -23,15 +23,12 @@ return {
             )
         end,
         calculate = function(self, card, context)
-            -- 2X Chips
-            if
-                context.forcetrigger or
-                (context.cardarea == G.jokers and context.joker_main)
-            then
+            if context.checktrigger then
+                return context.cardarea == G.jokers and context.joker_main
+            end
+            if context.forcetrigger or (context.cardarea == G.jokers and context.joker_main) then
                 return { xchips = card.ability.extra.x_chips }
             end
-
-            -- End of round
             if Madcap.Funcs.banana_context(context) then
                 local numerator, denominator = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'bluenana', true)
                 numerator = MadLib.add(numerator, card.ability.numer_factor or 0)
@@ -50,5 +47,6 @@ return {
         end,
         eternal_compat  = false,
         demicoloncompat = true,
+        quasicoloncheck = true
     },
 }

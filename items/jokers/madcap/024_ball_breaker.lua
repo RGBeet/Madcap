@@ -11,6 +11,9 @@ return {
             return MadLib.collect_vars(number_format(card.ability.extra.chip_mod), number_format(card.ability.extra.chips))
         end,
         calculate = function(self, card, context)
+            if context.checktrigger then
+                return context.joker_main
+            end
             if
                 context.cardarea == G.jokers
                 and context.before
@@ -18,15 +21,17 @@ return {
             then
                 if MadLib.list_matches_all(G.play.cards, function(v)
                     return MadLib.has_fib_rank(v)
-                end) then -- WOW U GOT THE FIBONACCI!!
-                    card.ability.extra.chips = card.ability.extra.chips + card.ability.extra.chip_mod
-                    return { message = localize("k_upgrade_ex"), }
+                end) then
+                    SMODS.scale_card(card, {
+                        ref_table       = card.ability.extra,
+                        ref_value       = "chips",
+                        scalar_value    = "chip_mod",
+                        message_key     = "a_chips",
+                        message_colour  = G.C.CHIPS,
+                    })
                 end
             end
-            if -- demicolon
-                context.joker_main
-                or context.forcetrigger
-            then
+            if context.joker_main or context.forcetrigger then
                 return { chips = card.ability.extra.chips }
             end
         end,

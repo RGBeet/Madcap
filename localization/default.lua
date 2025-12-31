@@ -605,7 +605,7 @@ return {
                     },
                     {
                         "{C:red}Reset{} chance increases by",
-                        "{C:attention}+#5#{} per used {C:red}discard{}"
+                        "{C:attention}+1{} per used {C:red}discard{}"
                     }
                 }
             },
