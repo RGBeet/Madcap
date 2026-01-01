@@ -5995,7 +5995,6 @@ return {
 			k_rgmc_spatia_pack   = "Spatia Pack", -- includes potentia crystals too?!
 			k_rgmc_variety_pack  = "Variety Pack",
 			k_rgmc_reward_pack   = "Reward Pack",
-			k_rgmc_ruinous_pack  = "Ruinous Pack",
 
 			a_discard_plus   = "+#1# Discard",
 			a_discard_minus  = "-#1# Discard",

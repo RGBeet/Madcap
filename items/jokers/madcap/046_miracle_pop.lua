@@ -26,6 +26,13 @@ return {
                     })
         end,
         calculate = function(self, card, context)
+            if context.checktrigger then
+                return context.cardarea == G.play
+                    and context.other_card
+                    and not context.blueprint
+                    and (context.other_card:is_suit(card.ability.extra.suits[1])
+                    or context.other_card:is_suit(card.ability.extra.suits[2]))
+            end
             if
                 (context.cardarea == G.play
                     and context.other_card
@@ -38,10 +45,10 @@ return {
                 then
                     local upgrade =
                         context.other_card:is_suit(card.ability.extra.suits[2])
-                        and card.ability.extra.chip_mod * 2
+                        and MadLib.multiply(card.ability.extra.chip_mod, 2)
                         or  card.ability.extra.chip_mod
 
-                    card.ability.extra.chips = card.ability.extra.chips + upgrade
+                    card.ability.extra.chips = MadLib.add(card.ability.extra.chips, upgrade)
                     return {
                         message = localize('k_upgrade_ex'),
                         colour = G.C.CHIPS,
@@ -65,5 +72,6 @@ return {
         eternal_compat = false,
         perishable_compat = false,
         demicoloncompat = true,
+        quasicoloncheck = true
     }
 }

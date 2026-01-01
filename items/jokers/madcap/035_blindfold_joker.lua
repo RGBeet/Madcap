@@ -18,26 +18,21 @@ return {
                         or localize("rgmc_inactive"))
         end,
         calculate = function(self, card, context)
-            
-            -- start blind: activate if big blind show it's active
+            if context.checktrigger then
+                return context.joker_main and card.ability.extra.active == true
+            end
             if context.setting_blind then
                 local is_big_blind = G.GAME.blind:get_type() == 'Big'
-                card.ability.extra.active = is_big_blind
+                card.ability.extra.active = is_big_blind and true or false
 
                 if is_big_blind then
                     local eval = function() return G.GAME.blind:get_type() ~= "Big" end
                     juice_card_until(card, eval, true)
                 end
             end
-
-            -- Reduces by ? until lower than 0.5X Mult, then destructs.
             if context.skip_blind then -- uh oh...
-                if card.ability.extra.x_mult - card.ability.extra.x_mult_penalty < 0.5 then
+                if MadLib.is_positive_number(MadLib.subtract(MadLib.subtract(card.ability.extra.x_mult, card.ability.extra.x_mult_penalty),0.5)) then
                     SMODS.destroy_cards(card, nil, nil, true)
-                    return {
-                        message = "!!",
-                        colour = G.C.MULT
-                    }
                 else
                     -- See note about SMODS Scaling Manipulation on the wiki
                     card.ability.extra.x_mult = card.ability.extra.x_mult - card.ability.extra.x_mult_penalty
@@ -47,9 +42,8 @@ return {
                     }
                 end
             end
-
             if -- big blind be like
-                (context.joker_main and G.GAME.blind:get_type() == "Big")
+                (context.joker_main and card.ability.extra.active == true)
                 or context.forcetrigger -- demicolon
             then
                 return { xmult = card.ability.extra.x_mult, card = card }

@@ -11,6 +11,13 @@ return {
         rarity  = 3,
         cost    = 10,
         calculate = function(self, card, context)
+            if context.checktrigger then
+                return context.individual
+                and context.cardarea == G.play
+                and context.other_card
+                and #G.playing_cards > 1    -- does not work if you have only 1 card
+                and SMODS.has_enhancement(context.other_card,'m_wild')
+            end
             if
                 context.individual
                 and context.cardarea == G.play
@@ -44,6 +51,7 @@ return {
                 end
             end
         end,
-        demicoloncompat = false, -- choose a random wild card in hand to do this with instead
+        demicoloncompat = false,
+        quasicoloncheck = true,
     }
 }

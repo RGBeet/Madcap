@@ -13,7 +13,7 @@
             extra = { rank = 'rgmc_Knight', x_chips = 2, }
         },
         loc_vars = function(self, info_queue, card)
-            return MadLib.collect_vars(localize(card.ability.extra.rank,'ranks'),
+            return MadLib.collect_vars(localize(Madcap.Funcs.get_joker_rank(card, 'rgmc_Knight'), 'ranks'),
                 number_format(card.ability.extra.x_chips))
         end,
         calculate = function(self, card, context)
@@ -36,5 +36,6 @@
             end)
         end,
         demicoloncompat = true,
+        quasicoloncheck = true,
     },
 }

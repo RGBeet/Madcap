@@ -30,10 +30,16 @@ return {
                         message_colour  = G.C.CHIPS,
                     })
                 end
+                return nil, true
             end
             if context.joker_main or context.forcetrigger then
                 return { chips = card.ability.extra.chips }
             end
+        end,
+        in_pool = function(self, args) -- At least one compatible card
+            return MadLib.list_matches_one(G.playing_cards or {}, function(v)
+                return MadLib.has_fib_rank(v)
+            end)
         end,
         perishable_compat = false,
         demicoloncompat = true,

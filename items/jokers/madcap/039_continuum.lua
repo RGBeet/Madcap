@@ -1,13 +1,3 @@
-local calc_func = nil
-
-if Overloaded or Cryptid then
-    calc_func = function(self, card, context)
-        if context.checktrigger then -- Check
-            return MadLib.joker_check_rank(context.other_card, card, '8')
-        end
-    end
-end
-
 return {
     data = {
         object_type = "Joker",
@@ -45,6 +35,11 @@ return {
                     SMODS.score_card(selection, context)
                     index = (selection == card) and (#scoring_hand + 1) or (index + 1)
                 end
+            end
+        end,
+        calculate = function(self, card, context)
+            if context.checktrigger then -- Check
+                return MadLib.joker_check_rank(context.other_card, card, '8')
             end
         end,
         -- no calculation here - mostly happens using lovely shenanigans

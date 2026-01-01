@@ -14,10 +14,16 @@ return {
             return MadLib.collect_vars(card.ability.extra.active and localize("k_active_ex") or localize("rgmc_inactive"))
         end,
         calculate = function(self, card, context)
+            if context.checktrigger then
+                return context.joker_main 
+                    and G.GAME.current_round.discards_left > 0
+                    and card.ability.extra.active 
+                    and G.GAME.current_round.hands_left == 0
+                    and not context.blueprint
+            end
             if context.setting_blind then -- active!
                 card.ability.extra.active = true
             end
-
             -- show it's about to POP OFF!
             if
                 context.before
@@ -28,22 +34,22 @@ return {
                 local eval = function() return G.GAME.current_round.hands_left == 0 end
                 juice_card_until(card, eval, true)
             end
-
             -- changes hands and discards before you can get a game over
             -- if you have 0 discards, don't even bother!
             if
-                (context.joker_main and G.GAME.current_round.discards_left > 0)
-                and ((card.ability.extra.active and G.GAME.current_round.hands_left == 0
-                    and not context.blueprint) or context.forcetrigger)
+                (context.joker_main 
+                    and G.GAME.current_round.discards_left > 0
+                    and card.ability.extra.active 
+                    and G.GAME.current_round.hands_left == 0
+                    and not context.blueprint)
+                or context.forcetrigger
             then
                 -- do the thing RIGHT NOW
                 ease_discard(G.GAME.current_round.hands_left-G.GAME.current_round.discards_left, nil, true)
                 ease_hands_played(G.GAME.current_round.discards_left)
                 -- give safe message
-
                 if not context.forcetrigger then -- if demicolon'd, don't
                     card.ability.extra.active = false -- activated for the round
-
                     -- do the stuff
                     MadLib.event({
                         trigger = 'after',
@@ -60,5 +66,6 @@ return {
             end
         end,
         demicoloncompat = true,
+        quasicoloncheck = true,
     }
 }

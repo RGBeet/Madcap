@@ -28,5 +28,6 @@ return {
             end
         end,
         demicoloncompat = false, -- doesn't really have anything to force trigger
+        quasicoloncheck = false
     }
 }

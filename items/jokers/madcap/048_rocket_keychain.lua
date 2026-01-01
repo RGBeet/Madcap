@@ -8,14 +8,19 @@ return {
         rarity  = 3,
         cost    = 10,
         config =  {
-            extra = { level_ups = 1, target_hand = "High Card" }
+            extra = { level_factor = 1, target_hand = "High Card" }
         },
         loc_vars = function(self, info_queue, card)
             return MadLib.collect_vars(localize(card.ability.extra.target_hand, 'poker_hands'),
-                    number_format(card.ability.extra.level_ups),
+                    number_format(card.ability.extra.level_factor),
                     localize(MadLib.get_most_played_hand(), 'poker_hands'))
         end,
         calculate = function(self, card, context)
+            if context.checktrigger then
+                return context.level_up_hand
+                    and context.level_up_hand == card.ability.extra.target_hand
+                    and context.other_card ~= card
+            end
             if context.setting_blind then
                 card.ability.extra.target_hand = MadLib.get_random_poker_hand()
                 MadLib.simple_event(function()
@@ -24,14 +29,22 @@ return {
                     return true
                 end)
             end
-
-            if context.forcetrigger then
-                -- get most played poker hand
+            -- TODO: add this whenever target hand is leveled up
+            if 
+                (context.level_up_hand
+                and context.level_up_hand == card.ability.extra.target_hand
+                and context.other_card ~= card)
+                or context.forcetrigger
+            then
+                card.ability.extra.target_hand = MadLib.get_random_poker_hand()
+                SMODS.smart_level_up_hand(card, MadLib.get_most_played_hand(), nil, card.ability.level_factor or 1)
+                delay(1.0)
             end
         end,
         add_to_deck = function(self, card, from_debuff)
             card.ability.extra.target_hand = MadLib.get_random_poker_hand()
         end,
-        demicoloncompat = false, -- TODO: add level up most played poker hand
+        demicoloncompat = true,
+        quasicoloncheck = true
     }
 }

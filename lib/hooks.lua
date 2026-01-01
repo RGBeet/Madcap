@@ -1275,18 +1275,6 @@ function Back.apply_to_run(self)
 	]]
 end
 
-local level_up_hand_ref = level_up_hand
-function level_up_hand(card, hand, instant, amount, context)
-	if MadLib.is_positive_number(amount or 1) then -- actually levelling up the hand
-		-- Rocket Keychain: level up a random hand
-		MadLib.loop_joker_effect('j_rgmc_rocket_keychain', function(v)
-			if hand ~= v.ability.extra.target_hand then return end
-			level_up_hand_ref(card, MadLib.get_most_played_hand(), instant, v.ability.extra.level_ups)
-		end)
-	end
-	level_up_hand_ref(card, hand, instant, amount)
-end
-
 local smods_change_base = SMODS.change_base
 function SMODS.change_base(card, suit, rank)
 	if not card then return nil end

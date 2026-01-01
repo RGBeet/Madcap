@@ -41,7 +41,7 @@ return {
                 (context.forcetrigger or context.joker_main)
                 and #card.ability.immutable.combos > 0
             then
-                return { chips = card.ability.extra.chips * #card.ability.immutable.combos, card = card }
+                return { chips = MadLib.multiply(card.ability.extra.chips, #card.ability.immutable.combos), card = card }
             end
             -- Food Joker end logic
             Madcap.Funcs.food_joker_round_end(card)

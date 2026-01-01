@@ -34,6 +34,11 @@ return {
                 return { mult = card.ability.extra.mult }
             end
         end,
+        in_pool = function(self, args) -- At least one compatible card
+            return MadLib.list_matches_one(G.playing_cards or {}, function(v)
+                return v:is_suit('rgmc_towers')
+            end)
+        end,
         demicoloncompat = true,
         quasicoloncheck = true
     },

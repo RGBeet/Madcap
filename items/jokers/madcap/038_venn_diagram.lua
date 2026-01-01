@@ -17,17 +17,20 @@ return {
             return MadLib.collect_vars(number_format(card.ability.extra.mult))
         end,
         calculate = function(self, card, context)
-            -- so basically i'm monke
+            
             if (context.individual and context.cardarea == G.play
                 and not MadLib.has_suit_in_list(context.other_card, MadLib.SuitTypes.Base)
                 and not MadLib.has_rank_in_list(context.other_card, MadLib.RankTypes.Base))
-                or context.forcetrigger -- demicolon compat
-            then -- has to have custom rank and suit
+                or context.forcetrigger
+            then
                 return { mult = card.ability.extra.mult, card = card }
             end
         end,
         in_pool = function(self, args) -- Exotic suits/ranks enabled
-            return G.GAME.Exotic
+            return MadLib.list_matches_one(G.playing_cards, function(v)
+                return not MadLib.has_suit_in_list(v, MadLib.SuitTypes.Base)
+                and not MadLib.has_rank_in_list(v, MadLib.RankTypes.Base)
+            end)
         end,
         demicoloncompat = true,
     },

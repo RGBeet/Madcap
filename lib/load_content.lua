@@ -130,11 +130,6 @@ Madcap.Directories = {
 			return true
 		end
 	},
-	['challenges']	= {
-		pass = function()
-			return true
-		end
-	},
 	['stakes'] = {
 		['madcap'] = {
 			pass = function()

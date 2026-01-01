@@ -1,27 +1,3 @@
-local calc_func = function(self, card, context)
-    -- Most of this is handled in hooks
-    if Madcap.Funcs.get_end_of_round(context) then
-        return MadLib.food_joker_logic(card)
-    end
-    
-    if context.after then
-        card.ability.extra.xmult_store = 0
-    end
-end
-
-if Overloaded or Cryptid then
-    local calc_func_ref = calc_func
-    calc_func = function(self, card, context)
-        if context.forcetrigger then
-            return { x_chips = MadLib.add(1, card.ability.extra.xchip_mod) }
-        end
-        if context.checktrigger then
-            return context.joker_main and MadLib.is_positive_number(card.ability.extra.xmult_store)
-        end
-        return calc_func_ref(self, card, context)
-    end
-end
-
 -- Might have a calculation issue.
 return {
     data = {
@@ -46,7 +22,22 @@ return {
                 number_format(card.ability.extra.xmult_mod),
                 number_format(card.ability.extra.rounds_remaining))
         end,
-        calculate = calc_func,
+        calculate = function(self, card, context)
+            -- Most of this is handled in hooks
+            if Madcap.Funcs.get_end_of_round(context) then
+                return MadLib.food_joker_logic(card)
+            end
+            if context.after then
+                card.ability.extra.xmult_store = 0
+            end
+            if context.forcetrigger then
+                return { x_chips = MadLib.add(1, card.ability.extra.xchip_mod) }
+            end
+        end,
+        quasi_check = function(self, card, context)
+            return context.joker_main and MadLib.is_positive_number(card.ability.extra.xmult_store)
+        end,
         demicoloncompat = true,
+        quasicoloncheck = true,
     },
 }

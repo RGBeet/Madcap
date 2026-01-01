@@ -39,6 +39,13 @@ return {
         loc_vars = function(self, info_queue, card)
             return MadLib.collect_vars(number_format(card.ability.extra.chips))
         end,
+        in_pool = function(self, args) -- At least one compatible card
+            return MadLib.list_matches_one(G.playing_cards or {}, function(v)
+                return MadLib.list_matches_one(Madcap.Lists.PentagonalNumbers, function(c)
+                    return MadLib.is_rank(v, c) 
+                end)
+            end)
+        end,
         calculate = calc_func,
         demicoloncompat = true,
         quasicoloncheck = true

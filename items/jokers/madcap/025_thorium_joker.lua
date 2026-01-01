@@ -64,6 +64,14 @@ return {
                 end
             end
         end,
+        in_pool = function(self, args) -- At least one compatible card
+            return MadLib.list_matches_one(G.playing_cards or {}, function(v)
+                for k,_ in pairs(Madcap.ThoriumJokerConversions) do
+                    if MadLib.is_rank(v, k) then return true; end
+                end
+                return false
+            end)
+        end,
         demicoloncompat = false, -- all cards in scored hand have a 1 in 3 chance (WIP)
     },
 }

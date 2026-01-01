@@ -60,5 +60,6 @@ return {
             end
         end,
         demicoloncompat = true,
+        quasicoloncheck = true,
     },
 }

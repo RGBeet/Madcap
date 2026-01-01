@@ -18,6 +18,9 @@ return {
                     number_format(card.ability.immutable.antes_completed))
         end,
         calculate = function(self, card, context)
+            if context.checktrigger then
+                return context.cardarea == G.jokers and context.joker_main
+            end
             if
                 not context.individual
                 and context.end_of_round and G.GAME.blind.boss

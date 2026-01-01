@@ -43,6 +43,11 @@ return {
             return MadLib.collect_vars(_numer, _denom, card.ability.extra.times)
         end,
         calculate = calc_func,
+        in_pool = function(self, args) -- At least one compatible card
+            return MadLib.list_matches_one(G.playing_cards or {}, function(v)
+                return not (v:is_rankless())
+            end)
+        end,
         demicoloncompat = true,
         quasicoloncheck = true
     },

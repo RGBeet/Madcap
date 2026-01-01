@@ -58,7 +58,13 @@ return {
                 return { chips = card.ability.extra.chips }
             end
         end,
+        in_pool = function(self, args) -- At least one compatible card
+            return MadLib.list_matches_one(G.playing_cards or {}, function(v)
+                return MadLib.is_rank(v, self.config.extra.rank or '6')
+            end)
+        end,
         perishable_compat = false,
         demicoloncompat = true,
+        quasicoloncheck = true,
     },
 }
